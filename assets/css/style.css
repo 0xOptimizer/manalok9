@@ -320,3 +320,7 @@ a:hover {
 .db-identifier:before {
 	content: "#";
 }
+.highlighted {
+	background-color: #123826 !important;
+	color: #ebebeb !important;
+}

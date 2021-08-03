@@ -16,6 +16,11 @@ if ($date == date('M j, Y')) {
 // Fetch products
 $getAllProducts = $this->Model_Selects->GetAllProducts();
 
+// Highlighting new recorded entry
+$highlightID = 'N/A';
+if ($this->session->flashdata('highlight-id')) {
+	$highlightID = $this->session->flashdata('highlight-id');
+}
 ?>
 <style>
 	.rotate-text {
@@ -83,7 +88,7 @@ $getAllProducts = $this->Model_Selects->GetAllProducts();
 							<?php
 							if ($getAllProducts->num_rows() > 0):
 								foreach ($getAllProducts->result_array() as $row): ?>
-									<tr>
+									<tr data-code="<?=$row['Code'];?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
@@ -152,6 +157,9 @@ $getAllProducts = $this->Model_Selects->GetAllProducts();
 <script>
 $('.sidebar-admin-products').addClass('active');
 $(document).ready(function() {
+	<?php if ($highlightID != 'N/A'): ?>
+		$('#productsTable').find("[data-code='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
+	<?php endif; ?>
 	$('.newproduct-btn').on('click', function() {
 		$('#newProductModal').modal('toggle');
 	});

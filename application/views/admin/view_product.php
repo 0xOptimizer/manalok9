@@ -22,6 +22,11 @@ if ($getProductByCode->num_rows() > 0) {
 }
 $getTransactionsByCode = $this->Model_Selects->GetTransactionsByCode($code);
 
+// Highlighting new recorded entry
+$highlightID = 'N/A';
+if ($this->session->flashdata('highlight-id')) {
+	$highlightID = $this->session->flashdata('highlight-id');
+}
 ?>
 <style>
 	.rotate-text {
@@ -84,13 +89,17 @@ $getTransactionsByCode = $this->Model_Selects->GetTransactionsByCode($code);
 									<?php
 									if ($getProductByCode->num_rows() > 0):
 										if ($getTransactionsByCode->num_rows() > 0):
-											foreach ($getTransactionsByCode->result_array() as $row): ?>
-												<tr>
+											foreach ($getTransactionsByCode->result_array() as $row):
+												$typeText = '<i class="bi bi-arrow-down-left-square"></i> Restock';
+												if ($row['Type'] == 1) {
+													$typeText = '<i class="bi bi-arrow-up-right-square"></i> Released';
+												}?>
+												<tr data-transactionid="<?=$row['TransactionID'];?>">
 													<td>
 														<?=$row['TransactionID'];?>
 													</td>
 													<td>
-														<?=$row['Type'];?>
+														<?=$typeText;?>
 													</td>
 													<td>
 														<?=$row['Amount'];?>
@@ -186,6 +195,9 @@ $getTransactionsByCode = $this->Model_Selects->GetTransactionsByCode($code);
 <script>
 $('.sidebar-admin-products').addClass('active');
 $(document).ready(function() {
+	<?php if ($highlightID != 'N/A'): ?>
+		$('#productsTable').find("[data-transactionid='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
+	<?php endif; ?>
 	var productCode = "<?=$code;?>";
 	$('.newtransaction-btn').on('click', function() {
 		$('#newTransactionModal').modal('toggle');
