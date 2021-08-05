@@ -78,3 +78,6 @@ $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateProduct';
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
+
+// Database backup
+$route['database_backup'] = 'Admin/database_backup';

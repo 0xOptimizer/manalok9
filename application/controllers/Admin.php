@@ -51,6 +51,42 @@ class Admin extends CI_Controller {
 		$data = array_merge($data, $this->globalData);
 		$header['pageTitle'] = 'Dashboard';
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+
+		$c_year = date('Y');
+		$c_month = date('m');
+		// Total Products per month
+		$all_months = array(
+			'January' => '01',
+			'February' => '02',
+			'March' => '03',
+			'April' => '04',
+			'May' => '05',
+			'June' => '06',
+			'July' => '07',
+			'August' => '08',
+			'September' => '09',
+			'October' => '10',
+			'November' => '11',
+			'December' => '12'
+		);
+		$mt = array();
+		foreach ($all_months as $row => $val) {
+			$tppm = $this->Model_Selects->C_Products_perMonth($c_year,$val);
+			if ($tppm > 0) {
+				$mt[] = $tppm['total'];
+			}
+			else
+			{
+				$mt[] = "0";
+			}
+		}
+		$data['month_count'] = $mt;
+		$data['all_months'] = $all_months;
+		
+		// Total product stock
+		$data['tps'] = $this->Model_Selects->total_product_stocks();
+		$data['tps_m'] = $this->Model_Selects->total_product_thismonth($c_year,$c_month);
+
 		$this->load->view('admin/dashboard', $data);
 	}
 	public function users()
@@ -368,5 +404,30 @@ class Admin extends CI_Controller {
 			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/viewproduct?code=' . $code);
 		}
+	}
+	// Database backup
+	public function database_backup()
+	{
+		date_default_timezone_set('Asia/Manila');
+		$this->load->dbutil();
+
+		$date = date('Y-m-d-H-i-s');
+		$prefs = array(     
+			'format'      => 'zip',             
+			'filename'    => 'manalok9'.$date.'.sql'
+		);
+
+
+		$backup =& $this->dbutil->backup($prefs); 
+
+		$db_name = 'backup-on-'. date("Y-m-d-H-i-s") .'.zip';
+		$save = 'pathtobkfolder/'.$db_name;
+
+		$this->load->helper('file');
+		write_file($save, $backup); 
+
+
+		$this->load->helper('download');
+		force_download($db_name, $backup);
 	}
 }

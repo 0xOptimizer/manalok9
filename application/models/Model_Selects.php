@@ -40,4 +40,24 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
+	public function C_Products_perMonth($c_year,$val)
+	{
+		$sql = "SELECT EXTRACT(MONTH FROM DateAdded) as months, EXTRACT(YEAR FROM DateAdded) as year,SUM(InStock) as total  FROM products WHERE YEAR(DateAdded) = '$c_year' AND MONTH(DateAdded) = '$val' GROUP BY months,year ORDER BY months ASC";
+		$result = $this->db->query($sql);
+		return $result->row_array();
+	}
+	public function total_product_stocks()
+	{
+		$this->db->select_sum('InStock');
+		$result = $this->db->get('products');
+		return $result->row_array();
+	}
+	public function total_product_thismonth($c_year,$c_month)
+	{
+
+		$this->db->select_sum('InStock');
+		$this->db->where(array('MONTH(DateAdded)'=> $c_month, 'YEAR(DateAdded)' => $c_year));
+		$result = $this->db->get('products');
+		return $result->row_array();
+	}
 }
