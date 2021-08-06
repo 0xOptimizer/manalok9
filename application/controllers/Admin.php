@@ -41,7 +41,7 @@ class Admin extends MY_Controller {
 				$this->globalData['image'] = $this->session->userdata('Image');
 			}
 		} else {
-			redirect('login');
+			redirect('logout');
 		}
 		// $this->output->enable_profiler(TRUE);
 	}
@@ -133,6 +133,7 @@ class Admin extends MY_Controller {
 		$contactNumber = $this->input->post('contactNumber');
 		$address = $this->input->post('locationAddress');
 		$comment = $this->input->post('adminComment');
+		$privilege = $this->input->post('userPrivilege');
 
 		$pImageChecker = $this->input->post('pImageChecker');
 		$userID = uniqid();
@@ -198,6 +199,7 @@ class Admin extends MY_Controller {
 			'ContactNumber' => $contactNumber,
 			'Address' => $address,
 			'Comment' => $comment,
+			'Privilege' => ($privilege == NULL ? 0 : $privilege),
 			'DateAdded' => date('Y-m-d h:i:s A'),
 		);
 		$insertNewEmployee = $this->Model_Inserts->InsertNewUser($data);
@@ -208,12 +210,12 @@ class Admin extends MY_Controller {
 			// $this->Model_Logbook->LogbookEntry('Green', 'Applicant', ' added a new applicant: <a class="logbook-tooltip-highlight" href="' . base_url() . 'ViewEmployee?id=' . $ApplicantID . '" target="_blank">' . ucfirst($LastName) . ', ' . ucfirst($FirstName) .  ' ' . ucfirst($MiddleName) . '</a>');
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Applicant ID: <b>' . $ApplicantID . '</b>');
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Referral: <b>' . $Referral . '</b>');
-			redirect('admin');
+			redirect('admin/users');
 		}
 		else
 		{
 			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
-			redirect('admin');
+			redirect('admin/users');
 		}
 	}
 	public function FORM_updateUser()
@@ -228,6 +230,7 @@ class Admin extends MY_Controller {
 		$contactNumber = $this->input->post('contactNumber');
 		$address = $this->input->post('locationAddress');
 		$comment = $this->input->post('adminComment');
+		$privilege = $this->input->post('userPrivilege');
 
 		$pImageChecker = $this->input->post('pImageChecker');
 		$userID = $this->input->post('userID');
@@ -295,6 +298,7 @@ class Admin extends MY_Controller {
 			'ContactNumber' => $contactNumber,
 			'Address' => $address,
 			'Comment' => $comment,
+			'Privilege' => $privilege,
 			'DateAdded' => date('Y-m-d h:i:s A'),
 		);
 		$updateEmployee = $this->Model_Updates->UpdateUser($data, $userID);
@@ -306,18 +310,18 @@ class Admin extends MY_Controller {
 				);
 				$updateEmployeeLogin = $this->Model_Updates->UpdateUserLogin($loginData, $userID);
 				if ($updateEmployeeLogin) {
-					redirect('admin');
+					redirect('admin/users');
 				} else {
-					redirect('admin');
+					redirect('admin/users');
 				}
 			} else {
-				redirect('admin');
+				redirect('admin/users');
 			}
 		}
 		else
 		{
 			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
-			redirect('admin');
+			redirect('admin/users');
 		}
 	}
 	public function FORM_addNewProduct()

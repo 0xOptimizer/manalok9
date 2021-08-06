@@ -66,6 +66,15 @@
 										<label class="input-label">COMMENT</label>
 										<input id="UpdateComment" type="text" class="form-control" name="adminComment" readonly>
 									</div>
+									<div class="form-group col-sm-12">
+										<label class="input-label">PRIVILEGE</label>
+										<select id="UpdatePrivilege" class="form-control" name="userPrivilege" readonly disabled>
+											<option value="0" selected>None</option>
+											<option value="1">Normal</option>
+											<option value="2">Admin</option>
+											<option value="3">Developer</option>
+										</select>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -83,26 +92,6 @@
 									</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<td>Visited linkasdasdasdasaaaaaaaaaaaaaaa.</td>
-											<td class="text-muted">2 minutes ago</td>
-										</tr>
-										<tr>
-											<td>Visited linkasdasdasdasaaaaaaaaaaaaaaa.</td>
-											<td class="text-muted">2 minutes ago</td>
-										</tr>
-										<tr>
-											<td>Visited linkasdasdasdasaaaaaaaaaaaaaaa.</td>
-											<td class="text-muted">2 minutes ago</td>
-										</tr>
-										<tr>
-											<td>Visited linkasdasdasdasaaaaaaaaaaaaaaa.</td>
-											<td class="text-muted">2 minutes ago</td>
-										</tr>
-										<tr>
-											<td>Visited linkasdasdasdasaaaaaaaaaaaaaaa.</td>
-											<td class="text-muted">2 minutes ago</td>
-										</tr>
 									</tbody>
 								</table>
 							</div>

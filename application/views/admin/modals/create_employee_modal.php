@@ -56,6 +56,15 @@
 								<label class="input-label">COMMENT</label>
 								<input type="text" class="form-control" name="adminComment">
 							</div>
+							<div class="form-group col-sm-12">
+								<label class="input-label">PRIVILEGE</label>
+								<select class="form-control" name="userPrivilege">
+									<option value="0" selected>None</option>
+									<option value="1">Normal</option>
+									<option value="2">Admin</option>
+									<option value="3">Developer</option>
+								</select>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -18,6 +18,15 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('users');  
 		return $result;
 	}
+	public function GetUserHistory($userID)
+	{
+		$this->db->select('*');
+		$this->db->where('UserID', $userID);
+		$this->db->order_by('ID', 'desc');
+		$this->db->limit('10');
+		$result = $this->db->get('security_log');  
+		return $result;
+	}
 	public function GetAllProducts()
 	{
 		$this->db->select('*');
