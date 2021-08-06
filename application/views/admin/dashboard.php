@@ -289,7 +289,7 @@ if ($date == date('M j, Y')) {
 											<button type="button" class="btn btn-primary" style="width: 150px;"><i class="bi bi-server"></i> DATABASE</button>
 										</div>
 										<div class="col-sm-6">
-											<button type="button" class="btn btn-info" style="width: 150px;"><i class="bi bi-back"></i> BACKUP</button>
+											<button type="button" class="backup-btn btn btn-info" style="width: 150px;"><i class="bi bi-back"></i> BACKUP</button>
 										</div>
 									</div>
 									<div class="row mt-2">
@@ -301,6 +301,20 @@ if ($date == date('M j, Y')) {
 										</div>
 									</div>
 								</div>
+								<div class="row ml-2 mt-2">
+									<div class="col-sm-12">
+										<span class="success-banner-sm">
+											<i class="bi bi-check-circle-fill"></i> DATABASE LAST BACKED UP 2 DAYS AGO
+										</span>
+									</div>
+								</div>
+								<div class="row ml-2 mt-2">
+									<div class="col-sm-12">
+										<span class="success-banner-sm">
+											<i class="bi bi-check-circle-fill"></i> 0 SUSPICIOUS VISITS FOUND
+										</span>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -309,6 +323,9 @@ if ($date == date('M j, Y')) {
 		</div>
 	</div>
 </div>
+<!-- Create a new employee modal -->
+<?php $this->load->view('admin/modals/database_backupprompt.php'); ?>
+
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -320,6 +337,9 @@ if ($date == date('M j, Y')) {
 <script>
 $('.sidebar-admin-dashboard').addClass('active');
 $(document).ready(function() {
+	$('.backup-btn').on('click', function() {
+		$('#databaseBackupPrompt').modal('toggle');
+	});
 	var totalProducts = new Chart(document.getElementById('productsChart'), {
 			type: 'line',
 			data: {

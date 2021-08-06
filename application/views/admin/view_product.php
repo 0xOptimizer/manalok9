@@ -90,9 +90,9 @@ if ($this->session->flashdata('highlight-id')) {
 									if ($getProductByCode->num_rows() > 0):
 										if ($getTransactionsByCode->num_rows() > 0):
 											foreach ($getTransactionsByCode->result_array() as $row):
-												$typeText = '<i class="bi bi-arrow-down-left-square"></i> Restock';
+												$typeText = '<span class="text-primary"><i class="bi bi-arrow-down-left-square"></i> Restock</span>';
 												if ($row['Type'] == 1) {
-													$typeText = '<i class="bi bi-arrow-up-right-square"></i> Released';
+													$typeText = '<span class="text-info"><i class="bi bi-arrow-up-right-square"></i> Released</span>';
 												}?>
 												<tr data-transactionid="<?=$row['TransactionID'];?>">
 													<td>
@@ -155,7 +155,7 @@ if ($this->session->flashdata('highlight-id')) {
 						<b>MONITORING</b>
 						<div class="row">
 							<div class="col-sm-12 mt-2">
-								<button type="button" class="newtransaction-btn btn btn-primary"><i class="bi bi-cart-plus"></i> ADD A NEW TRANSACTION</button>
+								<button type="button" class="newtransaction-btn btn btn-info"><i class="bi bi-cart-plus"></i> ADD A NEW TRANSACTION</button>
 							</div>
 							<div class="col-sm-12 mt-4">
 								<span style="font-size: 12px;">THIS WEEK</span>

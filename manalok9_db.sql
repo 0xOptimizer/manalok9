@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 03, 2021 at 10:52 AM
+-- Generation Time: Aug 06, 2021 at 02:15 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.10
 
@@ -43,7 +43,9 @@ CREATE TABLE `products` (
 
 INSERT INTO `products` (`ID`, `Code`, `Description`, `InStock`, `Released`, `DateAdded`) VALUES
 (1, 'TEST', 'TEST 123', 650, 0, '2021-08-03 03:18:07 AM'),
-(3, 'ASD', 'ASDA12345', 0, 0, '2021-08-03 09:50:06 AM');
+(3, 'ASD', 'ASDA12345', 275, 0, '2021-08-03 09:50:06 AM'),
+(4, 'NEW', 'NEW135616316', 0, 0, '2021-08-03 06:11:02 PM'),
+(5, '1', '123', 0, 0, '2021-08-03 06:25:47 PM');
 
 -- --------------------------------------------------------
 
@@ -74,7 +76,35 @@ INSERT INTO `products_transactions` (`ID`, `Code`, `TransactionID`, `Type`, `Amo
 (5, 'TEST', 'TEST-6108FDED404C0', 0, 500, 500, '2021-08-03', '2021-08-03 10:27:25 AM'),
 (6, 'TEST', 'TEST-6108FE5650E69', 0, 500, 500, '2021-08-03', '2021-08-03 10:29:10 AM'),
 (7, 'TEST', 'TEST-6108FE60310E6', 0, 250, 750, '2021-08-03', '2021-08-03 10:29:20 AM'),
-(8, 'TEST', 'TEST-6108FE639AD12', 1, 100, 650, '2021-08-03', '2021-08-03 10:29:23 AM');
+(8, 'TEST', 'TEST-6108FE639AD12', 1, 100, 650, '2021-08-03', '2021-08-03 10:29:23 AM'),
+(9, 'ASD', 'ASD-6109068131100', 0, 200, 200, '2021-08-03', '2021-08-03 11:04:01 AM'),
+(10, 'ASD', 'ASD-610906860108B', 0, 100, 300, '2021-08-03', '2021-08-03 11:04:06 AM'),
+(11, 'ASD', 'ASD-61096907810D3', 1, 125, 175, '2021-08-04', '2021-08-03 06:04:23 PM'),
+(12, 'ASD', 'ASD-6109692B1005B', 0, 100, 275, '2021-08-04', '2021-08-03 06:04:59 PM');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `security_log`
+--
+
+CREATE TABLE `security_log` (
+  `ID` int(11) NOT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `Agent` varchar(255) DEFAULT NULL,
+  `Platform` varchar(255) DEFAULT NULL,
+  `IPAddress` varchar(50) DEFAULT NULL,
+  `Country` varchar(255) DEFAULT NULL,
+  `PageURL` varchar(255) DEFAULT NULL,
+  `DateAdded` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `security_log`
+--
+
+INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `Country`, `PageURL`, `DateAdded`) VALUES
+(1, NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-05 03:22:52 PM');
 
 -- --------------------------------------------------------
 
@@ -205,7 +235,11 @@ INSERT INTO `users_login_history` (`ID`, `UserID`, `LoginEmail`, `LoginPassword`
 (54, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-07-26 07:23:36 AM'),
 (55, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-07-26 08:09:29 AM'),
 (56, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-08-02 04:11:16 PM'),
-(57, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-08-03 01:37:36 AM');
+(57, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-08-03 01:37:36 AM'),
+(58, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-08-03 05:43:37 PM'),
+(59, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-08-04 01:05:20 AM'),
+(60, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-08-04 05:24:40 AM'),
+(61, '60bf510d64ba8', 'admin', NULL, 'Desktop: Chrome 92.0.4515.107', 'Windows 7', '::1', 1, '2021-08-05 05:35:40 AM');
 
 --
 -- Indexes for dumped tables
@@ -221,6 +255,12 @@ ALTER TABLE `products`
 -- Indexes for table `products_transactions`
 --
 ALTER TABLE `products_transactions`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `security_log`
+--
+ALTER TABLE `security_log`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -249,13 +289,19 @@ ALTER TABLE `users_login_history`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `products_transactions`
 --
 ALTER TABLE `products_transactions`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `security_log`
+--
+ALTER TABLE `security_log`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -273,7 +319,7 @@ ALTER TABLE `users_login`
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

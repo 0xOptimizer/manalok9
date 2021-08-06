@@ -30,4 +30,9 @@ class Model_Security extends CI_Model {
 		$result = $this->db->get('users_login');  
 		return $result;
 	}
+	public function LogUser($data)
+	{
+		$result = $this->db->insert('security_log', $data);
+		return $result;
+	}
 }
