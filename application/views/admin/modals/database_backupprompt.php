@@ -5,10 +5,10 @@
 				<div class="row">
 					<div class="col-sm-12 col-md-6">
 						<div class="card standard-card-btn standard-card-btn-primary">
-							<div class="card-body text-center">
+							<a href="<?=base_url()?>database_backup" class="card-body text-center">
 								<p class="card-btn-icon"><i class="bi bi-back"></i></p>
 								<p class="card-btn-text">CREATE BACKUP</p>
-							</div>
+							</a>
 						</div>
 					</div>
 					<div class="col-sm-12 col-md-6">
