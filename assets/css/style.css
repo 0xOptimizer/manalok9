@@ -1,3 +1,31 @@
+/* ============  */
+/* Media Queries */
+/* ============= */
+
+@media (min-width: 1px) {
+	.tppm-chart {
+		width: 100%;
+		min-height: 250px !important;
+		height: 250px !important;
+	}
+}
+
+@media (min-width: 576px) {
+	.tppm-chart {
+		width: 100%;
+		min-height: 500px !important;
+		height: 500px !important;
+	}
+}
+
+@media (min-width: 768px) {}
+
+@media (min-width: 992px) {}
+
+@media (min-width: 1200px) {}
+
+@media (min-width: 1400px) {}
+
 body {
 	background-color: #222124;
 	color: #8e8e8e;
