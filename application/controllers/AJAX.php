@@ -9,4 +9,14 @@ class AJAX extends MY_Controller {
 		$this->load->model('Model_Selects');
 		$this->load->model('Model_Inserts');
 	}
+
+	public function getUserLogs()
+	{
+		$id = $this->input->get('userID');
+		if (strlen($id) > 0) {
+			$userHistory = $this->Model_Selects->GetUserHistory($id)->result_array();
+
+			echo json_encode($userHistory);
+		}
+	}
 }

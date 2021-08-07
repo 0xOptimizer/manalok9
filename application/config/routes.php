@@ -71,9 +71,11 @@ $route['FORM_loginValidation'] = 'Main/FORM_loginValidation';
 $route['logout'] = 'Main/logout';
 
 // Users
-$route['FORM_addNewUser'] = 'Admin/FORM_addNewProduct';
-$route['FORM_updateUser'] = 'Admin/FORM_updateProduct';
-$route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateProduct';
+$route['FORM_addNewUser'] = 'Admin/FORM_addNewUser';
+$route['FORM_updateUser'] = 'Admin/FORM_updateUser';
+$route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
+
+$route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';

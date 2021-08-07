@@ -8,6 +8,7 @@ class MY_Controller extends CI_Controller {
 		
 		$this->load->model('Model_Security');
 		date_default_timezone_set('Asia/Manila');
+		$userID = $this->session->userdata('UserID');
 		if ($this->agent->is_browser()) {
 		$agent = 'Desktop: ' . $this->agent->browser().' '.$this->agent->version();
 		} elseif ($this->agent->is_robot()) {
@@ -22,6 +23,7 @@ class MY_Controller extends CI_Controller {
 		$country = 'TBD';
 		$pageURL = base_url($this->uri->uri_string());
 		$data = array(
+			'UserID' => $userID,
 			'Agent' => $agent,
 			'Platform' => $platform,
 			'IPAddress' => $ipAddress,

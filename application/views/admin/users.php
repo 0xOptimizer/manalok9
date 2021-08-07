@@ -143,7 +143,7 @@ $globalHeader;
 											}
 											?>
 											<div class="col-xs-12 col-sm-6 col-md-3">
-												<div class="card employee-standard-card employee-card-hover" data-userid="<?=$row['UserID'];?>" data-image="<?=$row['Image'];?>" data-firstname="<?=$row['FirstName'];?>" data-middlename="<?=$row['MiddleName'];?>" data-lastname="<?=$row['LastName'];?>" data-nameextension="<?=$row['NameExtension'];?>" data-dateofbirth="<?=$row['DateOfBirth'];?>" data-contactnumber="<?=$row['ContactNumber'];?>" data-address="<?=$row['Address'];?>" data-comment="<?=$row['Comment'];?>" data-loginemail="<?=$loginEmail;?>" data-loginpassword="<?=$loginPassword;?>">
+												<div class="card employee-standard-card employee-card-hover" data-userid="<?=$row['UserID'];?>" data-image="<?=$row['Image'];?>" data-firstname="<?=$row['FirstName'];?>" data-middlename="<?=$row['MiddleName'];?>" data-lastname="<?=$row['LastName'];?>" data-nameextension="<?=$row['NameExtension'];?>" data-dateofbirth="<?=$row['DateOfBirth'];?>" data-contactnumber="<?=$row['ContactNumber'];?>" data-address="<?=$row['Address'];?>" data-comment="<?=$row['Comment'];?>" data-privilege="<?=$row['Privilege'];?>" data-loginemail="<?=$loginEmail;?>" data-loginpassword="<?=$loginPassword;?>">
 													<div class="card-body text-center">
 														<p><img class="img-fluid rounded-circle" src="<?=base_url().$row['Image'];?>" width="128" height="128" alt="card image"></p>
 														<h4 class="card-title"<?php if($isFullNameHoverable): ?> data-toggle="tooltip" data-placement="top" data-html="true" title="<?=$fullNameHover;?>"<?php endif; ?>><?=$fullName?></h4>
@@ -203,6 +203,7 @@ $(document).ready(function() {
 		$('#UpdateContactNumber').val($(this).data('contactnumber'));
 		$('#UpdateAddress').val($(this).data('address'));
 		$('#UpdateComment').val($(this).data('comment'));
+		$('#UpdatePrivilege option[value=' + $(this).data('privilege') + ']').prop('selected', true);
 		let loginEmail = $(this).data('loginemail');
 		let loginPassword = $(this).data('loginpassword');
 		$('#LoginEmail').val(loginEmail);
@@ -225,6 +226,37 @@ $(document).ready(function() {
 		$('.save-btn').removeAttr('disabled');
 		$('.save-btn').html('<i class="bi bi-check-square"></i> Save Changes');
 		$('#UpdateEmployeeModal').modal('toggle');
+
+		// get user logs
+		$('#attendanceLogTable tbody').html('');
+		var id = $('#UpdateUserID').val();
+		if ($(this).html().length > 0) {
+			$.get('getUserLogs', { dataType: 'json', userID: id })
+			.done(function(data) {
+				var userLogs = $.parseJSON(data);
+				$.each(userLogs, function(index, val) {
+					var dateNow = new Date();
+					var date = val['DateAdded'].split(' ');
+					var time = date[1].split(':');
+					if (time[0] == 12) {
+						time[0] = 0;
+					}
+					if (date[2] == 'PM') {
+						time[0] = parseInt(time[0]) + 12;
+					}
+					var dateLog = new Date(date[0] + ' ' + time[0] + ':' + time[1] + ':' + time[2]);
+					var diff = dateNow.getTime() - dateLog.getTime();
+					timeDiff = [ Math.floor(diff / 86400000), Math.floor(diff / 3600000), Math.floor(diff / 60000) ];
+					$('#attendanceLogTable tbody').append($('<tr>').append(
+						$('<td>').html('Visited ' + val['PageURL'].replace(window.location.origin + '/', '') + '.')).append(
+						$('<td>').attr({ class: 'text-muted' }).html(timeDiff[0] + 'd' + (timeDiff[1] - (timeDiff[0] * 24)) + 'h' + 
+							(timeDiff[2] - ((timeDiff[1]  * 60))) + 'm ago'))
+					)
+				});
+			}).fail(function () {
+				alert(id);
+			});
+		}
 	});
 	$('#PFPInputPreview').click(function(){ $('#PFPInput').trigger('click'); });
 	$('#UpdatePFPInputPreview').click(function(){ $('#UpdatePFPInput').trigger('click'); });
@@ -256,11 +288,19 @@ $(document).ready(function() {
 			$('#UpdateEmployeeModal').find('.modal-body').find('input').each(function() {
 				$(this).attr('readonly', false);
 			});
+			$('#UpdateEmployeeModal').find('.modal-body').find('select').each(function() {
+				$(this).attr('readonly', false);
+				$(this).attr('disabled', false);
+			});
 			$('#LoginPassword').attr('readonly', true);
 			$('.newpass-btn-group').fadeIn('fast');
 		} else {
 			$('#UpdateEmployeeModal').find('.modal-body').find('input').each(function() {
 				$(this).attr('readonly', true);
+			$('#UpdateEmployeeModal').find('.modal-body').find('select').each(function() {
+				$(this).attr('readonly', true);
+				$(this).attr('disabled', true);
+			});
 			});
 			$('.newpass-btn-group').fadeOut('fast');
 		}
