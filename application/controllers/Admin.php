@@ -121,6 +121,14 @@ class Admin extends MY_Controller {
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$this->load->view('admin/inventory', $data);
 	}
+	public function security()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Security Oveview';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/dashboard_security', $data);
+	}
 	// Form inputs
 	public function FORM_addNewUser()
 	{	

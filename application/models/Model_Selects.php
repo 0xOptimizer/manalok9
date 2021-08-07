@@ -49,6 +49,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
+	public function GetAllSecurityLogs()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('security_log');  
+		return $result;
+	}
 	public function C_Products_perMonth($c_year,$val)
 	{
 		$sql = "SELECT EXTRACT(MONTH FROM DateAdded) as months, EXTRACT(YEAR FROM DateAdded) as year,SUM(InStock) as total  FROM products WHERE YEAR(DateAdded) = '$c_year' AND MONTH(DateAdded) = '$val' GROUP BY months,year ORDER BY months ASC";

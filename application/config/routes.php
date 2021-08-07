@@ -58,7 +58,7 @@ $route['admin/users'] = 'Admin/users';
 $route['admin/products'] = 'Admin/products';
 $route['admin/viewproduct'] = 'Admin/view_product';
 $route['admin/inventory'] = 'Admin/inventory';
-$route['admin/attendance'] = 'Admin/attendance';
+$route['admin/security'] = 'Admin/security';
 
 $route['user'] = 'Users';
 $route['user/log'] = 'Users/attendanceLog';

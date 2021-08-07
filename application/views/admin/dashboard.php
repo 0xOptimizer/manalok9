@@ -295,20 +295,20 @@ if ($date == date('M j, Y')) {
 									</div>
 									<div class="row mt-2">
 										<div class="col-sm-6">
-											<button type="button" class="btn btn-danger" style="width: 150px;"><i class="bi bi-shield-fill"></i> SECURITY</button>
+											<a href="<?=base_url() . 'admin/security';?>" class="btn btn-danger" style="width: 150px;"><i class="bi bi-shield-fill"></i> SECURITY</a>
 										</div>
 										<div class="col-sm-6">
 											<button type="button" class="btn btn-secondary" style="width: 150px;"><i class="bi bi-wrench"></i> SETTINGS</button>
 										</div>
 									</div>
 								</div>
-								<div class="row ml-2 mt-2">
+								<!-- <div class="row ml-2 mt-2">
 									<div class="col-sm-12">
 										<span class="success-banner-sm">
 											<i class="bi bi-check-circle-fill"></i> DATABASE LAST BACKED UP 2 DAYS AGO
 										</span>
 									</div>
-								</div>
+								</div> -->
 								<div class="row ml-2 mt-2">
 									<div class="col-sm-12">
 										<span class="success-banner-sm">
