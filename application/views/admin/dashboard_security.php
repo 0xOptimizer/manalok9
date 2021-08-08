@@ -13,8 +13,9 @@ if ($date == date('M j, Y')) {
 	$isCurrentDate = true;
 }
 
-// Fetch products
+// Fetch data
 $getAllSecurityLogs = $this->Model_Selects->GetAllSecurityLogs();
+$getAllUsers = $this->Model_Selects->GetAllUsers();
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -23,9 +24,9 @@ if ($this->session->flashdata('highlight-id')) {
 }
 ?>
 <style>
-	body {
+	/*body {
 		background-color: #121b11 !important;
-	}
+	}*/
 	.rotate-text {
 		-webkit-transform:rotate(-75deg);
 	}
@@ -60,17 +61,27 @@ if ($this->session->flashdata('highlight-id')) {
 							<i class="bi bi-shield-fill"></i> Security Overview
 						</h3>
 					</div>
-					<div class="col-sm-12">
-						<!-- <button type="button" class="newproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW PRODUCT</button>
-						|
-						<button type="button" class="newtransaction-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cart-plus"></i> NEW TRANSACTION</button>
-						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a> -->
+					<div class="col-sm-12 col-md-10">
+						<span class="text-center success-banner-sm">
+							<i class="bi bi-eye-fill"></i> <?=$getAllSecurityLogs->num_rows();?> TOTAL PAGE VISITS
+						</span>
+						<span class="text-center success-banner-sm">
+							<i class="bi bi-person-fill"></i> <?=$getAllUsers->num_rows();?> TOTAL USERS
+						</span>
+					</div>
+					<div class="col-sm-12 col-md-2 mr-auto" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
 					</div>
 				</div>
 			</div>
 			<section class="section">
 				<div class="table-responsive">
-					<table id="productsTable" class="table">
+					<table id="productsTable" class="standard-table-nodesign table">
 						<thead style="font-size: 12px;">
 							<th></th>
 							<th>USER</th>
@@ -78,13 +89,13 @@ if ($this->session->flashdata('highlight-id')) {
 							<th>PLATFORM</th>
 							<th>COUNTRY</th>
 							<th>PAGE</th>
-							<th></th>
+							<th>TIME</th>
 						</thead>
-						<tbody>
+						<tbody style="font-size: 14px;">
 							<?php
 							if ($getAllSecurityLogs->num_rows() > 0):
 								foreach ($getAllSecurityLogs->result_array() as $row): ?>
-									<tr>
+									<tr style="background-color: #121b11;">
 										<td>
 											<span style="color: #198754;"><i class="bi bi-check-circle"></i></span>
 										</td>
@@ -101,7 +112,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['IPAddress']?> (<?=$row['Country'];?>)
 										</td>
 										<td>
-											<?=$row['PageURL'];?>
+											<a href="<?=$row['PageURL'];?>"><?=$row['PageURL'];?></a>
 										</td>
 										<td>
 											<span class="text-muted"><?=$row['DateAdded'];?></span>
@@ -121,7 +132,6 @@ if ($this->session->flashdata('highlight-id')) {
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
 
-<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -143,68 +153,19 @@ $(document).ready(function() {
 	$('.newtransaction-btn').on('click', function() {
 		$('#newTransactionModal').modal('toggle');
 	});
-	/*
 	var table = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
 		"bLengthChange": false,
-    	"order": [[ 1, "desc" ]],
-    	buttons: [
-        {
-            extend: 'print',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            },
-            customize: function ( doc ) {
-            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/img/wercher_logo.png" width="63px" height="56px" />');
-				$(doc.document.body).find('h1').css('font-size', '24px');
-				$(doc.document.body).find('h1').css('text-align', 'center'); 
-			}
-        },
-        {
-            extend: 'copyHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'excelHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'csvHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'pdfHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        }
-    ]});
-	$('#ExportPrint').on('click', function () {
-        table.button('0').trigger();
+    	"order": [[ 6, "desc" ]],
     });
-    $('#ExportCopy').on('click', function () {
-        table.button('1').trigger();
-    });
-    $('#ExportExcel').on('click', function () {
-        table.button('2').trigger();
-    });
-    $('#ExportCSV').on('click', function () {
-        table.button('3').trigger();
-    });
-    $('#ExportPDF').on('click', function () {
-        table.button('4').trigger();
-    });
-    */
+    $('#tableSearch').on('keyup change', function(){
+		table.search($(this).val()).draw();
+	});
 });
 </script>
 
 <script src="<?=base_url()?>/assets/js/main.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 </body>
 
 </html>

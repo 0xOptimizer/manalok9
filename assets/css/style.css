@@ -31,6 +31,36 @@ body {
 	color: #8e8e8e;
 }
 
+.page-item.disabled .page-link {
+	background-color: transparent;
+	color: #4e4e4e;
+	border-color: #4e4e4e;
+}
+
+.page-item.active .page-link {
+	background-color: transparent;
+	color: #a7852d;
+	border-color: #a7852d;
+}
+
+.page-link {
+	background-color: transparent;
+	color: #8e8e8e;
+	border-color: #8e8e8e;
+}
+
+.page-link:hover {
+	background-color: transparent;
+	color: #a7852d !important;
+	border-color: #a7852d;
+	transition: 0.05s;
+}
+th:hover, .standard-table tbody tr:hover {
+	color: #a7852d;
+	cursor: pointer;
+	transition: 0.05s;
+}
+
 /* ========================================================================================  */
 /* ==================================== BOOTSTRAP =========================================  */
 /* ========================================================================================  */
@@ -222,6 +252,7 @@ a:hover {
 	color: #fff;
 	background-color: rgba(0, 0, 0, 0.20);
 	border-left: 4px solid #a7852d;
+	transition: 0s;
 }
 .sidebar-wrapper .menu .sidebar-item .sidebar-link:hover {
 	border-radius: 0px;

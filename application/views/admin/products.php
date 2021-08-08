@@ -38,6 +38,7 @@ if ($this->session->flashdata('highlight-id')) {
 		color: #FFFFFF;
 	}
 </style>
+
 </head>
 <body>
 <div id="app">
@@ -65,17 +66,25 @@ if ($this->session->flashdata('highlight-id')) {
 							<!-- <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW</button> -->
 						</h3>
 					</div>
-					<div class="col-sm-12">
+					<div class="col-sm-12 col-md-10">
 						<button type="button" class="newproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW PRODUCT</button>
 						|
 						<button type="button" class="newtransaction-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cart-plus"></i> NEW TRANSACTION</button>
 						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
 					</div>
+					<div class="col-sm-12 col-md-2 mr-auto" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
 				</div>
 			</div>
 			<section class="section">
 				<div class="table-responsive">
-					<table id="productsTable" class="table">
+					<table id="productsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th>ID</th>
 							<th>CODE</th>
@@ -88,7 +97,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php
 							if ($getAllProducts->num_rows() > 0):
 								foreach ($getAllProducts->result_array() as $row): ?>
-									<tr data-code="<?=$row['Code'];?>">
+									<tr data-code="<?=$row['Code'];?>" data-urlredirect="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
@@ -112,26 +121,6 @@ if ($this->session->flashdata('highlight-id')) {
 									</tr>
 							<?php endforeach;
 							endif; ?>
-							<tr>
-								<td>
-									--
-								</td>
-								<td>
-									
-								</td>
-								<td>
-									--
-								</td>
-								<td>
-									--
-								</td>
-								<td>
-									--
-								</td>
-								<td>
-									--
-								</td>
-							</tr>
 						</tbody>
 					</table>
 				</div>
@@ -144,7 +133,6 @@ if ($this->session->flashdata('highlight-id')) {
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
 
-<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -166,68 +154,20 @@ $(document).ready(function() {
 	$('.newtransaction-btn').on('click', function() {
 		$('#newTransactionModal').modal('toggle');
 	});
-	/*
+	
 	var table = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
 		"bLengthChange": false,
-    	"order": [[ 1, "desc" ]],
-    	buttons: [
-        {
-            extend: 'print',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            },
-            customize: function ( doc ) {
-            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/img/wercher_logo.png" width="63px" height="56px" />');
-				$(doc.document.body).find('h1').css('font-size', '24px');
-				$(doc.document.body).find('h1').css('text-align', 'center'); 
-			}
-        },
-        {
-            extend: 'copyHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'excelHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'csvHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'pdfHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        }
-    ]});
-	$('#ExportPrint').on('click', function () {
-        table.button('0').trigger();
+    	"order": [[ 3, "desc" ]],
     });
-    $('#ExportCopy').on('click', function () {
-        table.button('1').trigger();
-    });
-    $('#ExportExcel').on('click', function () {
-        table.button('2').trigger();
-    });
-    $('#ExportCSV').on('click', function () {
-        table.button('3').trigger();
-    });
-    $('#ExportPDF').on('click', function () {
-        table.button('4').trigger();
-    });
-    */
+    $('#tableSearch').on('keyup change', function(){
+		table.search($(this).val()).draw();
+	});
 });
 </script>
 
 <script src="<?=base_url()?>/assets/js/main.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 </body>
 
 </html>

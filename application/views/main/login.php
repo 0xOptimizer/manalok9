@@ -22,13 +22,13 @@ $globalHeader;
 					<div class="form-group position-relative has-icon-left mt-2 mb-4">
 						<input type="text" class="form-control form-control-xl" name="email" placeholder="Email">
 						<div class="form-control-icon">
-							<i class="bi bi-envelope"></i>
+							<i class="bi bi-envelope" style="font-size: 18px;"></i>
 						</div>
 					</div>
 					<div class="form-group position-relative has-icon-left">
 						<input type="password" class="form-control form-control-xl" name="password" placeholder="Password">
 						<div class="form-control-icon">
-							<i class="bi bi-shield-lock"></i>
+							<i class="bi bi-shield-lock" style="font-size: 18px;"></i>
 						</div>
 					</div>
 					<!-- <div class="form-check form-check-lg d-flex align-items-end">
