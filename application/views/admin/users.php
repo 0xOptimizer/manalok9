@@ -203,7 +203,8 @@ $(document).ready(function() {
 		$('#UpdateContactNumber').val($(this).data('contactnumber'));
 		$('#UpdateAddress').val($(this).data('address'));
 		$('#UpdateComment').val($(this).data('comment'));
-		$('#UpdatePrivilege option[value=' + $(this).data('privilege') + ']').prop('selected', true);
+		console.log($(this).data('privilege'));
+		$('#UpdatePrivilege option[value=' + (($(this).data('privilege').length < 1) ? 0 : $(this).data('privilege')) + ']').prop('selected', true);
 		let loginEmail = $(this).data('loginemail');
 		let loginPassword = $(this).data('loginpassword');
 		$('#LoginEmail').val(loginEmail);

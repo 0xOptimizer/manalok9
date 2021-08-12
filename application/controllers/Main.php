@@ -9,6 +9,7 @@ class Main extends MY_Controller {
 		$this->load->model('Model_Selects');
 		$this->load->model('Model_Inserts');
 		$this->load->model('Model_Security');
+		$this->load->model('Model_Logbook');
 	}
 	public function index()
 	{
@@ -115,6 +116,8 @@ class Main extends MY_Controller {
 								'DateAdded' => date('Y-m-d h:i:s A'),
 							);
 							$insertLoginHistory = $this->Model_Inserts->InsertLoginHistory($historyData);
+							// LOGBOOK
+							$this->Model_Logbook->LogbookEntry('logged in.');
 						}
 						redirect(base_url() . 'admin');
 					} else {
@@ -185,6 +188,9 @@ class Main extends MY_Controller {
 	}
 	public function logout()
 	{
+		// LOGBOOK
+		$this->Model_Logbook->LogbookEntry('logged out.');
+		
 		$this->session->sess_destroy();
 		redirect(base_url() . 'login');
 	}
