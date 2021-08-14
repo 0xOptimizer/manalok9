@@ -194,7 +194,7 @@ class Users extends MY_Controller {
 		$data = array_merge($data, $this->globalData);
 		$header['pageTitle'] = 'Your Corner';
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-		$this->load->view('users', $data);
+		$this->load->view('users/activities', $data);
 	}
 	public function profile()
 	{
@@ -203,8 +203,8 @@ class Users extends MY_Controller {
 		$header['pageTitle'] = 'Your Profile';
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$userID = $this->session->userdata('UserID');
-		$data['getUserID'] = $this->Model_Selects->GetUserID($userID, 'employees');
-		$data['getLoginCredentials'] = $this->Model_Selects->GetUserID($userID, 'employees_login');
+		$data['getUserID'] = $this->Model_Selects->GetUserID($userID, 'users');
+		$data['getLoginCredentials'] = $this->Model_Selects->GetUserID($userID, 'users_login');
 		$this->load->view('users/profile', $data);
 	}
 }

@@ -13,6 +13,9 @@ if ($date == date('M j, Y')) {
 	$isCurrentDate = true;
 }
 
+// Fetch products
+$getDashLogs = $this->Model_Selects->GetDashboardLogs();
+
 ?>
 <style>
 .rotate-text {
@@ -169,56 +172,46 @@ if ($date == date('M j, Y')) {
 									</span>
 								</div>
 								<div class="activity-log ml-2">
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin4&gt; logged out.
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">15 seconds ago</div>
-										</div>
-									</div>
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin1&gt; created a new user.
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">2 minutes ago</div>
-										</div>
-									</div>
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin1&gt; logged in.
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">5 minutes ago</div>
-										</div>
-									</div>
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin2&gt; added 200 x &lt;product&gt;.
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">8 minutes ago</div>
-										</div>
-									</div>
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin0&gt; created a new user.
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">1 day ago</div>
-										</div>
-									</div>
+									<?php if ($getDashLogs->num_rows() > 0):
+										foreach ($getDashLogs->result_array() as $row): ?>
+											<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														<<?=$row['UserID']?>> <?=$row['Event']?>
+													</b>
+												</span>
+												<div class="col-sm-12">
+													<?php
+													$dateDiff = strtotime(date('Y-m-d h:i:s A')) - strtotime($row['DateAdded']);
+													$days = $dateDiff / (60 * 60 * 24);
+													$hours = $dateDiff / (60 * 60);
+													$minutes = $dateDiff / 60;
+													if ($days > 1) {
+														$timePassed = floor($days) . ' day';
+														if ($days >= 2) {
+															$timePassed .= 's';
+														}
+													}
+													elseif ($hours > 1) {
+														$timePassed = floor($hours) . ' hour';
+														if ($hours >= 2) {
+															$timePassed .= 's';
+														}
+													}
+													elseif ($minutes > 1) {
+														$timePassed = floor($minutes) . ' minute';
+														if ($minutes >= 2) {
+															$timePassed .= 's';
+														}
+													} else {
+														$timePassed = $dateDiff . ' seconds';
+													}
+													?>
+													<div class="text-muted"><?=$timePassed?> ago</div>
+												</div>
+											</div>
+										<?php endforeach;
+									endif;?>
 								</div>
 							</div>
 						</div>

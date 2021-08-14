@@ -9,6 +9,7 @@ class Admin extends MY_Controller {
 		parent::__construct();
 		$this->load->model('Model_Selects');
 		$this->load->model('Model_Security');
+		$this->load->model('Model_Logbook');
 		if($this->Model_Security->CheckPrivilegeLevel() >= 2) {
 			$this->load->model('Model_Inserts');
 			$this->load->model('Model_Updates');
@@ -188,7 +189,7 @@ class Admin extends MY_Controller {
 				$this->image_lib->resize();
 				if ( ! $this->image_lib->resize())
 				{
-				        $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
+			        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
 				}
 				$this->image_lib->clear();
 			}
@@ -215,14 +216,14 @@ class Admin extends MY_Controller {
 			$this->session->set_flashdata('isApplicantAdded', 'true');
 			// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
 			// LOGBOOK
-			// $this->Model_Logbook->LogbookEntry('Green', 'Applicant', ' added a new applicant: <a class="logbook-tooltip-highlight" href="' . base_url() . 'ViewEmployee?id=' . $ApplicantID . '" target="_blank">' . ucfirst($LastName) . ', ' . ucfirst($FirstName) .  ' ' . ucfirst($MiddleName) . '</a>');
-			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Applicant ID: <b>' . $ApplicantID . '</b>');
+			$this->Model_Logbook->LogbookEntry('created a new user.', 'added a new user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
+			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Applicant ID: <b>' . $userID . '</b>');
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Referral: <b>' . $Referral . '</b>');
 			redirect('admin/users');
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/users');
 		}
 	}
@@ -288,7 +289,7 @@ class Admin extends MY_Controller {
 				$this->image_lib->resize();
 				if ( ! $this->image_lib->resize())
 				{
-				        $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
+			        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
 				}
 				$this->image_lib->clear();
 			}
@@ -311,6 +312,7 @@ class Admin extends MY_Controller {
 		);
 		$updateEmployee = $this->Model_Updates->UpdateUser($data, $userID);
 		if ($updateEmployee == TRUE) {
+			$this->Model_Logbook->LogbookEntry('updated user details.', 'updated details of user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
 			if ($loginEmail != NULL && $loginPassword != NULL) {
 				$loginData = array(
 					'LoginEmail' => $loginEmail,
@@ -318,6 +320,7 @@ class Admin extends MY_Controller {
 				);
 				$updateEmployeeLogin = $this->Model_Updates->UpdateUserLogin($loginData, $userID);
 				if ($updateEmployeeLogin) {
+					$this->Model_Logbook->LogbookEntry('updated user login details.', 'updated login details of user' . ($loginEmail ? ' ' . $loginEmail : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
 					redirect('admin/users');
 				} else {
 					redirect('admin/users');
@@ -328,7 +331,7 @@ class Admin extends MY_Controller {
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/users');
 		}
 	}
@@ -350,6 +353,7 @@ class Admin extends MY_Controller {
 			// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
 			// LOGBOOK
 			// $this->Model_Logbook->LogbookEntry('Green', 'Applicant', ' added a new applicant: <a class="logbook-tooltip-highlight" href="' . base_url() . 'ViewEmployee?id=' . $ApplicantID . '" target="_blank">' . ucfirst($LastName) . ', ' . ucfirst($FirstName) .  ' ' . ucfirst($MiddleName) . '</a>');
+			$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($description ? ' ' . $description : '') . ' [Code: ' . $code . '].', base_url('admin/products'));
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Applicant ID: <b>' . $ApplicantID . '</b>');
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Referral: <b>' . $Referral . '</b>');
 			redirect('admin/products');
@@ -405,15 +409,16 @@ class Admin extends MY_Controller {
 			$this->session->set_flashdata('highlight-id', $transactionID);
 			$updateStocksCount = $this->Model_Updates->UpdateStocksCount($code, $inStock);
 			if ($updateStocksCount) {
+				$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
 				redirect('admin/viewproduct?code=' . $code);
 			} else {
-				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/viewproduct?code=' . $code);
 			}
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/viewproduct?code=' . $code);
 		}
 	}
