@@ -174,6 +174,8 @@ $globalHeader;
 		</div>
 	</div>
 </div>
+<!-- New user prompt -->
+<?php $this->load->view('admin/modals/users_registration.php'); ?>
 <!-- Create a new employee modal -->
 <?php $this->load->view('admin/modals/create_employee_modal.php'); ?>
 <!-- Update employee modal -->
@@ -188,8 +190,12 @@ $globalHeader;
 $('.sidebar-admin-employees').addClass('active');
 $(document).ready(function() {
 	var toggle = false;
-	$('.employee-add-new').on('click', function() {
+	$('.bymyself-btn').on('click', function() {
 		$('#NewEmployeeModal').modal('toggle');
+		$('#userRegistration').modal('hide');
+	});
+	$('.employee-add-new').on('click', function() {
+		$('#userRegistration').modal('toggle');
 	});
 	$('.employee-standard-card').on('click', function() {
 		$('#UpdateDefaultImage').val($(this).data('image'));

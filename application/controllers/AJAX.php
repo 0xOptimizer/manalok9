@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class AJAX extends MY_Controller {
+class AJAX extends CI_Controller {
 
 	public function __construct()
 	{
