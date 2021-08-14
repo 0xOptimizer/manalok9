@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 15, 2021 at 01:14 AM
+-- Generation Time: Aug 15, 2021 at 01:35 AM
 -- Server version: 10.4.13-MariaDB
 -- PHP Version: 7.4.7
 
@@ -63,7 +63,10 @@ INSERT INTO `logbook` (`ID`, `Event`, `Description`, `UserID`, `PageURL`, `DateA
 (20, 'added new transaction.', 'restocked 200 for  2021sampleID [TransactionID: 2021SAMPLEID-61184A4258E13].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 06:57:06 AM'),
 (21, 'added new transaction.', 'restocked 101 for  2021sampleID [TransactionID: 2021SAMPLEID-61184ADC6BF4D].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 06:59:40 AM'),
 (22, 'added new transaction.', 'released 101 for  2021sampleID [TransactionID: 2021SAMPLEID-61184AE6F0E94].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 06:59:51 AM'),
-(23, 'added new transaction.', 'released 100 for  2021sampleID [TransactionID: 2021SAMPLEID-61184B23D1796].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:00:51 AM');
+(23, 'added new transaction.', 'released 100 for  2021sampleID [TransactionID: 2021SAMPLEID-61184B23D1796].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:00:51 AM'),
+(24, 'added new transaction.', 'restocked 101 for  2021sampleID [TransactionID: ].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:32:08 AM'),
+(25, 'added new transaction.', 'restocked 200 for  2021sampleID [TransactionID: ].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:34:01 AM'),
+(26, 'added new transaction.', 'restocked 100 for  2021sampleID [TransactionID: 2021SAMPLEID-61184A005D0E4].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:34:48 AM');
 
 -- --------------------------------------------------------
 
@@ -87,7 +90,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`ID`, `Code`, `Product_Name`, `Description`, `InStock`, `Released`, `Product_Category`, `DateAdded`) VALUES
-(4, '2021sampleID', 'Deadwood RY4', '', 100, 200, 'Category 1', '2021-08-15 06:55:47 AM');
+(4, '2021sampleID', 'Deadwood RY4', '', 502, 300, 'Category 1', '2021-08-15 06:55:47 AM');
 
 -- --------------------------------------------------------
 
@@ -104,20 +107,21 @@ CREATE TABLE `products_transactions` (
   `InStock` int(255) DEFAULT 0,
   `Date` varchar(255) DEFAULT NULL,
   `DateAdded` varchar(255) DEFAULT NULL,
-  `Status` int(11) NOT NULL COMMENT '0 = for approval\r\n1 = approved'
+  `Status` int(11) NOT NULL COMMENT '0 = for approval\r\n1 = approved',
+  `Date_Approval` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `products_transactions`
 --
 
-INSERT INTO `products_transactions` (`ID`, `Code`, `TransactionID`, `Type`, `Amount`, `InStock`, `Date`, `DateAdded`, `Status`) VALUES
-(14, '2021sampleID', '2021SAMPLEID-61184A005D0E4', 0, 100, 0, '2021-08-15', '2021-08-15 06:56:00 AM', 1),
-(15, '2021sampleID', '2021SAMPLEID-61184A0DE32FA', 1, 200, 0, '2021-08-15', '2021-08-15 06:56:13 AM', 1),
-(16, '2021sampleID', '2021SAMPLEID-61184A4258E13', 0, 200, 0, '2021-08-15', '2021-08-15 06:57:06 AM', 1),
-(17, '2021sampleID', '2021SAMPLEID-61184ADC6BF4D', 0, 101, 0, '2021-08-15', '2021-08-15 06:59:40 AM', 0),
-(18, '2021sampleID', '2021SAMPLEID-61184AE6F0E94', 1, 101, 0, '2021-08-15', '2021-08-15 06:59:50 AM', 0),
-(19, '2021sampleID', '2021SAMPLEID-61184B23D1796', 1, 100, 0, '2021-08-15', '2021-08-15 07:00:51 AM', 0);
+INSERT INTO `products_transactions` (`ID`, `Code`, `TransactionID`, `Type`, `Amount`, `InStock`, `Date`, `DateAdded`, `Status`, `Date_Approval`) VALUES
+(14, '2021sampleID', '2021SAMPLEID-61184A005D0E4', 0, 100, 0, '2021-08-15', '2021-08-15 06:56:00 AM', 1, '2021-08-15-07-34-48'),
+(15, '2021sampleID', '2021SAMPLEID-61184A0DE32FA', 1, 200, 0, '2021-08-15', '2021-08-15 06:56:13 AM', 0, NULL),
+(16, '2021sampleID', '2021SAMPLEID-61184A4258E13', 0, 200, 0, '2021-08-15', '2021-08-15 06:57:06 AM', 1, '2021-08-15-07-34-01'),
+(17, '2021sampleID', '2021SAMPLEID-61184ADC6BF4D', 0, 101, 0, '2021-08-15', '2021-08-15 06:59:40 AM', 1, '2021-08-15-07-32-07'),
+(18, '2021sampleID', '2021SAMPLEID-61184AE6F0E94', 1, 101, 0, '2021-08-15', '2021-08-15 06:59:50 AM', 0, NULL),
+(19, '2021sampleID', '2021SAMPLEID-61184B23D1796', 1, 100, 0, '2021-08-15', '2021-08-15 07:00:51 AM', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -1015,7 +1019,56 @@ INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `C
 (870, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/FORM_addNewTransaction', '2021-08-15 07:00:51 AM'),
 (871, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-15 07:00:51 AM'),
 (872, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/FORM_addNewTransaction', '2021-08-15 07:12:37 AM'),
-(873, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-15 07:12:38 AM');
+(873, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-15 07:12:38 AM'),
+(874, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:17:42 AM'),
+(875, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:17:50 AM'),
+(876, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:17:51 AM'),
+(877, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:17:52 AM'),
+(878, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:17:55 AM'),
+(879, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:17:56 AM'),
+(880, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:17:57 AM'),
+(881, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:17:58 AM'),
+(882, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:17:58 AM'),
+(883, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:17:59 AM'),
+(884, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:18:00 AM'),
+(885, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:18:01 AM'),
+(886, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:18:02 AM'),
+(887, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/inventory', '2021-08-15 07:20:36 AM'),
+(888, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-08-15 07:20:36 AM'),
+(889, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/inventory', '2021-08-15 07:20:37 AM'),
+(890, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/inventory', '2021-08-15 07:20:38 AM'),
+(891, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-08-15 07:20:40 AM'),
+(892, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/inventory', '2021-08-15 07:20:41 AM'),
+(893, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/inventory', '2021-08-15 07:28:48 AM'),
+(894, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:28:49 AM'),
+(895, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:28:51 AM'),
+(896, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:28:52 AM'),
+(897, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:28:53 AM'),
+(898, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:32:05 AM'),
+(899, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:32:05 AM'),
+(900, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:32:05 AM'),
+(901, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:32:07 AM'),
+(902, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:32:07 AM'),
+(903, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:32:09 AM'),
+(904, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:32:10 AM'),
+(905, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-15 07:32:24 AM'),
+(906, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/user', '2021-08-15 07:32:29 AM'),
+(907, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-15 07:32:55 AM'),
+(908, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/user', '2021-08-15 07:32:58 AM'),
+(909, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-15 07:32:59 AM'),
+(910, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/user', '2021-08-15 07:33:00 AM'),
+(911, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-15 07:33:01 AM'),
+(912, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/user', '2021-08-15 07:33:03 AM'),
+(913, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/inventory', '2021-08-15 07:33:57 AM'),
+(914, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:33:58 AM'),
+(915, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:33:59 AM'),
+(916, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:34:01 AM'),
+(917, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:34:06 AM'),
+(918, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:34:07 AM'),
+(919, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:34:47 AM'),
+(920, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:34:48 AM'),
+(921, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:34:49 AM'),
+(922, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/user', '2021-08-15 07:34:51 AM');
 
 -- --------------------------------------------------------
 
@@ -1140,7 +1193,7 @@ ALTER TABLE `users_login_history`
 -- AUTO_INCREMENT for table `logbook`
 --
 ALTER TABLE `logbook`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -1158,7 +1211,7 @@ ALTER TABLE `products_transactions`
 -- AUTO_INCREMENT for table `security_log`
 --
 ALTER TABLE `security_log`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=874;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=923;
 
 --
 -- AUTO_INCREMENT for table `users`

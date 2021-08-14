@@ -44,7 +44,10 @@ class Model_Updates extends CI_Model {
 	public function ApproveTransaction($data)
 	{
 		extract($data);
-		$this->db->set('Status', $Status);
+		$this->db->set(array(
+			'Status' => $Status,
+			'Date_Approval' => $Date_Approval,
+		));
 		$this->db->where('TransactionID', $TransactionID);
 		$result = $this->db->update('products_transactions');
 		return $result;

@@ -479,9 +479,9 @@ class Admin extends MY_Controller {
 			$NewRelease = $CheckStocksByCode['Released'] + $CheckIFApproved['Amount'];
 
 			if ($CheckStocksByCode['InStock'] < $CheckIFApproved['Amount']) {
-			echo 'NO_STOCK';
-			exit();
-		}
+				echo 'NO_STOCK';
+				exit();
+			}
 		}
 
 		$data = array(
@@ -494,14 +494,17 @@ class Admin extends MY_Controller {
 			$data = array(
 				'TransactionID' => $TransactionID,
 				'Status' => 1,
+				'Date_Approval' => date('Y-m-d-H-i-s'),
 			);
 			$this->Model_Updates->ApproveTransaction($data);
 			if ($CheckIFApproved['Type'] == 0) {
+				$this->Model_Logbook->LogbookEntry('added new transaction.', ($CheckIFApproved['Type'] == '0' ? 'restocked ' : 'released ') . $CheckIFApproved['Amount'] . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $TransactionID . '].', base_url('admin/viewproduct?code=' . $code));
 				echo 'NEW_STOCK_ADDED';
 				exit();
 			}
 			else
 			{
+				$this->Model_Logbook->LogbookEntry('added new transaction.', ($CheckIFApproved['Type'] == '0' ? 'restocked ' : 'released ') . $CheckIFApproved['Amount'] . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $TransactionID . '].', base_url('admin/viewproduct?code=' . $code));
 				echo 'STOCK_RELEASE';
 				exit();
 			}
