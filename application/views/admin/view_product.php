@@ -82,8 +82,8 @@ if ($this->session->flashdata('highlight-id')) {
 									<th>TRANSACTION ID</th>
 									<th>TYPE</th>
 									<th>AMOUNT</th>
-									<th>IN STOCK</th>
 									<th>DATE</th>
+									<TH>STATUS</TH>
 								</thead>
 								<tbody>
 									<?php
@@ -105,10 +105,23 @@ if ($this->session->flashdata('highlight-id')) {
 														<?=$row['Amount'];?>
 													</td>
 													<td>
-														<?=$row['InStock'];?>
+														<?=$row['Date'];?>
 													</td>
 													<td>
-														<?=$row['Date'];?>
+														<?php
+														switch ($row['Status']) {
+															case '0':
+																echo '<span><i class="bi bi-asterisk" style="color:#E4B55B;"></i> For Approval</span>';
+																break;
+															case '1':
+																echo '<span><i class="bi bi-file-check" style="color:#55B73E;"></i> Approved</span>';
+																break;
+															
+															default:
+																echo "";
+																break;
+														}
+														?>
 													</td>
 												</tr>
 											<?php endforeach;

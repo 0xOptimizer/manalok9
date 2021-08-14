@@ -29,4 +29,24 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('products');
 		return $result;
 	}
+	public function UpdateStock_product($data)
+	{
+		extract($data);
+		$this->db->where('Code', $Code);
+		$this->db->set(array(
+			'InStock' => $InStock,
+			'Released' => $Released,
+		));
+		$result = $this->db->update('products');
+		return $result;
+	}
+	
+	public function ApproveTransaction($data)
+	{
+		extract($data);
+		$this->db->set('Status', $Status);
+		$this->db->where('TransactionID', $TransactionID);
+		$result = $this->db->update('products_transactions');
+		return $result;
+	}
 }

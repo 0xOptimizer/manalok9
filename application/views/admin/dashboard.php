@@ -74,7 +74,7 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 										<div class="row ml-2">
 											<span style="font-size: 2em; color: #ebebeb;">
 												<b>
-													<?php echo $tps['InStock']; ?>
+													<?php if ($tps_m['InStock'] < 1) { echo '0'; } else { echo $tps_m['InStock']; } ?>
 												</b>
 											</span>
 											<i class="fas fa-user-friends fa-fw card-icon ml-auto mr-2"></i>

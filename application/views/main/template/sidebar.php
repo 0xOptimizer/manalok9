@@ -38,6 +38,12 @@
 						<span>Inventory</span>
 					</a>
 				</li>
+				<li class="sidebar-item sidebar-admin-transactions">
+					<a href="<?=base_url().'admin/view_transactions'?>" class='sidebar-link'>
+						<i class="bi bi-journal"></i>
+						<span>Transactions</span>
+					</a>
+				</li>
 
 				<li class="sidebar-title">YOUR CORNER</li>
 

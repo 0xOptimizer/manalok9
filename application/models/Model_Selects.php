@@ -49,6 +49,35 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
+	public function getAllTransactions()
+	{
+		$this->db->select('*');
+		$this->db->order_by('DateAdded', 'desc');
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function getall_transaction($data)
+	{
+		extract($data);
+		$this->db->select('*');
+		$this->db->where('TransactionID', $TransactionID);
+		$result = $this->db->get('products_transactions');  
+		return $result->row_array();
+	}
+	public function CheckIFApproved($TransactionID)
+	{
+		$this->db->select('*');
+		$this->db->where('TransactionID', $TransactionID);
+		$result = $this->db->get('products_transactions');  
+		return $result->row_array();
+	}
+	public function CheckStocksByCode($code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $code);
+		$result = $this->db->get('products');  
+		return $result->row_array();
+	}
 	public function GetAllSecurityLogs()
 	{
 		$this->db->select('*');

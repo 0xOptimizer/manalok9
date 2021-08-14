@@ -59,6 +59,8 @@ $route['admin/products'] = 'Admin/products';
 $route['admin/viewproduct'] = 'Admin/view_product';
 $route['admin/inventory'] = 'Admin/inventory';
 $route['admin/security'] = 'Admin/security';
+$route['admin/view_transactions'] = 'Admin/view_transactions';
+
 
 $route['user'] = 'Users';
 $route['user/log'] = 'Users/attendanceLog';
@@ -80,6 +82,11 @@ $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
+
+// AJAX REQUEST
+$route['getTransactionDetails'] = 'Admin/getTransactionDetails';
+$route['FORM_approveTransaction'] = 'Admin/FORM_approveTransaction';
+
 
 // Database backup
 $route['database_backup'] = 'Admin/database_backup';

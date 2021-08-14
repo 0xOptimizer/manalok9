@@ -53,7 +53,7 @@ if ($getAllProducts->num_rows() > 0) {
 							<!-- <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW</button> -->
 						</h3>
 					</div>
-					<div class="col-sm-12 col-md-10">
+					<div class="col-sm-12 col-md-10 pt-4 pb-2">
 						<button type="button" class="btn btn-sm-success">TOTAL</button>
 						<button type="button" class="btn btn-sm-secondary">MONTHLY</button>
 						<button type="button" class="btn btn-sm-secondary">SEMI-ANNUAL</button>
@@ -62,7 +62,7 @@ if ($getAllProducts->num_rows() > 0) {
 						|
 						<button type="button" class="btn btn-sm-primary">GENERATE REPORT</button>
 					</div>
-					<div class="col-sm-12 col-md-2 mr-auto" style="margin-top: -15px;">
+					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>

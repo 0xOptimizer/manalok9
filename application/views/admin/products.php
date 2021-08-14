@@ -66,13 +66,13 @@ if ($this->session->flashdata('highlight-id')) {
 							<!-- <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW</button> -->
 						</h3>
 					</div>
-					<div class="col-sm-12 col-md-10">
+					<div class="col-sm-12 col-md-10 pt-4 pb-2">
 						<button type="button" class="newproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW PRODUCT</button>
 						|
 						<button type="button" class="newtransaction-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cart-plus"></i> NEW TRANSACTION</button>
 						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
 					</div>
-					<div class="col-sm-12 col-md-2 mr-auto" style="margin-top: -15px;">
+					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
@@ -88,6 +88,8 @@ if ($this->session->flashdata('highlight-id')) {
 						<thead style="font-size: 12px;">
 							<th>ID</th>
 							<th>CODE</th>
+							<th>NAME</th>
+							<th>CATEGORY</th>
 							<th>DESCRIPTION</th>
 							<th>IN STOCK</th>
 							<th>RELEASED</th>
@@ -103,6 +105,12 @@ if ($this->session->flashdata('highlight-id')) {
 										</td>
 										<td>
 											<?=$row['Code']?>
+										</td>
+										<td>
+											<?=$row['Product_Name']?>
+										</td>
+										<td>
+											<?=$row['Product_Category']?>
 										</td>
 										<td>
 											<?=$row['Description']?>
