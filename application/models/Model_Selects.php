@@ -76,4 +76,23 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result->row_array();
 	}
+
+
+
+	public function GetUserLogs($userID)
+	{
+		$this->db->select('*');
+		$this->db->where('UserID', $userID);
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('logbook'); 
+		return $result;
+	}
+	public function GetDashboardLogs()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->limit('5');
+		$result = $this->db->get('logbook'); 
+		return $result;
+	}
 }
