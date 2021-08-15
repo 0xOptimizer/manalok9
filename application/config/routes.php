@@ -78,6 +78,7 @@ $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
 $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
+$route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
 
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';

@@ -346,6 +346,31 @@ $(document).ready(function() {
 			$('.save-btn').html('<i class="bi bi-lock"></i> Save Changes');
 		}
 	});
+	$('body').on('input', '.registration-email', function() {
+		let value = $(this).val();
+		$('.registration-email-icon').show();
+		$('.email-banners-group').addClass('.opacity-4');
+		$.ajax({
+			url: "<?php echo base_url() . 'AJAX_validateEmailRegistration';?>",
+			method: "POST",
+			data: {email: value},
+			dataType: "html",
+			success: function(response){
+				$('.email-banners-group').removeClass('.opacity-4');
+				$('.email-banners-group').html(response);
+				$('.registration-email-icon').hide();
+			},
+			error: function(xhr, textStatus, error){
+				$('.email-banners-group').removeClass('.opacity-4');
+				$('.email-banners-group').html('<span class="registration-message-banners info-banner-sm" data-feedback="1"><i class="bi bi-exclamation-triangle-fill"></i> No internet connection detected. Please check your internet and try again.</span>');
+				$('.registration-email-icon').hide();
+				console.log(xhr.statusText);
+				console.log(textStatus);
+				console.log(error);
+				// $('.comment-pen_' + id).html('<i class="bi bi-pen-fill"></i>');
+			}
+		});
+	});
 });
 </script>
 </body>

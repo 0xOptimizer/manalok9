@@ -10,7 +10,7 @@
 					<div class="col-sm-12 col-md-12">
 						<div class="row">
 							<div class="col-sm-12 col-md-8">
-								<label class="input-label">ENTER EMAIL ADDRESS <span style="margin-left: 5px;"><i class="spinner-border spinner-border-sm" style="color: #de940c;"></i></span></label>
+								<label class="input-label">ENTER EMAIL ADDRESS <span style="margin-left: 5px;"><i class="registration-email-icon spinner-border spinner-border-sm" style="color: #de940c; display: none;"></i></span></label>
 								<input type="text" class="registration-email form-control">
 							</div>
 							<div class="col-sm-12 col-md-4">
@@ -23,19 +23,7 @@
 							</div>
 						</div>
 						<div class="row mt-2">
-							<div class="col-sm-12 col-md-8">
-								<span class="message-banners success-banner-sm" data-feedback="0" style="display: none;">
-									<i class="bi bi-check-circle-fill"></i> Email valid
-								</span>
-								<span class="message-banners info-banner-sm" data-feedback="1" style="display: none;">
-									<i class="bi bi-exclamation-triangle-fill"></i> No internet connection detected. Please check your internet and try again.
-								</span>
-								<span class="message-banners warning-banner-sm" data-feedback="2" style="display: none;">
-									<i class="bi bi-exclamation-triangle-fill"></i> Invalid email format
-								</span>
-								<span class="message-banners warning-banner-sm" data-feedback="3" style="display: none;">
-									<i class="bi bi-exclamation-triangle-fill"></i> Email already registered
-								</span>
+							<div class="col-sm-12 col-md-8 email-banners-group">
 							</div>
 							<div class="col-sm-12 col-md-4">
 								<label class="input-label">EXPIRES IN</label>
