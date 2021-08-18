@@ -19,7 +19,7 @@
 							</div>
 							<div class="col-sm-12 mt-2">
 								<label for="transaction-type" style="font-size: 12px;">TYPE</label>
-								<select id="transaction-type" name="transaction-type" class="form-control">
+								<select id="transaction-type" name="transaction-type" class="form-control" <?=($this->session->userdata('Privilege') < 2 ? 'readonly disabled' : '')?>>
 									<option value="0">Restock</option>
 									<option value="1">Released</option>
 								</select>

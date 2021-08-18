@@ -9,6 +9,7 @@ class AJAX extends CI_Controller {
 		$this->load->model('Model_Selects');
 		$this->load->model('Model_Security');
 		$this->load->model('Model_Inserts');
+		date_default_timezone_set('Asia/Manila');
 	}
 
 	public function getUserLogs()
@@ -16,6 +17,35 @@ class AJAX extends CI_Controller {
 		$id = $this->input->get('userID');
 		if (strlen($id) > 0) {
 			$userHistory = $this->Model_Selects->GetUserHistory($id)->result_array();
+
+			foreach ($userHistory as $key => $row) {
+				$dateDiff = strtotime(date('Y-m-d h:i:s A')) - strtotime($row['DateAdded']);
+				$days = $dateDiff / (60 * 60 * 24);
+				$hours = $dateDiff / (60 * 60);
+				$minutes = $dateDiff / 60;
+				if ($days > 1) {
+					$timePassed = floor($days) . ' day';
+					if ($days >= 2) {
+						$timePassed .= 's';
+					}
+				}
+				elseif ($hours > 1) {
+					$timePassed = floor($hours) . ' hour';
+					if ($hours >= 2) {
+						$timePassed .= 's';
+					}
+				}
+				elseif ($minutes > 1) {
+					$timePassed = floor($minutes) . ' minute';
+					if ($minutes >= 2) {
+						$timePassed .= 's';
+					}
+				} else {
+					$timePassed = $dateDiff . ' seconds';
+				}
+
+				$userHistory[$key]['TimePassed'] = $timePassed . ' ago';
+			}
 
 			echo json_encode($userHistory);
 		}

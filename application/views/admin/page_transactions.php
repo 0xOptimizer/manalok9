@@ -14,7 +14,11 @@ if ($date == date('M j, Y')) {
 }
 
 // Fetch products
-$getAllTransactions = $this->Model_Selects->getAllTransactions();
+if ($this->session->userdata('Privilege') > 1) {
+	$getAllTransactions = $this->Model_Selects->getAllTransactions();
+} else {
+	$getAllTransactions = $this->Model_Selects->GetTransactionsByUserID($this->session->userdata('UserID'));
+}
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';

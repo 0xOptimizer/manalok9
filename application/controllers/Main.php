@@ -103,6 +103,7 @@ class Main extends MY_Controller {
 								'NameExtension' => $nameExtension,
 								'Image' => $row['Image'],
 								'FullName' => $fullName,
+								'Privilege' => ($row['Privilege'] ? $row['Privilege'] : '0'),
 							);
 							$this->session->set_userdata($data);
 							$historyData = array(
