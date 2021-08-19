@@ -14,7 +14,7 @@
 	<link rel="stylesheet" href="<?=base_url()?>/assets/vendors/bootstrap-icons/bootstrap-icons.css">
 	<link rel="stylesheet" href="<?=base_url()?>/assets/css/app.css">
 	<link rel="shortcut icon" href="<?=base_url()?>/assets/images/favicon.svg" type="image/x-icon">
-	<link href="<?=base_url();?>assets/css/style.css?v4" rel="stylesheet">
+	<link href="<?=base_url();?>assets/css/style.css?v5" rel="stylesheet">
 
 <?php
 

@@ -1,6 +1,5 @@
 <div class="modal fade" id="userRegistration" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" role="document">
-		<form action="<?php echo base_url() . 'FORM_addNewUser';?>" method="POST" enctype="multipart/form-data">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="bymyself-btn btn btn-sm-primary"><i class="bi bi-plus"></i> I WANT TO CREATE THE USER BY MYSELF INSTEAD</button>
@@ -42,9 +41,10 @@
 				</div>
 			</div>
 			<div class="feedback-form modal-footer">
-				<button type="submit" class="btn btn-success"><i class="bi bi-check-square"></i> Send Form to Email</button>
+				<!-- <div class="col-sm-12 col-md-8 send-email-banners-group">
+				</div> -->
+				<button type="button" class="send-registration-email-btn btn btn-success"><i class="bi bi-check-square"></i> Send Form to Email</button>
 			</div>
 		</div>
-		</form>
 	</div>
 </div>

@@ -124,4 +124,11 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('logbook'); 
 		return $result;
 	}
+	public function GetToken($token)
+	{
+		$this->db->select('*');
+		$this->db->where('Token', $token);
+		$result = $this->db->get('users_registrations'); 
+		return $result;
+	}
 }

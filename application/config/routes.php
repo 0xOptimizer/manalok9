@@ -61,10 +61,11 @@ $route['admin/inventory'] = 'Admin/inventory';
 $route['admin/security'] = 'Admin/security';
 $route['admin/view_transactions'] = 'Admin/view_transactions';
 
-
+// Users
 $route['user'] = 'Users';
 $route['user/log'] = 'Users/attendanceLog';
 $route['profile'] = 'Users/profile';
+$route['register'] = 'Users/register';
 
 $route['demo/inventory'] = 'Demo/inventory';
 
@@ -72,13 +73,15 @@ $route['login'] = 'Main/login';
 $route['FORM_loginValidation'] = 'Main/FORM_loginValidation';
 $route['logout'] = 'Main/logout';
 
-// Users
+// Admin
 $route['FORM_addNewUser'] = 'Admin/FORM_addNewUser';
 $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
 $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
+$route['FORM_selfAddNewUser'] = 'Admin/FORM_selfAddNewUser';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
+$route['AJAX_sendRegistrationEmail'] = 'AJAX/sendRegistrationEmail';
 
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
