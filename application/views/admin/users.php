@@ -242,22 +242,9 @@ $(document).ready(function() {
 			.done(function(data) {
 				var userLogs = $.parseJSON(data);
 				$.each(userLogs, function(index, val) {
-					var dateNow = new Date();
-					var date = val['DateAdded'].split(' ');
-					var time = date[1].split(':');
-					if (time[0] == 12) {
-						time[0] = 0;
-					}
-					if (date[2] == 'PM') {
-						time[0] = parseInt(time[0]) + 12;
-					}
-					var dateLog = new Date(date[0] + ' ' + time[0] + ':' + time[1] + ':' + time[2]);
-					var diff = dateNow.getTime() - dateLog.getTime();
-					timeDiff = [ Math.floor(diff / 86400000), Math.floor(diff / 3600000), Math.floor(diff / 60000) ];
 					$('#attendanceLogTable tbody').append($('<tr>').append(
-						$('<td>').html('Visited ' + val['PageURL'].replace(window.location.origin + '/', '') + '.')).append(
-						$('<td>').attr({ class: 'text-muted' }).html(timeDiff[0] + 'd' + (timeDiff[1] - (timeDiff[0] * 24)) + 'h' + 
-							(timeDiff[2] - ((timeDiff[1]  * 60))) + 'm ago'))
+						$('<td>').html(val['Event'])).append(
+						$('<td>').attr({ class: 'text-muted' }).html(val['TimePassed']))
 					)
 				});
 			}).fail(function () {

@@ -11,7 +11,7 @@ class Admin extends MY_Controller {
 		$this->load->model('Model_Security');
 		$this->load->model('Model_Inserts');
 		$this->load->model('Model_Logbook');
-		if($this->Model_Security->CheckPrivilegeLevel() >= 2) {
+		if($this->Model_Security->CheckPrivilegeLevel() >= 1) {
 			$this->load->model('Model_Inserts');
 			$this->load->model('Model_Updates');
 			$this->globalData['userID'] = 'N/A';
@@ -487,67 +487,73 @@ class Admin extends MY_Controller {
 		$type = $this->input->post('transaction-type');
 		$amount = $this->input->post('transaction-amount');
 		$date = $this->input->post('transaction-date');
-
-		$getProductByCode = $this->Model_Selects->GetProductByCode($code);
-		$get_prdsCol = $getProductByCode->row_array();
-		// Prompts
-		
-		if ($type == 1) {
-			if ($get_prdsCol['InStock'] < $amount) {
-			// Code for Low on stocks
-				echo "Low on STocks";
-				exit();
-			}
-		}
-
-		// // ~ calculate stocks changed
-		// $inStock = 0;
-		// if ($getProductByCode->num_rows() > 0) {
-		// 	foreach($getProductByCode->result_array() as $row) {
-		// 		$inStock = $row['InStock'];
-		// 	}
-		// }
-		// if ($type == 0) {
-		// 	// ~~ restocked
-		// 	$inStock += $amount;
-		// } else {
-		// 	// ~~ released
-		// 	$inStock -= $amount;
-		// }
-
-		// ~ creating transaction id
-		$transactionID = '';
-		$transactionID .= strtoupper($code);
-		$transactionID .= '-';
-		$transactionID .= strtoupper(uniqid());
-
-		// Insert
-		$data = array(
-			'Code' => $code,
-			'TransactionID' => $transactionID,
-			'Type' => $type,
-			'Amount' => $amount,
-			'Date' => $date,
-			'DateAdded' => date('Y-m-d h:i:s A'),
-			'Status' => 0,
-		);
-		$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
-		if ($insertNewTransaction == TRUE) {
-			$this->session->set_flashdata('highlight-id', $transactionID);
-			// $updateStocksCount = $this->Model_Updates->UpdateStocksCount($code, $inStock);
-			// if ($updateStocksCount) {
-
-			// } else {
-			// 	// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
-			// redirect('admin/viewproduct?code=' . $code);
-			// }
-			$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
-			redirect('admin/viewproduct?code=' . $code);
-		}
-		else
-		{
+		if ($this->session->userdata('Privilege') < 2 && $type == '1') {
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/viewproduct?code=' . $code);
+		} else {
+
+			$getProductByCode = $this->Model_Selects->GetProductByCode($code);
+			$get_prdsCol = $getProductByCode->row_array();
+			// Prompts
+			
+			if ($type == 1) {
+				if ($get_prdsCol['InStock'] < $amount) {
+				// Code for Low on stocks
+					echo "Low on STocks";
+					exit();
+				}
+			}
+
+			// // ~ calculate stocks changed
+			// $inStock = 0;
+			// if ($getProductByCode->num_rows() > 0) {
+			// 	foreach($getProductByCode->result_array() as $row) {
+			// 		$inStock = $row['InStock'];
+			// 	}
+			// }
+			// if ($type == 0) {
+			// 	// ~~ restocked
+			// 	$inStock += $amount;
+			// } else {
+			// 	// ~~ released
+			// 	$inStock -= $amount;
+			// }
+
+			// ~ creating transaction id
+			$transactionID = '';
+			$transactionID .= strtoupper($code);
+			$transactionID .= '-';
+			$transactionID .= strtoupper(uniqid());
+
+			// Insert
+			$data = array(
+				'Code' => $code,
+				'TransactionID' => $transactionID,
+				'Type' => $type,
+				'Amount' => $amount,
+				'Date' => $date,
+				'DateAdded' => date('Y-m-d h:i:s A'),
+				'Status' => 0,
+				'UserID' => $this->session->userdata('UserID'),
+			);
+			$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+			if ($insertNewTransaction == TRUE) {
+				$this->session->set_flashdata('highlight-id', $transactionID);
+				// $updateStocksCount = $this->Model_Updates->UpdateStocksCount($code, $inStock);
+				// if ($updateStocksCount) {
+
+				// } else {
+				// 	// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				// redirect('admin/viewproduct?code=' . $code);
+				// }
+				$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
+				redirect('admin/viewproduct?code=' . $code);
+			}
+			else
+			{
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				redirect('admin/viewproduct?code=' . $code);
+			}
 		}
 	}
 	// AJAX GET
@@ -560,64 +566,68 @@ class Admin extends MY_Controller {
 	}
 	public function FORM_approveTransaction()
 	{
-		$TransactionID = $this->input->post('transaction_id');
-
-		$CheckIFApproved = $this->Model_Selects->CheckIFApproved($TransactionID);
-		$code = $CheckIFApproved['Code'];
-		$CheckStocksByCode = $this->Model_Selects->CheckStocksByCode($code);
-
-		if ($CheckIFApproved['Status'] == 1) {
-			echo 'APPROVED';
+		if ($this->session->userdata('Privilege') < 2) {
+			echo 'ERROR';
 			exit();
-		}
-		if ($CheckIFApproved['Type'] == 0) {
-			// RESTOCK
-			$NewStock = $CheckStocksByCode['InStock'] + $CheckIFApproved['Amount'];
-			$NewRelease = $CheckStocksByCode['Released'];
-		}
-		else
-		{
-			// RELEASE
-			$NewStock = $CheckStocksByCode['InStock'] - $CheckIFApproved['Amount'];
-			$NewRelease = $CheckStocksByCode['Released'] + $CheckIFApproved['Amount'];
+		} else {
+			$TransactionID = $this->input->post('transaction_id');
 
-			if ($CheckStocksByCode['InStock'] < $CheckIFApproved['Amount']) {
-				echo 'NO_STOCK';
+			$CheckIFApproved = $this->Model_Selects->CheckIFApproved($TransactionID);
+			$code = $CheckIFApproved['Code'];
+			$CheckStocksByCode = $this->Model_Selects->CheckStocksByCode($code);
+
+			if ($CheckIFApproved['Status'] == 1) {
+				echo 'APPROVED';
 				exit();
 			}
-		}
-
-		$data = array(
-			'Code' => $code,
-			'InStock' => $NewStock,
-			'Released' => $NewRelease,
-		);
-		$UpdateStock_product = $this->Model_Updates->UpdateStock_product($data);
-		if ($UpdateStock_product == TRUE) {
-			$data = array(
-				'TransactionID' => $TransactionID,
-				'Status' => 1,
-				'Date_Approval' => date('Y-m-d-H-i-s'),
-			);
-			$this->Model_Updates->ApproveTransaction($data);
 			if ($CheckIFApproved['Type'] == 0) {
-				$this->Model_Logbook->LogbookEntry('added new transaction.', ($CheckIFApproved['Type'] == '0' ? 'restocked ' : 'released ') . $CheckIFApproved['Amount'] . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $TransactionID . '].', base_url('admin/viewproduct?code=' . $code));
-				echo 'NEW_STOCK_ADDED';
-				exit();
+				// RESTOCK
+				$NewStock = $CheckStocksByCode['InStock'] + $CheckIFApproved['Amount'];
+				$NewRelease = $CheckStocksByCode['Released'];
 			}
 			else
 			{
-				$this->Model_Logbook->LogbookEntry('added new transaction.', ($CheckIFApproved['Type'] == '0' ? 'restocked ' : 'released ') . $CheckIFApproved['Amount'] . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $TransactionID . '].', base_url('admin/viewproduct?code=' . $code));
-				echo 'STOCK_RELEASE';
+				// RELEASE
+				$NewStock = $CheckStocksByCode['InStock'] - $CheckIFApproved['Amount'];
+				$NewRelease = $CheckStocksByCode['Released'] + $CheckIFApproved['Amount'];
+
+				if ($CheckStocksByCode['InStock'] < $CheckIFApproved['Amount']) {
+					echo 'NO_STOCK';
+					exit();
+				}
+			}
+
+			$data = array(
+				'Code' => $code,
+				'InStock' => $NewStock,
+				'Released' => $NewRelease,
+			);
+			$UpdateStock_product = $this->Model_Updates->UpdateStock_product($data);
+			if ($UpdateStock_product == TRUE) {
+				$data = array(
+					'TransactionID' => $TransactionID,
+					'Status' => 1,
+					'Date_Approval' => date('Y-m-d-H-i-s'),
+				);
+				$this->Model_Updates->ApproveTransaction($data);
+				if ($CheckIFApproved['Type'] == 0) {
+					$this->Model_Logbook->LogbookEntry('added new transaction.', ($CheckIFApproved['Type'] == '0' ? 'restocked ' : 'released ') . $CheckIFApproved['Amount'] . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $TransactionID . '].', base_url('admin/viewproduct?code=' . $code));
+					echo 'NEW_STOCK_ADDED';
+					exit();
+				}
+				else
+				{
+					$this->Model_Logbook->LogbookEntry('added new transaction.', ($CheckIFApproved['Type'] == '0' ? 'restocked ' : 'released ') . $CheckIFApproved['Amount'] . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $TransactionID . '].', base_url('admin/viewproduct?code=' . $code));
+					echo 'STOCK_RELEASE';
+					exit();
+				}
+			}
+			else
+			{
+				echo 'ERROR';
 				exit();
 			}
 		}
-		else
-		{
-			echo 'ERROR';
-			exit();
-		}
-
 	}
 	// Database backup
 	public function database_backup()

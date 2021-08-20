@@ -21,9 +21,11 @@
 					</div>
 				</div>
 				<div class="p-3 d-flex flex-wrap justify-content-between">
-					<div class="">
-						<a id="Approve_TransactionBTN" type="button" class="btn btn-success" style="width: 110px;"><i class="bi bi-check2"></i> Approve</a>
-					</div>
+					<?php if ($this->session->userdata('Privilege') > 1): ?>
+						<div class="">
+							<a id="Approve_TransactionBTN" type="button" class="btn btn-success" style="width: 110px;"><i class="bi bi-check2"></i> Approve</a>
+						</div>
+					<?php endif; ?>
 					<div class="">
 						<a type="button" class="btn btn-success" style="width: 110px;"><i class="bi bi-check2"></i> Track</a>
 					</div>

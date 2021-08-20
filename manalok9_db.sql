@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 15, 2021 at 01:35 AM
--- Server version: 10.4.13-MariaDB
--- PHP Version: 7.4.7
+-- Generation Time: Aug 18, 2021 at 05:43 PM
+-- Server version: 10.4.20-MariaDB
+-- PHP Version: 7.4.21
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -66,7 +66,13 @@ INSERT INTO `logbook` (`ID`, `Event`, `Description`, `UserID`, `PageURL`, `DateA
 (23, 'added new transaction.', 'released 100 for  2021sampleID [TransactionID: 2021SAMPLEID-61184B23D1796].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:00:51 AM'),
 (24, 'added new transaction.', 'restocked 101 for  2021sampleID [TransactionID: ].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:32:08 AM'),
 (25, 'added new transaction.', 'restocked 200 for  2021sampleID [TransactionID: ].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:34:01 AM'),
-(26, 'added new transaction.', 'restocked 100 for  2021sampleID [TransactionID: 2021SAMPLEID-61184A005D0E4].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:34:48 AM');
+(26, 'added new transaction.', 'restocked 100 for  2021sampleID [TransactionID: 2021SAMPLEID-61184A005D0E4].', '60bf510d64ba8', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-15 07:34:48 AM'),
+(27, 'updated user details.', 'updated details of user chiruno borger [UserID: 60bc6643380bb].', '60bf510d64ba8', 'https://localhost/manalok9/admin/users', '2021-08-18 11:37:43 PM'),
+(28, 'updated user login details.', 'updated login details of user borgir [UserID: 60bc6643380bb].', '60bf510d64ba8', 'https://localhost/manalok9/admin/users', '2021-08-18 11:37:44 PM'),
+(29, 'updated user details.', 'updated details of user chiruno borger [UserID: 60bc6643380bb].', '60bf510d64ba8', 'https://localhost/manalok9/admin/users', '2021-08-18 11:38:26 PM'),
+(30, 'logged out.', '', '60bf510d64ba8', '', '2021-08-18 11:38:34 PM'),
+(31, 'logged in.', '', '60bc6643380bb', '', '2021-08-18 11:38:42 PM'),
+(32, 'added new transaction.', 'released 20 for  2021sampleID [TransactionID: 2021SAMPLEID-611D2999F32B2].', '60bc6643380bb', 'https://localhost/manalok9/admin/viewproduct?code=2021sampleID', '2021-08-18 11:39:06 PM');
 
 -- --------------------------------------------------------
 
@@ -108,20 +114,22 @@ CREATE TABLE `products_transactions` (
   `Date` varchar(255) DEFAULT NULL,
   `DateAdded` varchar(255) DEFAULT NULL,
   `Status` int(11) NOT NULL COMMENT '0 = for approval\r\n1 = approved',
-  `Date_Approval` varchar(255) DEFAULT NULL
+  `Date_Approval` varchar(255) DEFAULT NULL,
+  `UserID` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `products_transactions`
 --
 
-INSERT INTO `products_transactions` (`ID`, `Code`, `TransactionID`, `Type`, `Amount`, `InStock`, `Date`, `DateAdded`, `Status`, `Date_Approval`) VALUES
-(14, '2021sampleID', '2021SAMPLEID-61184A005D0E4', 0, 100, 0, '2021-08-15', '2021-08-15 06:56:00 AM', 1, '2021-08-15-07-34-48'),
-(15, '2021sampleID', '2021SAMPLEID-61184A0DE32FA', 1, 200, 0, '2021-08-15', '2021-08-15 06:56:13 AM', 0, NULL),
-(16, '2021sampleID', '2021SAMPLEID-61184A4258E13', 0, 200, 0, '2021-08-15', '2021-08-15 06:57:06 AM', 1, '2021-08-15-07-34-01'),
-(17, '2021sampleID', '2021SAMPLEID-61184ADC6BF4D', 0, 101, 0, '2021-08-15', '2021-08-15 06:59:40 AM', 1, '2021-08-15-07-32-07'),
-(18, '2021sampleID', '2021SAMPLEID-61184AE6F0E94', 1, 101, 0, '2021-08-15', '2021-08-15 06:59:50 AM', 0, NULL),
-(19, '2021sampleID', '2021SAMPLEID-61184B23D1796', 1, 100, 0, '2021-08-15', '2021-08-15 07:00:51 AM', 0, NULL);
+INSERT INTO `products_transactions` (`ID`, `Code`, `TransactionID`, `Type`, `Amount`, `InStock`, `Date`, `DateAdded`, `Status`, `Date_Approval`, `UserID`) VALUES
+(14, '2021sampleID', '2021SAMPLEID-61184A005D0E4', 0, 100, 0, '2021-08-15', '2021-08-15 06:56:00 AM', 1, '2021-08-15-07-34-48', NULL),
+(15, '2021sampleID', '2021SAMPLEID-61184A0DE32FA', 1, 200, 0, '2021-08-15', '2021-08-15 06:56:13 AM', 0, NULL, NULL),
+(16, '2021sampleID', '2021SAMPLEID-61184A4258E13', 0, 200, 0, '2021-08-15', '2021-08-15 06:57:06 AM', 1, '2021-08-15-07-34-01', NULL),
+(17, '2021sampleID', '2021SAMPLEID-61184ADC6BF4D', 0, 101, 0, '2021-08-15', '2021-08-15 06:59:40 AM', 1, '2021-08-15-07-32-07', NULL),
+(18, '2021sampleID', '2021SAMPLEID-61184AE6F0E94', 1, 101, 0, '2021-08-15', '2021-08-15 06:59:50 AM', 0, NULL, NULL),
+(19, '2021sampleID', '2021SAMPLEID-61184B23D1796', 1, 100, 0, '2021-08-15', '2021-08-15 07:00:51 AM', 0, NULL, NULL),
+(20, '2021sampleID', '2021SAMPLEID-611D2999F32B2', NULL, 20, 0, '2021-08-18', '2021-08-18 11:39:05 PM', 0, NULL, '60bc6643380bb');
 
 -- --------------------------------------------------------
 
@@ -145,6 +153,7 @@ CREATE TABLE `security_log` (
 --
 
 INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `Country`, `PageURL`, `DateAdded`) VALUES
+(0, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-18 11:30:29 PM'),
 (1, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-08-15 01:16:38 AM'),
 (2, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-15 01:16:39 AM'),
 (3, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-15 01:17:50 AM'),
@@ -465,9 +474,9 @@ INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `C
 (318, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:03 AM'),
 (319, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:04 AM'),
 (320, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:04 AM'),
-(321, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:04 AM'),
-(322, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:04 AM');
+(321, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:04 AM');
 INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `Country`, `PageURL`, `DateAdded`) VALUES
+(322, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:04 AM'),
 (323, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:17:04 AM'),
 (324, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:18:22 AM'),
 (325, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 04:18:42 AM'),
@@ -769,9 +778,9 @@ INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `C
 (621, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 06:09:02 AM'),
 (622, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 06:09:02 AM'),
 (623, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 06:09:03 AM'),
-(624, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 06:09:03 AM'),
-(625, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 06:11:14 AM');
+(624, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 06:09:03 AM');
 INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `Country`, `PageURL`, `DateAdded`) VALUES
+(625, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 06:11:14 AM'),
 (626, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 06:11:15 AM'),
 (627, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 06:11:16 AM'),
 (628, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 06:18:58 AM'),
@@ -1068,7 +1077,37 @@ INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `C
 (919, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-15 07:34:47 AM'),
 (920, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/FORM_approveTransaction', '2021-08-15 07:34:48 AM'),
 (921, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-15 07:34:49 AM'),
-(922, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/user', '2021-08-15 07:34:51 AM');
+(922, '60bf510d64ba8', 'Desktop: Chrome 92.0.4515.131', 'Windows 10', '::1', 'TBD', 'https://localhost/manalok9/user', '2021-08-15 07:34:51 AM'),
+(923, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-18 11:32:15 PM'),
+(924, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/users', '2021-08-18 11:32:28 PM'),
+(925, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-18 11:32:55 PM'),
+(926, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-18 11:33:36 PM'),
+(927, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-18 11:33:42 PM'),
+(928, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/users', '2021-08-18 11:36:47 PM'),
+(929, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_updateUser', '2021-08-18 11:37:42 PM'),
+(930, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/users', '2021-08-18 11:37:45 PM'),
+(931, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_updateUser', '2021-08-18 11:38:26 PM');
+INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `Country`, `PageURL`, `DateAdded`) VALUES
+(932, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/users', '2021-08-18 11:38:28 PM'),
+(933, '60bf510d64ba8', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/logout', '2021-08-18 11:38:34 PM'),
+(934, NULL, 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/login', '2021-08-18 11:38:35 PM'),
+(935, NULL, 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_loginValidation', '2021-08-18 11:38:41 PM'),
+(936, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-18 11:38:42 PM'),
+(937, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-18 11:38:51 PM'),
+(938, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-08-18 11:38:55 PM'),
+(939, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-18 11:38:57 PM'),
+(940, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addNewTransaction', '2021-08-18 11:39:05 PM'),
+(941, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-18 11:39:06 PM'),
+(942, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_transactions', '2021-08-18 11:39:09 PM'),
+(943, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getTransactionDetails', '2021-08-18 11:39:12 PM'),
+(944, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-18 11:39:24 PM'),
+(945, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-18 11:39:26 PM'),
+(946, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/users', '2021-08-18 11:40:17 PM'),
+(947, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-18 11:40:31 PM'),
+(948, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/users', '2021-08-18 11:40:41 PM'),
+(949, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-08-18 11:41:23 PM'),
+(950, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-08-18 11:41:25 PM'),
+(951, '60bc6643380bb', 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-08-18 11:41:29 PM');
 
 -- --------------------------------------------------------
 
@@ -1097,7 +1136,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`ID`, `UserID`, `Image`, `FirstName`, `MiddleName`, `LastName`, `NameExtension`, `DateOfBirth`, `ContactNumber`, `Address`, `Comment`, `Privilege`, `DateAdded`) VALUES
-(1, '60bc6643380bb', 'uploads/60bc6643380bb/119885521_653071058972274_4010704502296133963_n.jpg', 'chiruno', '', 'borger', '', '', '', '', '', NULL, '2021-06-06 08:08:03 AM'),
+(1, '60bc6643380bb', 'uploads/60bc6643380bb/119885521_653071058972274_4010704502296133963_n.jpg', 'chiruno', '', 'borger', '', '', '', '', '', '1', '2021-08-18 11:38:26 PM'),
 (3, '60bf510d64ba8', 'uploads/60bf510d64ba8/image5.jpg', 'first', 'middle', 'last', 'name ext', '2021-06-02', '1231233a2', '', '', '2', '2021-07-24 09:25:14 AM'),
 (6, '6117f910ce15a', 'assets/images/faces/1.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', '2021-08-15 01:10:41 AM');
 
@@ -1119,7 +1158,8 @@ CREATE TABLE `users_login` (
 --
 
 INSERT INTO `users_login` (`ID`, `UserID`, `LoginEmail`, `LoginPassword`) VALUES
-(1, '60bf510d64ba8', 'admin', '$2y$10$wwa2SWPK1P1E.24TsBJUGu7Xn8eRBDliJkxeMMeo8QoHc1wGks7ie');
+(1, '60bf510d64ba8', 'admin', '$2y$10$wwa2SWPK1P1E.24TsBJUGu7Xn8eRBDliJkxeMMeo8QoHc1wGks7ie'),
+(2, '60bc6643380bb', 'borgir', '$2y$10$ui4J.HDf9Oo10WHnKnoGyO5YcqJanAyNQDR3rGEV/dvfwrZw65CvO');
 
 -- --------------------------------------------------------
 
@@ -1138,6 +1178,13 @@ CREATE TABLE `users_login_history` (
   `Success` tinyint(1) DEFAULT NULL COMMENT '0 = failed; 1 = success',
   `DateAdded` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `users_login_history`
+--
+
+INSERT INTO `users_login_history` (`ID`, `UserID`, `LoginEmail`, `LoginPassword`, `Agent`, `Platform`, `IPAddress`, `Success`, `DateAdded`) VALUES
+(1, '60bc6643380bb', 'borgir', NULL, 'Desktop: Firefox 90.0', 'Windows 10', '127.0.0.1', 1, '2021-08-18 11:38:42 PM');
 
 --
 -- Indexes for dumped tables
@@ -1193,7 +1240,7 @@ ALTER TABLE `users_login_history`
 -- AUTO_INCREMENT for table `logbook`
 --
 ALTER TABLE `logbook`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -1205,13 +1252,13 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `products_transactions`
 --
 ALTER TABLE `products_transactions`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `security_log`
 --
 ALTER TABLE `security_log`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=923;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=952;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -1223,13 +1270,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users_login`
 --
 ALTER TABLE `users_login`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

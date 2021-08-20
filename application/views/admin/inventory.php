@@ -59,8 +59,10 @@ if ($getAllProducts->num_rows() > 0) {
 						<button type="button" class="btn btn-sm-secondary">SEMI-ANNUAL</button>
 						<button type="button" class="btn btn-sm-secondary">ANNUAL</button>
 						<button type="button" class="btn btn-sm-secondary">CUSTOM DATE</button>
-						|
-						<button type="button" class="btn btn-sm-primary">GENERATE REPORT</button>
+						<?php if ($this->session->userdata('Privilege') > 1): ?>
+							|
+							<button type="button" class="btn btn-sm-primary">GENERATE REPORT</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">

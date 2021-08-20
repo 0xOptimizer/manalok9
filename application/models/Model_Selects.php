@@ -23,8 +23,8 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('UserID', $userID);
 		$this->db->order_by('ID', 'desc');
-		$this->db->limit('10');
-		$result = $this->db->get('security_log');  
+		$this->db->limit('5');
+		$result = $this->db->get('logbook');  
 		return $result;
 	}
 	public function GetAllProducts()
@@ -45,6 +45,14 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('Code', $code);
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function GetTransactionsByUserID($userID)
+	{
+		$this->db->select('*');
+		$this->db->where('UserID', $userID);
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('products_transactions');  
 		return $result;
