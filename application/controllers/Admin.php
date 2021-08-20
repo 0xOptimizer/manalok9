@@ -9,6 +9,7 @@ class Admin extends MY_Controller {
 		parent::__construct();
 		$this->load->model('Model_Selects');
 		$this->load->model('Model_Security');
+		$this->load->model('Model_Inserts');
 		$this->load->model('Model_Logbook');
 		if($this->Model_Security->CheckPrivilegeLevel() >= 1) {
 			$this->load->model('Model_Inserts');
@@ -41,8 +42,6 @@ class Admin extends MY_Controller {
 			if ($this->session->userdata('Image')) {
 				$this->globalData['image'] = $this->session->userdata('Image');
 			}
-		} else {
-			redirect('logout');
 		}
 		// $this->output->enable_profiler(TRUE);
 	}
@@ -342,6 +341,110 @@ class Admin extends MY_Controller {
 		{
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/users');
+		}
+	}
+	public function FORM_selfAddNewUser()
+	{	
+		# PERSONAL INFORMATION
+		$firstName = "demo";
+		$middleName = "demo";
+		$lastName = "demo";
+		$nameExtension = "demo";
+		$dateOfBirth = $this->input->post('birthDate');
+		$contactNumber = $this->input->post('contactNumber');
+		$address = $this->input->post('locationAddress');
+
+		$pImageChecker = $this->input->post('pImageChecker');
+		$userID = uniqid();
+
+		$loginEmail = $this->input->post('loginEmail');
+		$loginPassword = $this->input->post('loginPassword');
+		
+		$config['upload_path'] = './uploads/'.$userID;
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size'] = 4000;
+		$config['max_width'] = 4000;
+		$config['max_height'] = 4000;
+		$this->load->library('upload', $config);
+		if (!is_dir('uploads'))
+		{
+			mkdir('./uploads', 0777, true);
+		}
+		if (!is_dir('uploads/' . $userID))
+		{
+			mkdir('./uploads/' . $userID, 0777, true);
+			$dir_exist = false;
+		}
+		if ($pImageChecker != NULL) {
+			// Reminder: enctype="multipart/form-data" in the form tag;
+			if ( ! $this->upload->do_upload('pImage'))
+			{
+				echo $this->upload->display_errors();
+				exit();
+				// redirect('NewEmployee');
+			}
+			else
+			{
+				$pImage = 'uploads/'.$userID.'/'.$this->upload->data('file_name');
+				// Create thumbnail
+				$this->load->library('image_lib');
+				$tconfig['image_library'] = 'gd2';
+				$tconfig['source_image'] = './uploads/'.$userID.'/'.$this->upload->data('file_name');
+				$tconfig['create_thumb'] = TRUE;
+				$tconfig['maintain_ratio'] = TRUE;
+				$tconfig['width'] = 70;
+				$tconfig['height'] = 70;
+				$tconfig['new_image'] = './uploads/'.$userID.'/';
+
+				$this->load->library('image_lib', $tconfig);
+				$this->image_lib->initialize($tconfig);
+
+				$this->image_lib->resize();
+				if ( ! $this->image_lib->resize())
+				{
+			        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
+				}
+				$this->image_lib->clear();
+			}
+		} else {
+			$pImage = 'assets/images/faces/1.jpg';
+		}
+		// INSERT EMPLOYEE
+		$data = array(
+			'UserID' => $userID,
+			'Image' => $pImage,
+			'FirstName' => $firstName,
+			'MiddleName' => $middleName,
+			'LastName' => $lastName,
+			'NameExtension' => $nameExtension,
+			'DateOfBirth' => $dateOfBirth,
+			'ContactNumber' => $contactNumber,
+			'Address' => $address,
+			'DateAdded' => date('Y-m-d h:i:s A'),
+		);
+		$insertNewEmployee = $this->Model_Inserts->InsertNewUser($data);
+		if ($insertNewEmployee == TRUE) {
+			$this->session->set_flashdata('isApplicantAdded', 'true');
+			if ($loginEmail != NULL && $loginPassword != NULL) {
+				$loginData = array(
+					'UserID' => $userID,
+					'LoginEmail' => $loginEmail,
+					'LoginPassword' => password_hash($loginPassword, PASSWORD_BCRYPT),
+				);
+				$insertUserLogin = $this->Model_Inserts->InsertUserLogin($loginData);
+				if ($insertUserLogin) {
+					redirect('login');
+				} else {
+					redirect('login');
+				}
+			} else {
+				redirect('login');
+			}
+		}
+		else
+		{
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('login');
 		}
 	}
 	public function FORM_addNewProduct()

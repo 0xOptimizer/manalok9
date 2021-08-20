@@ -25,5 +25,10 @@ $(document).ready(function() {
 			window.location.href = url;
 		}
 	});
+	// ~ little loading animation when clicking on a sidebar link
+	$('body').on('click', 'a.sidebar-link, .standard-table-nodesign tr', function() {
+		let defaultText = $(this).text();
+		$(this).html('<i class="spinner-border spinner-border-sm"></i> <span>' + defaultText + "</span>");
+	});
 });
 </script>

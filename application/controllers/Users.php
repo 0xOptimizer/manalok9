@@ -39,10 +39,7 @@ class Users extends MY_Controller {
 			if ($this->session->userdata('Image')) {
 				$this->globalData['image'] = $this->session->userdata('Image');
 			}
-		} else {
-			redirect(base_url() . 'login');
-		}
-	}
+		}	}
 	public function FORM_selfUpdateUser()
 	{	
 		$userID = $this->session->userdata('UserID');
@@ -206,5 +203,11 @@ class Users extends MY_Controller {
 		$data['getUserID'] = $this->Model_Selects->GetUserID($userID, 'users');
 		$data['getLoginCredentials'] = $this->Model_Selects->GetUserID($userID, 'users_login');
 		$this->load->view('users/profile', $data);
+	}
+	public function register()
+	{
+		$header['pageTitle'] = 'Register';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('users/register', $data);
 	}
 }

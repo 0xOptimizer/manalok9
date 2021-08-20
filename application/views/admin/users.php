@@ -358,6 +358,35 @@ $(document).ready(function() {
 			}
 		});
 	});
+	$('body').on('click', '.send-registration-email-btn', function() {
+		let email = $('.registration-email').val();
+		$(this).html('<i class="spinner-border spinner-border-sm"></i> Sending...');
+		$(this).attr('disabled', true);
+		$.ajax({
+			url: "<?php echo base_url() . 'AJAX_sendRegistrationEmail';?>",
+			method: "POST",
+			data: {email: email},
+			dataType: "html",
+			success: function(response){
+				$('.send-registration-email-btn').html('<i class="bi bi-redo"></i> Resend');
+				$('.send-registration-email-btn').attr('disabled', false);
+				$('.send-email-banners-group').removeClass('.opacity-4');
+				$('.send-email-banners-group').html(response);
+				$('.registration-email-icon').hide();
+			},
+			error: function(xhr, textStatus, error){
+				$('.send-registration-email-btn').html('<i class="bi bi-check-square"></i> Send Form to Email');
+				$('.send-registration-email-btn').attr('disabled', false);
+				$('.send-email-banners-group').removeClass('.opacity-4');
+				$('.send-email-banners-group').html('<span class="registration-message-banners info-banner-sm" data-feedback="1"><i class="bi bi-exclamation-triangle-fill"></i> No internet connection detected. Please check your internet and try again.</span>');
+				$('.registration-email-icon').hide();
+				console.log(xhr.statusText);
+				console.log(textStatus);
+				console.log(error);
+				// $('.comment-pen_' + id).html('<i class="bi bi-pen-fill"></i>');
+			}
+		});
+	});
 });
 </script>
 </body>

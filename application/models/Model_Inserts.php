@@ -23,6 +23,16 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('products_transactions', $data);
 		return $result;
 	}
+	public function InsertRegistrationToken($data)
+	{
+		$result = $this->db->insert('users_registrations', $data);
+		return $result;
+	}
+	public function InsertUserLogin($data)
+	{
+		$result = $this->db->insert('users_login', $data);
+		return $result;
+	}
 
 
 

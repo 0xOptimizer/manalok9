@@ -133,6 +133,9 @@ th:hover, .standard-table tbody tr:hover {
 	color: #494f54 !important;
 	padding: 4px 8px;
 }
+.btn-secondary.disabled, .btn-secondary:disabled {
+	background-color: transparent !important;
+}
 .btn-success {
 	border: 1px solid #198754;
 	background-color: transparent;
@@ -144,6 +147,9 @@ th:hover, .standard-table tbody tr:hover {
 	border: 1px solid #13613d;
 	background-color: transparent;
 	color: #13613d !important;
+}
+.btn-success.disabled, .btn-success:disabled {
+	background-color: transparent !important;
 }
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
 	color: #ccc;
