@@ -139,4 +139,49 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('users_registrations'); 
 		return $result;
 	}
+
+	// PURCHASE ORDERS
+	public function GetOrders()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+	public function MaxOrderID()
+	{
+		$this->db->select_max('ID');
+		$result = $this->db->get('purchase_orders');
+		return $result->row_array()['ID'];
+	}
+	public function GetOrderTransactions($orderID)
+	{
+		$this->db->select('*');
+		$this->db->where('PurchaseOrderID', $orderID);
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetOrderedTransactions()
+	{
+		$this->db->select('*');
+		$this->db->where('PurchaseOrderID !=', NULL);
+		$this->db->order_by('Code', 'asc');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetTransactionsReleased()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', '1');
+		$this->db->where('Status', '0');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetTransactionsByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
 }

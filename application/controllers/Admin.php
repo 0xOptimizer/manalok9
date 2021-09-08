@@ -137,6 +137,30 @@ class Admin extends MY_Controller {
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$this->load->view('admin/page_transactions', $data);
 	}
+	public function orders()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Purchase Orders';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/orders', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function view_order_summary()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Order Summary';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/order_summary', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
 
 	// Form inputs
 	public function FORM_addNewUser()
@@ -629,6 +653,12 @@ class Admin extends MY_Controller {
 			}
 		}
 	}
+	public function getOrderDetails()
+	{
+		$orderID = $this->input->get('order_id');
+		$getTransactionsByPurchaseOrderID = $this->Model_Selects->GetOrderTransactions($orderID);
+		print json_encode($getTransactionsByPurchaseOrderID->result_array());
+	}
 	// Database backup
 	public function database_backup()
 	{
@@ -653,5 +683,50 @@ class Admin extends MY_Controller {
 
 		$this->load->helper('download');
 		force_download($db_name, $backup);
+	}
+
+	// Purchase Orders
+	public function FORM_addPurchaseOrder()
+	{	
+		$seriesNo = "POSAMPLE-" . str_pad($this->Model_Selects->MaxOrderID() + 1, 6, '0', STR_PAD_LEFT);
+		$clientName = $this->input->post('clientName');
+		$shipAddress = $this->input->post('shipAddress');
+		$transactionsCount = $this->input->post('transactionsCount');
+
+		// INSERT PURCHASE ORDER
+		$data = array(
+			'SeriesNo' => $seriesNo,
+			'DateCreation' => date('Y-m-d h:i:s A'),
+			'ClientName' => $clientName,
+			'ShipAddress' => $shipAddress,
+		);
+		// check if stock is enough
+		$transactionIDs = array();
+		for ($i = 0; $i < $transactionsCount; $i++) {
+			$tID = $this->input->post('tInput' . $i);
+			array_push($transactionIDs, $tID);
+			$t = $this->Model_Selects->GetTransactionsByID($tID)->row_array();
+			$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+			if ($t['Amount'] > $p['InStock']) {
+				echo "Low on STocks";
+				exit();
+			}
+		}
+		$insertNewPurchaseOrder = $this->Model_Inserts->InsertPurchaseOrder($data);
+		if ($insertNewPurchaseOrder == TRUE) {
+			$orderID = $this->db->insert_id();
+			// update included transactions
+			foreach ($transactionIDs as $key => $val) {
+				$this->Model_Updates->TransactionToPurchaseOrder($val, $orderID);
+			}
+			$this->session->set_flashdata('highlight-id', $orderID);
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('created a new purchase order.', 'added a new purchase order Series No. ' . $seriesNo . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/orders'));
+			redirect('admin/orders');
+		}
+		else
+		{
+			redirect('admin/orders');
+		}
 	}
 }

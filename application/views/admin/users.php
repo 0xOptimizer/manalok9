@@ -242,13 +242,11 @@ $(document).ready(function() {
 			.done(function(data) {
 				var userLogs = $.parseJSON(data);
 				$.each(userLogs, function(index, val) {
-					$('#attendanceLogTable tbody').append($('<tr>').append(
-						$('<td>').html(val['Event'])).append(
-						$('<td>').attr({ class: 'text-muted' }).html(val['TimePassed']))
+					$('#attendanceLogTable tbody').append($('<tr>')
+						.append($('<td>').html(val['Event']))
+						.append($('<td>').attr({ class: 'text-muted' }).html(val['TimePassed']))
 					)
 				});
-			}).fail(function () {
-				alert(id);
 			});
 		}
 	});

@@ -52,4 +52,16 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('products_transactions');
 		return $result;
 	}
+
+	// PURCHASE ORDERS
+	public function TransactionToPurchaseOrder($ID, $orderID)
+	{
+		$this->db->set(array(
+			'PurchaseOrderID' => $orderID,
+			'Status' => '1',
+		));
+		$this->db->where('ID', $ID);
+		$result = $this->db->update('products_transactions');
+		return $result;
+	}
 }
