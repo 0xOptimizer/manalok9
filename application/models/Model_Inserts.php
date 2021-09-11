@@ -34,11 +34,17 @@ class Model_Inserts extends CI_Model {
 		return $result;
 	}
 
-
-
+	// LOGBOOK
 	public function InsertLogbook($data)
 	{
 		$result = $this->db->insert('logbook', $data);
+		return $result;
+	}
+
+	// PURCHASE ORDERS
+	public function InsertPurchaseOrder($data)
+	{
+		$result = $this->db->insert('purchase_orders', $data);
 		return $result;
 	}
 }

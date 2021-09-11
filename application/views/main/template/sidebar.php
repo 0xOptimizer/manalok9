@@ -47,6 +47,14 @@ ini_set('display_errors', 0); ?>
 						<span>Transactions</span>
 					</a>
 				</li>
+				<?php if ($this->session->userdata('Privilege') > 1): ?>
+					<li class="sidebar-item sidebar-admin-orders">
+						<a href="<?=base_url().'admin/orders'?>" class='sidebar-link'>
+							<i class="bi bi-receipt"></i>
+							<span>Purchase Orders</span>
+						</a>
+					</li>
+				<?php endif; ?>
 
 				<li class="sidebar-title">YOUR CORNER</li>
 

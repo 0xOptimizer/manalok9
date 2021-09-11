@@ -114,8 +114,6 @@ class Model_Selects extends CI_Model {
 		return $result->row_array();
 	}
 
-
-
 	public function GetUserLogs($userID)
 	{
 		$this->db->select('*');
@@ -137,6 +135,73 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('Token', $token);
 		$result = $this->db->get('users_registrations'); 
+		return $result;
+	}
+
+	// PURCHASE ORDERS
+	public function GetAllOrders()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+	public function GetOrders($status)
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('Status', $status);
+		$result = $this->db->get('purchase_orders');
+		return $result;
+	}
+	public function GetPurchaseOrderByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+	public function MaxOrderID()
+	{
+		$this->db->select_max('ID');
+		$result = $this->db->get('purchase_orders');
+		return $result->row_array()['ID'];
+	}
+	public function GetOrderTransactions($orderID)
+	{
+		$this->db->select('*');
+		$this->db->where('PurchaseOrderID', $orderID);
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetAllOrderedTransactions()
+	{
+		$this->db->select('*');
+		$this->db->where('PurchaseOrderID !=', NULL);
+		$this->db->order_by('Code', 'asc');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetOrderedTransactions($status)
+	{
+		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '1' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.ID = ot.PurchaseOrderID AND Status = $status)";
+		$result = $this->db->query($sql);
+		return $result;
+	}
+	public function GetTransactionsReleasedUnordered()
+	{
+		$this->db->select('*');
+		$this->db->where('PurchaseOrderID', NULL);
+		$this->db->where('Type', '1');
+		$this->db->where('Status', '0');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetTransactionsByTID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('TransactionID', $id);
+		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
 }

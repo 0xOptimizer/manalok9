@@ -60,6 +60,8 @@ $route['admin/viewproduct'] = 'Admin/view_product';
 $route['admin/inventory'] = 'Admin/inventory';
 $route['admin/security'] = 'Admin/security';
 $route['admin/view_transactions'] = 'Admin/view_transactions';
+$route['admin/orders'] = 'Admin/orders';
+$route['admin/viewsummary'] = 'Admin/view_order_summary';
 
 // Users
 $route['user'] = 'Users';
@@ -78,6 +80,8 @@ $route['FORM_addNewUser'] = 'Admin/FORM_addNewUser';
 $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
 $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
 $route['FORM_selfAddNewUser'] = 'Admin/FORM_selfAddNewUser';
+$route['FORM_addPurchaseOrder'] = 'Admin/FORM_addPurchaseOrder';
+$route['FORM_approvePurchaseOrder'] = 'Admin/FORM_approvePurchaseOrder';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
@@ -90,6 +94,8 @@ $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
 // AJAX REQUEST
 $route['getTransactionDetails'] = 'Admin/getTransactionDetails';
 $route['FORM_approveTransaction'] = 'Admin/FORM_approveTransaction';
+$route['getPurchaseDetails'] = 'Admin/getPurchaseDetails';
+$route['FORM_removePurchaseOrderTransaction'] = 'Admin/FORM_removePurchaseOrderTransaction';
 
 
 // Database backup

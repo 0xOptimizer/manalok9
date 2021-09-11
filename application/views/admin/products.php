@@ -37,6 +37,17 @@ if ($this->session->flashdata('highlight-id')) {
 		padding-left: 20px;
 		color: #FFFFFF;
 	}
+	/* Chrome, Safari, Edge, Opera */
+	.num-noarrow::-webkit-outer-spin-button,
+	.num-noarrow::-webkit-inner-spin-button {
+	  -webkit-appearance: none;
+	  margin: 0;
+	}
+
+	/* Firefox */
+	.num-noarrow {
+	  -moz-appearance: textfield;
+	}
 </style>
 
 </head>
