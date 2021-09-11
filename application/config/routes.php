@@ -81,6 +81,7 @@ $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
 $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
 $route['FORM_selfAddNewUser'] = 'Admin/FORM_selfAddNewUser';
 $route['FORM_addPurchaseOrder'] = 'Admin/FORM_addPurchaseOrder';
+$route['FORM_approvePurchaseOrder'] = 'Admin/FORM_approvePurchaseOrder';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
@@ -94,6 +95,7 @@ $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
 $route['getTransactionDetails'] = 'Admin/getTransactionDetails';
 $route['FORM_approveTransaction'] = 'Admin/FORM_approveTransaction';
 $route['getPurchaseDetails'] = 'Admin/getPurchaseDetails';
+$route['FORM_removePurchaseOrderTransaction'] = 'Admin/FORM_removePurchaseOrderTransaction';
 
 
 // Database backup

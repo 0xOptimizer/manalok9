@@ -34,10 +34,11 @@
 											<table class="table" id="orderTransactions">
 												<thead>
 													<tr>
-														<th>CODE</th>
-														<th>RELEASED</th>
-														<th>TRANSACTION DATE</th>
-														<th></th>
+														<th class="text-center">ID</th>
+														<th class="text-center">CODE</th>
+														<th class="text-center">RELEASED</th>
+														<th class="text-center">TRANSACTION DATE</th>
+														<th class="text-center"></th>
 													</tr>
 												</thead>
 												<tbody>
@@ -50,7 +51,8 @@
 													</tr>
 													<tr class="transactionsTotal" style="border-color: #a7852d;">
 														<td class="font-weight-bold" style="color: #a7852d;">TOTAL</td>
-														<td class="released">0</td>
+														<td></td>
+														<td class="released text-center">0</td>
 														<td></td>
 														<td></td>
 													</tr>
@@ -64,7 +66,7 @@
 						<!-- Right Part -->
 						<div class="col-sm-12 col-md-6">
 							<div class="row">
-								<?php $getAllTransactions = $this->Model_Selects->GetTransactionsReleased(); ?>
+								<?php $getAllTransactions = $this->Model_Selects->GetTransactionsReleasedUnordered(); ?>
 								<div class="col-sm-0 col-md-6"></div>
 								<div class="col-sm-12 col-md-6 pt-4 pb-2" style="margin-top: -15px;">
 									<div class="input-group">
@@ -88,7 +90,7 @@
 											<?php
 											if ($getAllTransactions->num_rows() > 0):
 												foreach ($getAllTransactions->result_array() as $row): ?>
-													<tr class="add-transaction-row" data-id="<?=$row['ID']?>">
+													<tr class="add-transaction-row transaction-<?=$row['ID']?>" data-id="<?=$row['ID']?>">
 														<td class="text-center">
 															<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 														</td>

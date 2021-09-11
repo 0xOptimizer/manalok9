@@ -3,8 +3,25 @@ $globalHeader;
 
 date_default_timezone_set('Asia/Manila');
 
-$getAllPurchaseOrders = $this->Model_Selects->GetOrders();
-$GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions();
+switch ($this->input->get('sortOrders')) {
+	case 'rejected':
+		$getPurchaseOrders = $this->Model_Selects->GetOrders('0');
+		$GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions('0');
+		break;
+	case 'forApproval':
+		$getPurchaseOrders = $this->Model_Selects->GetOrders('1');
+		$GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions('1');
+		break;
+	case 'waitingForPayment':
+		$getPurchaseOrders = $this->Model_Selects->GetOrders('2');
+		$GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions('2');
+		break;
+	
+	default:
+		$getPurchaseOrders = $this->Model_Selects->GetAllOrders();
+		$GetOrderedTransactions = $this->Model_Selects->GetAllOrderedTransactions();
+		break;
+}
 
 ?>
 
@@ -23,14 +40,24 @@ $GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions();
 		<div class="page-heading">
 			<div class="page-title">
 				<div class="row">
-					<div class="col-12 col-md-6">
+					<div class="col-12 col-md-8">
 						<h3>Purchase Order Summary
-							<?php if ($getAllPurchaseOrders->num_rows() <= 0): ?>
+							<?php if ($getPurchaseOrders->num_rows() <= 0): ?>
 								<span class="info-banner-sm">
 									<i class="bi bi-exclamation-diamond-fill"></i> No Purchase Orders found.
 								</span>
 							<?php endif; ?>
 						</h3>
+					</div>
+					<div class="col-12 col-md-4">
+						<form id="sortOrders" action="<?php echo base_url() . 'admin/viewsummary';?>" method="GET" enctype="multipart/form-data">
+							<select id="sortSelect" name="sortOrders" class="form-control">
+								<option selected>ALL</option>
+								<option value="forApproval">FOR APPROVAL</option>
+								<option value="waitingForPayment">WAITING FOR PAYMENT</option>
+								<option value="rejected">REJECTED</option>
+							</select>
+						</form>
 					</div>
 					<b>dd/mm/yyyy - <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button></b>
 				</div>
@@ -52,8 +79,8 @@ $GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions();
 						</thead>
 						<tbody>
 							<?php
-							if ($getAllPurchaseOrders->num_rows() > 0):
-								foreach ($getAllPurchaseOrders->result_array() as $row): ?>
+							if ($getPurchaseOrders->num_rows() > 0):
+								foreach ($getPurchaseOrders->result_array() as $row): ?>
 									<tr>
 										<?php
 										$poTransactions = $this->Model_Selects->GetOrderTransactions($row["ID"])->result_array();
@@ -88,7 +115,13 @@ $GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions();
 										<?php endforeach; ?>
 									</tr>
 							<?php endforeach;
-							endif; ?>
+							else: ?>
+								<td class="text-center" colspan="5">
+									<label class="input-label">
+										[ EMPTY ]
+									</label>
+								</td>
+							<?php endif; ?>
 						</tbody>
 					</table>
 				</div>
@@ -108,6 +141,13 @@ $GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions();
 <script>
 $('.sidebar-admin-orders').addClass('active');
 $(document).ready(function() {
+	<?php if ($this->input->get('sortOrders')): ?>
+		$('#sortSelect').find("[value='" + "<?=$this->input->get('sortOrders');?>" + "']").attr('selected', '');; 
+	<?php endif; ?>
+
+	$("#sortSelect").on('change', function(event) {
+		$("#sortOrders").submit();
+	});
 });
 </script>
 

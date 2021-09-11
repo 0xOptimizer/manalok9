@@ -688,45 +688,153 @@ class Admin extends MY_Controller {
 	// Purchase Orders
 	public function FORM_addPurchaseOrder()
 	{	
-		$seriesNo = "POSAMPLE-" . str_pad($this->Model_Selects->MaxOrderID() + 1, 6, '0', STR_PAD_LEFT);
-		$clientName = $this->input->post('clientName');
-		$shipAddress = $this->input->post('shipAddress');
-		$transactionsCount = $this->input->post('transactionsCount');
+		if ($this->session->userdata('Privilege') > 1) {
+			$seriesNo = "POSAMPLE-" . str_pad($this->Model_Selects->MaxOrderID() + 1, 6, '0', STR_PAD_LEFT);
+			$clientName = $this->input->post('clientName');
+			$shipAddress = $this->input->post('shipAddress');
+			$transactionsCount = $this->input->post('transactionsCount');
 
-		// INSERT PURCHASE ORDER
-		$data = array(
-			'SeriesNo' => $seriesNo,
-			'DateCreation' => date('Y-m-d h:i:s A'),
-			'ClientName' => $clientName,
-			'ShipAddress' => $shipAddress,
-		);
-		// check if stock is enough
-		$transactionIDs = array();
-		for ($i = 0; $i < $transactionsCount; $i++) {
-			$tID = $this->input->post('tInput' . $i);
-			array_push($transactionIDs, $tID);
-			$t = $this->Model_Selects->GetTransactionsByID($tID)->row_array();
-			$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
-			if ($t['Amount'] > $p['InStock']) {
-				echo "Low on STocks";
-				exit();
+			// INSERT PURCHASE ORDER
+			$data = array(
+				'SeriesNo' => $seriesNo,
+				'DateCreation' => date('Y-m-d h:i:s A'),
+				'ClientName' => $clientName,
+				'ShipAddress' => $shipAddress,
+				'Status' => '1',
+			);
+			$insertNewPurchaseOrder = $this->Model_Inserts->InsertPurchaseOrder($data);
+			if ($insertNewPurchaseOrder == TRUE) {
+				$orderID = $this->db->insert_id();
+				// update included transactions
+				for ($i = 0; $i < $transactionsCount; $i++) {
+					$tID = $this->input->post('tInput' . $i);
+					$data = array(
+						'transactionID' => $tID,
+						'OrderID' => $orderID,
+					);
+					$this->Model_Updates->UpdateTransaction($data);
+				}
+				$this->session->set_flashdata('highlight-id', $orderID);
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('created a new purchase order.', 'added a new purchase order Series No. ' . $seriesNo . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/orders'));
+				redirect('admin/orders');
 			}
-		}
-		$insertNewPurchaseOrder = $this->Model_Inserts->InsertPurchaseOrder($data);
-		if ($insertNewPurchaseOrder == TRUE) {
-			$orderID = $this->db->insert_id();
-			// update included transactions
-			foreach ($transactionIDs as $key => $val) {
-				$this->Model_Updates->TransactionToPurchaseOrder($val, $orderID);
+			else
+			{
+				redirect('admin/orders');
 			}
-			$this->session->set_flashdata('highlight-id', $orderID);
-			// LOGBOOK
-			$this->Model_Logbook->LogbookEntry('created a new purchase order.', 'added a new purchase order Series No. ' . $seriesNo . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/orders'));
-			redirect('admin/orders');
 		}
 		else
 		{
 			redirect('admin/orders');
 		}
+	}
+	public function FORM_approvePurchaseOrder()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$orderID = $this->input->post('orderID');
+			$order = $this->Model_Selects->GetOrderTransactions($CheckIFApproved['PurchaseOrderID'])->row_array();
+			if ($order['Status'] != '0') {
+				$orderTransactions = $this->Model_Selects->GetOrderTransactions($orderID)->result_array();
+				foreach ($orderTransactions as $row) {
+					// check if stock is enough
+					$t = $this->Model_Selects->GetTransactionsByTID($row['TransactionID'])->row_array();
+					$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+					if ($t['Amount'] <= $p['InStock']) {
+						// approve transaction
+						$data = array(
+							'TransactionID' => $row['TransactionID'],
+							'Status' => 1,
+							'Date_Approval' => date('Y-m-d-H-i-s'),
+						);
+						$this->Model_Updates->ApproveTransaction($data);
+						// RELEASE
+						$NewStock = $p['InStock'] - $t['Amount'];
+						$NewRelease = $p['Released'] + $t['Amount'];
+						$data = array(
+							'Code' => $t['Code'],
+							'InStock' => $NewStock,
+							'Released' => $NewRelease,
+						);
+						$this->Model_Updates->UpdateStock_product($data);
+					}
+				}
+				// update order status
+				$data = array(
+					'OrderID' => $orderID,
+					'Status' => '2',
+				);
+				$this->Model_Updates->UpdatePurchaseOrder($data);
+
+				$this->session->set_flashdata('highlight-id', $orderID);
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('approved purchase order.', 'approved a purchase order Series No. ' . $order['SeriesNo'] . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/orders'));
+				redirect('admin/orders');
+			}
+			else
+			{
+				redirect('admin/orders');
+			}
+		}
+		else
+		{
+			redirect('admin/orders');
+		}
+	}
+	public function FORM_removePurchaseOrderTransaction()
+	{
+		if ($this->session->userdata('Privilege') < 2) {
+			echo 'ERROR';
+			exit();
+		} else {
+			$TransactionID = $this->input->post('transaction_id');
+
+			$CheckIFApproved = $this->Model_Selects->CheckIFApproved($TransactionID);
+			$code = $CheckIFApproved['Code'];
+			$CheckStocksByCode = $this->Model_Selects->CheckStocksByCode($code);
+
+			if ($CheckIFApproved['Type'] == '1' && $CheckIFApproved['PurchaseOrderID'] != NULL) { // if released
+				if ($CheckIFApproved['Status'] == '1') { // if approved
+					// RESTOCK
+					$NewStock = $CheckStocksByCode['InStock'] + $CheckIFApproved['Amount'];
+					$NewRelease = $CheckStocksByCode['Released'] - $CheckIFApproved['Amount'];
+					$data = array(
+						'Code' => $code,
+						'InStock' => $NewStock,
+						'Released' => $NewRelease,
+					);
+					$this->Model_Updates->UpdateStock_product($data);
+				}
+				
+				$data = array(
+					'TransactionID' => $TransactionID,
+				);
+				$removeOT = $this->Model_Updates->RemoveOrderTransaction($data);
+				if ($removeOT == TRUE) {
+					// if transactions is less than 1, change order status to rejected
+					$orderTransactions = $this->Model_Selects->GetOrderTransactions($CheckIFApproved['PurchaseOrderID']);
+					if ($orderTransactions->num_rows() < 1) {
+						$data = array(
+							'OrderID' => $CheckIFApproved['PurchaseOrderID'],
+							'Status' => '0',
+						);
+						$this->Model_Updates->UpdatePurchaseOrder($data);
+					}
+					$this->session->set_flashdata('highlight-id', $CheckIFApproved['PurchaseOrderID']);
+					// LOGBOOK
+					$orderDetails = $this->Model_Selects->GetPurchaseOrderByID($CheckIFApproved['PurchaseOrderID'])->row_array();
+					$this->Model_Logbook->LogbookEntry('remove transaction from purchase order.', 'removed transaction ' . $TransactionID . ' from purchase order Series No. ' . $orderDetails['SeriesNo'] . ' [PurchaseOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/orders'));
+					echo 'SUCCESS';
+					exit();
+				} else {
+					echo 'ERROR';
+					exit();
+				}
+			} else {
+				echo 'ERROR';
+				exit();
+			}
+		}
+		redirect('admin/orders');
 	}
 }

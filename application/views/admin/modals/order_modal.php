@@ -26,10 +26,27 @@
 						<hr class="mt-2">
 						<div class="col-sm-12 table-responsive">
 							<table id="orderTransactionsTable" class="standard-table table">
+								<thead style="font-size: 12px;">
+									<th class="text-center">ID</th>
+									<th class="text-center">CODE</th>
+									<th class="text-center">TRANSACTION ID</th>
+									<th class="text-center">AMOUNT</th>
+									<th class="text-center">TRANSACTION DATE</th>
+									<th class="text-center">STATUS</th>
+									<th class="text-center"></th>
+								</thead>
+								<tbody>
+								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="feedback-form modal-footer">
+				<form action="<?php echo base_url() . 'FORM_approvePurchaseOrder';?>" method="POST" enctype="multipart/form-data">
+					<input type="hidden" name="orderID" class="m_inp_orderid">
+					<button type="submit" class="approvePurchaseOrder btn btn-success"><i class="bi bi-check2"></i> Approve</button>
+				</form>
 			</div>
 		</div>
 	</div>

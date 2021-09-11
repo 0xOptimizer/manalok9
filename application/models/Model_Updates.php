@@ -54,13 +54,35 @@ class Model_Updates extends CI_Model {
 	}
 
 	// PURCHASE ORDERS
-	public function TransactionToPurchaseOrder($ID, $orderID)
+	public function UpdatePurchaseOrder($data)
 	{
+		extract($data);
+		$this->db->where('ID', $OrderID);
 		$this->db->set(array(
-			'PurchaseOrderID' => $orderID,
-			'Status' => '1',
+			'Status' => $Status,
 		));
-		$this->db->where('ID', $ID);
+		$result = $this->db->update('purchase_orders');
+		return $result;
+	}
+	public function UpdateTransaction($data)
+	{
+		extract($data);
+		$this->db->where('ID', $transactionID);
+		$this->db->set(array(
+			'PurchaseOrderID' => $OrderID,
+		));
+		$result = $this->db->update('products_transactions');
+		return $result;
+	}
+	public function RemoveOrderTransaction($data)
+	{
+		extract($data);
+		$this->db->set(array(
+			'PurchaseOrderID' => NULL,
+			'Status' => '0',
+			'Date_Approval' => NULL,
+		));
+		$this->db->where('TransactionID', $TransactionID);
 		$result = $this->db->update('products_transactions');
 		return $result;
 	}
