@@ -477,13 +477,21 @@ class Admin extends MY_Controller {
 		$code = $this->input->post('product-code');
 		$name = $this->input->post('product-name');
 		$category = $this->input->post('product-category');
+		$pro_weight = $this->input->post('pro_weight');
+		$prc_pitem = $this->input->post('prc_pitem');
+		$cst_pitem = $this->input->post('cst_pitem');
+		
 		$description = $this->input->post('product-description');
+		
 
 		// Insert
 		$data = array(
 			'Code' => $code,
 			'Product_Name' => $name,
 			'Product_Category' => $category,
+			'Product_Weight' => $pro_weight,
+			'Price_PerItem' => $prc_pitem,
+			'Cost_PerItem' => $cst_pitem,
 			'Description' => $description,
 			'DateAdded' => date('Y-m-d h:i:s A'),
 		);
