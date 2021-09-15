@@ -178,9 +178,15 @@ $(document).ready(function() {
 		sDom: 'lrtip',
 		"bLengthChange": false,
     	"order": [[ 3, "desc" ]],
-    });
-    $('#tableSearch').on('keyup change', function(){
+	});
+	$('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
+	});
+	$("textarea").each(function () {
+		this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
+	}).on("input", function () {
+		this.style.height = "auto";
+		this.style.height = (this.scrollHeight) + "px";
 	});
 });
 </script>

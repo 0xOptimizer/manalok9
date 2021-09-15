@@ -111,10 +111,14 @@ if ($this->session->flashdata('highlight-id')) {
 														<?php
 														switch ($row['Status']) {
 															case '0':
-																echo '<span><i class="bi bi-asterisk" style="color:#E4B55B;"></i> For Approval</span>';
+																echo '<span class="text-center info-banner-sm">
+																		<i class="bi bi-asterisk"></i>&nbsp;Pending Approval
+																	</span>';
 																break;
 															case '1':
-																echo '<span><i class="bi bi-file-check" style="color:#55B73E;"></i> Approved</span>';
+																echo '<span class="text-center success-banner-sm">
+																		<i class="bi bi-check-circle-fill"></i>&nbsp;Approved
+																	</span>';
 																break;
 															
 															default:

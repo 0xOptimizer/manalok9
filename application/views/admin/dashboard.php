@@ -63,7 +63,7 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 					</div>
 					<div class="col-sm-12 col-lg-4">
 						<div class="row">
-							<div class="col-md-6 col-lg-6">
+							<div class="col-md-12">
 								<div class="card">
 									<div class="card-body">
 										<div class="row ml-2">
@@ -87,12 +87,12 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 									</div>
 								</div>
 							</div>
-							<div class="col-md-6 col-lg-6">
+							<div class="col-md-12">
 								<div class="card">
 									<div class="card-body">
 										<div class="row ml-2">
 											<span class="head-text">
-												SOLD
+												TOTAL RESTOCKED
 											</span>
 										</div>
 										<div class="row ml-2">
@@ -111,12 +111,12 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 									</div>
 								</div>
 							</div>
-							<div class="col-md-6 col-lg-6">
+							<div class="col-md-12">
 								<div class="card">
 									<div class="card-body">
 										<div class="row ml-2">
 											<span class="head-text">
-												RELEASED
+												TOTAL RELEASED
 											</span>
 										</div>
 										<div class="row ml-2">
@@ -130,30 +130,6 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 										<div class="wercher-card-weekly-tracker-container">
 											<div class="wercher-card-weekly-tracker">
 												<i class="bi bi-caret-up"></i>40 this week
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-6 col-lg-6">
-								<div class="card">
-									<div class="card-body">
-										<div class="row ml-2">
-											<span class="head-text">
-												NEW
-											</span>
-										</div>
-										<div class="row ml-2">
-											<span style="font-size: 2em; color: #ebebeb;">
-												<b>
-													6000
-												</b>
-											</span>
-											<i class="fas fa-user-friends fa-fw card-icon ml-auto mr-2"></i>
-										</div>
-										<div class="wercher-card-weekly-tracker-container">
-											<div class="wercher-card-weekly-tracker">
-												<i class="bi bi-caret-up"></i>750 this week
 											</div>
 										</div>
 									</div>

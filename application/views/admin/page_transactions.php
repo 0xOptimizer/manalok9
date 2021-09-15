@@ -71,7 +71,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="newproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
+						<button type="button" class="generate-prompt-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
+						|
+						<button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-journals"></i> REJECTED TRANSACTIONS</button>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -87,7 +89,7 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="table-responsive">
 					<table id="productsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th class="text-center">ID</th>
+							<th class="text-center"></th>
 							<th class="text-center">CODE</th>
 							<th class="text-center">TRANSACTION ID</th>
 							<th class="text-center">TYPE</th>
@@ -135,11 +137,15 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php
 											switch ($row['Status']) {
 												case '0':
-												echo '<span><i class="bi bi-asterisk" style="color:#E4B55B;"></i> For Approval</span>';
-												break;
+													echo '<span class="text-center info-banner-sm">
+															<i class="bi bi-asterisk"></i>&nbsp;Pending Approval
+														</span>';
+													break;
 												case '1':
-												echo '<span><i class="bi bi-file-check" style="color:#55B73E;"></i> Approved</span>';
-												break;
+													echo '<span class="text-center success-banner-sm">
+															<i class="bi bi-check-circle-fill"></i>&nbsp;Approved
+														</span>';
+													break;
 
 												default:
 												echo "";
@@ -158,6 +164,7 @@ if ($this->session->flashdata('highlight-id')) {
 	</div>
 </div>
 <?php $this->load->view('admin/modals/transaction_modal'); ?>
+<?php $this->load->view('admin/modals/generate_prompt'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -166,6 +173,12 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.flash.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/3.1.3_jszip.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/0.1.53_pdfmake.min.js"></script> <!-- TODO: This script's load time is very slow. -->
+<script type="text/javascript" src="<?=base_url()?>assets/js/0.1.53_vfs_fonts.js"></script> <!-- TODO: Big .js file. -->
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
 
 <script>
 $('.sidebar-admin-transactions').addClass('active');
@@ -173,7 +186,9 @@ $(document).ready(function() {
 	<?php if ($highlightID != 'N/A'): ?>
 		$('#productsTable').find("[data-code='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
 	<?php endif; ?>
-	
+	$('.generate-prompt-btn').on('click', function() {
+		$('#generatePrompt').modal('toggle');
+	});
 	$('.tr_class_modal').on('click', function() {
 		$('#TransactionDetails').modal('toggle');
 
@@ -192,6 +207,7 @@ $(document).ready(function() {
 					$('.m_Type').text('RELEASE : ' + response.Amount);
 				}
 				$('.m_transactiondate').text(response.Date);
+				$('.transaction-product-name').text(response.Code);
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -236,19 +252,84 @@ $(document).ready(function() {
 		});
 	});
 	
-	$('#TransactionDetails').modal({
-	    backdrop: 'static',
-	    keyboard: false
-	});
+	// $('#TransactionDetails').modal({
+	//     backdrop: 'static',
+	//     keyboard: false
+	// });
 	
 	var table = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
 		"bLengthChange": false,
     	"order": [[ 3, "desc" ]],
+    	buttons: [
+            {
+	            extend: 'print',
+	            exportOptions: {
+	                columns: [ 1, 3, 4, 6 ]
+	            },
+	            customize: function ( doc ) {
+	            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/img/logo.png" width="63px" height="56px" />');
+					$(doc.document.body).find('h1').css('font-size', '24px');
+					$(doc.document.body).find('h1').css('text-align', 'center'); 
+				}
+	        },
+	        {
+	            extend: 'copyHtml5',
+	            exportOptions: {
+	                columns: [ 1, 3, 4, 6 ]
+	            }
+	        },
+	        {
+	            extend: 'excelHtml5',
+	            exportOptions: {
+	                columns: [ 1, 2, 3, 4, 5, 6 ]
+	            }
+	        },
+	        {
+	            extend: 'csvHtml5',
+	            exportOptions: {
+	                columns: [ 1, 3, 4, 6 ]
+	            }
+	        },
+	        {
+	            extend: 'pdfHtml5',
+	            exportOptions: {
+	                columns: [ 1, 3, 4, 6 ]
+	            }
+	        }
+        ]
     });
     $('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
 	});
+	$('.exportexcel-btn').on('click', function () {
+        table.button('2').trigger();
+        let email = $('.export-email').val();
+        let text = $('.export-text').val();
+        $.ajax({
+			url: "createExport",
+			type: "POST",
+			dataType: "JSON",
+			data: { exportType: 'excel', email: email, text: text } ,
+			success: function (response) {
+				console.log(response);
+				
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+			}
+		});
+    });
+    $('.generate-report-btn').on('click', function() {
+    	$('.export-prompt-group').show();
+    	$('.export-email-group').hide();
+    	$('.export-footer-group').hide();
+    });
+    $('.send-email-btn').on('click', function() {
+    	$('.export-prompt-group').hide();
+    	$('.export-email-group').show();
+    	$('.export-footer-group').show();
+    });
 });
 </script>
 

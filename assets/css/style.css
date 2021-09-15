@@ -420,3 +420,17 @@ a:hover {
 	cursor: pointer;
 	transition: 0.05s;
 }
+.standard-tooltip-title {
+	color: #ccc;
+	font-size: 14px;
+}
+.standard-tooltip-text {
+	color: #8e8e8e;
+	font-size: 16px;
+}
+.standard-input-pad {
+	padding: .375rem !important;
+}
+.select-first-gray:first-child {
+	color: #6c7277;
+}
