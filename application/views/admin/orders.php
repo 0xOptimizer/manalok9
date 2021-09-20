@@ -45,7 +45,7 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-12 col-md-6">
 						<h3>Purchase Orders
 							<span class="text-center success-banner-sm">
-								<i class="bi bi-bag-fill"></i> <?=$getAllPurchaseOrders->num_rows();?> TOTAL
+								<i class="bi bi-receipt"></i> <?=$getAllPurchaseOrders->num_rows();?> TOTAL
 							</span>
 							<?php if ($getAllPurchaseOrders->num_rows() <= 0): ?>
 								<span class="info-banner-sm">

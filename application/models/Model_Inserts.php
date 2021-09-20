@@ -8,6 +8,16 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('users', $data);
 		return $result;
 	}
+	public function InsertNewVendor($data)
+	{
+		$result = $this->db->insert('vendors', $data);
+		return $result;
+	}
+	public function InsertNewClient($data)
+	{
+		$result = $this->db->insert('clients', $data);
+		return $result;
+	}
 	public function InsertLoginHistory($data)
 	{
 		$result = $this->db->insert('users_login_history', $data);

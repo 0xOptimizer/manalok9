@@ -86,4 +86,19 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('products_transactions');
 		return $result;
 	}
+
+	// VENDORS
+	public function UpdateVendor($data, $vendorID)
+	{
+		$this->db->where('ID', $vendorID);
+		$result = $this->db->update('vendors', $data);
+		return $result;
+	}
+	// CLIENTS
+	public function UpdateClient($data, $clientID)
+	{
+		$this->db->where('ID', $clientID);
+		$result = $this->db->update('clients', $data);
+		return $result;
+	}
 }

@@ -26,6 +26,18 @@
 						<span>Users</span>
 					</a>
 				</li>
+				<li class="sidebar-item sidebar-admin-vendors">
+					<a href="<?=base_url().'admin/vendors'?>" class='sidebar-link'>
+						<i class="bi bi-shop-window"></i>
+						<span>Vendors</span>
+					</a>
+				</li>
+				<li class="sidebar-item sidebar-admin-clients">
+					<a href="<?=base_url().'admin/clients'?>" class='sidebar-link'>
+						<i class="bi bi-people-fill"></i>
+						<span>Clients</span>
+					</a>
+				</li>
 				<li class="sidebar-item sidebar-admin-products">
 					<a href="<?=base_url().'admin/products'?>" class='sidebar-link'>
 						<i class="bi bi-bag-fill"></i>

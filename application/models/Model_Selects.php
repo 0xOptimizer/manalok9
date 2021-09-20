@@ -204,4 +204,35 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
+
+	// VENDORS
+	public function GetVendors()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('vendors');
+		return $result;
+	}
+	public function GetVendorByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('vendors');
+		return $result;
+	}
+	// CLIENTS
+	public function GetClients()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('clients');
+		return $result;
+	}
+	public function GetClientByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('clients');
+		return $result;
+	}
 }

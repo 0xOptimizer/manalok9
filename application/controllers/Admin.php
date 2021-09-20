@@ -97,6 +97,22 @@ class Admin extends MY_Controller {
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$this->load->view('admin/users', $data);
 	}
+	public function vendors()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Vendors';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/vendors', $data);
+	}
+	public function clients()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Clients';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/clients', $data);
+	}
 	public function products()
 	{
 		$data = [];
@@ -469,6 +485,134 @@ class Admin extends MY_Controller {
 		{
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('login');
+		}
+	}
+	public function FORM_addNewVendor()
+	{	
+		// Fetch data
+		$name = $this->input->post('add-name');
+		$tin = $this->input->post('add-tin');
+		$address = $this->input->post('add-address');
+		$contactNum = $this->input->post('add-contact-num');
+		$kind = $this->input->post('add-kind');
+		
+		// Insert
+		$data = array(
+			'Name' => $name,
+			'TIN' => $tin,
+			'Address' => $address,
+			'ContactNum' => $contactNum,
+			'ProductServiceKind' => $kind,
+		);
+		$insertNewVendor = $this->Model_Inserts->InsertNewVendor($data);
+		if ($insertNewVendor == TRUE) {
+			$vendorID = $this->db->insert_id();
+			$this->session->set_flashdata('highlight-id', $vendorID);
+			// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('created a new vendor.', 'added a new vendor' . ($name ? ' ' . $name : '') . ' [ID: ' . $vendorID . '].', base_url('admin/vendors'));
+			redirect('admin/vendors');
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/vendors');
+		}
+	}
+	public function FORM_updateVendor()
+	{	
+		// Fetch data
+		$vendorID = $this->input->post('upd-vendor-id');
+		$name = $this->input->post('upd-name');
+		$tin = $this->input->post('upd-tin');
+		$address = $this->input->post('upd-address');
+		$contactNum = $this->input->post('upd-contact-num');
+		$kind = $this->input->post('upd-kind');
+
+		// Insert
+		$data = array(
+			'Name' => $name,
+			'TIN' => $tin,
+			'Address' => $address,
+			'ContactNum' => $contactNum,
+			'ProductServiceKind' => $kind,
+		);
+		$updateVendor = $this->Model_Updates->UpdateVendor($data, $vendorID);
+		if ($updateVendor == TRUE) {
+			$this->Model_Logbook->LogbookEntry('updated vendor details.', 'updated details of vendor' . ($name ? ' ' . $name : '') . ' [vendorID: ' . $vendorID . '].', base_url('admin/vendors'));
+			$this->session->set_flashdata('highlight-id', $vendorID);
+			redirect('admin/vendors');
+		}
+		else
+		{
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/vendors');
+		}
+	}
+	public function FORM_addNewClient()
+	{	
+		// Fetch data
+		$name = $this->input->post('add-name');
+		$tin = $this->input->post('add-tin');
+		$address = $this->input->post('add-address');
+		$contactNum = $this->input->post('add-contact-num');
+		$category = $this->input->post('add-category');
+		$territoryManager = $this->input->post('add-territory-manager');
+
+		// Insert
+		$data = array(
+			'Name' => $name,
+			'TIN' => $tin,
+			'Address' => $address,
+			'ContactNum' => $contactNum,
+			'Category' => $category,
+			'TerritoryManager' => $territoryManager,
+		);
+		$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
+		if ($insertNewClient == TRUE) {
+			$clientID = $this->db->insert_id();
+			$this->session->set_flashdata('highlight-id', $clientID);
+			// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('created a new client.', 'added a new client' . ($name ? ' ' . $name : '') . ' [ID: ' . $clientID . '].', base_url('admin/clients'));
+			redirect('admin/clients');
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/clients');
+		}
+	}
+	public function FORM_updateClient()
+	{	
+		// Fetch data
+		$clientID = $this->input->post('upd-client-id');
+		$name = $this->input->post('upd-name');
+		$tin = $this->input->post('upd-tin');
+		$address = $this->input->post('upd-address');
+		$contactNum = $this->input->post('upd-contact-num');
+		$category = $this->input->post('upd-category');
+		$territoryManager = $this->input->post('upd-territory-manager');
+
+		// Insert
+		$data = array(
+			'Name' => $name,
+			'TIN' => $tin,
+			'Address' => $address,
+			'ContactNum' => $contactNum,
+			'Category' => $category,
+			'TerritoryManager' => $territoryManager,
+		);
+		$updateClient = $this->Model_Updates->UpdateClient($data, $clientID);
+		if ($updateClient == TRUE) {
+			$this->Model_Logbook->LogbookEntry('updated client details.', 'updated details of client' . ($name ? ' ' . $name : '') . ' [clientID: ' . $clientID . '].', base_url('admin/clients'));
+			$this->session->set_flashdata('highlight-id', $clientID);
+			redirect('admin/clients');
+		}
+		else
+		{
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/clients');
 		}
 	}
 	public function FORM_addNewProduct()
@@ -844,5 +988,18 @@ class Admin extends MY_Controller {
 			}
 		}
 		redirect('admin/orders');
+	}
+
+	public function getVendorDetails()
+	{
+		$vendorID = $this->input->get('vendor_id');
+		$getVendorByID = $this->Model_Selects->GetVendorByID($vendorID)->row_array();
+		print json_encode($getVendorByID);
+	}
+	public function getClientDetails()
+	{
+		$clientID = $this->input->get('client_id');
+		$getClientByID = $this->Model_Selects->GetClientByID($clientID)->row_array();
+		print json_encode($getClientByID);
 	}
 }
