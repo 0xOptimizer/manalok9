@@ -62,8 +62,13 @@ $route['admin/viewproduct'] = 'Admin/view_product';
 $route['admin/inventory'] = 'Admin/inventory';
 $route['admin/security'] = 'Admin/security';
 $route['admin/view_transactions'] = 'Admin/view_transactions';
-$route['admin/orders'] = 'Admin/orders';
-$route['admin/viewsummary'] = 'Admin/view_order_summary';
+
+$route['admin/purchase_orders'] = 'Admin/purchase_orders';
+$route['admin/view_purchase_order'] = 'Admin/view_purchase_order';
+$route['admin/view_purchase_summary'] = 'Admin/view_purchase_orders_summary';
+$route['admin/sales_orders'] = 'Admin/sales_orders';
+$route['admin/view_sales_order'] = 'Admin/view_sales_order';
+$route['admin/view_sales_summary'] = 'Admin/view_sales_orders_summary';
 
 // Users
 $route['user'] = 'Users';
@@ -82,14 +87,19 @@ $route['FORM_addNewUser'] = 'Admin/FORM_addNewUser';
 $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
 $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
 $route['FORM_selfAddNewUser'] = 'Admin/FORM_selfAddNewUser';
+
 $route['FORM_addNewVendor'] = 'Admin/FORM_addNewVendor';
 $route['FORM_updateVendor'] = 'Admin/FORM_updateVendor';
 $route['FORM_addNewClient'] = 'Admin/FORM_addNewClient';
 $route['FORM_updateClient'] = 'Admin/FORM_updateClient';
+
 $route['FORM_addPurchaseOrder'] = 'Admin/FORM_addPurchaseOrder';
 $route['FORM_approvePurchaseOrder'] = 'Admin/FORM_approvePurchaseOrder';
+$route['FORM_addSalesOrder'] = 'Admin/FORM_addSalesOrder';
+$route['FORM_approveSalesOrder'] = 'Admin/FORM_approveSalesOrder';
+$route['FORM_removePurchaseOrderTransaction'] = 'Admin/FORM_removePurchaseOrderTransaction';
+$route['FORM_removeSalesOrderTransaction'] = 'Admin/FORM_removeSalesOrderTransaction';
 
-$route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
 $route['AJAX_sendRegistrationEmail'] = 'AJAX/sendRegistrationEmail';
 
@@ -100,11 +110,12 @@ $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
 // AJAX REQUEST
 $route['getTransactionDetails'] = 'Admin/getTransactionDetails';
 $route['FORM_approveTransaction'] = 'Admin/FORM_approveTransaction';
-$route['getPurchaseDetails'] = 'Admin/getPurchaseDetails';
-$route['FORM_removePurchaseOrderTransaction'] = 'Admin/FORM_removePurchaseOrderTransaction';
 $route['getVendorDetails'] = 'Admin/getVendorDetails';
 $route['getClientDetails'] = 'Admin/getClientDetails';
 
+$route['admin/getUserLogs'] = 'AJAX/getUserLogs';
+$route['admin/searchClientName'] = 'AJAX/searchClientName';
+$route['admin/searchClientDetails'] = 'AJAX/searchClientDetails';
 
 // Database backup
 $route['database_backup'] = 'Admin/database_backup';

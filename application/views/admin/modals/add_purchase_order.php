@@ -1,9 +1,9 @@
-<div class="modal fade" id="AddOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="AddSalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-xl" role="document">
-		<form action="<?php echo base_url() . 'FORM_addPurchaseOrder';?>" method="POST" enctype="multipart/form-data">
+		<form action="<?php echo base_url() . 'FORM_addSalesOrder';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> New Purchase Order</h4>
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> New Sales Order</h4>
 				</div>
 				<div class="modal-body">
 					<div class="row">
@@ -14,8 +14,8 @@
 									<div class="row">
 										<input type="hidden" name="transactionsCount" id="TransactionsCount">
 										<div class="form-group col-sm-12 col-md-6">
-											<label class="input-label">SERIES NO.</label>
-											<input type="text" class="form-control" value="POSAMPLE-<?=str_pad($this->Model_Selects->MaxOrderID() + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+											<label class="input-label">SALES ORDER #</label>
+											<input type="text" class="form-control" value="SOSAMPLE-<?=str_pad($this->db->count_all('sales_orders') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
 										</div>
 										<div class="form-group col-sm-12 col-md-6">
 											<label class="input-label">DATE OF CREATION</label>
@@ -29,21 +29,28 @@
 											<label class="input-label">SHIP ADDRESS</label>
 											<input type="text" class="form-control" name="shipAddress" autocomplete="off" required>
 										</div>
+				<!-- <div class="form-group col-sm-12">
+					<div class="w-100">
+					<input id="inp_name_last" type="text" class="form-control no_account_last_name required" name="inp_name_last" placeholder="*Last Name" autocomplete="off" data-toggle="dropdown">
+					<div class="dropdown-menu dropdown-menu-left no_account_dropdown"></div>
+					</div>
+				</div> -->
 										<div class="col-sm-12 table-responsive">
 											<label class="input-label">TRANSACTIONS</label>
-											<table class="table" id="orderTransactions">
+											<table class="table" id="salesOrderTransactions">
 												<thead>
 													<tr>
 														<th class="text-center">ID</th>
 														<th class="text-center">CODE</th>
 														<th class="text-center">RELEASED</th>
+														<th class="text-center">PRICE</th>
 														<th class="text-center">TRANSACTION DATE</th>
 														<th class="text-center"></th>
 													</tr>
 												</thead>
 												<tbody>
 													<tr class="noTransaction">
-														<td class="text-center" colspan="4">
+														<td class="text-center" colspan="6">
 															<label class="input-label">
 																[ EMPTY ]
 															</label>
@@ -53,6 +60,7 @@
 														<td class="font-weight-bold" style="color: #a7852d;">TOTAL</td>
 														<td></td>
 														<td class="released text-center">0</td>
+														<td class="priceTotal text-center">0</td>
 														<td></td>
 														<td></td>
 													</tr>
@@ -83,6 +91,7 @@
 											<th class="text-center">CODE</th>
 											<th class="text-center">TRANSACTION ID</th>
 											<th class="text-center">RELEASED</th>
+											<th class="text-center">TOTAL PRICE</th>
 											<th class="text-center">DATE</th>
 											<th class="text-center">USER</th>
 										</thead>
@@ -103,6 +112,9 @@
 														<td class="text-center tReleased">
 															<?=$row['Amount']?>
 														</td>
+														<td class="text-center tPriceTotal">
+															<?=number_format($row['PriceTotal'], 2)?>
+														</td>
 														<td class="text-center tDate">
 															<?=$row['Date']?>
 														</td>
@@ -120,7 +132,7 @@
 					</div>
 				</div>
 				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Purchase Order</button>
+					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Sales Order</button>
 				</div>
 			</div>
 		</form>

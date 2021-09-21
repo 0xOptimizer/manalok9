@@ -153,26 +153,62 @@ class Admin extends MY_Controller {
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$this->load->view('admin/page_transactions', $data);
 	}
-	public function orders()
+	public function purchase_orders()
 	{
 		if ($this->session->userdata('Privilege') > 1) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
 			$header['pageTitle'] = 'Purchase Orders';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-			$this->load->view('admin/orders', $data);
+			$this->load->view('admin/purchase_orders', $data);
 		} else {
 			redirect(base_url());
 		}
 	}
-	public function view_order_summary()
+	public function view_purchase_orders_summary()
 	{
 		if ($this->session->userdata('Privilege') > 1) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
-			$header['pageTitle'] = 'Order Summary';
+			$header['pageTitle'] = 'Purchase Orders Summary';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-			$this->load->view('admin/order_summary', $data);
+			$this->load->view('admin/purchase_orders_summary', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function sales_orders()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Sales Orders';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/sales_orders', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function view_sales_order()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Sales Orders';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/view_sales_order', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function view_sales_orders_summary()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Sales Orders Summary';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/sales_orders_summary', $data);
 		} else {
 			redirect(base_url());
 		}
@@ -552,18 +588,24 @@ class Admin extends MY_Controller {
 	public function FORM_addNewClient()
 	{	
 		// Fetch data
+		$clientNo = 'C-' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
 		$name = $this->input->post('add-name');
 		$tin = $this->input->post('add-tin');
 		$address = $this->input->post('add-address');
+		$cityStateProvinceZip = $this->input->post('add-city-state-province-zip');
+		$country = $this->input->post('add-country');
 		$contactNum = $this->input->post('add-contact-num');
 		$category = $this->input->post('add-category');
 		$territoryManager = $this->input->post('add-territory-manager');
 
 		// Insert
 		$data = array(
+			'ClientNo' => $clientNo,
 			'Name' => $name,
 			'TIN' => $tin,
 			'Address' => $address,
+			'CityStateProvinceZip' => $cityStateProvinceZip,
+			'Country' => $country,
 			'ContactNum' => $contactNum,
 			'Category' => $category,
 			'TerritoryManager' => $territoryManager,
@@ -590,6 +632,8 @@ class Admin extends MY_Controller {
 		$name = $this->input->post('upd-name');
 		$tin = $this->input->post('upd-tin');
 		$address = $this->input->post('upd-address');
+		$cityStateProvinceZip = $this->input->post('upd-city-state-province-zip');
+		$country = $this->input->post('upd-country');
 		$contactNum = $this->input->post('upd-contact-num');
 		$category = $this->input->post('upd-category');
 		$territoryManager = $this->input->post('upd-territory-manager');
@@ -599,6 +643,8 @@ class Admin extends MY_Controller {
 			'Name' => $name,
 			'TIN' => $tin,
 			'Address' => $address,
+			'CityStateProvinceZip' => $cityStateProvinceZip,
+			'Country' => $country,
 			'ContactNum' => $contactNum,
 			'Category' => $category,
 			'TerritoryManager' => $territoryManager,
@@ -687,13 +733,15 @@ class Admin extends MY_Controller {
 			// 		$inStock = $row['InStock'];
 			// 	}
 			// }
-			// if ($type == 0) {
-			// 	// ~~ restocked
+			if ($type == 0) {
+				// ~~ restocked
+				$priceTotal = 0;
 			// 	$inStock += $amount;
-			// } else {
-			// 	// ~~ released
+			} else {
+				// ~~ released
+				$priceTotal = $get_prdsCol['PriceSelling'] * $amount;
 			// 	$inStock -= $amount;
-			// }
+			}
 
 			// ~ creating transaction id
 			$transactionID = '';
@@ -711,6 +759,8 @@ class Admin extends MY_Controller {
 				'DateAdded' => date('Y-m-d h:i:s A'),
 				'Status' => 0,
 				'UserID' => $this->session->userdata('UserID'),
+
+				'PriceTotal' => $priceTotal,
 			);
 			$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 			if ($insertNewTransaction == TRUE) {
@@ -805,7 +855,7 @@ class Admin extends MY_Controller {
 			}
 		}
 	}
-	public function getOrderDetails()
+	public function getOrderDetails() // UPDATE
 	{
 		$orderID = $this->input->get('order_id');
 		$getTransactionsByPurchaseOrderID = $this->Model_Selects->GetOrderTransactions($orderID);
@@ -837,116 +887,165 @@ class Admin extends MY_Controller {
 		force_download($db_name, $backup);
 	}
 
-	// Purchase Orders
-	public function FORM_addPurchaseOrder()
+	// Sales Orders
+	public function FORM_addSalesOrder()
 	{	
 		if ($this->session->userdata('Privilege') > 1) {
-			$seriesNo = "POSAMPLE-" . str_pad($this->Model_Selects->MaxOrderID() + 1, 6, '0', STR_PAD_LEFT);
-			$clientName = $this->input->post('clientName');
-			$shipAddress = $this->input->post('shipAddress');
-			$transactionsCount = $this->input->post('transactionsCount');
+			$orderNo = 'SO-' . str_pad($this->db->count_all('sales_orders') + 1, 6, '0', STR_PAD_LEFT);
+			$date = $this->input->post('date');
+			$billToNo = $this->input->post('billToNo');
+			$shipToNo = $this->input->post('shipToNo');
+			$productCount = $this->input->post('productCount');
 
 			// INSERT PURCHASE ORDER
 			$data = array(
-				'SeriesNo' => $seriesNo,
+				'OrderNo' => $orderNo,
+				'Date' => $date,
 				'DateCreation' => date('Y-m-d h:i:s A'),
-				'ClientName' => $clientName,
-				'ShipAddress' => $shipAddress,
+				'BillToClientNo' => $billToNo,
+				'ShipToClientNo' => $shipToNo,
 				'Status' => '1',
 			);
-			$insertNewPurchaseOrder = $this->Model_Inserts->InsertPurchaseOrder($data);
-			if ($insertNewPurchaseOrder == TRUE) {
+			$insertNewSalesOrder = $this->Model_Inserts->InsertSalesOrder($data);
+			if ($insertNewSalesOrder == TRUE) {
 				$orderID = $this->db->insert_id();
-				// update included transactions
-				for ($i = 0; $i < $transactionsCount; $i++) {
-					$tID = $this->input->post('tInput' . $i);
+				// create new release transactions
+				for ($i = 0; $i < $productCount; $i++) {
+					$code = trim($this->input->post('productCodeInput_' . $i));
+					$unitPrice = trim($this->input->post('productPriceInput_' . $i));
+					$qty = trim($this->input->post('productQtyInput_' . $i));
+					$getProductByCode = $this->Model_Selects->GetProductByCode($code)->row_array();
+
 					$data = array(
-						'transactionID' => $tID,
-						'OrderID' => $orderID,
+						'Code' => $code,
+						'TransactionID' => strtoupper($code) . '-' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
+						'OrderNo' => $orderNo,
+						'Type' => '1',
+						'Amount' => $qty,
+						'PriceUnit' => $unitPrice,
+						'Date' => $date,
+						'DateAdded' => date('Y-m-d h:i:s A'),
+						'Status' => 0,
+						'UserID' => $this->session->userdata('UserID'),
 					);
-					$this->Model_Updates->UpdateTransaction($data);
+					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 				}
 				$this->session->set_flashdata('highlight-id', $orderID);
 				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('created a new purchase order.', 'added a new purchase order Series No. ' . $seriesNo . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/orders'));
-				redirect('admin/orders');
+				$this->Model_Logbook->LogbookEntry('created a new sales order.', 'added sales order ' . $orderNo . ' [SalesOrderID: ' . $orderID . '].', base_url('admin/sales_orders'));
+				redirect('admin/sales_orders');
 			}
 			else
 			{
-				redirect('admin/orders');
+				redirect('admin/sales_orders');
 			}
 		}
 		else
 		{
-			redirect('admin/orders');
+			redirect('admin/sales_orders');
 		}
 	}
-	public function FORM_approvePurchaseOrder()
+	public function FORM_approveSalesOrder()
 	{
+		$orderNo = $this->input->post('order_no');
 		if ($this->session->userdata('Privilege') > 1) {
-			$orderID = $this->input->post('orderID');
-			$order = $this->Model_Selects->GetOrderTransactions($CheckIFApproved['PurchaseOrderID'])->row_array();
-			if ($order['Status'] != '0') {
-				$orderTransactions = $this->Model_Selects->GetOrderTransactions($orderID)->result_array();
-				foreach ($orderTransactions as $row) {
-					// check if stock is enough
-					$t = $this->Model_Selects->GetTransactionsByTID($row['TransactionID'])->row_array();
-					$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
-					if ($t['Amount'] <= $p['InStock']) {
-						// approve transaction
-						$data = array(
-							'TransactionID' => $row['TransactionID'],
-							'Status' => 1,
-							'Date_Approval' => date('Y-m-d-H-i-s'),
-						);
-						$this->Model_Updates->ApproveTransaction($data);
-						// RELEASE
-						$NewStock = $p['InStock'] - $t['Amount'];
-						$NewRelease = $p['Released'] + $t['Amount'];
-						$data = array(
+			$orderDetails = $this->Model_Selects->GetSalesOrderByNo($orderNo)->row_array();
+			$approved = $this->input->post('approved');
+
+			if ($approved == '1' && $orderDetails['Status'] == '1') { // if approved and pending
+				$transactions = array();
+
+				$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
+				foreach ($orderTransactions as $key => $t) {
+					if ($t['Status'] == 0) { // if not approved
+						// check if stock is enough
+						$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+						// IF NOT ENOUGH STOCK FOR APPROVAL, REDIRECT
+						if ($t['Amount'] <= $p['InStock']) {
+							// approve transaction
+							$dataTransaction = array(
+								'TransactionID' => $t['TransactionID'],
+								'Status' => '1',
+								'Date_Approval' => date('Y-m-d-H-i-s'),
+							);
+							// RELEASE
+							$NewStock = $p['InStock'] - $t['Amount'];
+							$NewRelease = $p['Released'] + $t['Amount'];
+							$dataProduct = array(
+								'Code' => $t['Code'],
+								'InStock' => $NewStock,
+								'Released' => $NewRelease,
+							);
+							$transactions[] = array(
+								'dataTransaction' => $dataTransaction,
+								'dataProduct' => $dataProduct,
+							);
+						} else {
+							echo 'approval aborted, not enough stock for ' . $t['TransactionID'];
+							exit();
+						}
+					}
+				}
+				foreach ($transactions as $row) { // update transactions/products with enough stock
+					$this->Model_Updates->ApproveTransaction($row['dataTransaction']);
+					$this->Model_Updates->UpdateStock_product($row['dataProduct']);
+				}
+				// update order status
+				$data = array(
+					'OrderNo' => $orderNo,
+					'Status' => '2',
+				);
+				$this->Model_Updates->UpdateSalesOrder($data);
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('approved sales order.', 'approved sales order ' . $orderDetails['OrderNo'] . ' [SalesOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
+			} elseif ($approved == '0' && $orderDetails['Status'] == '1') { // if rejected and pending
+				$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
+				foreach ($orderTransactions as $key => $t) {
+					if ($t['Status'] == 1) { // if approved, revert stocks
+						$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+						// RESTOCK
+						$NewStock = $p['InStock'] + $t['Amount'];
+						$NewRelease = $p['Released'] - $t['Amount'];
+						$dataProduct = array(
 							'Code' => $t['Code'],
 							'InStock' => $NewStock,
 							'Released' => $NewRelease,
 						);
-						$this->Model_Updates->UpdateStock_product($data);
+						$this->Model_Updates->UpdateStock_product($dataProduct);
 					}
+					$dataTransaction = array(
+						'TransactionID' => $t['TransactionID'],
+					);
+					$this->Model_Updates->RemoveOrderTransaction($dataTransaction);
 				}
 				// update order status
 				$data = array(
-					'OrderID' => $orderID,
-					'Status' => '2',
+					'OrderNo' => $orderNo,
+					'Status' => '0',
 				);
-				$this->Model_Updates->UpdatePurchaseOrder($data);
+				$this->Model_Updates->UpdateSalesOrder($data);
 
-				$this->session->set_flashdata('highlight-id', $orderID);
 				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('approved purchase order.', 'approved a purchase order Series No. ' . $order['SeriesNo'] . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/orders'));
-				redirect('admin/orders');
-			}
-			else
-			{
-				redirect('admin/orders');
+				$this->Model_Logbook->LogbookEntry('rejected sales order.', 'rejected sales order ' . $orderDetails['OrderNo'] . ' [SalesOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
 			}
 		}
-		else
-		{
-			redirect('admin/orders');
-		}
+		redirect('admin/view_sales_order?orderNo=' . $orderNo);
 	}
-	public function FORM_removePurchaseOrderTransaction()
+	public function FORM_removeSalesOrderTransaction()
 	{
-		if ($this->session->userdata('Privilege') < 2) {
-			echo 'ERROR';
-			exit();
-		} else {
+		$orderNo = $this->input->post('order_no');
+		if ($this->session->userdata('Privilege') > 1) {
 			$TransactionID = $this->input->post('transaction_id');
 
 			$CheckIFApproved = $this->Model_Selects->CheckIFApproved($TransactionID);
 			$code = $CheckIFApproved['Code'];
 			$CheckStocksByCode = $this->Model_Selects->CheckStocksByCode($code);
 
-			if ($CheckIFApproved['Type'] == '1' && $CheckIFApproved['PurchaseOrderID'] != NULL) { // if released
-				if ($CheckIFApproved['Status'] == '1') { // if approved
+			$orderDetails = $this->Model_Selects->GetSalesOrderByNo($orderNo)->row_array();
+
+			if ($CheckIFApproved['Type'] == '1' && $CheckIFApproved['OrderNo'] != NULL && $orderDetails['Status'] == '1') { // if released, if status pending
+				if ($CheckIFApproved['Status'] == '1') { // if approved, revert changes
 					// RESTOCK
 					$NewStock = $CheckStocksByCode['InStock'] + $CheckIFApproved['Amount'];
 					$NewRelease = $CheckStocksByCode['Released'] - $CheckIFApproved['Amount'];
@@ -964,32 +1063,24 @@ class Admin extends MY_Controller {
 				$removeOT = $this->Model_Updates->RemoveOrderTransaction($data);
 				if ($removeOT == TRUE) {
 					// if transactions is less than 1, change order status to rejected
-					$orderTransactions = $this->Model_Selects->GetOrderTransactions($CheckIFApproved['PurchaseOrderID']);
+					$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($CheckIFApproved['OrderNo']);
 					if ($orderTransactions->num_rows() < 1) {
 						$data = array(
-							'OrderID' => $CheckIFApproved['PurchaseOrderID'],
+							'OrderNo' => $CheckIFApproved['OrderNo'],
 							'Status' => '0',
 						);
-						$this->Model_Updates->UpdatePurchaseOrder($data);
+						$this->Model_Updates->UpdateSalesOrder($data);
 					}
-					$this->session->set_flashdata('highlight-id', $CheckIFApproved['PurchaseOrderID']);
 					// LOGBOOK
-					$orderDetails = $this->Model_Selects->GetPurchaseOrderByID($CheckIFApproved['PurchaseOrderID'])->row_array();
-					$this->Model_Logbook->LogbookEntry('remove transaction from purchase order.', 'removed transaction ' . $TransactionID . ' from purchase order Series No. ' . $orderDetails['SeriesNo'] . ' [PurchaseOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/orders'));
-					echo 'SUCCESS';
-					exit();
-				} else {
-					echo 'ERROR';
-					exit();
+					$orderDetails = $this->Model_Selects->GetSalesOrderByNo($CheckIFApproved['OrderNo'])->row_array();
+					$this->Model_Logbook->LogbookEntry('remove transaction from sales order.', 'removed transaction ' . $TransactionID . ' from sales order ' . $orderDetails['OrderNo'] . ' [SalesOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
 				}
-			} else {
-				echo 'ERROR';
-				exit();
 			}
 		}
-		redirect('admin/orders');
+		redirect('admin/view_sales_order?orderNo=' . $orderNo);
 	}
 
+	// VENDOR / CLIENT
 	public function getVendorDetails()
 	{
 		$vendorID = $this->input->get('vendor_id');

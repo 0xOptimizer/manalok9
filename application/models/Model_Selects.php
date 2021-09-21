@@ -53,7 +53,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('UserID', $userID);
-		$this->db->order_by('ID', 'desc');
+		$this->db->order_by('DateAdded', 'desc');
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
@@ -138,73 +138,6 @@ class Model_Selects extends CI_Model {
 		return $result;
 	}
 
-	// PURCHASE ORDERS
-	public function GetAllOrders()
-	{
-		$this->db->select('*');
-		$this->db->order_by('ID', 'desc');
-		$result = $this->db->get('purchase_orders');  
-		return $result;
-	}
-	public function GetOrders($status)
-	{
-		$this->db->select('*');
-		$this->db->order_by('ID', 'desc');
-		$this->db->where('Status', $status);
-		$result = $this->db->get('purchase_orders');
-		return $result;
-	}
-	public function GetPurchaseOrderByID($id)
-	{
-		$this->db->select('*');
-		$this->db->where('ID', $id);
-		$result = $this->db->get('purchase_orders');  
-		return $result;
-	}
-	public function MaxOrderID()
-	{
-		$this->db->select_max('ID');
-		$result = $this->db->get('purchase_orders');
-		return $result->row_array()['ID'];
-	}
-	public function GetOrderTransactions($orderID)
-	{
-		$this->db->select('*');
-		$this->db->where('PurchaseOrderID', $orderID);
-		$result = $this->db->get('products_transactions');
-		return $result;
-	}
-	public function GetAllOrderedTransactions()
-	{
-		$this->db->select('*');
-		$this->db->where('PurchaseOrderID !=', NULL);
-		$this->db->order_by('Code', 'asc');
-		$result = $this->db->get('products_transactions');
-		return $result;
-	}
-	public function GetOrderedTransactions($status)
-	{
-		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '1' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.ID = ot.PurchaseOrderID AND Status = $status)";
-		$result = $this->db->query($sql);
-		return $result;
-	}
-	public function GetTransactionsReleasedUnordered()
-	{
-		$this->db->select('*');
-		$this->db->where('PurchaseOrderID', NULL);
-		$this->db->where('Type', '1');
-		$this->db->where('Status', '0');
-		$result = $this->db->get('products_transactions');
-		return $result;
-	}
-	public function GetTransactionsByTID($id)
-	{
-		$this->db->select('*');
-		$this->db->where('TransactionID', $id);
-		$result = $this->db->get('products_transactions');  
-		return $result;
-	}
-
 	// VENDORS
 	public function GetVendors()
 	{
@@ -233,6 +166,103 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('ID', $id);
 		$result = $this->db->get('clients');
+		return $result;
+	}
+	public function GetClientByNo($no)
+	{
+		$this->db->select('*');
+		$this->db->where('ClientNo', $no);
+		$result = $this->db->get('clients');
+		return $result;
+	}
+
+	// SALES
+	public function GetAllSalesOrders()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('sales_orders');  
+		return $result;
+	}
+	public function GetSalesOrders($status)
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('Status', $status);
+		$result = $this->db->get('sales_orders');
+		return $result;
+	}
+	public function GetSalesOrderByNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('sales_orders');  
+		return $result;
+	}
+
+	public function GetAllReleases()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', '1');
+		$this->db->order_by('DateAdded', 'desc');
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function GetTransactionsByTID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('TransactionID', $id);
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function GetTransactionsByOrderNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetTransactionsReleasedUnordered()
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', NULL);
+		$this->db->where('Type', '1');
+		$this->db->where('Status', '0');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetAllSalesOrderedTransactions()
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo !=', NULL);
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetSalesOrderedTransactions($status)
+	{
+		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '1' AND EXISTS(SELECT * FROM sales_orders AS so WHERE so.OrderNo = ot.OrderNo AND Status = $status)";
+		$result = $this->db->query($sql);
+		return $result;
+	}
+
+	public function GetStockedProducts()
+	{
+		$this->db->select('*');
+		$this->db->where('InStock >', '0');
+		$this->db->order_by('ID', 'asc');
+		$result = $this->db->get('products'); 
+		return $result;
+	}
+
+	// NAME SEARCH
+	public function FindClientName($name)
+	{
+		$this->db->select('*');
+		$this->db->like('Name', $name);
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('clients');  
 		return $result;
 	}
 }

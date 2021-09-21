@@ -57,9 +57,9 @@ if ($this->session->flashdata('highlight-id')) {
 					<table id="clientsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th>ID</th>
+							<th>CLIENT #</th>
 							<th>NAME</th>
 							<th>TIN</th>
-							<th>ADDRESS</th>
 							<th>CONTACT #</th>
 							<th>CATEGORY</th>
 							<th>TERRITORY MANAGER</th>
@@ -74,19 +74,25 @@ if ($this->session->flashdata('highlight-id')) {
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
 										<td>
+											<?=$row['ClientNo']?>
+										</td>
+										<td>
 											<?=$row['Name']?>
 										</td>
 										<td>
 											<?=$row['TIN']?>
 										</td>
 										<td>
-											<?=$row['Address']?>
-										</td>
-										<td>
 											<?=$row['ContactNum']?>
 										</td>
 										<td>
-											<?=$row['Category']?>
+											<?php switch ($row['Category']) {
+												case '0': echo 'Confirmed Distributor'; break;
+												case '1': echo 'Distributor On Probation'; break;
+												case '2': echo 'Direct Dealer'; break;
+												case '3': echo 'Direct End User'; break;
+												default: echo 'NONE'; break;
+											} ?>
 										</td>
 										<td>
 											<?=$row['TerritoryManager']?>
@@ -146,11 +152,22 @@ $(document).ready(function() {
 			data: { client_id : client_id } ,
 			success: function (response) {
 				$('.m_clientid').text(response.ID).val(response.ID);
+				$('.m_clientno').text(response.ClientNo).val(response.ClientNo);
 				$('.m_name').text(response.Name).val(response.Name);
 				$('.m_tin').text(response.TIN).val(response.TIN);
 				$('.m_address').text(response.Address).val(response.Address);
+				$('.m_citystateprovincezip').text(response.CityStateProvinceZip).val(response.CityStateProvinceZip);
+				$('.m_country').text(response.Country).val(response.Country);
 				$('.m_contactnum').text(response.ContactNum).val(response.ContactNum);
-				$('.m_category').text(response.Category).val(response.Category);
+				let category = null;
+				switch (response.Category) {
+					case '0': category = 'Confirmed Distributor'; break;
+					case '1': category = 'Distributor On Probation'; break;
+					case '2': category = 'Direct Dealer'; break;
+					case '3': category = 'Direct End User'; break;
+				}
+				$('.m_category').text(category);
+				$('.ms_category option[value=' + response.Category + ']').prop('selected', true);
 				$('.m_territorymanager').text(response.TerritoryManager).val(response.TerritoryManager);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {

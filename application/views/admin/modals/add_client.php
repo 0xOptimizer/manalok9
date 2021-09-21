@@ -8,18 +8,32 @@
 				<div class="modal-body">
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
+							<input id="in-client-no" type="text" class="form-control standard-input-pad" value="C-<?=str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+							<label class="input-label" for="in-client-no">CLIENT #</label>
+						</div>
+						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
 							<input id="in-name" type="text" class="form-control standard-input-pad" name="add-name" placeholder="John Doe">
 							<label class="input-label" for="in-name">NAME</label>
 						</div>
-						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
+					</div>
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
 							<input id="in-tin" type="text" class="form-control standard-input-pad" name="add-tin" placeholder="123 456 789 000">
 							<label class="input-label" for="in-tin">TIN</label>
 						</div>
-					</div>
-					<div class="form-row d-flex flex-wrap">
-						<div class="form-group col-12 col-sm-12 col-md-11 m-auto mb-3">
-							<input id="in-address" type="text" class="form-control standard-input-pad" name="add-address" placeholder="M. Santos St., Brgy. San Jose, Antipolo City">
+						<div class="form-group col-12 col-sm-12 col-md-5  offset-md-1 mb-3">
+							<input id="in-address" type="text" class="form-control standard-input-pad" name="add-address" placeholder="M. Santos St.">
 							<label class="input-label" for="in-address">ADDRESS</label>
+						</div>
+					</div>
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
+							<input id="in-city-state-province-zip" type="text" class="form-control standard-input-pad" name="add-city-state-province-zip" placeholder="Antipolo, Rizal, 1870">
+							<label class="input-label" for="in-city-state-province-zip">CITY, STATE/PROVINCE, ZIP</label>
+						</div>
+						<div class="form-group col-12 col-sm-12 col-md-5  offset-md-1 mb-3">
+							<input id="in-country" type="text" class="form-control standard-input-pad" name="add-country" placeholder="Philippines">
+							<label class="input-label" for="in-country">COUNTRY</label>
 						</div>
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
@@ -28,7 +42,12 @@
 							<label class="input-label" for="in-contact-num">CONTACT #</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
-							<input id="in-category" type="text" class="form-control standard-input-pad" name="add-category" placeholder="Category">
+							<select id="in-category" class="form-control standard-input-pad" name="add-category">
+								<option value="0" selected>Confirmed Distributor</option>
+								<option value="1">Distributor On Probation</option>
+								<option value="2">Direct Dealer</option>
+								<option value="3">Direct End User</option>
+							</select>
 							<label class="input-label" for="in-category">CATEGORY</label>
 						</div>
 					</div>

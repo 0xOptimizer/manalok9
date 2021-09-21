@@ -20,24 +20,6 @@
 						<span>Dashboard</span>
 					</a>
 				</li>
-				<li class="sidebar-item sidebar-admin-employees">
-					<a href="<?=base_url().'admin/users'?>" class='sidebar-link'>
-						<i class="bi bi-person-lines-fill"></i>
-						<span>Users</span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-vendors">
-					<a href="<?=base_url().'admin/vendors'?>" class='sidebar-link'>
-						<i class="bi bi-shop-window"></i>
-						<span>Vendors</span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-clients">
-					<a href="<?=base_url().'admin/clients'?>" class='sidebar-link'>
-						<i class="bi bi-people-fill"></i>
-						<span>Clients</span>
-					</a>
-				</li>
 				<li class="sidebar-item sidebar-admin-products">
 					<a href="<?=base_url().'admin/products'?>" class='sidebar-link'>
 						<i class="bi bi-bag-fill"></i>
@@ -50,20 +32,46 @@
 						<span>Inventory</span>
 					</a>
 				</li>
-				<li class="sidebar-item sidebar-admin-transactions">
-					<a href="<?=base_url().'admin/view_transactions'?>" class='sidebar-link'>
-						<i class="bi bi-journal"></i>
-						<span>Transactions</span>
+				<li class="sidebar-item sidebar-admin-employees">
+					<a href="<?=base_url().'admin/users'?>" class='sidebar-link'>
+						<i class="bi bi-person-lines-fill"></i>
+						<span>Users</span>
+					</a>
+				</li>
+				<li class="sidebar-item sidebar-admin-vendors">
+					<a href="<?=base_url().'admin/vendors'?>" class='sidebar-link'>
+						<i class="bi bi-shop-window"></i>
+						<span>Vendors</span>
 					</a>
 				</li>
 				<?php if ($this->session->userdata('Privilege') > 1): ?>
-					<li class="sidebar-item sidebar-admin-orders">
-						<a href="<?=base_url().'admin/orders'?>" class='sidebar-link'>
+					<li class="sidebar-item sidebar-admin-purchase-orders">
+						<a href="<?=base_url().'admin/purchase_orders'?>" class='sidebar-link'>
 							<i class="bi bi-receipt"></i>
 							<span>Purchase Orders</span>
 						</a>
 					</li>
 				<?php endif; ?>
+				<li class="sidebar-item sidebar-admin-clients">
+					<a href="<?=base_url().'admin/clients'?>" class='sidebar-link'>
+						<i class="bi bi-people-fill"></i>
+						<span>Clients</span>
+					</a>
+				</li>
+				<?php if ($this->session->userdata('Privilege') > 1): ?>
+					<li class="sidebar-item sidebar-admin-sales-orders">
+						<a href="<?=base_url().'admin/sales_orders'?>" class='sidebar-link'>
+							<i class="bi bi-receipt"></i>
+							<span>Sales Orders</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				<!-- <li class="sidebar-item sidebar-admin-transactions">
+					<a href="<?=base_url().'admin/view_transactions'?>" class='sidebar-link'>
+						<i class="bi bi-journal"></i>
+						<span>Transactions</span>
+					</a>
+				</li> -->
 
 				<li class="sidebar-title">YOUR CORNER</li>
 

@@ -57,19 +57,31 @@ class Model_Updates extends CI_Model {
 	public function UpdatePurchaseOrder($data)
 	{
 		extract($data);
-		$this->db->where('ID', $OrderID);
+		$this->db->where('OrderNo', $OrderNo);
 		$this->db->set(array(
 			'Status' => $Status,
 		));
 		$result = $this->db->update('purchase_orders');
 		return $result;
 	}
+	// SALES ORDERS
+	public function UpdateSalesOrder($data)
+	{
+		extract($data);
+		$this->db->where('OrderNo', $OrderNo);
+		$this->db->set(array(
+			'Status' => $Status,
+		));
+		$result = $this->db->update('sales_orders');
+		return $result;
+	}
+	// ORDER / TRANSACTIONS
 	public function UpdateTransaction($data)
 	{
 		extract($data);
 		$this->db->where('ID', $transactionID);
 		$this->db->set(array(
-			'PurchaseOrderID' => $OrderID,
+			'OrderNo' => $OrderNo,
 		));
 		$result = $this->db->update('products_transactions');
 		return $result;
@@ -78,7 +90,7 @@ class Model_Updates extends CI_Model {
 	{
 		extract($data);
 		$this->db->set(array(
-			'PurchaseOrderID' => NULL,
+			'OrderNo' => NULL,
 			'Status' => '0',
 			'Date_Approval' => NULL,
 		));
