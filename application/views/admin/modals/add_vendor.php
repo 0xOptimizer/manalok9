@@ -8,16 +8,20 @@
 				<div class="modal-body">
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
+							<input id="in-vendor-no" type="text" class="form-control standard-input-pad" value="V-<?=str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+							<label class="input-label" for="in-vendor-no">VENDOR #</label>
+						</div>
+						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
 							<input id="in-name" type="text" class="form-control standard-input-pad" name="add-name" placeholder="John Doe">
 							<label class="input-label" for="in-name">NAME</label>
 						</div>
-						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
+					</div>
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
 							<input id="in-tin" type="text" class="form-control standard-input-pad" name="add-tin" placeholder="123 456 789 000">
 							<label class="input-label" for="in-tin">TIN</label>
 						</div>
-					</div>
-					<div class="form-row d-flex flex-wrap">
-						<div class="form-group col-12 col-sm-12 col-md-11 m-auto mb-3">
+						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
 							<input id="in-address" type="text" class="form-control standard-input-pad" name="add-address" placeholder="M. Santos St., Brgy. San Jose, Antipolo City">
 							<label class="input-label" for="in-address">ADDRESS</label>
 						</div>

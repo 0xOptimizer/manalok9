@@ -14,7 +14,7 @@
 							<div class="row">
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">SALES ORDER #</label>
-									<input type="text" class="form-control viewonly" value="SOSAMPLE-<?=str_pad($this->db->count_all('sales_orders') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+									<input type="text" class="form-control viewonly" value="SO-<?=str_pad($this->db->count_all('sales_orders') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">SALES ORDER DATE</label>

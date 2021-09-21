@@ -153,6 +153,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('vendors');
 		return $result;
 	}
+	public function GetVendorByNo($no)
+	{
+		$this->db->select('*');
+		$this->db->where('VendorNo', $no);
+		$result = $this->db->get('vendors');
+		return $result;
+	}
 	// CLIENTS
 	public function GetClients()
 	{
@@ -235,6 +242,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('OrderNo !=', NULL);
+		$this->db->where('Type', '1');
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('products_transactions');
 		return $result;
@@ -254,8 +262,96 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products'); 
 		return $result;
 	}
+	// PURCHASE
+	public function GetAllPurchaseOrders()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+	public function GetPurchaseOrders($status)
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('Status', $status);
+		$result = $this->db->get('purchase_orders');
+		return $result;
+	}
+	public function GetPurchaseOrderByNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+
+	public function GetAllRestocks()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', '0');
+		$this->db->order_by('DateAdded', 'desc');
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	// public function GetTransactionsByTID($id)
+	// {
+	// 	$this->db->select('*');
+	// 	$this->db->where('TransactionID', $id);
+	// 	$result = $this->db->get('products_transactions');  
+	// 	return $result;
+	// }
+	// public function GetTransactionsByOrderNo($orderNo)
+	// {
+	// 	$this->db->select('*');
+	// 	$this->db->where('OrderNo', $orderNo);
+	// 	$result = $this->db->get('products_transactions');
+	// 	return $result;
+	// }
+	public function GetTransactionsRestockedUnordered()
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', NULL);
+		$this->db->where('Type', '0');
+		$this->db->where('Status', '0');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetAllPurchaseOrderedTransactions() // remove duplicate?
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo !=', NULL);
+		$this->db->where('Type', '0');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetPurchaseOrderedTransactions($status)
+	{
+		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '0' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.OrderNo = ot.OrderNo AND Status = $status)";
+		$result = $this->db->query($sql);
+		return $result;
+	}
+
+	// public function GetStockedProducts()
+	// {
+	// 	$this->db->select('*');
+	// 	$this->db->where('InStock >', '0');
+	// 	$this->db->order_by('ID', 'asc');
+	// 	$result = $this->db->get('products'); 
+	// 	return $result;
+	// }
 
 	// NAME SEARCH
+	public function FindVendorName($name)
+	{
+		$this->db->select('*');
+		$this->db->like('Name', $name);
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('vendors');  
+		return $result;
+	}
 	public function FindClientName($name)
 	{
 		$this->db->select('*');

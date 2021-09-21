@@ -109,7 +109,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['OrderNo']?>
 										</td>
 										<td class="text-center">
-											<?=$row['DateCreation']?>
+											<?=$row['Date']?>
 										</td>
 										<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo']); ?>
 										<td class="text-center">

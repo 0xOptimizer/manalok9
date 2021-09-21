@@ -17,11 +17,9 @@ switch ($this->input->get('sortOrders')) {
 	default: break;
 }
 if (isset($sort)) {
-	echo 'test1';
 	$getSalesOrders = $this->Model_Selects->GetSalesOrders($sort);
 	$GetSalesOrderedTransactions = $this->Model_Selects->GetSalesOrderedTransactions($sort);
 } else {
-	echo 'test2';
 	$getSalesOrders = $this->Model_Selects->GetAllSalesOrders();
 	$GetSalesOrderedTransactions = $this->Model_Selects->GetAllSalesOrderedTransactions();
 }
@@ -91,7 +89,7 @@ if (isset($sort)) {
 										$totalAmount = array_sum(array_column($soTransactions, 'Amount'));
 										?>
 										<td class="text-center">
-											<?=$row['DateCreation']?>
+											<?=$row['Date']?>
 										</td>
 										<td class="text-center">
 											<?=$row['OrderNo']?>
@@ -143,7 +141,7 @@ if (isset($sort)) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
 
 <script>
-$('.sidebar-admin-orders').addClass('active');
+$('.sidebar-admin-sales-orders').addClass('active');
 $(document).ready(function() {
 	<?php if ($this->input->get('sortOrders')): ?>
 		$('#sortSelect').find("[value='" + "<?=$this->input->get('sortOrders');?>" + "']").attr('selected', '');; 

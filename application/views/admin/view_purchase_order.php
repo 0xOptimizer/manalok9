@@ -6,10 +6,10 @@ date_default_timezone_set('Asia/Manila');
 if ($this->input->get('orderNo')) {
 	$orderNo = $this->input->get('orderNo');
 } else {
-	redirect('admin/sales_orders');
+	redirect('admin/purchase_orders');
 }
-$getSalesOrderByOrderNo = $this->Model_Selects->GetSalesOrderByNo($orderNo);
-$salesOrder = $getSalesOrderByOrderNo->row_array();
+$getPurchaseOrderByOrderNo = $this->Model_Selects->GetPurchaseOrderByNo($orderNo);
+$purchaseOrder = $getPurchaseOrderByOrderNo->row_array();
 $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orderNo);
 
 ?>
@@ -38,18 +38,18 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 			<a href="#" class="burger-btn d-block d-xl-none">
 				<i class="bi bi-justify fs-3"></i>
 			</a>
-			<a href="<?=base_url() . 'admin/sales_orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO SALES ORDERS</a>
+			<a href="<?=base_url() . 'admin/purchase_orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO PURCHASE ORDERS</a>
 		</header>
 
 		<div class="page-heading">
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<h3>Sales Order ID #<?=$salesOrder['ID']?>
-							<?php if ($salesOrder['Status'] == '1'): ?>
+						<h3>Purchase Order ID #<?=$purchaseOrder['ID']?>
+							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
-							<?php elseif ($salesOrder['Status'] == '2'): ?>
-								<span class="info-banner-sm"><i class="bi bi-cash" style="color:#E4B55B;"></i> Waiting For Payment</span>
+							<?php elseif ($purchaseOrder['Status'] == '2'): ?>
+								<span class="info-banner-sm"><i class="bi bi-cash" style="color:#E4B55B;"></i> Received</span>
 							<?php else: ?>
 								<span class="info-banner-sm text-danger"><i class="bi bi-trash"></i> Rejected</span>
 							<?php endif; ?>
@@ -70,11 +70,11 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 										<th class="text-center">AMOUNT</th>
 										<th class="text-center">PRICE</th>
 										<th class="text-center">TRANSACTION DATE</th>
-										<?php if ($salesOrder['Status'] != '0'): ?>
+										<?php if ($purchaseOrder['Status'] != '0'): ?>
 											<th class="text-center">STATUS</th>
 										<?php endif; ?>
 										<th class="text-center">USER</th>
-										<?php if ($salesOrder['Status'] == '1'): ?>
+										<?php if ($purchaseOrder['Status'] == '1'): ?>
 											<th></th>
 										<?php endif; ?>
 									</thead>
@@ -101,7 +101,7 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 													<td class="text-center">
 														<?=$row['Date']?>
 													</td>
-													<?php if ($salesOrder['Status'] != '0'): ?>
+													<?php if ($purchaseOrder['Status'] != '0'): ?>
 														<td class="text-center">
 															<?php if ($row['Status'] == '0'): ?>
 																<span class="text-center info-banner-sm">
@@ -117,7 +117,7 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 													<td class="text-center">
 														<?=$row['UserID']?>
 													</td>
-													<?php if ($salesOrder['Status'] == '1'): ?>
+													<?php if ($purchaseOrder['Status'] == '1'): ?>
 														<td class="text-center">
 															<i class="bi bi-x-square text-danger removeot-btn" data-transactionid="<?=$row['TransactionID']?>"></i>
 														</td>
@@ -127,8 +127,8 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 										endif; ?>
 									</tbody>
 								</table>
-								<form id="removeSalesOrderTransaction" action="<?php echo base_url() . 'FORM_removeSalesOrderTransaction';?>" method="POST" enctype="multipart/form-data">
-									<input type="hidden" name="order_no" value="<?=$salesOrder['OrderNo']?>">
+								<form id="removePurchaseOrderTransaction" action="<?php echo base_url() . 'FORM_removePurchaseOrderTransaction';?>" method="POST" enctype="multipart/form-data">
+									<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
 									<input id="rOTTransactionID" type="hidden" name="transaction_id">
 								</form>
 							</div>
@@ -137,22 +137,18 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 					<div class="col-12 col-sm-5 col-md-3">
 						<div class="row">
 							<div class="col-12">
-								<h6>SALES ORDER #</h6>
-								<label><?=$salesOrder['OrderNo']?></label>
+								<h6>PURCHASE ORDER #</h6>
+								<label><?=$purchaseOrder['OrderNo']?></label>
 							</div>
 							<div class="col-12">
-								<h6>DATE</h6>
-								<label><?=$salesOrder['Date']?></label>
+								<h6>DATE CREATION</h6>
+								<label><?=$purchaseOrder['DateCreation']?></label>
 							</div>
 							<div class="col-12">
-								<h6>BILL TO</h6>
-								<label><?=$this->Model_Selects->GetClientByNo($salesOrder['BillToClientNo'])->row_array()['Name']?></label>
+								<h6>PURCHASE FROM</h6>
+								<label><?=$this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array()['Name']?></label>
 							</div>
-							<div class="col-12">
-								<h6>SHIP TO</h6>
-								<label><?=$this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array()['Name']?></label>
-							</div>
-							<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($salesOrder['OrderNo']); ?>
+							<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($purchaseOrder['OrderNo']); ?>
 							<?php if ($orderTransactions->num_rows() > 0): ?>
 								<div class="col-12 mt-2">
 									<div class="card">
@@ -195,10 +191,10 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 									</div>
 								</div>
 							<?php endif; ?>
-							<?php if ($salesOrder['Status'] == '1'): ?>
+							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<div class="col-12 text-center">
-									<form id="approveSalesOrder" action="<?php echo base_url() . 'FORM_approveSalesOrder';?>" method="POST" enctype="multipart/form-data">
-										<input type="hidden" name="order_no" value="<?=$salesOrder['OrderNo']?>">
+									<form id="approvePurchaseOrder" action="<?php echo base_url() . 'FORM_approvePurchaseOrder';?>" method="POST" enctype="multipart/form-data">
+										<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
 										<input id="orderApproved" type="hidden" name="approved">
 										<button type="button" class="btn btn-danger rejectOrder"><i class="bi bi-trash-fill"></i> Reject</button>
 										<button type="button" class="btn btn-success approveOrder"><i class="bi bi-check2"></i> Approve</button>
@@ -224,7 +220,7 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
 
 <script>
-$('.sidebar-admin-sales-orders').addClass('active');
+$('.sidebar-admin-purchase-orders').addClass('active');
 $(document).ready(function() {
 	var tableTransactions = $('#transactionsTable').DataTable( {
 		sDom: 'lrtip',
@@ -233,27 +229,27 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.removeot-btn', function() {
-		if (!confirm('Remove Transaction from Sales Order?') && $(this).data('id').length > 0) {
+		if (!confirm('Remove Transaction from Purchase Order?') && $(this).data('id').length > 0) {
 			event.preventDefault();
 		} else {
 			$('#rOTTransactionID').val($(this).data('transactionid'));
-			$('#removeSalesOrderTransaction').submit();
+			$('#removePurchaseOrderTransaction').submit();
 		}
 	});
 	$(document).on('click', '.rejectOrder', function() {
-		if (!confirm('Reject Sales Order?')) {
+		if (!confirm('Reject Purchase Order?')) {
 			event.preventDefault();
 		} else {
 			$('#orderApproved').val('0');
-			$('#approveSalesOrder').submit();
+			$('#approvePurchaseOrder').submit();
 		}
 	});
 	$(document).on('click', '.approveOrder', function() {
-		if (!confirm('Approve Sales Order?')) {
+		if (!confirm('Approve Purchase Order?')) {
 			event.preventDefault();
 		} else {
 			$('#orderApproved').val('1');
-			$('#approveSalesOrder').submit();
+			$('#approvePurchaseOrder').submit();
 		}
 	});
 });

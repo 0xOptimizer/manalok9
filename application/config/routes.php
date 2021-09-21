@@ -116,6 +116,8 @@ $route['getClientDetails'] = 'Admin/getClientDetails';
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['admin/searchClientName'] = 'AJAX/searchClientName';
 $route['admin/searchClientDetails'] = 'AJAX/searchClientDetails';
+$route['admin/searchVendorName'] = 'AJAX/searchVendorName';
+$route['admin/searchVendorDetails'] = 'AJAX/searchVendorDetails';
 
 // Database backup
 $route['database_backup'] = 'Admin/database_backup';

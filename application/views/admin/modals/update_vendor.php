@@ -9,16 +9,20 @@
 					<input type="hidden" name="upd-vendor-id" class="m_vendorid">
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
+							<input id="upd-vendor-no" type="text" class="form-control standard-input-pad m_vendorno" readonly>
+							<label class="input-label" for="upd-vendor-no">VENDOR #</label>
+						</div>
+						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
 							<input id="upd-name" type="text" class="form-control standard-input-pad m_name" name="upd-name" placeholder="John Doe">
 							<label class="input-label" for="upd-name">NAME</label>
 						</div>
-						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
+					</div>
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
 							<input id="upd-tin" type="text" class="form-control standard-input-pad m_tin" name="upd-tin" placeholder="123 456 789 000">
 							<label class="input-label" for="upd-tin">TIN</label>
 						</div>
-					</div>
-					<div class="form-row d-flex flex-wrap">
-						<div class="form-group col-12 col-sm-12 col-md-11 m-auto mb-3">
+						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
 							<input id="upd-address" type="text" class="form-control standard-input-pad m_address" name="upd-address" placeholder="M. Santos St., Brgy. San Jose, Antipolo City">
 							<label class="input-label" for="upd-address">ADDRESS</label>
 						</div>

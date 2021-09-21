@@ -9,7 +9,7 @@
 					<input type="hidden" name="upd-client-id" class="m_clientid">
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="upd-client-no" type="text" class="form-control standard-input-pad m_clientno" value="C-<?=str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+							<input id="upd-client-no" type="text" class="form-control standard-input-pad m_clientno" readonly>
 							<label class="input-label" for="upd-client-no">CLIENT #</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">

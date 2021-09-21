@@ -154,4 +154,23 @@ class AJAX extends CI_Controller {
 			echo json_encode($clientDetails);
 		}
 	}
+	// VENDOR NAME SEARCH
+	public function searchVendorName()
+	{
+		$search = $this->input->get('search');
+		if (strlen($search) > 0) {
+			$searchResult = $this->Model_Selects->FindVendorName($search)->result_array();
+
+			echo json_encode($searchResult);
+		}
+	}
+	public function searchVendorDetails()
+	{
+		$no = $this->input->get('no');
+		if (strlen($no) > 0) {
+			$vendorDetails = $this->Model_Selects->GetVendorByNo($no)->row_array();
+
+			echo json_encode($vendorDetails);
+		}
+	}
 }

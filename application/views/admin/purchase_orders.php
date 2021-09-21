@@ -3,7 +3,7 @@ $globalHeader;
 
 date_default_timezone_set('Asia/Manila');
 // Fetch Purchase Orders
-$getAllPurchaseOrders = $this->Model_Selects->GetAllOrders();
+$getAllPurchaseOrders = $this->Model_Selects->GetAllPurchaseOrders();
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -25,6 +25,20 @@ if ($this->session->flashdata('highlight-id')) {
 		padding-right: 20px;
 		padding-left: 20px;
 		color: #FFFFFF;
+	}
+
+	.vendorSelect {
+		cursor: pointer;
+	}
+	.vendorSelect:hover {
+		background-color: rgba(0, 0, 0, 0.2);
+	}
+	.viewonly {
+		color: #ccc !important;
+	}
+	.footerHead {
+		color: #a7852d;
+		font-size: 0.9rem;
 	}
 </style>
 
@@ -55,10 +69,10 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="neworder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW PURCHASE ORDER</button>
+						<button type="button" class="newpurchaseorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW PURCHASE ORDER</button>
 						|
 						<button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
-						<a href="viewsummary">
+						<a href="view_purchase_summary">
 							<button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-list"></i> SUMMARY</button>
 						</a>
 					</div>
@@ -74,37 +88,51 @@ if ($this->session->flashdata('highlight-id')) {
 			</div>
 			<section class="section">
 				<div class="table-responsive">
-					<table id="ordersTable" class="standard-table table">
+					<table id="purchaseTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th class="text-center">ID</th>
-							<th class="text-center">SERIES NO</th>
+							<th class="text-center">SO #</th>
 							<th class="text-center">DATE</th>
 							<th class="text-center">ITEMS</th>
+							<th class="text-center">TOTAL PRICE</th>
 							<th class="text-center">STATUS</th>
 						</thead>
 						<tbody>
 							<?php
 							if ($getAllPurchaseOrders->num_rows() > 0):
 								foreach ($getAllPurchaseOrders->result_array() as $row): ?>
-									<tr data-id="<?=$row['ID'];?>" class="tr_class_modal" id="<?=$row['SeriesNo']?>" data-seriesno="<?=$row['SeriesNo'];?>" data-datecreation="<?=$row['DateCreation'];?>" data-clientname="<?=$row['ClientName'];?>" data-shipaddress="<?=$row['ShipAddress'];?>" data-status="<?=$row['Status'];?>">
+									<tr data-urlredirect="<?=base_url() . 'admin/view_purchase_order?orderNo=' . $row['OrderNo'];?>">
 										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
 										<td class="text-center">
-											<?=$row['SeriesNo']?>
+											<?=$row['OrderNo']?>
 										</td>
 										<td class="text-center">
-											<?=$row['DateCreation']?>
+											<?=$row['Date']?>
 										</td>
-										<?php $orderTransactions = $this->Model_Selects->GetOrderTransactions($row["ID"]); ?>
+										<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo']); ?>
 										<td class="text-center">
 											<?=$orderTransactions->num_rows()?>
 										</td>
 										<td class="text-center">
+											<?php
+											if ($orderTransactions->num_rows() > 0) {
+												$transactionsPriceTotal = 0;
+												foreach ($orderTransactions->result_array() as $transaction) {
+													$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+												}
+												echo number_format($transactionsPriceTotal, 2);
+											} else {
+												echo '0';
+											}
+											?>
+										</td>
+										<td class="text-center">
 											<?php if ($row['Status'] == '1'): ?>
-												<span><i class="bi bi-asterisk" style="color:#E4B55B;"></i> For Approval</span>
+												<span><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 											<?php elseif ($row['Status'] == '2'): ?>
-												<span><i class="bi bi-cash" style="color:#E4B55B;"></i> Waiting For Payment</span>
+												<span><i class="bi bi-cash" style="color:#E4B55B;"></i> Received</span>
 											<?php else: ?>
 												<span><i class="bi bi-trash text-danger"></i> Rejected</span>
 											<?php endif; ?>
@@ -119,8 +147,7 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<?php $this->load->view('admin/modals/add_order'); ?>
-<?php $this->load->view('admin/modals/order_modal'); ?>
+<?php $this->load->view('admin/modals/add_purchase_order'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -131,89 +158,17 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
 
 <script>
-$('.sidebar-admin-orders').addClass('active');
+$('.sidebar-admin-purchase-orders').addClass('active');
 $(document).ready(function() {
 	<?php if ($highlightID != 'N/A'): ?>
-		$('#ordersTable').find("[data-id='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
+		$('#purchaseTable').find("[data-id='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
 	<?php endif; ?>
 
-	$(document).on('click', '.tr_class_modal', function() {
-		$('#PurchaseOrderModal').modal('toggle');
-
-		$('.m_inp_orderid').val($(this).data('id'));
-		$('.m_orderid').text($(this).data('id'));
-		$('.m_seriesno').text($(this).data('seriesno'));
-		$('.m_datecreation').text($(this).data('datecreation'));
-		$('.m_shipaddress').text($(this).data('shipaddress'));
-		$('.m_clientname').text($(this).data('clientname'));
-		if ($(this).data('status') < 1) {
-			$('.approvePurchaseOrder').attr('disabled', '');
-		} else {
-			$('.approvePurchaseOrder').removeAttr('disabled');
-		}
-
-		// order transaction list
-		var order_id = $(this).data('id');
-		$('#orderTransactionsTable tbody').hide();
-		$.get('getOrderDetails', { dataType: 'json', order_id: order_id })
-		.done(function(data) {
-			if ($.fn.dataTable.isDataTable('#orderTransactionsTable')) {
-				$('#orderTransactionsTable').DataTable().destroy();
-			}
-			$('#orderTransactionsTable tbody').html('');
-
-			var transactions = $.parseJSON(data);
-			$.each(transactions, function(index, val) {
-				$('#orderTransactionsTable tbody').append($('<tr>')
-					.append($('<td>').attr({ class: 'text-center' }).append($('<span>').attr({ class: 'db-identifier' }).css({ 'font-style': 'italic', 'font-size': '12px' }).html(val['ID'])))
-					.append($('<td>').attr({ class: 'text-center' }).html(val['Code']))
-					.append($('<td>').attr({ class: 'text-center' }).html(val['TransactionID']))
-					.append($('<td>').attr({ class: 'text-center' }).html(val['Amount']))
-					.append($('<td>').attr({ class: 'text-center' }).html(val['Date']))
-					.append($('<td>').attr({ class: 'text-center' }).html(
-						(val['Status'] == '0' ? '<i class="bi bi-asterisk" style="color:#E4B55B;"></i>' : '<i class="bi bi-file-check" style="color:#55B73E;"></i>')
-					))
-					.append($('<td>').attr({ class: 'text-center removeot-btn' }).data('id', val['TransactionID']).html('<i class="bi bi-x-square text-danger"></i>'
-					))
-				);
-			});
-
-			$('#orderTransactionsTable').DataTable( {
-				sDom: 'lrtip',
-				'bLengthChange': false,
-				'order': [[ 0, 'desc' ]],
-			});
-			$('#orderTransactionsTable tbody').show();
-		});
-	});
-	$(document).on('click', '.removeot-btn', function() {
-		if (!confirm('Remove Transaction from Purchase Order?') && $(this).data('id').length > 0) {
-			event.preventDefault();
-		} else {
-			$.ajax({
-				url: 'FORM_removePurchaseOrderTransaction',
-				type: 'POST',
-				
-				data: { transaction_id : $(this).data('id') } ,
-				success: function (response) {
-					if (response == 'SUCCESS') {
-						alert('Transaction removed.');
-					} else {
-						alert('ERROR');
-					}
-					location.reload();
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					alert(textStatus, errorThrown);
-				}
-			});
-		}
-	});
-	$('.neworder-btn').on('click', function() {
-		$('#AddOrderModal').modal('toggle');
+	$('.newpurchaseorder-btn').on('click', function() {
+		$('#AddPurchaseOrderModal').modal('toggle');
 	});
 	
-	var table = $('#ordersTable').DataTable( {
+	var table = $('#purchaseTable').DataTable( {
 		sDom: 'lrtip',
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
@@ -221,67 +176,154 @@ $(document).ready(function() {
 	$('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
 	});
-	var tableTransactions = $('#transactionsTable').DataTable( {
+	var tableProducts = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
 	});
-	$('#tableTransactionsSearch').on('keyup change', function(){
-		tableTransactions.search($(this).val()).draw();
+	$('#tableProductsSearch').on('keyup change', function(){
+		tableProducts.search($(this).val()).draw();
 	});
 
-	function updOTCount() {
+	function updProductCount() {
 		// update order transaction count
-		$('#TransactionsCount').val($('.orderTransaction').length);
+		$('#ProductsCount').val($('.orderProduct').length);
 		// update order transsaction input names
-		$.each($('.orderTransaction input'), function(i, val) {
-			$(this).attr('name', 'tInput' + i);
+		$.each($('.orderProduct'), function(i, val) {
+			$(this).find('.inpCode').attr('name', 'productCodeInput_' + i);
+			$(this).find('.inpPrice').attr('name', 'productPriceInput_' + i);
+			$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
 		});
 		// total
-		let totalReleased = 0;
-		$.each($('.toReleased'), function(i, val) {
-			totalReleased += parseFloat($(this).html());
+		let subTotal = 0;
+		$.each($('.productTotal'), function(i, val) {
+			subTotal += parseFloat($(this).data('product-total'));
 		});
-		$('.transactionsTotal .released').html(totalReleased);
+		$('.productsTotal .subTotal, .total').html(subTotal.toFixed(2));
 		// empty transaction
-		if ($('.orderTransaction').length > 0) {
-			$('.noTransaction').hide();
+		if ($('.orderProduct').length > 0) {
+			$('.noProduct').hide();
 		} else {
-			$('.noTransaction').show();
+			$('.noProduct').show();
 		}
 	}
-	$(document).on('click', '.add-transaction-row', function() {
-		let trClassName = 'ot' + $(this).data('id');
-		if ($('.' + trClassName).length < 1) {
-			$('.transactionsTotal').before($('<tr>')
+	$(document).on('click', '.add-product-row', function() {
+		let opClassName = 'op' + $(this).data('id');
+		if ($('.' + opClassName).length < 1) {
+			$('.productsTotal').before($('<tr>')
 				.attr({
-					'class': 'orderTransaction highlighted ' + trClassName
-				}).css('display', 'none')
-				.append($('<input>').attr({
+					class: 'orderProduct highlighted ' + opClassName
+				})
+				.append($('<td>').attr({ // qty
+					class: 'productQty text-center'
+				}).append($('<input>').attr({ // qty input
+					class: 'inpQty ' + opClassName + '_qty',
+					type: 'number',
+					value: 0,
+					min: '0',
+					max: parseInt($(this).children('.pStock').html())
+				})))
+				.append($('<td>').attr({ // code
+					class: 'text-center'
+				}).html($(this).children('.pCode').html())
+				.append($('<input>').attr({ // create hidden input for product id
+					class: 'inpCode',
 					type: 'hidden',
-					value: $(this).data('id')
-				}))
-				.append($('<td>').attr({ class: 'text-center' }).append($('<span>').attr({ class: 'db-identifier' }).css({ 'font-style': 'italic', 'font-size': '12px' }).html($(this).data('id'))))
-				.append($('<td>').attr({ class: 'text-center' }).html($(this).children('.tCode').html()))
-				.append($('<td>').attr({
-					class: 'toReleased text-center'
-				}).html($(this).children('.tReleased').html()))
-				.append($('<td>').attr({ class: 'text-center' }).html($(this).children('.tDate').html()))
+					value: $(this).children('.pCode').html()
+				})))
+				.append($('<td>').attr({ // unit price
+					class: 'productPrice text-center'
+				}).html($(this).children('.pPrice').html()).append($('<input>').attr({ // create hidden input for unit price
+					class: 'inpPrice',
+					type: 'hidden',
+					value: parseFloat($(this).children('.pPrice').html().replace(',', ''))
+				})))
+				.append($('<td>').attr({ // total
+					class: 'productTotal text-center'
+				}).html('0.00').data('product-total', 0))
 				.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
 					type: 'button',
-					class: 'btn remove-transaction-btn'
+					class: 'btn remove-product-btn'
 				}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
 			);
-			updOTCount();
+			updProductCount();
 			setTimeout(function() {
-				$('.' + trClassName).removeClass('highlighted');
+				$('.' + opClassName).removeClass('highlighted');
 			}, 2000);
-			$('.' + trClassName).fadeIn('2000');
+			$('.' + opClassName).fadeIn('2000');
 		}
 	});
-	$(document).on('click', '.remove-transaction-btn', function() {
+	$(document).on('click', '.remove-product-btn', function() {
 		$(this).parents('tr').remove();
-		updOTCount();
+		updProductCount();
+	});
+	$(document).on('focus keyup change', '.productQty input', function() {
+		let td = $(this).parent('.productQty');
+		if ($(this).val().length > 0) {
+			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').html().replace(',', ''));
+			td.siblings('.productTotal').html(productTotal.toFixed(2)).data('product-total', productTotal);
+		} else {
+			td.siblings('.productTotal').html(0).data('product-total', 0);
+		}
+		updProductCount();
+	});
+
+	// NAME SEARCH
+	$('.vendorPurchaseNameSearch').on('focus keyup', function() {
+		var searchVal = $(this).val();
+		if (searchVal.length > 0 ) {
+			$.ajax({
+				url: 'searchVendorName',
+				type: 'GET',
+				dataType: 'JSON',
+				data: { search : searchVal } ,
+				success: function (response) {
+					$('.vendorPurchaseNameDropdown').html('');
+					$.each(response, function(index, val) {
+						$('.vendorPurchaseNameDropdown').append($('<span>').attr({ class: 'dropdown-item vendorSelect vendorPurchaseDetailsSelect' }).html(val.Name).data('vendor-no', val.VendorNo));
+					});
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(textStatus, errorThrown);
+				}
+			});
+		} else {
+			$('.vendorPurchaseNameDropdown').html('');
+		}
+	}).on('keydown', function(e) {
+		if (!$('.vendorPurchaseNameDropdown').hasClass('show')) {
+			$('.vendorPurchaseNameSearch').dropdown('show');
+		}
+	});
+	$(document).on('click', '.vendorPurchaseDetailsSelect', function(t) {
+		var vendorNo = $(this).data('vendor-no');
+		if (vendorNo.length > 0) {
+			$.ajax({
+				url: 'searchVendorDetails',
+				type: 'GET',
+				dataType: 'JSON',
+				data: { no: vendorNo } ,
+				success: function (response) {
+					$('.purchaseNameIcon').removeClass('bi-x-circle-fill text-danger').addClass('bi-check-circle-fill text-success');
+
+					$('.purchaseName').val(response.Name);
+					$('.purchaseNo').val(response.VendorNo);
+					// $('.purchaseAddress').val(response.Address);
+					// $('.purchaseCity').val(response.CityStateProvinceZip);
+					// $('.purchaseCountry').val(response.Country);
+					// $('.purchaseContact').val(response.ContactNum);
+
+					$('#PurchaseFromNo').val(response.VendorNo);
+
+					if ($('.vendorPurchaseNameDropdown').hasClass('show')) {
+						$('.vendorPurchaseNameSearch').dropdown('hide');
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(textStatus, errorThrown);
+				}
+			});
+		}
 	});
 });
 </script>

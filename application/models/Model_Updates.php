@@ -98,6 +98,17 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('products_transactions');
 		return $result;
 	}
+	public function RejectOrderTransaction($data)
+	{
+		extract($data);
+		$this->db->set(array(
+			'Status' => '0',
+			'Date_Approval' => NULL,
+		));
+		$this->db->where('TransactionID', $TransactionID);
+		$result = $this->db->update('products_transactions');
+		return $result;
+	}
 
 	// VENDORS
 	public function UpdateVendor($data, $vendorID)

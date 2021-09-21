@@ -51,6 +51,12 @@ class Model_Inserts extends CI_Model {
 		return $result;
 	}
 
+	// PURCHASE ORDERS
+	public function InsertPurchaseOrder($data)
+	{
+		$result = $this->db->insert('purchase_orders', $data);
+		return $result;
+	}
 	// SALES ORDERS
 	public function InsertSalesOrder($data)
 	{

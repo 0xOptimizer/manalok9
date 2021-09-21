@@ -57,6 +57,7 @@ if ($this->session->flashdata('highlight-id')) {
 					<table id="vendorsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th>ID</th>
+							<th>VENDOR #</th>
 							<th>NAME</th>
 							<th>TIN</th>
 							<th>ADDRESS</th>
@@ -71,6 +72,9 @@ if ($this->session->flashdata('highlight-id')) {
 									<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+										</td>
+										<td>
+											<?=$row['VendorNo']?>
 										</td>
 										<td>
 											<?=$row['Name']?>
@@ -142,6 +146,7 @@ $(document).ready(function() {
 			data: { vendor_id : vendor_id } ,
 			success: function (response) {
 				$('.m_vendorid').text(response.ID).val(response.ID);
+				$('.m_vendorno').text(response.VendorNo).val(response.VendorNo);
 				$('.m_name').text(response.Name).val(response.Name);
 				$('.m_tin').text(response.TIN).val(response.TIN);
 				$('.m_address').text(response.Address).val(response.Address);
