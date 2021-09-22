@@ -103,6 +103,8 @@ $route['FORM_removeSalesOrderTransaction'] = 'Admin/FORM_removeSalesOrderTransac
 $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
 $route['AJAX_sendRegistrationEmail'] = 'AJAX/sendRegistrationEmail';
 
+$route['get_productDetails'] = 'Admin/get_productDetails';
+
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
@@ -118,6 +120,8 @@ $route['admin/searchClientName'] = 'AJAX/searchClientName';
 $route['admin/searchClientDetails'] = 'AJAX/searchClientDetails';
 $route['admin/searchVendorName'] = 'AJAX/searchVendorName';
 $route['admin/searchVendorDetails'] = 'AJAX/searchVendorDetails';
+
+
 
 // Database backup
 $route['database_backup'] = 'Admin/database_backup';

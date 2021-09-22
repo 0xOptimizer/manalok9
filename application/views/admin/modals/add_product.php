@@ -37,7 +37,7 @@
 							<label class="input-label">WEIGHT</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-1 mb-4" style="margin-left: -25px;">
-							<select id="in-productcategory" class="form-control standard-input-pad" name="product-category">
+							<select id="in-productcategory" class="form-control standard-input-pad" name="pro_weight_size">
 								<option>kg</option>
 								<option selected>g</option>
 								<option>mg</option>

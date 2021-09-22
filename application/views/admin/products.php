@@ -82,6 +82,8 @@ if ($this->session->flashdata('highlight-id')) {
 						|
 						<button type="button" class="newtransaction-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cart-plus"></i> NEW TRANSACTION</button>
 						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
+						|
+						<button type="button" class="scnrelease-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> RELEASE USING SCANNER</button>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -98,6 +100,7 @@ if ($this->session->flashdata('highlight-id')) {
 					<table id="productsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th>ID</th>
+							<th>BARCODE</th>
 							<th>CODE</th>
 							<th>NAME</th>
 							<th>CATEGORY</th>
@@ -113,6 +116,11 @@ if ($this->session->flashdata('highlight-id')) {
 									<tr data-code="<?=$row['Code'];?>" data-urlredirect="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+										</td>
+										<td width="100">
+											<div class="p-2 text-center" style="background-color: white;">
+												<img src="<?=base_url();?><?=$row['Barcode_Images']?>" width="95" alt="No image">
+											</div>
 										</td>
 										<td>
 											<?=$row['Code']?>
@@ -151,6 +159,8 @@ if ($this->session->flashdata('highlight-id')) {
 <?php $this->load->view('admin/modals/add_product.php'); ?>
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
+<!-- Release scanner modal -->
+<?php $this->load->view('admin/modals/scan_release.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -160,6 +170,7 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.js"></script>
 
 <script>
 $('.sidebar-admin-products').addClass('active');
@@ -188,9 +199,77 @@ $(document).ready(function() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	});
+	$('.scnrelease-btn').on('click', function() {
+		$('#scanrelease_modal').modal('toggle');
+	});
 });
 </script>
+<script type="text/javascript">
+	startScanner();
+	var _scannerIsRunning = false;
 
+
+	function startScanner() {
+		Quagga.init({
+			inputStream: {
+				name: "Live",
+				type: "LiveStream",
+				target: document.querySelector('#scanner_area'),
+				constraints: {
+					width: 320,
+					height: 220,
+					facingMode: "environment"
+				},
+			},
+			decoder: {
+				readers: [
+				"code_128_reader",
+				"ean_reader",
+				"ean_8_reader",
+				"code_39_reader",
+				"code_39_vin_reader",
+				"codabar_reader",
+				"upc_reader",
+				"upc_e_reader",
+				"i2of5_reader",
+				"2of5_reader",
+				"code_93_reader",
+				"code_32_reader",
+				],
+				debug: {
+					showCanvas: true,
+					showPatches: true,
+					showFoundPatches: true,
+					showSkeleton: true,
+					showLabels: true,
+					showPatchLabels: true,
+					showRemainingPatchLabels: true,
+				}
+			},
+
+		}, function (err) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			Quagga.start();
+		});
+
+		Quagga.onDetected(function (result) {
+			// $('#pro-show').text(result.codeResult.code);
+			var p_id = result.codeResult.code;
+			$.ajax({
+				url: "get_productDetails",
+				type: "post",
+				data: { product_code: p_id, },
+				success: function(response) {
+					alert(response);
+				}
+			});
+			return;
+		});
+	}
+</script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
 </body>

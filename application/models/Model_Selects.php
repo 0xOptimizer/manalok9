@@ -361,4 +361,11 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('clients');  
 		return $result;
 	}
+	public function Get_productByPID($product_id)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $product_id);
+		$result = $this->db->get('products');  
+		return $result;
+	}
 }

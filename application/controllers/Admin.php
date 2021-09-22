@@ -676,17 +676,23 @@ class Admin extends MY_Controller {
 		}
 	}
 	public function FORM_addNewProduct()
-	{	
+	{
+		require 'vendor/autoload.php';
 		// Fetch data
 		$code = $this->input->post('product-code');
 		$name = $this->input->post('product-name');
 		$category = $this->input->post('product-category');
-		$pro_weight = $this->input->post('pro_weight');
+		$pro_weight = $this->input->post('pro_weight') . ' ' . $this->input->post('pro_weight_size');
 		$prc_pitem = $this->input->post('prc_pitem');
 		$cst_pitem = $this->input->post('cst_pitem');
 		
 		$description = $this->input->post('product-description');
 		
+		// BARCODE GENEREATOR
+		
+		$colorblk = [0, 0, 0];
+		$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+		file_put_contents('assets/barcode_images/'.$code.'-pbarcode.png', $generator->getBarcode($code, $generator::TYPE_CODE_128, 3, 50, $colorblk));
 
 		// Insert
 		$data = array(
@@ -698,6 +704,7 @@ class Admin extends MY_Controller {
 			'Cost_PerItem' => $cst_pitem,
 			'Description' => $description,
 			'DateAdded' => date('Y-m-d h:i:s A'),
+			'Barcode_Images' => 'assets/barcode_images/'.$code.'-pbarcode.png',
 		);
 		$insertNewProduct = $this->Model_Inserts->InsertNewProduct($data);
 		if ($insertNewProduct == TRUE) {
@@ -706,6 +713,8 @@ class Admin extends MY_Controller {
 			// LOGBOOK
 			// $this->Model_Logbook->LogbookEntry('Green', 'Applicant', ' added a new applicant: <a class="logbook-tooltip-highlight" href="' . base_url() . 'ViewEmployee?id=' . $ApplicantID . '" target="_blank">' . ucfirst($LastName) . ', ' . ucfirst($FirstName) .  ' ' . ucfirst($MiddleName) . '</a>');
 			$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($description ? ' ' . $description : '') . ' [Code: ' . $code . '].', base_url('admin/products'));
+
+
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Applicant ID: <b>' . $ApplicantID . '</b>');
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Referral: <b>' . $Referral . '</b>');
 			redirect('admin/products');
@@ -1281,5 +1290,18 @@ class Admin extends MY_Controller {
 		$clientID = $this->input->get('client_id');
 		$getClientByID = $this->Model_Selects->GetClientByID($clientID)->row_array();
 		print json_encode($getClientByID);
+	}
+	public function get_productDetails()
+	{
+		$product_id = $this->input->post('product_code');
+		$Get_productByPID = $this->Model_Selects->Get_productByPID($product_id);
+		if ($Get_productByPID->num_rows() > 0) {
+			$nrow = $Get_productByPID->row_array();
+			echo $nrow['Code'];
+		}
+		else
+		{
+			echo "ERROR NO PRODUCT FOUND!";
+		}
 	}
 }
