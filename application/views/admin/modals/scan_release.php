@@ -1,15 +1,19 @@
 <style type="text/css">
-#barcode-scanner video, canvas {
-	width: 100%;
+.scanner-area video, canvas {
+	width: 100% !important;
 	height: auto;
 }
 
-#barcode-scanner video.drawingBuffer, canvas.drawingBuffer {
+.scanner-area video.drawingBuffer, canvas.drawingBuffer {
 	display: none;
+}
+.img-product
+{
+	max-width: 90%;
 }
 </style>
 <div class="modal fade" id="scanrelease_modal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog" role="document">
+	<div class="modal-dialog modal-lg" role="document">
 		<form action="<?php echo base_url() . 'FORM_addNewProduct';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -17,9 +21,65 @@
 				</div>
 				<div class="modal-body">
 					<div class="container-fluid">
-						<div class="row text-center">
-							<div class="col-12 mb-4 scanner-area" id="scanner_area">
+						<div class="row stacksss">
+							<div class="col-12 col-sm-12 col-md-7 col-lg-7 m-auto scanner-area" id="scanner_area">
 							</div>
+							<div class="col-12 col-sm-5">
+								<p>
+									<input id="" class="release_num form-control" type="number" name="" placeholder="Release amount ?">
+								</p>
+								<p class="text-center">
+									<img class="img-product" src="<?=base_url()?>assets/images/325-3256246_fa-fa-product-icon-transparent-cartoons-fa-fa.png">
+								</p>
+							</div>
+							
+
+							<div class="col-12 mt-5">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>CODE : </span><span class="code_prev"></span>
+								</p>
+							</div>
+							<div class="col-12">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>NAME : </span><span class="name_prev"></span>
+								</p>
+							</div>
+							<div class="col-12">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>DESCRIPTION : </span><span class="descrip_prev"></span>
+								</p>
+							</div>
+							<div class="col-6">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>STOCK : </span><span class="InStock_prev"></span>
+								</p>
+							</div>
+							<div class="col-6">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>RELEASED : </span><span class="Released_prev"></span>
+								</p>
+							</div>
+							<div class="col-6">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>CATEGORY : </span><span class="Product_Category_prev"></span>
+								</p>
+							</div>
+							<div class="col-6">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>WEIGHT : </span><span class="Product_Weight_prev"></span>
+								</p>
+							</div>
+							<div class="col-6">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>PRICE : </span><span class="Price_PerItem_prev"></span>
+								</p>
+							</div>
+							<div class="col-6">
+								<p style="border-left: 2px solid #D1C246; padding-left: 10px;">
+									<span>TOTAL PRICE : </span><span class="Total_PerItem_prev"></span>
+								</p>
+							</div>
+							
 						</div>
 					</div>
 				</div>

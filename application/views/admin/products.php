@@ -170,7 +170,9 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.js"></script>
+<script src="https://serratus.github.io/quaggaJS/examples/js/quagga.min.js"></script>
+
+
 
 <script>
 $('.sidebar-admin-products').addClass('active');
@@ -201,75 +203,68 @@ $(document).ready(function() {
 	});
 	$('.scnrelease-btn').on('click', function() {
 		$('#scanrelease_modal').modal('toggle');
+		startScanner();
+		function startScanner() {
+			Quagga.init({
+				inputStream: {
+					name: "Live",
+					type: "LiveStream",
+					target: document.querySelector('#scanner_area'),
+					constraints: {
+						width: 480,
+						height: 320,
+						facingMode: "environment"
+					},
+				},
+				decoder: {
+					readers: [
+					"code_128_reader"
+					],
+				},
+
+			}, function (err) {
+				if (err) {
+					console.log(err);
+					return;
+				}
+				Quagga.start();
+			});
+
+			Quagga.onDetected(function(result) {
+				var p_id = result.codeResult.code;
+				$.ajax({
+					url: "get_productDetails",
+					type: "POST",
+					data: { product_code: p_id },
+					success: function(response) {
+						var data = $.parseJSON(response);
+						if (data.Status == "success") {
+							$('.code_prev').html(data.Code);
+							$('.name_prev').html(data.Product_Name);
+							$('.descrip_prev').html(data.Description);
+							$('.InStock_prev').html(data.InStock);
+							$('.Released_prev').html(data.Released);
+							$('.Product_Category_prev').html(data.Product_Category);
+							$('.Product_Weight_prev').html(data.Product_Weight);
+							$('.Price_PerItem_prev').html(data.Price_PerItem);
+						}
+						else
+						{
+							alert(data.Status);
+						}
+					}
+				});
+				return;
+			});
+		}
+	});
+	$('.release_num').on('keyup change', function() {
+		$calPriceAmount = $('.Price_PerItem_prev').text() * $(this).val(); 
+		$('.Total_PerItem_prev').html($calPriceAmount);
 	});
 });
 </script>
-<script type="text/javascript">
-	startScanner();
-	var _scannerIsRunning = false;
 
-
-	function startScanner() {
-		Quagga.init({
-			inputStream: {
-				name: "Live",
-				type: "LiveStream",
-				target: document.querySelector('#scanner_area'),
-				constraints: {
-					width: 320,
-					height: 220,
-					facingMode: "environment"
-				},
-			},
-			decoder: {
-				readers: [
-				"code_128_reader",
-				"ean_reader",
-				"ean_8_reader",
-				"code_39_reader",
-				"code_39_vin_reader",
-				"codabar_reader",
-				"upc_reader",
-				"upc_e_reader",
-				"i2of5_reader",
-				"2of5_reader",
-				"code_93_reader",
-				"code_32_reader",
-				],
-				debug: {
-					showCanvas: true,
-					showPatches: true,
-					showFoundPatches: true,
-					showSkeleton: true,
-					showLabels: true,
-					showPatchLabels: true,
-					showRemainingPatchLabels: true,
-				}
-			},
-
-		}, function (err) {
-			if (err) {
-				console.log(err);
-				return;
-			}
-			Quagga.start();
-		});
-
-		Quagga.onDetected(function (result) {
-			// $('#pro-show').text(result.codeResult.code);
-			var p_id = result.codeResult.code;
-			$.ajax({
-				url: "get_productDetails",
-				type: "post",
-				data: { product_code: p_id, },
-				success: function(response) {
-					alert(response);
-				}
-			});
-			return;
-		});
-	}
-</script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
 </body>

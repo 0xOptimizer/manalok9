@@ -1297,11 +1297,30 @@ class Admin extends MY_Controller {
 		$Get_productByPID = $this->Model_Selects->Get_productByPID($product_id);
 		if ($Get_productByPID->num_rows() > 0) {
 			$nrow = $Get_productByPID->row_array();
-			echo $nrow['Code'];
+			$data = array(
+				'Status' => 'success',
+				'Code' => $nrow['Code'],
+				'Product_Name' => $nrow['Product_Name'],
+				'Description' => $nrow['Description'],
+				'InStock' => $nrow['InStock'],
+				'Released' => $nrow['Released'],
+				'Product_Category' => $nrow['Product_Category'],
+				'Product_Weight' => $nrow['Product_Weight'],
+				'Price_PerItem' => $nrow['Price_PerItem'],
+
+			);
+			$result = json_encode($data);
+			echo $result;
+			exit();
 		}
 		else
 		{
-			echo "ERROR NO PRODUCT FOUND!";
+			$data = array(
+				'Status' => 'error',
+			);
+			$result = json_encode($data);
+			echo $result;
+			exit();
 		}
 	}
 }
