@@ -162,6 +162,8 @@ class AJAX extends CI_Controller {
 			$searchResult = $this->Model_Selects->FindVendorName($search)->result_array();
 
 			echo json_encode($searchResult);
+		} else {
+			echo json_encode($this->Model_Selects->FindVendorAll()->result_array());
 		}
 	}
 	public function searchVendorDetails()

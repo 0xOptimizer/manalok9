@@ -144,13 +144,13 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 								<h6>DATE CREATION</h6>
 								<label><?=$purchaseOrder['DateCreation']?></label>
 							</div>
-							<div class="col-12">
+							<div class="col-12 mb-3">
 								<h6>PURCHASE FROM</h6>
 								<label><?=$this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array()['Name']?></label>
 							</div>
 							<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($purchaseOrder['OrderNo']); ?>
 							<?php if ($orderTransactions->num_rows() > 0): ?>
-								<div class="col-12 mt-2">
+								<div class="col-12 mb-2">
 									<div class="card">
 										<div class="text-center p-2">
 											<div class="row">

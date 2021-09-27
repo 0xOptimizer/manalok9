@@ -27,7 +27,7 @@ if ($this->session->flashdata('highlight-id')) {
 		color: #FFFFFF;
 	}
 
-	.clientSelect {
+	.clientSelect, .billNameIcon, .shipNameIcon {
 		cursor: pointer;
 	}
 	.clientSelect:hover {
@@ -236,7 +236,7 @@ $(document).ready(function() {
 				}).html($(this).children('.pPrice').html()).append($('<input>').attr({ // create hidden input for unit price
 					class: 'inpPrice',
 					type: 'hidden',
-					value: parseFloat($(this).children('.pPrice').html().replace(',', ''))
+					value: parseFloat($(this).children('.pPrice').data('price'))
 				})))
 				.append($('<td>').attr({ // total
 					class: 'productTotal text-center'
@@ -260,7 +260,7 @@ $(document).ready(function() {
 	$(document).on('focus keyup change', '.productQty input', function() {
 		let td = $(this).parent('.productQty');
 		if ($(this).val().length > 0) {
-			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').html().replace(',', ''));
+			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('.inpPrice').val());
 			td.siblings('.productTotal').html(productTotal.toFixed(2)).data('product-total', productTotal);
 		} else {
 			td.siblings('.productTotal').html(0).data('product-total', 0);
@@ -268,31 +268,52 @@ $(document).ready(function() {
 		updProductCount();
 	});
 
+
 	// NAME SEARCH - BILL TO
-	$('.clientBillNameSearch').on('focus keyup', function() {
-		var searchVal = $(this).val();
-		if (searchVal.length > 0 ) {
-			$.ajax({
-				url: 'searchClientName',
-				type: 'GET',
-				dataType: 'JSON',
-				data: { search : searchVal } ,
-				success: function (response) {
-					$('.clientBillNameDropdown').html('');
-					$.each(response, function(index, val) {
-						$('.clientBillNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect clientBillDetailsSelect' }).html(val.Name).data('client-no', val.ClientNo));
-					});
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log(textStatus, errorThrown);
-				}
-			});
-		} else {
-			$('.clientBillNameDropdown').html('');
+	function hideBillNameDropdown() {
+		if ($('.clientBillNameDropdown').hasClass('show')) {
+			$('.clientBillNameSearch').dropdown('hide');
 		}
-	}).on('keydown', function(e) {
+	}
+	function showBillNameDropdown() {
 		if (!$('.clientBillNameDropdown').hasClass('show')) {
 			$('.clientBillNameSearch').dropdown('show');
+		}
+	}
+	$('.clientBillNameSearch').on('focus keyup', function() {
+		if (!$('.billNameIcon').hasClass('bi-backspace-fill')) {
+			var searchVal = $(this).val();
+			if (searchVal.length > 0 ) {
+				$.ajax({
+					url: 'searchClientName',
+					type: 'GET',
+					dataType: 'JSON',
+					data: { search : searchVal } ,
+					success: function (response) {
+						$('.clientBillNameDropdown').html('');
+						$.each(response, function(index, val) {
+							$('.clientBillNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect clientBillDetailsSelect' }).html(val.Name).data('client-no', val.ClientNo));
+						});
+						$('.clientBillNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect newBillClient' }).html("[ NEW CLIENT ]"));
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log(textStatus, errorThrown);
+					}
+				});
+			} else {
+				$('.clientBillNameDropdown').html('');
+				$('.clientBillNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect newBillClient' }).html("[ NEW CLIENT ]"));
+			}
+		} else {
+			$('.clientBillNameDropdown').html('');
+			hideBillNameDropdown();
+		}
+	}).on('keydown click', function(e) {
+		if (!$('.billNameIcon').hasClass('bi-backspace-fill')) {
+			showBillNameDropdown();
+		} else {
+			$('.clientBillNameDropdown').html('');
+			hideBillNameDropdown();
 		}
 	});
 	$(document).on('click', '.clientBillDetailsSelect', function(t) {
@@ -304,7 +325,13 @@ $(document).ready(function() {
 				dataType: 'JSON',
 				data: { no: clientNo } ,
 				success: function (response) {
-					$('.billNameIcon').removeClass('bi-x-circle-fill text-danger').addClass('bi-check-circle-fill text-success');
+					$('.billNameIcon').addClass('bi-check-circle-fill text-success'); // change name icon
+					if ($('.billNameIcon').hasClass('bi-x-circle-fill')) {
+						$('.billNameIcon').removeClass('bi-x-circle-fill text-danger');
+					} else if ($('.billNameIcon').hasClass('bi-backspace-fill')) {
+						$('.billNameIcon').removeClass('bi-backspace-fill text-light');
+						$('.newBillInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+					}
 
 					$('.billName').val(response.Name);
 					$('.billNo').val(response.ClientNo);
@@ -312,20 +339,14 @@ $(document).ready(function() {
 					$('.billCity').val(response.CityStateProvinceZip);
 					$('.billCountry').val(response.Country);
 					$('.billContact').val(response.ContactNum);
-					let category = null;
-					switch (response.Category) {
-						case '0': category = 'CONFIRMED DISTRIBUTOR'; break;
-						case '1': category = 'DISTRIBUTOR ON PROBATION'; break;
-						case '2': category = 'DIRECT DEALER'; break;
-						case '3': category = 'DIRECT END USER'; break;
-					}
-					$('.billCategory').val(category).html(category);
+					$('.billTIN').val(response.TIN);
+					$('.billTerritory').val(response.TerritoryManager);
 
-					$('#BillToNo').val(response.ClientNo);
+					$('.billCategory option[value=' + response.Category + ']').prop('selected', true);
 
-					if ($('.clientBillNameDropdown').hasClass('show')) {
-						$('.clientBillNameSearch').dropdown('hide');
-					}
+					$('#BillToNo').val(response.ClientNo); // change client no input
+
+					hideBillNameDropdown();
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log(textStatus, errorThrown);
@@ -333,31 +354,125 @@ $(document).ready(function() {
 			});
 		}
 	});
-	// NAME SEARCH - SHIP TO
-	$('.clientShipNameSearch').on('focus keyup', function() {
-		var searchVal = $(this).val();
-		if (searchVal.length > 0 ) {
-			$.ajax({
-				url: 'searchClientName',
-				type: 'GET',
-				dataType: 'JSON',
-				data: { search : searchVal } ,
-				success: function (response) {
-					$('.clientShipNameDropdown').html('');
-					$.each(response, function(index, val) {
-						$('.clientShipNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect clientShipDetailsSelect' }).html(val.Name).data('client-no', val.ClientNo));
-					});
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log(textStatus, errorThrown);
-				}
-			});
-		} else {
-			$('.clientShipNameDropdown').html('');
+
+	$(document).on('click', '.newBillClient', function(t) { // on clicking the new vendor button on dropdown
+		$('.newBillInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+		// clear inputs
+		$('.billName').val('');
+		$('.billNo').val('');
+		$('.billAddress').val('');
+		$('.billCity').val('');
+		$('.billCountry').val('');
+		$('.billContact').val('');
+		$('.billTIN').val('');
+		$('.billTerritory').val('');
+		$('.billCategory option[value=0]').prop('selected', true);
+		// change no value
+		$('.billNo').val($('.billNo').data('newcno'));
+		$('#BillToNo').val('newBillClient');
+		
+		hideBillNameDropdown();
+
+		$('.billNameIcon').addClass('bi-backspace-fill text-light'); // change name icon
+		if ($('.billNameIcon').hasClass('bi-x-circle-fill')) {
+			$('.billNameIcon').removeClass('bi-x-circle-fill text-danger');
+		} else if ($('.billNameIcon').hasClass('bi-check-circle-fill')) {
+			$('.billNameIcon').removeClass('bi-check-circle-fill text-success');
 		}
-	}).on('keydown', function(e) {
+		// show ship to bill button
+		$('.shipToBillingClient').show();
+	});
+	$(document).on('click', '.billNameIcon', function(t) { // onclick of backspace icon
+		if ($('.billNameIcon').hasClass('bi-backspace-fill')) {
+			$('.newBillInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			// clear inputs
+			$('.billName').val('');
+			$('.billNo').val('');
+			$('.billAddress').val('');
+			$('.billCity').val('');
+			$('.billCountry').val('');
+			$('.billContact').val('');
+			$('.billTIN').val('');
+			$('.billTerritory').val('');
+			$('.billCategory option[value=0]').prop('selected', true);
+			// change no value
+			$('.billNo').val('');
+			$('#BillToNo').val('');
+			// change icon
+			$('.billNameIcon').removeClass('bi-backspace-fill text-light');
+			$('.billNameIcon').addClass('bi-x-circle-fill text-danger');
+		}
+		hideBillNameDropdown();
+		// hide ship to bill button
+		$('.shipToBillingClient').hide();
+		if ($('#ShipToNo').val() == 'shipToBillingClient') {
+			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+			$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			// clear inputs
+			$('.shipName').val('');
+			$('.shipNo').val('');
+			$('.shipAddress').val('');
+			$('.shipCity').val('');
+			$('.shipCountry').val('');
+			$('.shipContact').val('');
+			$('.shipTIN').val('');
+			$('.shipTerritory').val('');
+			$('.shipCategory option[value=0]').prop('selected', true);
+			// change no value
+			$('.shipNo').val('');
+			$('#ShipToNo').val('');
+			// change icon
+			$('.shipNameIcon').addClass('bi-x-circle-fill text-danger'); // change name icon
+			$('.shipNameIcon').removeClass('bi-check-circle-fill text-success');
+			hideShipNameDropdown();
+		}
+	});
+
+	// NAME SEARCH - SHIP TO
+	function hideShipNameDropdown() {
+		if ($('.clientShipNameDropdown').hasClass('show')) {
+			$('.clientShipNameSearch').dropdown('hide');
+		}
+	}
+	function showShipNameDropdown() {
 		if (!$('.clientShipNameDropdown').hasClass('show')) {
 			$('.clientShipNameSearch').dropdown('show');
+		}
+	}
+	$('.clientShipNameSearch').on('focus keyup', function() {
+		if (!$('.shipNameIcon').hasClass('bi-backspace-fill')) {
+			var searchVal = $(this).val();
+			if (searchVal.length > 0 ) {
+				$.ajax({
+					url: 'searchClientName',
+					type: 'GET',
+					dataType: 'JSON',
+					data: { search : searchVal } ,
+					success: function (response) {
+						$('.clientShipNameDropdown').html('');
+						$.each(response, function(index, val) {
+							$('.clientShipNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect clientShipDetailsSelect' }).html(val.Name).data('client-no', val.ClientNo));
+						});
+						$('.clientShipNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect newShipClient' }).html("[ NEW CLIENT ]"));
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log(textStatus, errorThrown);
+					}
+				});
+			} else {
+				$('.clientShipNameDropdown').html('');
+				$('.clientShipNameDropdown').append($('<span>').attr({ class: 'dropdown-item clientSelect newShipClient' }).html("[ NEW CLIENT ]"));
+			}
+		} else {
+			$('.clientShipNameDropdown').html('');
+			hideShipNameDropdown();
+		}
+	}).on('keydown click', function(e) {
+		if (!$('.shipNameIcon').hasClass('bi-backspace-fill')) {
+			showShipNameDropdown();
+		} else {
+			$('.clientShipNameDropdown').html('');
+			hideShipNameDropdown();
 		}
 	});
 	$(document).on('click', '.clientShipDetailsSelect', function(t) {
@@ -369,7 +484,13 @@ $(document).ready(function() {
 				dataType: 'JSON',
 				data: { no: clientNo } ,
 				success: function (response) {
-					$('.shipNameIcon').removeClass('bi-x-circle-fill text-danger').addClass('bi-check-circle-fill text-success');
+					$('.shipNameIcon').addClass('bi-check-circle-fill text-success'); // change name icon
+					if ($('.shipNameIcon').hasClass('bi-x-circle-fill')) {
+						$('.shipNameIcon').removeClass('bi-x-circle-fill text-danger');
+					} else if ($('.shipNameIcon').hasClass('bi-backspace-fill')) {
+						$('.shipNameIcon').removeClass('bi-backspace-fill text-light');
+						$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+					}
 
 					$('.shipName').val(response.Name);
 					$('.shipNo').val(response.ClientNo);
@@ -377,17 +498,108 @@ $(document).ready(function() {
 					$('.shipCity').val(response.CityStateProvinceZip);
 					$('.shipCountry').val(response.Country);
 					$('.shipContact').val(response.ContactNum);
+					$('.shipTIN').val(response.TIN);
+					$('.shipTerritory').val(response.TerritoryManager);
 
-					$('#ShipToNo').val(response.ClientNo);
+					$('.shipCategory option[value=' + response.Category + ']').prop('selected', true);
 
-					if ($('.clientShipNameDropdown').hasClass('show')) {
-						$('.clientShipNameSearch').dropdown('hide');
-					}
+					$('#ShipToNo').val(response.ClientNo); // change client no input
+
+					hideShipNameDropdown();
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log(textStatus, errorThrown);
 				}
 			});
+		}
+	});
+
+	$(document).on('click', '.newShipClient', function(t) { // on clicking the new vendor button on dropdown
+		$('.newShipInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+		// clear inputs
+		$('.shipName').val('');
+		$('.shipNo').val('');
+		$('.shipAddress').val('');
+		$('.shipCity').val('');
+		$('.shipCountry').val('');
+		$('.shipContact').val('');
+		$('.shipTIN').val('');
+		$('.shipTerritory').val('');
+		$('.shipCategory option[value=0]').prop('selected', true);
+		// change no value
+		$('.shipNo').val($('.shipNo').data('newcno'));
+		$('#ShipToNo').val('newShipClient');
+		
+		hideShipNameDropdown();
+
+		$('.shipNameIcon').addClass('bi-backspace-fill text-light'); // change name icon
+		if ($('.shipNameIcon').hasClass('bi-x-circle-fill')) {
+			$('.shipNameIcon').removeClass('bi-x-circle-fill text-danger');
+		} else if ($('.shipNameIcon').hasClass('bi-check-circle-fill')) {
+			$('.shipNameIcon').removeClass('bi-check-circle-fill text-success');
+		}
+	});
+	$(document).on('click', '.shipNameIcon', function(t) { // onclick of backspace icon
+		if ($('.shipNameIcon').hasClass('bi-backspace-fill')) {
+			$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			// clear inputs
+			$('.shipName').val('');
+			$('.shipNo').val('');
+			$('.shipAddress').val('');
+			$('.shipCity').val('');
+			$('.shipCountry').val('');
+			$('.shipContact').val('');
+			$('.shipTIN').val('');
+			$('.shipTerritory').val('');
+			$('.shipCategory option[value=0]').prop('selected', true);
+			// change no value
+			$('.shipNo').val('');
+			$('#ShipToNo').val('');
+			// change icon
+			$('.shipNameIcon').removeClass('bi-backspace-fill text-light');
+			$('.shipNameIcon').addClass('bi-x-circle-fill text-danger');
+		}
+		hideShipNameDropdown();
+	});
+	$(document).on('submit', '#formAddSalesOrder', function(t) { // check inputs before submitting
+		if ($('#BillToNo').val().length < 1) {
+			alert('NO BILLING CLIENT SELECTED');
+			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000); // scroll to top
+			t.preventDefault();
+		} else if ($('#ShipToNo').val().length < 1) {
+			alert('NO SHIPPING CLIENT SELECTED');
+			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000);
+			t.preventDefault();
+		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
+			alert('SALES ITEMS LIST IS EMPTY');
+			t.preventDefault();
+		}
+	});
+	$(document).on('click', '.shipToBillingClient', function(t) { // when shipping to new client
+		$('.shipName').addClass('viewonly').attr('readonly', '').removeAttr('required');
+		$('.shipNameIcon').addClass('bi-check-circle-fill text-success'); // change name icon
+		if ($('.shipNameIcon').hasClass('bi-x-circle-fill')) {
+			$('.shipNameIcon').removeClass('bi-x-circle-fill text-danger');
+		} else if ($('.shipNameIcon').hasClass('bi-backspace-fill')) {
+			$('.shipNameIcon').removeClass('bi-backspace-fill text-light');
+			$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+		}
+		hideShipNameDropdown();
+		$('#ShipToNo').val('shipToBillingClient'); // change client no input
+	});
+	$(document).on('change keyup', '.shipToBillInput', function(event) {
+		if ($('#ShipToNo').val() == 'shipToBillingClient') {
+			$('.shipName').val($('.billName').val());
+			$('.shipNo').val($('.billNo').val());
+			$('.shipAddress').val($('.billAddress').val());
+			$('.shipCity').val($('.billCity').val());
+			$('.shipCountry').val($('.billCountry').val());
+			$('.shipContact').val($('.billContact').val());
+			$('.shipTIN').val($('.billTIN').val());
+			$('.shipTerritory').val($('.billTerritory').val());
+
+			$('.shipCategory option[value=' + $('.billCategory').val() + ']').prop('selected', true);
+			hideShipNameDropdown();
 		}
 	});
 });

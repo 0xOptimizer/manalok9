@@ -333,20 +333,19 @@ class Model_Selects extends CI_Model {
 		return $result;
 	}
 
-	// public function GetStockedProducts()
-	// {
-	// 	$this->db->select('*');
-	// 	$this->db->where('InStock >', '0');
-	// 	$this->db->order_by('ID', 'asc');
-	// 	$result = $this->db->get('products'); 
-	// 	return $result;
-	// }
-
 	// NAME SEARCH
 	public function FindVendorName($name)
 	{
-		$this->db->select('*');
+		$this->db->select('Name, VendorNo');
 		$this->db->like('Name', $name);
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('vendors');  
+		return $result;
+	}
+	public function FindVendorAll()
+	{
+		$this->db->select('Name, VendorNo');
 		$this->db->order_by('Name', 'desc');
 		$this->db->limit('6');
 		$result = $this->db->get('vendors');  
@@ -354,13 +353,22 @@ class Model_Selects extends CI_Model {
 	}
 	public function FindClientName($name)
 	{
-		$this->db->select('*');
+		$this->db->select('Name, ClientNo');
 		$this->db->like('Name', $name);
 		$this->db->order_by('Name', 'desc');
 		$this->db->limit('6');
 		$result = $this->db->get('clients');  
 		return $result;
 	}
+	public function FindClientAll()
+	{
+		$this->db->select('Name, ClientNo');
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('clients');  
+		return $result;
+	}
+
 	public function Get_productByPID($product_id)
 	{
 		$this->db->select('*');

@@ -918,6 +918,28 @@ class Admin extends MY_Controller {
 			$date = $this->input->post('date');
 			$purchaseFromNo = $this->input->post('purchaseFromNo');
 			$productCount = $this->input->post('productCount');
+			$shipVia = $this->input->post('shipVia');
+			$deliveryDate = $this->input->post('deliveryDate');
+
+			if ($purchaseFromNo == 'newVendor') {
+				$purchaseFromNo = 'V-' . str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT);
+				$name = $this->input->post('vendor-name');
+				$tin = $this->input->post('vendor-tin');
+				$address = $this->input->post('vendor-address');
+				$contactNum = $this->input->post('vendor-contact-num');
+				$kind = $this->input->post('vendor-kind');
+				
+				// Insert
+				$data = array(
+					'VendorNo' => $purchaseFromNo,
+					'Name' => $name,
+					'TIN' => $tin,
+					'Address' => $address,
+					'ContactNum' => $contactNum,
+					'ProductServiceKind' => $kind,
+				);
+				$insertNewVendor = $this->Model_Inserts->InsertNewVendor($data);
+			}
 
 			// INSERT PURCHASE ORDER
 			$data = array(
@@ -925,6 +947,8 @@ class Admin extends MY_Controller {
 				'Date' => $date,
 				'DateCreation' => date('Y-m-d h:i:s A'),
 				'VendorNo' => $purchaseFromNo,
+				'ShipVia' => $shipVia,
+				'DateDelivery' => $deliveryDate,
 				'Status' => '1',
 			);
 			$insertNewPurchaseOrder = $this->Model_Inserts->InsertPurchaseOrder($data);
@@ -1094,6 +1118,61 @@ class Admin extends MY_Controller {
 			$billToNo = $this->input->post('billToNo');
 			$shipToNo = $this->input->post('shipToNo');
 			$productCount = $this->input->post('productCount');
+
+			if ($billToNo == 'newBillClient') {
+				$billToNo = 'C-' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
+				$billName = $this->input->post('bill-name');
+				$billTin = $this->input->post('bill-tin');
+				$billAddress = $this->input->post('bill-address');
+				$billCityStateProvinceZip = $this->input->post('bill-city-state-province-zip');
+				$billCountry = $this->input->post('bill-country');
+				$billContactNum = $this->input->post('bill-contact-num');
+				$billCategory = $this->input->post('bill-category');
+				$billTerritoryManager = $this->input->post('bill-territory-manager');
+
+				// Insert
+				$data = array(
+					'ClientNo' => $billToNo,
+					'Name' => $billName,
+					'TIN' => $billTin,
+					'Address' => $billAddress,
+					'CityStateProvinceZip' => $billCityStateProvinceZip,
+					'Country' => $billCountry,
+					'ContactNum' => $billContactNum,
+					'Category' => $billCategory,
+					'TerritoryManager' => $billTerritoryManager,
+				);
+				$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
+
+				if ($shipToNo == 'shipToBillingClient') { // set ship client no to bill no
+					$shipToNo = $billToNo;
+				}
+			}
+			if ($shipToNo == 'newShipClient') {
+				$shipToNo = 'C-' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
+				$shipName = $this->input->post('ship-name');
+				$shipTin = $this->input->post('ship-tin');
+				$shipAddress = $this->input->post('ship-address');
+				$shipCityStateProvinceZip = $this->input->post('ship-city-state-province-zip');
+				$shipCountry = $this->input->post('ship-country');
+				$shipContactNum = $this->input->post('ship-contact-num');
+				$shipCategory = $this->input->post('ship-category');
+				$shipTerritoryManager = $this->input->post('ship-territory-manager');
+
+				// Insert
+				$data = array(
+					'ClientNo' => $shipToNo,
+					'Name' => $shipName,
+					'TIN' => $shipTin,
+					'Address' => $shipAddress,
+					'CityStateProvinceZip' => $shipCityStateProvinceZip,
+					'Country' => $shipCountry,
+					'ContactNum' => $shipContactNum,
+					'Category' => $shipCategory,
+					'TerritoryManager' => $shipTerritoryManager,
+				);
+				$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
+			}
 
 			// INSERT SALES ORDER
 			$data = array(

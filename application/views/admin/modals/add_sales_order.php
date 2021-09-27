@@ -1,6 +1,6 @@
 <div class="modal fade" id="AddSalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-xl" role="document">
-		<form action="<?php echo base_url() . 'FORM_addSalesOrder';?>" method="POST" enctype="multipart/form-data">
+		<form id="formAddSalesOrder" action="<?php echo base_url() . 'FORM_addSalesOrder';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> New Sales Order</h4>
@@ -34,40 +34,53 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="bi bi-x-circle-fill text-danger h-100 w-100 billNameIcon"></i></span>
 										</div>
-										<input type="text" class="form-control clientBillNameSearch viewonly billName" placeholder="John Doe" autocomplete="off" data-toggle="dropdown">
+										<input type="text" class="form-control clientBillNameSearch billName shipToBillInput" name="bill-name" placeholder="John Doe" autocomplete="off" data-toggle="dropdown" required>
 										<div class="dropdown-menu dropdown-menu-left clientBillNameDropdown"></div>
 									</div>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CLIENT #</label>
-									<input type="text" class="form-control viewonly billNo" readonly>
+									<input type="text" class="form-control viewonly billNo shipToBillInput" data-newcno="C-<?=str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
 								</div>
 								<div class="form-group col-sm-12">
 									<label class="input-label">ADDRESS</label>
-									<input type="text" class="form-control viewonly billAddress" readonly>
+									<input type="text" class="form-control viewonly billAddress newBillInput shipToBillInput" name="bill-address" placeholder="M. Santos St." readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CITY, STATE/PROVINCE, ZIP</label>
-									<input type="text" class="form-control viewonly billCity" readonly>
+									<input type="text" class="form-control viewonly billCity newBillInput shipToBillInput" name="bill-city-state-province-zip" placeholder="Antipolo, Rizal, 1870" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">COUNTRY</label>
-									<input type="text" class="form-control viewonly billCountry" readonly>
+									<input type="text" class="form-control viewonly billCountry newBillInput shipToBillInput" name="bill-country" placeholder="Philippines" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CONTACT NUMBER</label>
-									<input type="text" class="form-control viewonly billContact" readonly>
+									<input type="text" class="form-control viewonly billContact newBillInput shipToBillInput" name="bill-contact-num" placeholder="09123456789" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CATEGORY</label>
-									<input type="text" class="form-control viewonly billCategory" readonly>
+									<select class="form-control viewonly billCategory newBillInput shipToBillInput" name="bill-category" readonly>
+										<option value="0" selected>CONFIRMED DISTRIBUTOR</option>
+										<option value="1">DISTRIBUTOR ON PROBATION</option>
+										<option value="2">DIRECT DEALER</option>
+										<option value="3">DIRECT END USER</option>
+									</select>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">TIN #</label>
+									<input type="text" class="form-control viewonly billTIN newBillInput shipToBillInput" name="bill-tin" placeholder="123 456 789 000" readonly>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">TERRITORY MANAGER</label>
+									<input type="text" class="form-control viewonly billTerritory newBillInput shipToBillInput" name="bill-territory-manager" placeholder="Jane Doe" readonly>
 								</div>
 							</div>
 						</div>
 						<div class="col-sm-12 col-md-6">
 							<div class="row">
 								<div class="form-group col-sm-12">
-									SHIP TO:
+									SHIP TO: <button type="button" class="btn btn-sm-primary shipToBillingClient" style="font-size: 12px; display: none;">SHIP TO NEW BILLING CLIENT</button>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">NAME</label>
@@ -75,29 +88,46 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="bi bi-x-circle-fill text-danger h-100 w-100 shipNameIcon"></i></span>
 										</div>
-										<input type="text" class="form-control clientShipNameSearch viewonly shipName" placeholder="John Doe" autocomplete="off" data-toggle="dropdown">
+										<input type="text" class="form-control clientShipNameSearch shipName" name="ship-name" placeholder="John Doe" autocomplete="off" data-toggle="dropdown" required>
 										<div class="dropdown-menu dropdown-menu-left clientShipNameDropdown"></div>
 									</div>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CLIENT #</label>
-									<input type="text" class="form-control viewonly shipNo" readonly>
+									<input type="text" class="form-control viewonly shipNo" data-newcno="C-<?=str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
 								</div>
 								<div class="form-group col-sm-12">
 									<label class="input-label">ADDRESS</label>
-									<input type="text" class="form-control viewonly shipAddress" readonly>
+									<input type="text" class="form-control viewonly shipAddress newShipInput" name="ship-address" placeholder="M. Santos St." readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CITY, STATE/PROVINCE, ZIP</label>
-									<input type="text" class="form-control viewonly shipCity" readonly>
+									<input type="text" class="form-control viewonly shipCity newShipInput" name="ship-city-state-province-zip" placeholder="Antipolo, Rizal, 1870" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">COUNTRY</label>
-									<input type="text" class="form-control viewonly shipCountry" readonly>
+									<input type="text" class="form-control viewonly shipCountry newShipInput" name="ship-country" placeholder="Philippines" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CONTACT NUMBER</label>
-									<input type="text" class="form-control viewonly shipContact" readonly>
+									<input type="text" class="form-control viewonly shipContact newShipInput" name="ship-contact-num" placeholder="09123456789" readonly>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">CATEGORY</label>
+									<select class="form-control viewonly shipCategory newShipInput" name="ship-category" readonly>
+										<option value="0" selected>CONFIRMED DISTRIBUTOR</option>
+										<option value="1">DISTRIBUTOR ON PROBATION</option>
+										<option value="2">DIRECT DEALER</option>
+										<option value="3">DIRECT END USER</option>
+									</select>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">TIN #</label>
+									<input type="text" class="form-control viewonly shipTIN newShipInput" name="ship-tin" placeholder="123 456 789 000" readonly>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">TERRITORY MANAGER</label>
+									<input type="text" class="form-control viewonly shipTerritory newShipInput" name="ship-territory-manager" placeholder="Jane Doe" readonly>
 								</div>
 							</div>
 						</div>
@@ -212,8 +242,8 @@
 														<td class="text-center pStock">
 															<?=$row['InStock']?>
 														</td>
-														<td class="text-center pPrice">
-															<?=number_format($row['PriceSelling'], 2)?>
+														<td class="text-center pPrice" data-price="<?=$row['Price_PerItem']?>">
+															<?=number_format($row['Price_PerItem'], 2)?>
 														</td>
 													</tr>
 											<?php endforeach;

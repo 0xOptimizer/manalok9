@@ -27,7 +27,7 @@ if ($this->session->flashdata('highlight-id')) {
 		color: #FFFFFF;
 	}
 
-	.vendorSelect {
+	.vendorSelect, .purchaseNameIcon {
 		cursor: pointer;
 	}
 	.vendorSelect:hover {
@@ -198,6 +198,7 @@ $(document).ready(function() {
 		let subTotal = 0;
 		$.each($('.productTotal'), function(i, val) {
 			subTotal += parseFloat($(this).data('product-total'));
+			console.log($(this).data('product-total'));
 		});
 		$('.productsTotal .subTotal, .total').html(subTotal.toFixed(2));
 		// empty transaction
@@ -220,8 +221,7 @@ $(document).ready(function() {
 					class: 'inpQty ' + opClassName + '_qty',
 					type: 'number',
 					value: 0,
-					min: '0',
-					max: parseInt($(this).children('.pStock').html())
+					min: '0'
 				})))
 				.append($('<td>').attr({ // code
 					class: 'text-center'
@@ -236,7 +236,7 @@ $(document).ready(function() {
 				}).html($(this).children('.pPrice').html()).append($('<input>').attr({ // create hidden input for unit price
 					class: 'inpPrice',
 					type: 'hidden',
-					value: parseFloat($(this).children('.pPrice').html().replace(',', ''))
+					value: parseFloat($(this).children('.pPrice').data('price'))
 				})))
 				.append($('<td>').attr({ // total
 					class: 'productTotal text-center'
@@ -260,7 +260,7 @@ $(document).ready(function() {
 	$(document).on('focus keyup change', '.productQty input', function() {
 		let td = $(this).parent('.productQty');
 		if ($(this).val().length > 0) {
-			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').html().replace(',', ''));
+			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('.inpPrice').val());
 			td.siblings('.productTotal').html(productTotal.toFixed(2)).data('product-total', productTotal);
 		} else {
 			td.siblings('.productTotal').html(0).data('product-total', 0);
@@ -268,31 +268,52 @@ $(document).ready(function() {
 		updProductCount();
 	});
 
+
 	// NAME SEARCH
-	$('.vendorPurchaseNameSearch').on('focus keyup', function() {
-		var searchVal = $(this).val();
-		if (searchVal.length > 0 ) {
-			$.ajax({
-				url: 'searchVendorName',
-				type: 'GET',
-				dataType: 'JSON',
-				data: { search : searchVal } ,
-				success: function (response) {
-					$('.vendorPurchaseNameDropdown').html('');
-					$.each(response, function(index, val) {
-						$('.vendorPurchaseNameDropdown').append($('<span>').attr({ class: 'dropdown-item vendorSelect vendorPurchaseDetailsSelect' }).html(val.Name).data('vendor-no', val.VendorNo));
-					});
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log(textStatus, errorThrown);
-				}
-			});
-		} else {
-			$('.vendorPurchaseNameDropdown').html('');
+	function hideNameDropdown() {
+		if ($('.vendorPurchaseNameDropdown').hasClass('show')) {
+			$('.vendorPurchaseNameSearch').dropdown('hide');
 		}
-	}).on('keydown', function(e) {
+	}
+	function showNameDropdown() {
 		if (!$('.vendorPurchaseNameDropdown').hasClass('show')) {
 			$('.vendorPurchaseNameSearch').dropdown('show');
+		}
+	}
+	$('.vendorPurchaseNameSearch').on('focus keyup', function() {
+		if (!$('.purchaseNameIcon').hasClass('bi-backspace-fill')) {
+			var searchVal = $(this).val();
+			if (searchVal.length > 0) {
+				$.ajax({
+					url: 'searchVendorName',
+					type: 'GET',
+					dataType: 'JSON',
+					data: { search : searchVal } ,
+					success: function (response) {
+						$('.vendorPurchaseNameDropdown').html('');
+						$.each(response, function(index, val) {
+							$('.vendorPurchaseNameDropdown').append($('<span>').attr({ class: 'dropdown-item vendorSelect vendorPurchaseDetailsSelect' }).html(val.Name).data('vendor-no', val.VendorNo));
+						});
+						$('.vendorPurchaseNameDropdown').append($('<span>').attr({ class: 'dropdown-item vendorSelect newVendor' }).html("[ NEW VENDOR ]"));
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log(textStatus, errorThrown);
+					}
+				});
+			} else {
+				$('.vendorPurchaseNameDropdown').html('');
+				$('.vendorPurchaseNameDropdown').append($('<span>').attr({ class: 'dropdown-item vendorSelect newVendor' }).html("[ NEW VENDOR ]"));
+			}
+		} else {
+			$('.vendorPurchaseNameDropdown').html('');
+			hideNameDropdown();
+		}
+	}).on('keydown click', function(e) {
+		if (!$('.purchaseNameIcon').hasClass('bi-backspace-fill')) {
+			showNameDropdown();
+		} else {
+			$('.vendorPurchaseNameDropdown').html('');
+			hideNameDropdown();
 		}
 	});
 	$(document).on('click', '.vendorPurchaseDetailsSelect', function(t) {
@@ -304,25 +325,78 @@ $(document).ready(function() {
 				dataType: 'JSON',
 				data: { no: vendorNo } ,
 				success: function (response) {
-					$('.purchaseNameIcon').removeClass('bi-x-circle-fill text-danger').addClass('bi-check-circle-fill text-success');
+					$('.purchaseNameIcon').addClass('bi-check-circle-fill text-success'); // change name icon
+					if ($('.purchaseNameIcon').hasClass('bi-x-circle-fill')) {
+						$('.purchaseNameIcon').removeClass('bi-x-circle-fill text-danger');
+					} else if ($('.purchaseNameIcon').hasClass('bi-backspace-fill')) {
+						$('.purchaseNameIcon').removeClass('bi-backspace-fill text-light');
+						$('.newVendorInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+					}
 
 					$('.purchaseName').val(response.Name);
 					$('.purchaseNo').val(response.VendorNo);
-					// $('.purchaseAddress').val(response.Address);
-					// $('.purchaseCity').val(response.CityStateProvinceZip);
-					// $('.purchaseCountry').val(response.Country);
-					// $('.purchaseContact').val(response.ContactNum);
+					$('.purchaseTIN').val(response.TIN);
+					$('.purchaseAddress').val(response.Address);
+					$('.purchaseContactNum').val(response.ContactNum);
+					$('.purchaseKind').val(response.ProductServiceKind);
 
-					$('#PurchaseFromNo').val(response.VendorNo);
+					$('#PurchaseFromNo').val(response.VendorNo); // change vendor no input
 
-					if ($('.vendorPurchaseNameDropdown').hasClass('show')) {
-						$('.vendorPurchaseNameSearch').dropdown('hide');
-					}
+					hideNameDropdown();
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log(textStatus, errorThrown);
 				}
 			});
+		}
+	});
+	$(document).on('click', '.newVendor', function(t) { // on clicking the new vendor button on dropdown
+		$('.newVendorInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+		// clear inputs
+		$('.purchaseName').val('');
+		$('.purchaseTIN').val('');
+		$('.purchaseAddress').val('');
+		$('.purchaseContactNum').val('');
+		$('.purchaseKind').val('');
+		// change no value
+		$('.purchaseNo').val($('.purchaseNo').data('newvno'));
+		$('#PurchaseFromNo').val('newVendor');
+		
+		hideNameDropdown();
+
+		$('.purchaseNameIcon').addClass('bi-backspace-fill text-light'); // change name icon
+		if ($('.purchaseNameIcon').hasClass('bi-x-circle-fill')) {
+			$('.purchaseNameIcon').removeClass('bi-x-circle-fill text-danger');
+		} else if ($('.purchaseNameIcon').hasClass('bi-check-circle-fill')) {
+			$('.purchaseNameIcon').removeClass('bi-check-circle-fill text-success');
+		}
+	});
+	$(document).on('click', '.purchaseNameIcon', function(t) { // onclick of backspace icon
+		if ($('.purchaseNameIcon').hasClass('bi-backspace-fill')) {
+			$('.newVendorInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			// clear inputs
+			$('.purchaseName').val('');
+			$('.purchaseTIN').val('');
+			$('.purchaseAddress').val('');
+			$('.purchaseContactNum').val('');
+			$('.purchaseKind').val('');
+			
+			$('.purchaseNo').val('');
+			$('#PurchaseFromNo').val('');
+			// change icon
+			$('.purchaseNameIcon').removeClass('bi-backspace-fill text-light');
+			$('.purchaseNameIcon').addClass('bi-x-circle-fill text-danger');
+		}
+		hideNameDropdown();
+	});
+	$(document).on('submit', '#formAddPurchaseOrder', function(t) {
+		if ($('#PurchaseFromNo').val().length < 1) {
+			alert('NO VENDOR SELECTED');
+			$('#AddPurchaseOrderModal').animate({ scrollTop: 0 }, 1000);
+			t.preventDefault();
+		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
+			alert('PURCHASED ITEMS LIST IS EMPTY');
+			t.preventDefault();
 		}
 	});
 });

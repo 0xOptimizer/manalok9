@@ -1,6 +1,6 @@
 <div class="modal fade" id="AddPurchaseOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-xl" role="document">
-		<form action="<?php echo base_url() . 'FORM_addPurchaseOrder';?>" method="POST" enctype="multipart/form-data">
+		<form id="formAddPurchaseOrder" action="<?php echo base_url() . 'FORM_addPurchaseOrder';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> New Purchase Order</h4>
@@ -22,7 +22,7 @@
 							</div>
 						</div>
 						<!-- Top Part -->
-						<div class="col-sm-12">
+						<div class="col-sm-12 col-md-6">
 							<div class="row">
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">NAME</label>
@@ -30,13 +30,41 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="bi bi-x-circle-fill text-danger h-100 w-100 purchaseNameIcon"></i></span>
 										</div>
-										<input type="text" class="form-control vendorPurchaseNameSearch viewonly purchaseName" placeholder="John Doe" autocomplete="off" data-toggle="dropdown">
+										<input type="text" class="form-control vendorPurchaseNameSearch purchaseName" name="vendor-name" placeholder="John Doe" autocomplete="off" data-toggle="dropdown" required>
 										<div class="dropdown-menu dropdown-menu-left vendorPurchaseNameDropdown"></div>
 									</div>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">VENDOR #</label>
-									<input type="text" class="form-control viewonly purchaseNo" readonly>
+									<input type="text" class="form-control viewonly purchaseNo" readonly data-newvno="V-<?=str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT)?>">
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">TIN</label>
+									<input type="text" class="form-control viewonly purchaseTIN newVendorInput" name="vendor-tin" placeholder="123 456 789 000" readonly>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">ADDRESS</label>
+									<input type="text" class="form-control viewonly purchaseAddress newVendorInput" name="vendor-address" placeholder="M. Santos St., Brgy. San Jose, Antipolo City" readonly>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">CONTACT #</label>
+									<input type="text" class="form-control viewonly purchaseContactNum newVendorInput" name="vendor-contact-num" placeholder="09123456789" readonly>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">KIND OF PRODUCT/SERVICE</label>
+									<input type="text" class="form-control viewonly purchaseKind newVendorInput" name="vendor-kind" placeholder="Soap" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 col-md-6">
+							<div class="row">
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">SHIP VIA</label>
+									<input type="text" class="form-control" name="shipVia" placeholder="Ship" required>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">DELIVERY DATE</label>
+									<input type="date" class="form-control" name="dateDelivery" value="<?=date("Y-m-d");?>" required>
 								</div>
 							</div>
 						</div>
@@ -106,7 +134,7 @@
 						</div>
 						<div class="col-sm-12 col-md-6">
 							<div class="row">
-								<?php $getAllProducts = $this->Model_Selects->GetStockedProducts(); ?>
+								<?php $getAllProducts = $this->Model_Selects->GetAllProducts(); ?>
 								<div class="col-sm-0 col-md-6">
 									<label class="input-label">PRODUCTS</label>
 								</div>
@@ -125,7 +153,7 @@
 											<th class="text-center">CODE</th>
 											<th class="text-center">CATEGORY</th>
 											<th class="text-center">STOCK</th>
-											<th class="text-center">UNIT PRICE</th>
+											<th class="text-center">UNIT COST</th>
 										</thead>
 										<tbody>
 											<?php
@@ -141,11 +169,11 @@
 														<td class="text-center">
 															<?=$row['Product_Category']?>
 														</td>
-														<td class="text-center pStock">
+														<td class="text-center">
 															<?=$row['InStock']?>
 														</td>
-														<td class="text-center pPrice">
-															<?=number_format($row['PriceSelling'], 2)?>
+														<td class="text-center pPrice" data-price="<?=$row['Cost_PerItem']?>">
+															<?=number_format($row['Cost_PerItem'], 2)?>
 														</td>
 													</tr>
 											<?php endforeach;

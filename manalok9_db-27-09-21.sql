@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 21, 2021 at 06:57 PM
+-- Generation Time: Sep 27, 2021 at 09:50 AM
 -- Server version: 10.4.20-MariaDB
 -- PHP Version: 7.4.21
 
@@ -45,14 +45,7 @@ CREATE TABLE `clients` (
 --
 
 INSERT INTO `clients` (`ID`, `ClientNo`, `Name`, `TIN`, `Address`, `CityStateProvinceZip`, `Country`, `ContactNum`, `Category`, `TerritoryManager`) VALUES
-(1, 'C-000001', 'Client Name', 'TIN #', 'Test Address', 'City', 'Count', '09123456789', 0, 'Mngr Test'),
-(2, 'C-000002', 'Client Name 1', 'TIN # 1', 'Test Address 1', 'City', 'Count', '09123456789 1', 0, 'Mngr Test 1'),
-(3, 'C-000003', 'Client Name 2', 'TIN # 2', 'Test Address 2', 'City', 'Count', '09123456789 2', 1, 'Mngr Test 2'),
-(4, 'C-000004', 'Name', 'TIN', 'Address', 'City', 'Count', 'Contact', 2, 'Territory'),
-(5, 'C-000005', 'NameTest', 'TINTest', 'AddressTest', 'CityTest', 'CountryTest', 'ContactTest', 0, 'TerritoryTest'),
-(6, 'C-000006', 'Tester', 'Tester', 'Tester', NULL, NULL, 'Tester', 3, 'Tester'),
-(7, 'C-000007', 'NameTest', 'TINTest', 'AddressTest', 'CityTest', 'CountryTest', 'ContactTest', 3, 'TerritoryTest'),
-(8, 'C-000008', 'Test', 'Test', 'Test', 'Test', 'Test', 'Test', 0, 'Test');
+(1, 'C-000001', 'John Doe', '123 456 789 000', 'M. Santos St.', 'Antipolo, Rizal, 1870', 'Philippines', '09123456789', 0, 'Jane Doe');
 
 -- --------------------------------------------------------
 
@@ -189,7 +182,41 @@ INSERT INTO `logbook` (`ID`, `Event`, `Description`, `UserID`, `PageURL`, `DateA
 (113, 'created a new sales order.', 'added sales order SO-000006 [SalesOrderID: 6].', '60bf510d64ba8', 'https://localhost/manalok9/admin/sales_orders', '2021-09-22 12:47:22 AM'),
 (114, 'approved sales order.', 'approved sales order SO-000006 [SalesOrderID: 6].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_sales_order?orderNo=SO-000006', '2021-09-22 12:47:48 AM'),
 (115, 'created a new sales order.', 'added sales order SO-000007 [SalesOrderID: 7].', '60bf510d64ba8', 'https://localhost/manalok9/admin/sales_orders', '2021-09-22 12:48:07 AM'),
-(116, 'rejected sales order.', 'rejected sales order SO-000007 [SalesOrderID: 7].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_sales_order?orderNo=SO-000007', '2021-09-22 12:48:12 AM');
+(116, 'rejected sales order.', 'rejected sales order SO-000007 [SalesOrderID: 7].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_sales_order?orderNo=SO-000007', '2021-09-22 12:48:12 AM'),
+(117, 'logged in.', '', '60bf510d64ba8', '', '2021-09-25 01:06:32 PM'),
+(118, 'logged in.', '', '60bf510d64ba8', '', '2021-09-26 07:56:55 AM'),
+(119, 'created a new product.', 'added a new product Tester [Code: TST-23].', '60bf510d64ba8', 'https://localhost/manalok9/admin/products', '2021-09-26 08:35:29 AM'),
+(120, 'logged in.', '', '60bf510d64ba8', '', '2021-09-26 01:40:39 PM'),
+(121, 'logged in.', '', '60bf510d64ba8', '', '2021-09-26 07:24:56 PM'),
+(122, 'logged in.', '', '60bf510d64ba8', '', '2021-09-26 10:05:25 PM'),
+(123, 'created a new purchase order.', 'added purchase order PO-000001 [PurchaseOrderID: 1].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:55:03 PM'),
+(124, 'created a new purchase order.', 'added purchase order PO-000002 [PurchaseOrderID: 2].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:56:27 PM'),
+(125, 'created a new purchase order.', 'added purchase order PO-000003 [PurchaseOrderID: 3].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:01:33 PM'),
+(126, 'created a new purchase order.', 'added purchase order PO-000004 [PurchaseOrderID: 4].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:03:01 PM'),
+(127, 'created a new purchase order.', 'added purchase order PO-000005 [PurchaseOrderID: 5].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:03:31 PM'),
+(128, 'created a new purchase order.', 'added purchase order PO-000006 [PurchaseOrderID: 6].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:05:18 PM'),
+(129, 'created a new purchase order.', 'added purchase order PO-000007 [PurchaseOrderID: 7].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:05:27 PM'),
+(130, 'created a new purchase order.', 'added purchase order PO-000008 [PurchaseOrderID: 8].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:24:13 PM'),
+(131, 'created a new purchase order.', 'added purchase order PO-000009 [PurchaseOrderID: 9].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:27:39 PM'),
+(132, 'logged in.', '', '60bf510d64ba8', '', '2021-09-27 10:17:00 AM'),
+(133, 'created a new purchase order.', 'added purchase order PO-000010 [PurchaseOrderID: 10].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:18:07 AM'),
+(134, 'created a new purchase order.', 'added purchase order PO-000011 [PurchaseOrderID: 11].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:19:01 AM'),
+(135, 'created a new purchase order.', 'added purchase order PO-000012 [PurchaseOrderID: 12].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:21:07 AM'),
+(136, 'created a new purchase order.', 'added purchase order PO-000013 [PurchaseOrderID: 13].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:23:36 AM'),
+(137, 'created a new purchase order.', 'added purchase order PO-000014 [PurchaseOrderID: 14].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:57:29 PM'),
+(138, 'created a new purchase order.', 'added purchase order PO-000015 [PurchaseOrderID: 15].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:58:04 PM'),
+(139, 'approved purchase order.', 'approved purchase order PO-000014 [PurchaseOrderID: 14].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_purchase_order?orderNo=PO-000014', '2021-09-27 02:00:13 PM'),
+(140, 'created a new sales order.', 'added sales order SO-000001 [SalesOrderID: 1].', '60bf510d64ba8', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:00:51 PM'),
+(141, 'approved sales order.', 'approved sales order SO-000001 [SalesOrderID: 1].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_sales_order?orderNo=SO-000001', '2021-09-27 02:01:15 PM'),
+(142, 'created a new sales order.', 'added sales order SO-000002 [SalesOrderID: 2].', '60bf510d64ba8', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:02:43 PM'),
+(143, 'approved sales order.', 'approved sales order SO-000002 [SalesOrderID: 2].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_sales_order?orderNo=SO-000002', '2021-09-27 02:05:05 PM'),
+(144, 'created a new purchase order.', 'added purchase order PO-000016 [PurchaseOrderID: 16].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:16:52 PM'),
+(145, 'approved purchase order.', 'approved purchase order PO-000016 [PurchaseOrderID: 16].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_purchase_order?orderNo=PO-000016', '2021-09-27 02:17:02 PM'),
+(146, 'created a new sales order.', 'added sales order SO-000003 [SalesOrderID: 3].', '60bf510d64ba8', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:17:56 PM'),
+(147, 'created a new sales order.', 'added sales order SO-000004 [SalesOrderID: 4].', '60bf510d64ba8', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:41:23 PM'),
+(148, 'created a new purchase order.', 'added purchase order PO-000001 [PurchaseOrderID: 1].', '60bf510d64ba8', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 03:47:31 PM'),
+(149, 'approved purchase order.', 'approved purchase order PO-000001 [PurchaseOrderID: 1].', '60bf510d64ba8', 'https://localhost/manalok9/admin/view_purchase_order?orderNo=PO-000001', '2021-09-27 03:47:39 PM'),
+(150, 'created a new sales order.', 'added sales order SO-000001 [SalesOrderID: 1].', '60bf510d64ba8', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:48:38 PM');
 
 -- --------------------------------------------------------
 
@@ -205,24 +232,21 @@ CREATE TABLE `products` (
   `InStock` int(255) DEFAULT 0,
   `Released` int(255) DEFAULT 0,
   `Product_Category` varchar(255) DEFAULT NULL,
+  `Product_Weight` varchar(255) DEFAULT NULL,
+  `Price_PerItem` varchar(255) DEFAULT NULL,
+  `Cost_PerItem` varchar(255) DEFAULT NULL,
   `DateAdded` varchar(255) DEFAULT NULL,
-  `PriceSelling` varchar(255) DEFAULT '0'
+  `PriceSelling` varchar(255) DEFAULT '0',
+  `Barcode_Images` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`ID`, `Code`, `Product_Name`, `Description`, `InStock`, `Released`, `Product_Category`, `DateAdded`, `PriceSelling`) VALUES
-(4, '2021sampleID', 'Deadwood RY4', 'wood', 0, 0, 'Category 1', '2021-08-15 06:55:47 AM', '500'),
-(5, 'trytest62', 'Try', 'Try', 0, 0, 'Category 1', '2021-09-08 08:12:05 PM', '250'),
-(6, 'Tester42', '42', 'Tryer', 0, 0, 'Category 2', '2021-09-08 08:12:27 PM', '99.50'),
-(7, 'MC', 'M C', 'MC', 4994, 6, 'Category 1', '2021-09-08 08:57:12 PM', '679.50'),
-(8, 'YP', 'Y P', 'YP', 4395, 155, 'Category 1', '2021-09-08 08:57:24 PM', '99.99'),
-(9, 'POWTECH', 'POW TECH', 'POWTECH', 4695, 5, 'Category 1', '2021-09-08 08:57:40 PM', '1100.00'),
-(10, 'SDN', 'Sdn', 'SDN', 5000, 5, 'Category 1', '2021-09-08 08:58:03 PM', '200.00'),
-(11, 'SCB', 'Scb', 'scb\r\n', 4550, 0, 'Category 1', '2021-09-08 09:04:13 PM', '625.00'),
-(12, 'SDS', 'Sds', 'sds', 4500, 0, 'Category 2', '2021-09-08 09:04:24 PM', '420');
+INSERT INTO `products` (`ID`, `Code`, `Product_Name`, `Description`, `InStock`, `Released`, `Product_Category`, `Product_Weight`, `Price_PerItem`, `Cost_PerItem`, `DateAdded`, `PriceSelling`, `Barcode_Images`) VALUES
+(1, 'sample123', 'Dog food afritada', 'afritada recipe by Gordon Ramsay', 0, 0, 'Food', '200 kg', '10000', '20000', '2021-09-22 04:29:07 PM', '200', 'assets/barcode_images/sample123-pbarcode.png'),
+(2, 'TST-23', 'Tester', 'Tester', 10, 0, 'Accessories', '100 g', '99.55555', '109.55555', '2021-09-26 08:35:29 AM', '20', 'assets/barcode_images/TST-23-pbarcode.png');
 
 -- --------------------------------------------------------
 
@@ -251,35 +275,8 @@ CREATE TABLE `products_transactions` (
 --
 
 INSERT INTO `products_transactions` (`ID`, `Code`, `TransactionID`, `OrderNo`, `Type`, `Amount`, `PriceUnit`, `InStock`, `Date`, `DateAdded`, `Status`, `Date_Approval`, `UserID`) VALUES
-(1, 'SDS', 'SDS-613CAF90750DD', NULL, 0, 500, '0', 0, '2021-09-11', '2021-09-11 09:30:56 PM', 0, NULL, '60bf510d64ba8'),
-(2, 'MC', 'MC-613CAF9D6D3A7', NULL, 0, 5000, '0', 0, '2021-09-11', '2021-09-11 09:31:09 PM', 0, NULL, '60bf510d64ba8'),
-(3, 'YP', 'YP-613CAFA896A3B', NULL, 0, 5000, '0', 0, '2021-09-11', '2021-09-11 09:31:20 PM', 0, NULL, '60bf510d64ba8'),
-(4, 'SDS', 'SDS-613CAFB589753', NULL, 0, 4500, '0', 0, '2021-09-11', '2021-09-11 09:31:33 PM', 0, NULL, '60bf510d64ba8'),
-(5, 'POWTECH', 'POWTECH-613CAFBD34BC9', NULL, 0, 5000, '0', 0, '2021-09-11', '2021-09-11 09:31:41 PM', 0, NULL, '60bf510d64ba8'),
-(6, 'SDN', 'SDN-613CAFC9BA285', NULL, 0, 5000, '0', 0, '2021-09-11', '2021-09-11 09:31:53 PM', 0, NULL, '60bf510d64ba8'),
-(7, 'SCB', 'SCB-613CAFD410FC8', NULL, 0, 5000, '0', 0, '2021-09-11', '2021-09-11 09:32:04 PM', 0, NULL, '60bf510d64ba8'),
-(8, 'SDS', 'SDS-613CB1BE98AEC', NULL, 1, 200, '200', 0, '2021-09-11', '2021-09-11 09:40:14 PM', 0, NULL, '60bf510d64ba8'),
-(9, 'POWTECH', 'POWTECH-613CB1C957297', NULL, 1, 300, '300', 0, '2021-09-11', '2021-09-11 09:40:25 PM', 0, NULL, '60bf510d64ba8'),
-(10, 'SCB', 'SCB-613CB1D2EC939', NULL, 1, 450, '450', 0, '2021-09-11', '2021-09-11 09:40:34 PM', 0, NULL, '60bf510d64ba8'),
-(11, 'SCB', 'SCB-613CB1D97A01A', NULL, 1, 150, '150', 0, '2021-09-11', '2021-09-11 09:40:41 PM', 0, NULL, '60bf510d64ba8'),
-(12, 'YP', 'YP-613CB3649B407', 'SOSAMPLE-000003', 1, 150, '150', 0, '2021-09-11', '2021-09-11 09:47:16 PM', 1, '2021-09-21-11-41-22', '60bf510d64ba8'),
-(13, 'YP', 'YP-613CB36998305', NULL, 1, 350, '350', 0, '2021-09-11', '2021-09-11 09:47:21 PM', 0, NULL, '60bf510d64ba8'),
-(14, 'SDS', 'SDS-613CB373E2842', NULL, 1, 500, '500', 0, '2021-09-11', '2021-09-11 09:47:31 PM', 0, NULL, '60bf510d64ba8'),
-(15, 'SDN', 'SDN-613CB37FECDF3', NULL, 1, 350, '350', 0, '2021-09-11', '2021-09-11 09:47:43 PM', 0, NULL, '60bf510d64ba8'),
-(16, 'POWTECH', 'POWTECH-614893929BB4F', 'fgjfkdfd', 1, 200, '220000', 0, '2021-09-20', '2021-09-20 09:58:42 PM', 0, NULL, '60bf510d64ba8'),
-(17, 'MC', 'MC-000017', 'SO-000004', 1, 6, '679.50', 0, '2021-09-21', '2021-09-21 09:53:11 PM', 1, '2021-09-21-22-01-57', '60bf510d64ba8'),
-(18, 'POWTECH', 'POWTECH-000018', 'SO-000004', 1, 5, '1100.00', 0, '2021-09-21', '2021-09-21 09:53:11 PM', 1, '2021-09-21-22-01-57', '60bf510d64ba8'),
-(19, 'MC', 'MC-000019', NULL, 1, 9, '679.5', 0, '2021-09-21', '2021-09-21 10:02:23 PM', 0, NULL, '60bf510d64ba8'),
-(20, 'YP', 'YP-000020', NULL, 1, 14, '99.99', 0, '2021-09-21', '2021-09-21 10:02:23 PM', 0, NULL, '60bf510d64ba8'),
-(21, 'POWTECH', 'POWTECH-000021', NULL, 1, 15, '1100', 0, '2021-09-21', '2021-09-21 10:02:23 PM', 0, NULL, '60bf510d64ba8'),
-(22, 'SDS', 'SDS-000022', NULL, 0, 2, '420', 0, '2021-09-22', '2021-09-22 12:08:30 AM', 0, NULL, '60bf510d64ba8'),
-(23, 'SDN', 'SDN-000023', 'PO-000002', 0, 5, '200', 0, '2021-09-22', '2021-09-22 12:08:30 AM', 1, '2021-09-22-00-39-01', '60bf510d64ba8'),
-(24, 'SDS', 'SDS-000024', 'PO-000003', 0, 100, '420', 0, '2021-09-22', '2021-09-22 12:39:58 AM', 1, '2021-09-22-00-40-07', '60bf510d64ba8'),
-(25, 'MC', 'MC-000025', NULL, 0, 6, '679.5', 0, '2021-09-22', '2021-09-22 12:40:33 AM', 0, NULL, '60bf510d64ba8'),
-(26, 'SDN', 'SDN-000026', 'PO-000005', 0, 10, '200', 0, '2021-09-22', '2021-09-22 12:44:36 AM', 0, NULL, '60bf510d64ba8'),
-(27, 'SDN', 'SDN-000027', 'SO-000006', 1, 5, '200', 0, '2021-09-22', '2021-09-22 12:47:22 AM', 1, '2021-09-22-00-47-47', '60bf510d64ba8'),
-(28, 'YP', 'YP-000028', 'SO-000006', 1, 5, '99.99', 0, '2021-09-22', '2021-09-22 12:47:22 AM', 1, '2021-09-22-00-47-47', '60bf510d64ba8'),
-(29, 'POWTECH', 'POWTECH-000029', 'SO-000007', 1, 20, '1100', 0, '2021-09-22', '2021-09-22 12:48:07 AM', 0, NULL, '60bf510d64ba8');
+(1, 'TST-23', 'TST-23-000001', 'PO-000001', 0, 10, '109.55555', 0, '2021-09-27', '2021-09-27 03:47:31 PM', 1, '2021-09-27-15-47-39', '60bf510d64ba8'),
+(2, 'TST-23', 'TST-23-000002', 'SO-000001', 1, 5, '99.55555', 0, '2021-09-27', '2021-09-27 03:48:37 PM', 0, NULL, '60bf510d64ba8');
 
 -- --------------------------------------------------------
 
@@ -293,8 +290,17 @@ CREATE TABLE `purchase_orders` (
   `Date` varchar(255) DEFAULT NULL,
   `DateCreation` varchar(255) DEFAULT NULL,
   `VendorNo` varchar(255) DEFAULT NULL,
+  `ShipVia` varchar(255) DEFAULT NULL,
+  `DateDelivery` varchar(255) DEFAULT NULL,
   `Status` int(11) DEFAULT NULL COMMENT '0 = rejected; 1 = for approval; 2 = approved'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `purchase_orders`
+--
+
+INSERT INTO `purchase_orders` (`ID`, `OrderNo`, `Date`, `DateCreation`, `VendorNo`, `ShipVia`, `DateDelivery`, `Status`) VALUES
+(1, 'PO-000001', '2021-09-27', '2021-09-27 03:47:31 PM', 'V-000001', 'Ship', NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -311,6 +317,13 @@ CREATE TABLE `sales_orders` (
   `ShipToClientNo` varchar(255) DEFAULT NULL,
   `Status` int(11) DEFAULT NULL COMMENT '0 = rejected; 1 = for approval; 2 = approved'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `sales_orders`
+--
+
+INSERT INTO `sales_orders` (`ID`, `OrderNo`, `Date`, `DateCreation`, `BillToClientNo`, `ShipToClientNo`, `Status`) VALUES
+(1, 'SO-000001', '2021-09-27', '2021-09-27 03:48:37 PM', 'C-000001', 'C-000001', 1);
 
 -- --------------------------------------------------------
 
@@ -4690,7 +4703,412 @@ INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `C
 (4340, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_summary', '2021-09-22 12:56:24 AM'),
 (4341, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-22 12:56:31 AM'),
 (4342, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-22 12:56:51 AM'),
-(4343, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-22 12:56:54 AM');
+(4343, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-22 12:56:54 AM'),
+(4344, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/', '2021-09-25 01:06:18 PM'),
+(4345, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_loginValidation', '2021-09-25 01:06:31 PM'),
+(4346, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-09-25 01:06:33 PM'),
+(4347, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/inventory', '2021-09-25 01:06:54 PM'),
+(4348, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-25 01:06:59 PM'),
+(4349, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-25 01:07:03 PM'),
+(4350, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-25 01:07:16 PM'),
+(4351, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/', '2021-09-26 07:56:23 AM'),
+(4352, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_loginValidation', '2021-09-26 07:56:54 AM'),
+(4353, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-09-26 07:56:58 AM'),
+(4354, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-26 07:57:24 AM'),
+(4355, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-26 08:03:49 AM'),
+(4356, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-09-26 08:04:12 AM'),
+(4357, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-26 08:04:16 AM'),
+(4358, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-09-26 08:04:19 AM'),
+(4359, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-26 08:04:22 AM'),
+(4360, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addNewProduct', '2021-09-26 08:15:35 AM'),
+(4361, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-26 08:34:00 AM'),
+(4362, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addNewProduct', '2021-09-26 08:35:27 AM'),
+(4363, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-26 08:35:30 AM'),
+(4364, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-09-26 01:40:09 PM'),
+(4365, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/', '2021-09-26 01:40:19 PM'),
+(4366, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_loginValidation', '2021-09-26 01:40:38 PM'),
+(4367, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-09-26 01:40:41 PM'),
+(4368, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-26 01:41:07 PM'),
+(4369, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 01:43:47 PM'),
+(4370, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-26 01:44:03 PM'),
+(4371, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 01:58:08 PM'),
+(4372, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-26 02:00:21 PM'),
+(4373, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getVendorDetails', '2021-09-26 02:00:22 PM'),
+(4374, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getVendorDetails', '2021-09-26 02:00:45 PM'),
+(4375, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getVendorDetails', '2021-09-26 02:00:52 PM'),
+(4376, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getVendorDetails', '2021-09-26 02:00:54 PM'),
+(4377, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-26 02:07:06 PM'),
+(4378, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:07:10 PM'),
+(4379, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:09:56 PM'),
+(4380, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:10:39 PM'),
+(4381, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:11:22 PM'),
+(4382, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:12:06 PM'),
+(4383, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:12:26 PM'),
+(4384, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:14:14 PM'),
+(4385, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:14:36 PM'),
+(4386, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:16:24 PM'),
+(4387, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:17:47 PM'),
+(4388, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:18:27 PM'),
+(4389, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:21:43 PM'),
+(4390, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:24:02 PM'),
+(4391, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:25:13 PM'),
+(4392, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:25:48 PM'),
+(4393, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:26:09 PM'),
+(4394, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:26:18 PM'),
+(4395, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:26:36 PM'),
+(4396, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:26:56 PM'),
+(4397, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:27:46 PM'),
+(4398, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:28:14 PM'),
+(4399, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:28:37 PM'),
+(4400, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:28:49 PM'),
+(4401, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:29:19 PM'),
+(4402, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:30:47 PM'),
+(4403, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:31:01 PM'),
+(4404, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:31:55 PM'),
+(4405, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:32:22 PM'),
+(4406, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:32:44 PM'),
+(4407, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:33:15 PM'),
+(4408, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:34:14 PM'),
+(4409, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:34:24 PM'),
+(4410, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:34:50 PM'),
+(4411, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:35:21 PM'),
+(4412, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:36:59 PM'),
+(4413, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:37:06 PM'),
+(4414, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:37:22 PM'),
+(4415, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:37:54 PM'),
+(4416, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:38:02 PM'),
+(4417, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:41:07 PM'),
+(4418, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:41:31 PM'),
+(4419, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:41:45 PM'),
+(4420, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:44:06 PM'),
+(4421, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 02:44:30 PM'),
+(4422, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:24:26 PM'),
+(4423, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/', '2021-09-26 07:24:31 PM'),
+(4424, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_loginValidation', '2021-09-26 07:24:54 PM'),
+(4425, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-09-26 07:24:58 PM'),
+(4426, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:25:33 PM'),
+(4427, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:26:19 PM'),
+(4428, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:26:34 PM'),
+(4429, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:29:23 PM'),
+(4430, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:29:31 PM'),
+(4431, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:29:59 PM'),
+(4432, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:30:09 PM'),
+(4433, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:30:20 PM'),
+(4434, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:30:29 PM');
+INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `Country`, `PageURL`, `DateAdded`) VALUES
+(4435, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 07:31:42 PM'),
+(4436, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:04:24 PM'),
+(4437, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/', '2021-09-26 10:04:51 PM'),
+(4438, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_loginValidation', '2021-09-26 10:05:23 PM'),
+(4439, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-09-26 10:05:26 PM'),
+(4440, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:05:41 PM'),
+(4441, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:06:10 PM'),
+(4442, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:07:15 PM'),
+(4443, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:07:39 PM'),
+(4444, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:08:01 PM'),
+(4445, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:08:11 PM'),
+(4446, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:08:20 PM'),
+(4447, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:08:29 PM'),
+(4448, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:08:59 PM'),
+(4449, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:09:33 PM'),
+(4450, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:11:40 PM'),
+(4451, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:13:44 PM'),
+(4452, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:16:27 PM'),
+(4453, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:17:44 PM'),
+(4454, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:18:36 PM'),
+(4455, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:19:22 PM'),
+(4456, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:19:30 PM'),
+(4457, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:20:21 PM'),
+(4458, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:20:28 PM'),
+(4459, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:20:40 PM'),
+(4460, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:22:01 PM'),
+(4461, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:22:49 PM'),
+(4462, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:23:34 PM'),
+(4463, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:24:43 PM'),
+(4464, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:25:43 PM'),
+(4465, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:27:36 PM'),
+(4466, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:27:51 PM'),
+(4467, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:28:25 PM'),
+(4468, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:28:49 PM'),
+(4469, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:31:32 PM'),
+(4470, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:32:11 PM'),
+(4471, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:33:37 PM'),
+(4472, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:34:38 PM'),
+(4473, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:35:49 PM'),
+(4474, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:36:07 PM'),
+(4475, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:36:22 PM'),
+(4476, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:36:32 PM'),
+(4477, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:36:41 PM'),
+(4478, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:40:14 PM'),
+(4479, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:42:11 PM'),
+(4480, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:42:54 PM'),
+(4481, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-09-26 10:42:56 PM'),
+(4482, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:42:59 PM'),
+(4483, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:47:12 PM'),
+(4484, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:52:59 PM'),
+(4485, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:54:33 PM'),
+(4486, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 10:55:03 PM'),
+(4487, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:55:04 PM'),
+(4488, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 10:55:13 PM'),
+(4489, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:55:17 PM'),
+(4490, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 10:56:27 PM'),
+(4491, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:56:28 PM'),
+(4492, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 10:56:33 PM'),
+(4493, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 10:56:40 PM'),
+(4494, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:00:51 PM'),
+(4495, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 11:01:33 PM'),
+(4496, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:01:34 PM'),
+(4497, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:01:49 PM'),
+(4498, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:02:12 PM'),
+(4499, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:02:16 PM'),
+(4500, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 11:03:00 PM'),
+(4501, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:03:01 PM'),
+(4502, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 11:03:31 PM'),
+(4503, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:03:32 PM'),
+(4504, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:03:36 PM'),
+(4505, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:03:41 PM'),
+(4506, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:03:43 PM'),
+(4507, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:03:49 PM'),
+(4508, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:04:47 PM'),
+(4509, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:05:08 PM'),
+(4510, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 11:05:17 PM'),
+(4511, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:05:18 PM'),
+(4512, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 11:05:27 PM'),
+(4513, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:05:28 PM'),
+(4514, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:06:15 PM'),
+(4515, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:07:21 PM'),
+(4516, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:12:03 PM'),
+(4517, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:12:42 PM'),
+(4518, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:14:36 PM'),
+(4519, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:15:48 PM'),
+(4520, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:16:19 PM'),
+(4521, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:18:50 PM'),
+(4522, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:19:56 PM'),
+(4523, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:20:56 PM'),
+(4524, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:22:52 PM'),
+(4525, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:23:21 PM'),
+(4526, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 11:24:12 PM'),
+(4527, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:24:13 PM'),
+(4528, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:24:15 PM'),
+(4529, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:24:19 PM'),
+(4530, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-26 11:24:47 PM'),
+(4531, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:25:45 PM'),
+(4532, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:25:47 PM'),
+(4533, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:26:26 PM'),
+(4534, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:26:28 PM'),
+(4535, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:26:41 PM'),
+(4536, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:26:50 PM'),
+(4537, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:27:07 PM'),
+(4538, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-26 11:27:39 PM'),
+(4539, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:27:40 PM'),
+(4540, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-26 11:27:42 PM'),
+(4541, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-26 11:27:46 PM'),
+(4542, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getVendorDetails', '2021-09-26 11:27:47 PM'),
+(4543, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-26 11:27:58 PM'),
+(4544, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/', '2021-09-27 10:15:36 AM'),
+(4545, NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_loginValidation', '2021-09-27 10:16:58 AM'),
+(4546, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin', '2021-09-27 10:17:01 AM'),
+(4547, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:17:37 AM'),
+(4548, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 10:18:06 AM'),
+(4549, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:18:07 AM'),
+(4550, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:18:43 AM'),
+(4551, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 10:19:01 AM'),
+(4552, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:19:02 AM'),
+(4553, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:20:56 AM'),
+(4554, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 10:21:07 AM'),
+(4555, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:21:07 AM'),
+(4556, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:21:23 AM'),
+(4557, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:21:46 AM'),
+(4558, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:22:07 AM'),
+(4559, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:22:48 AM'),
+(4560, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:23:27 AM'),
+(4561, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 10:23:36 AM'),
+(4562, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:23:36 AM'),
+(4563, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:24:53 AM'),
+(4564, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:25:14 AM'),
+(4565, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:25:43 AM'),
+(4566, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:25:59 AM'),
+(4567, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:26:23 AM'),
+(4568, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:27:07 AM'),
+(4569, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:27:08 AM'),
+(4570, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 10:52:18 AM'),
+(4571, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 10:52:50 AM'),
+(4572, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getClientDetails', '2021-09-27 10:52:53 AM'),
+(4573, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 10:53:12 AM'),
+(4574, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 10:53:19 AM'),
+(4575, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getClientDetails', '2021-09-27 10:53:26 AM'),
+(4576, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 10:53:33 AM'),
+(4577, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 10:53:37 AM'),
+(4578, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 10:53:53 AM'),
+(4579, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 10:54:20 AM'),
+(4580, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:11:17 AM'),
+(4581, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:36:45 AM'),
+(4582, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:36:52 AM'),
+(4583, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:39:39 AM'),
+(4584, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:45:10 AM'),
+(4585, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:49:13 AM'),
+(4586, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:49:46 AM'),
+(4587, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:50:21 AM'),
+(4588, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:50:46 AM'),
+(4589, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:51:11 AM'),
+(4590, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:51:29 AM'),
+(4591, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 11:58:54 AM'),
+(4592, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 12:02:08 PM'),
+(4593, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 12:04:13 PM'),
+(4594, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 12:08:46 PM'),
+(4595, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 12:08:57 PM'),
+(4596, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 12:49:44 PM'),
+(4597, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:05:48 PM'),
+(4598, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:20:15 PM'),
+(4599, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:31:37 PM'),
+(4600, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:31:51 PM'),
+(4601, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:34:00 PM'),
+(4602, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:35:50 PM'),
+(4603, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:36:03 PM'),
+(4604, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:36:58 PM'),
+(4605, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:37:08 PM'),
+(4606, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:38:54 PM'),
+(4607, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:39:44 PM'),
+(4608, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:40:17 PM'),
+(4609, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 01:49:18 PM'),
+(4610, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 01:49:20 PM'),
+(4611, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-09-27 01:50:26 PM'),
+(4612, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 01:50:43 PM'),
+(4613, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:50:48 PM'),
+(4614, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 01:50:51 PM'),
+(4615, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 01:51:11 PM'),
+(4616, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-09-27 01:51:13 PM'),
+(4617, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/viewproduct', '2021-09-27 01:51:45 PM'),
+(4618, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 01:51:49 PM'),
+(4619, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:51:51 PM'),
+(4620, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 01:51:53 PM'),
+(4621, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:51:55 PM'),
+(4622, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:54:01 PM'),
+(4623, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:54:38 PM'),
+(4624, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:57:02 PM'),
+(4625, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 01:57:28 PM'),
+(4626, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:57:29 PM'),
+(4627, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 01:58:03 PM'),
+(4628, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:58:04 PM'),
+(4629, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 01:58:07 PM'),
+(4630, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:58:11 PM'),
+(4631, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 01:58:13 PM'),
+(4632, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:58:26 PM'),
+(4633, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 01:58:28 PM'),
+(4634, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:58:51 PM'),
+(4635, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-27 01:59:00 PM'),
+(4636, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getVendorDetails', '2021-09-27 01:59:09 PM'),
+(4637, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:59:11 PM'),
+(4638, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 01:59:46 PM'),
+(4639, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 01:59:48 PM'),
+(4640, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 02:00:03 PM'),
+(4641, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_approvePurchaseOrder', '2021-09-27 02:00:11 PM'),
+(4642, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 02:00:13 PM'),
+(4643, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:00:15 PM'),
+(4644, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:00:20 PM'),
+(4645, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addSalesOrder', '2021-09-27 02:00:50 PM'),
+(4646, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:00:51 PM'),
+(4647, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:00:56 PM'),
+(4648, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 02:01:09 PM'),
+(4649, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:01:11 PM'),
+(4650, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_approveSalesOrder', '2021-09-27 02:01:14 PM'),
+(4651, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:01:15 PM'),
+(4652, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 02:01:16 PM'),
+(4653, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:01:20 PM'),
+(4654, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:01:22 PM'),
+(4655, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addSalesOrder', '2021-09-27 02:02:43 PM'),
+(4656, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:02:44 PM'),
+(4657, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:02:46 PM'),
+(4658, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 02:03:04 PM'),
+(4659, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:03:10 PM'),
+(4660, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:05:02 PM'),
+(4661, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_approveSalesOrder', '2021-09-27 02:05:05 PM'),
+(4662, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:05:05 PM'),
+(4663, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 02:05:07 PM'),
+(4664, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:05:09 PM'),
+(4665, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:16:28 PM'),
+(4666, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 02:16:52 PM'),
+(4667, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:16:53 PM'),
+(4668, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 02:16:59 PM'),
+(4669, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_approvePurchaseOrder', '2021-09-27 02:17:02 PM'),
+(4670, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 02:17:02 PM'),
+(4671, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:17:04 PM'),
+(4672, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:17:11 PM'),
+(4673, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addSalesOrder', '2021-09-27 02:17:55 PM'),
+(4674, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:17:56 PM'),
+(4675, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 02:17:58 PM'),
+(4676, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:18:03 PM'),
+(4677, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:24:31 PM'),
+(4678, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:25:13 PM'),
+(4679, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:25:30 PM'),
+(4680, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/products', '2021-09-27 02:26:09 PM'),
+(4681, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:36:17 PM'),
+(4682, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:36:40 PM'),
+(4683, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:37:00 PM'),
+(4684, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:40:03 PM'),
+(4685, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:40:07 PM'),
+(4686, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:43:29 PM'),
+(4687, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:46:53 PM'),
+(4688, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:47:28 PM'),
+(4689, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:47:34 PM'),
+(4690, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:48:28 PM'),
+(4691, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:52:27 PM'),
+(4692, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 02:52:31 PM'),
+(4693, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-27 02:52:39 PM'),
+(4694, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:52:41 PM'),
+(4695, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-27 02:52:44 PM'),
+(4696, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 02:52:45 PM'),
+(4697, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:52:46 PM'),
+(4698, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 02:52:51 PM'),
+(4699, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:57:32 PM'),
+(4700, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 02:59:21 PM'),
+(4701, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:00:12 PM'),
+(4702, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:02:28 PM'),
+(4703, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:14:44 PM'),
+(4704, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:15:14 PM'),
+(4705, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:16:34 PM'),
+(4706, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:17:40 PM'),
+(4707, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:21:55 PM'),
+(4708, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:22:25 PM'),
+(4709, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:24:00 PM'),
+(4710, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:24:14 PM'),
+(4711, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:25:17 PM'),
+(4712, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:25:39 PM'),
+(4713, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:28:08 PM'),
+(4714, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:28:54 PM'),
+(4715, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:31:22 PM'),
+(4716, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:32:04 PM'),
+(4717, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:35:10 PM'),
+(4718, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 03:35:59 PM'),
+(4719, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/getClientDetails', '2021-09-27 03:36:03 PM'),
+(4720, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:36:08 PM'),
+(4721, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:36:59 PM'),
+(4722, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:37:32 PM'),
+(4723, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:39:11 PM'),
+(4724, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:39:47 PM'),
+(4725, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:40:47 PM'),
+(4726, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addSalesOrder', '2021-09-27 03:41:22 PM'),
+(4727, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:41:24 PM'),
+(4728, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 03:41:28 PM'),
+(4729, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:41:34 PM'),
+(4730, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 03:41:37 PM'),
+(4731, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:42:03 PM'),
+(4732, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:44:23 PM'),
+(4733, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 03:45:45 PM'),
+(4734, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-27 03:46:15 PM'),
+(4735, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 03:46:21 PM'),
+(4736, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addPurchaseOrder', '2021-09-27 03:47:31 PM'),
+(4737, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/purchase_orders', '2021-09-27 03:47:31 PM'),
+(4738, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 03:47:34 PM'),
+(4739, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_approvePurchaseOrder', '2021-09-27 03:47:39 PM'),
+(4740, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_purchase_order', '2021-09-27 03:47:39 PM'),
+(4741, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/vendors', '2021-09-27 03:47:42 PM'),
+(4742, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:47:44 PM'),
+(4743, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/FORM_addSalesOrder', '2021-09-27 03:48:37 PM'),
+(4744, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:48:38 PM'),
+(4745, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/view_sales_order', '2021-09-27 03:48:41 PM'),
+(4746, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/clients', '2021-09-27 03:48:52 PM'),
+(4747, '60bf510d64ba8', 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 'TBD', 'https://localhost/manalok9/admin/sales_orders', '2021-09-27 03:48:55 PM');
 
 -- --------------------------------------------------------
 
@@ -4796,7 +5214,13 @@ INSERT INTO `users_login_history` (`ID`, `UserID`, `LoginEmail`, `LoginPassword`
 (27, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-20 12:04:26 PM'),
 (28, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-20 08:56:31 PM'),
 (29, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-21 11:18:30 AM'),
-(30, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-21 04:22:10 PM');
+(30, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-21 04:22:10 PM'),
+(31, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-25 01:06:31 PM'),
+(32, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-26 07:56:55 AM'),
+(33, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-26 01:40:39 PM'),
+(34, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-26 07:24:55 PM'),
+(35, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-26 10:05:25 PM'),
+(36, '60bf510d64ba8', 'admin', NULL, 'Desktop: Firefox 91.0', 'Windows 10', '127.0.0.1', 1, '2021-09-27 10:17:00 AM');
 
 -- --------------------------------------------------------
 
@@ -4819,13 +5243,7 @@ CREATE TABLE `vendors` (
 --
 
 INSERT INTO `vendors` (`ID`, `VendorNo`, `Name`, `TIN`, `Address`, `ContactNum`, `ProductServiceKind`) VALUES
-(1, 'V-000001', 'Test Vendor', 'TIN #', 'Test Address', '09123456789', 'Merch'),
-(2, 'V-000002', 'Test Vendor 1', 'TIN # 1', 'Test Address 1', '09123456789 1', 'Merch 1'),
-(3, 'V-000003', 'Test Vendor 2', 'TIN # 2', 'Test Address 2', '09123456789 2', 'Merch 2'),
-(4, 'V-000004', 'Test', 'Test', 'Test', 'Test', 'Test'),
-(5, 'V-000005', 'Name', 'TIN', 'Address', 'Contact', 'Kind'),
-(6, 'V-000006', 'test', 'test', 'test', 'test', 'test'),
-(7, 'V-000007', 'NameTest', 'TINTest', 'AddressTest', 'ContactTest', 'KindTest');
+(1, 'V-000001', 'John Doe', '123 456 789 000', 'M. Santos St., Brgy. San Jose, Antipolo City', '09123456789', 'Soap');
 
 --
 -- Indexes for dumped tables
@@ -4905,43 +5323,43 @@ ALTER TABLE `vendors`
 -- AUTO_INCREMENT for table `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `logbook`
 --
 ALTER TABLE `logbook`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=151;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `products_transactions`
 --
 ALTER TABLE `products_transactions`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `sales_orders`
 --
 ALTER TABLE `sales_orders`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `security_log`
 --
 ALTER TABLE `security_log`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4344;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4748;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -4959,13 +5377,13 @@ ALTER TABLE `users_login`
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `vendors`
 --
 ALTER TABLE `vendors`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
