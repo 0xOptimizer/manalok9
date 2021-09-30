@@ -69,6 +69,8 @@ $route['admin/view_purchase_summary'] = 'Admin/view_purchase_orders_summary';
 $route['admin/sales_orders'] = 'Admin/sales_orders';
 $route['admin/view_sales_order'] = 'Admin/view_sales_order';
 $route['admin/view_sales_summary'] = 'Admin/view_sales_orders_summary';
+$route['admin/settings_itemcodepage'] = 'Admin/view_settings_itemcode';
+
 
 // Users
 $route['user'] = 'Users';
@@ -104,6 +106,10 @@ $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
 $route['AJAX_sendRegistrationEmail'] = 'AJAX/sendRegistrationEmail';
 
 $route['get_productDetails'] = 'Admin/get_productDetails';
+$route['admin/SubmitNewItemcode'] = 'Admin/SubmitNewItemcode';
+$route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
+
+
 
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';

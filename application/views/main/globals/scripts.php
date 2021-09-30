@@ -32,3 +32,8 @@ $(document).ready(function() {
 	});
 });
 </script>
+<noscript>
+	<h5>
+		Enable Javascript to continue.
+	</h5>
+</noscript>

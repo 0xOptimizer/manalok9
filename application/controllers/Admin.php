@@ -119,6 +119,11 @@ class Admin extends MY_Controller {
 		$data = array_merge($data, $this->globalData);
 		$header['pageTitle'] = 'Products';
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+
+		### FILL SELECT OPTIONS
+		$data['AllItem_Code'] = $this->Model_Selects->AllItem_Code();
+		$data['GetPROdtype'] = $this->Model_Selects->GetPROdtype();
+
 		$this->load->view('admin/products', $data);
 	}
 	public function view_product()
@@ -224,6 +229,15 @@ class Admin extends MY_Controller {
 		} else {
 			redirect(base_url());
 		}
+	}
+	public function view_settings_itemcode()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Item Code Settings';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$data['AllItem_Code'] = $this->Model_Selects->AllItem_Code();
+		$this->load->view('admin/settings_itemcode', $data);
 	}
 
 	// Form inputs
@@ -1400,6 +1414,125 @@ class Admin extends MY_Controller {
 			$result = json_encode($data);
 			echo $result;
 			exit();
+		}
+	}
+
+	### UNIQUE ID START
+	public function crypto_rand_secure($min, $max)
+	{
+		$range = $max - $min;
+		if ($range < 1) return $min;
+		$log = ceil(log($range, 2));
+		$bytes = (int) ($log / 8) + 1;
+		$bits = (int) $log + 1;
+		$filter = (int) (1 << $bits) - 1;
+		do {
+			$rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+			$rnd = $rnd & $filter;
+		} while ($rnd > $range);
+		return $min + $rnd;
+	}
+	public function getToken($length)
+	{
+	    $token = "";
+	    $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	    $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+	    $codeAlphabet.= "0123456789";
+	    $max = strlen($codeAlphabet);
+
+	    for ($i=0; $i < $length; $i++) {
+	        $token .= $codeAlphabet[$this->crypto_rand_secure(0, $max-1)];
+	    }
+
+	    return $token;
+	}
+	### UNIQUE ID END
+	public function SubmitNewItemcode()
+	{
+		### SET TIMEZONE TO PH
+		date_default_timezone_set('Asia/Manila');
+
+		### GENERATE UNIQUE ID
+		$length = 44;
+		$ntokkken = $this->getToken($length);
+
+		### VARIABLES
+		$unID = $ntokkken;
+		$brand_top = $this->input->post('brand_top');
+		$cat_char = $this->input->post('cat_char');
+		$prod_type = $this->input->post('prod_type');
+		$brand_bot = $this->input->post('brand_bot');
+		$prod_line = $this->input->post('prod_line');
+		$new_type = $this->input->post('new_type');
+		$prod_variant = $this->input->post('prod_variant');
+		$prod_size = $this->input->post('prod_size');
+		$prod_itemcode = $this->input->post('prod_itemcode');
+		$timezone = date_default_timezone_get();
+
+		### CHECK ITEM CODE IF EXIST
+		$CheckItemCode = $this->Model_Selects->CheckItemCode($prod_itemcode);
+		if ($CheckItemCode->num_rows() > 0) {
+			### PROMPT ITEM CODE EXIST
+			redirect('admin/settings_itemcodepage');
+		}
+		### CONDITIONS
+		if ($brand_top == NULL || $cat_char == NULL || $prod_type == NULL || $brand_bot == NULL || $prod_line == NULL || $new_type == NULL || $prod_variant == NULL || $prod_size == NULL || $prod_itemcode == NULL ) {
+			### ERROR PROMPT
+			redirect('admin/settings_itemcodepage');
+		}
+		else
+		{
+			### INSERT TO TABLE
+			$data = array(
+				'uniqueID' => $unID, 
+				'Brand_Top' => $brand_top, 
+				'Cat_Char' => $cat_char, 
+				'Prod_Type' => $prod_type, 
+				'Brand_Bot' => $brand_bot, 
+				'Prod_Line' => $prod_line, 
+				'New_Type' => $new_type, 
+				'Prod_Variant' => $prod_variant, 
+				'Prod_Size' => $prod_size, 
+				'ItemCode' => $prod_itemcode, 
+				'TimeStamp' => $timezone, 
+			);
+
+			$AddNewItem_Code = $this->Model_Inserts->AddNewItem_Code($data);
+			if ($AddNewItem_Code == TRUE) {
+				### PROMPT SUCCESS
+				redirect('admin/settings_itemcodepage');
+			}
+			else
+			{
+				### PROMPT ERROR
+				redirect('admin/settings_itemcodepage');
+			}
+		}
+	}
+	public function remove_thisicode()
+	{
+		$uniqueID = $this->input->get('uid');
+		$CheckItemcode_byuid = $this->Model_Selects->CheckItemcode_byuid($uniqueID);
+		if ($CheckItemcode_byuid->num_rows() < 1) {
+
+			### UNIQUE ID DOES'NT EXIST THEN PROMPT
+			redirect('admin/settings_itemcodepage');
+		}
+		else
+		{
+			### DELETE USING UNIQUE ID THEN PROMPT
+			$remove_itemCode = $this->Model_Updates->remove_itemCode($uniqueID);
+			if ($remove_itemCode == TRUE) {
+
+				### PROMPT SUCCESS
+				redirect('admin/settings_itemcodepage');
+			}
+			else
+			{
+
+				### PROMPT ERROR
+				redirect('admin/settings_itemcodepage');
+			}
 		}
 	}
 }

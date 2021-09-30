@@ -8,19 +8,24 @@
 				<div class="modal-body">
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-3 mb-5">
-							<input id="in-productcode" type="text" class="form-control standard-input-pad" name="product-code" autocomplete="off" placeholder="ABCD200">
+							<select id="in-productcode" class="form-control standard-input-pad select-first-gray" name="product-code" required="">
+								<option selected disabled="" hidden="">ABCD200</option>
+								<?php foreach ($AllItem_Code->result_array() as $row): ?>
+									<option value="<?php print $row['ItemCode']; ?>"><?php print $row['ItemCode']; ?></option>
+								<?php endforeach ?>
+							</select>
 							<label class="input-label" for="in-productcode">ITEM CODE</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-7 offset-md-1 mb-5">
 							<input id="in-productname" type="text" class="form-control standard-input-pad" name="product-name" placeholder="Dog Snacks 200G">
 							<label class="input-label" for="in-productname">ITEM NAME</label>
-						</div>
+						</div>	
 						<div class="form-group col-12 col-sm-12 col-md-5 col-md-11 m-auto mb-5">
-							<select id="in-productcategory" class="form-control standard-input-pad select-first-gray" name="product-category">
-								<option selected>N/A</option>
-								<option>Accessories</option>
-								<option>Food</option>
-								<option>Out wear</option>
+							<select id="in-productcategory" class="form-control standard-input-pad select-first-gray" name="product-category" required="">
+								<option selected="" disabled="" hidden="">Select....</option>
+								<?php foreach ($GetPROdtype->result_array() as $row): ?>
+									<option value="<?php print $row['Prod_Type']; ?>"><?php print $row['Prod_Type']; ?></option>
+								<?php endforeach ?>o
 							</select>
 							<label class="input-label" for="in-productcategory">ITEM CATEGORY</label>
 						</div>

@@ -376,4 +376,32 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');  
 		return $result;
 	}
+	public function AllItem_Code()
+	{
+		$this->db->select('*');
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
+	public function GetPROdtype()
+	{
+		$this->db->distinct();
+		$this->db->select('Prod_Type');
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
+
+	public function CheckItemcode_byuid($uniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('uniqueID', $uniqueID);
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
+	public function CheckItemCode($prod_itemcode)
+	{
+		$this->db->select('*');
+		$this->db->where('ItemCode', $prod_itemcode);
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
 }

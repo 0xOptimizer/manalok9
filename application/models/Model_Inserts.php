@@ -63,4 +63,9 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('sales_orders', $data);
 		return $result;
 	}
+	public function AddNewItem_Code($data)
+	{
+		$result = $this->db->insert('tb_itemcode', $data);
+		return $result;
+	}
 }

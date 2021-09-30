@@ -124,4 +124,10 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('clients', $data);
 		return $result;
 	}
+	public function remove_itemCode($uniqueID)
+	{
+		$this->db->where('uniqueID', $uniqueID);
+		$result = $this->db->delete('tb_itemcode');
+		return $result;
+	}
 }
