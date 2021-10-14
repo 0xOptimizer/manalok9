@@ -404,4 +404,19 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('tb_itemcode');  
 		return $result;
 	}
+	public function Filter_releaseprod()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', 1);
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function Filter_restockprod()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', 0);
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	
 }

@@ -12,12 +12,15 @@
 	max-width: 90%;
 }
 </style>
-<div class="modal fade" id="scanrelease_modal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="scanrestock_modal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-lg" role="document">
-		<form action="<?php echo base_url() . 'FORM_addNewProduct';?>" method="POST" enctype="multipart/form-data">
+		<form action="<?php echo base_url() . '';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-cart-fill" style="font-size: 24px;"></i> Release Product</h4>
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-cart-fill" style="font-size: 24px;"></i> Restock Product</h4>
+					<a id="Restock_modalclose" href="#">
+						<i class="bi bi-x" style="font-size: 24px;"></i>
+					</a>
 				</div>
 				<div class="modal-body">
 					<div class="container-fluid">
@@ -84,7 +87,7 @@
 					</div>
 				</div>
 				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-check-square"></i> RELEASE PRODUCT</button>
+					<button type="submit" class="btn btn-success"><i class="bi bi-cart-check"></i> Add to Cart</button>
 				</div>
 			</div>
 		</form>

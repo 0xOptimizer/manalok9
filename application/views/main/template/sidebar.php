@@ -26,6 +26,18 @@
 						<span>Products</span>
 					</a>
 				</li>
+				<li class="sidebar-item sidebar-admin-release_product">
+					<a href="<?=base_url()?>admin/product_releasing" class='sidebar-link'>
+						<i class="bi bi-card-checklist"></i>
+						<span>Release </span>
+					</a>
+				</li>
+				<li class="sidebar-item sidebar-admin-restock_product">
+					<a href="<?=base_url()?>admin/product_restocking" class='sidebar-link'>
+						<i class="bi bi-card-list"></i>
+						<span>Restock </span>
+					</a>
+				</li>
 				<li class="sidebar-item sidebar-admin-inventory">
 					<a href="<?=base_url().'admin/inventory'?>" class='sidebar-link'>
 						<i class="bi bi-cart-fill"></i>
@@ -66,6 +78,7 @@
 						</a>
 					</li>
 				<?php endif; ?>
+				
 				<li class="sidebar-title">SETTINGS</li>
 				<li class="sidebar-item sidebar-admin-settings-itemcode">
 					<a href="<?=base_url().'admin/settings_itemcodepage'?>" class='sidebar-link'>

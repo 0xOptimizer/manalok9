@@ -70,6 +70,9 @@ $route['admin/sales_orders'] = 'Admin/sales_orders';
 $route['admin/view_sales_order'] = 'Admin/view_sales_order';
 $route['admin/view_sales_summary'] = 'Admin/view_sales_orders_summary';
 $route['admin/settings_itemcodepage'] = 'Admin/view_settings_itemcode';
+$route['admin/product_releasing'] = 'Admin/product_releasing';
+$route['admin/product_restocking'] = 'Admin/product_restocking';
+
 
 
 // Users

@@ -82,8 +82,6 @@ if ($this->session->flashdata('highlight-id')) {
 						|
 						<!-- <button type="button" class="newtransaction-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cart-plus"></i> NEW TRANSACTION</button> -->
 						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
-						|
-						<button type="button" class="scnrelease-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> RELEASE USING SCANNER</button>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -159,8 +157,6 @@ if ($this->session->flashdata('highlight-id')) {
 <?php $this->load->view('admin/modals/add_product.php'); ?>
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
-<!-- Release scanner modal -->
-<?php $this->load->view('admin/modals/scan_release.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -170,7 +166,6 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
-<script src="https://serratus.github.io/quaggaJS/examples/js/quagga.min.js"></script>
 
 
 
@@ -200,67 +195,6 @@ $(document).ready(function() {
 	}).on("input", function () {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
-	});
-	$('.scnrelease-btn').on('click', function() {
-		$('#scanrelease_modal').modal('toggle');
-		startScanner();
-		function startScanner() {
-			Quagga.init({
-				inputStream: {
-					name: "Live",
-					type: "LiveStream",
-					target: document.querySelector('#scanner_area'),
-					constraints: {
-						width: 480,
-						height: 320,
-						facingMode: "environment"
-					},
-				},
-				decoder: {
-					readers: [
-					"code_128_reader"
-					],
-				},
-
-			}, function (err) {
-				if (err) {
-					console.log(err);
-					return;
-				}
-				Quagga.start();
-			});
-
-			Quagga.onDetected(function(result) {
-				var p_id = result.codeResult.code;
-				$.ajax({
-					url: "get_productDetails",
-					type: "POST",
-					data: { product_code: p_id },
-					success: function(response) {
-						var data = $.parseJSON(response);
-						if (data.Status == "success") {
-							$('.code_prev').html(data.Code);
-							$('.name_prev').html(data.Product_Name);
-							$('.descrip_prev').html(data.Description);
-							$('.InStock_prev').html(data.InStock);
-							$('.Released_prev').html(data.Released);
-							$('.Product_Category_prev').html(data.Product_Category);
-							$('.Product_Weight_prev').html(data.Product_Weight);
-							$('.Price_PerItem_prev').html(data.Price_PerItem);
-						}
-						else
-						{
-							alert(data.Status);
-						}
-					}
-				});
-				return;
-			});
-		}
-	});
-	$('.release_num').on('keyup change', function() {
-		$calPriceAmount = $('.Price_PerItem_prev').text() * $(this).val(); 
-		$('.Total_PerItem_prev').html($calPriceAmount);
 	});
 });
 </script>

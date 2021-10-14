@@ -239,6 +239,25 @@ class Admin extends MY_Controller {
 		$data['AllItem_Code'] = $this->Model_Selects->AllItem_Code();
 		$this->load->view('admin/settings_itemcode', $data);
 	}
+	public function product_releasing()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'List of Product to be release';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$data['Filter_releaseprod'] = $this->Model_Selects->Filter_releaseprod();
+		$this->load->view('admin/release_product', $data);
+	}
+	public function product_restocking()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'List of Product to be release';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$data['Filter_restockprod'] = $this->Model_Selects->Filter_restockprod();
+		$this->load->view('admin/restock_product', $data);
+	}
+	
 
 	// Form inputs
 	public function FORM_addNewUser()
