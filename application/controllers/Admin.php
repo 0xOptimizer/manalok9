@@ -243,7 +243,7 @@ class Admin extends MY_Controller {
 	{
 		$data = [];
 		$data = array_merge($data, $this->globalData);
-		$header['pageTitle'] = 'List of Product to be release';
+		$header['pageTitle'] = 'Release Transactions';
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$data['Filter_releaseprod'] = $this->Model_Selects->Filter_releaseprod();
 		$this->load->view('admin/release_product', $data);
@@ -252,7 +252,7 @@ class Admin extends MY_Controller {
 	{
 		$data = [];
 		$data = array_merge($data, $this->globalData);
-		$header['pageTitle'] = 'List of Product to be release';
+		$header['pageTitle'] = 'Restock Transactions';
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$data['Filter_restockprod'] = $this->Model_Selects->Filter_restockprod();
 		$this->load->view('admin/restock_product', $data);
