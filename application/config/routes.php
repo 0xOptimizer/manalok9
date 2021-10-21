@@ -129,6 +129,14 @@ $route['admin/searchClientName'] = 'AJAX/searchClientName';
 $route['admin/searchClientDetails'] = 'AJAX/searchClientDetails';
 $route['admin/searchVendorName'] = 'AJAX/searchVendorName';
 $route['admin/searchVendorDetails'] = 'AJAX/searchVendorDetails';
+$route['admin/Add_idtoCart'] = 'AJAX/Add_idtoCart';
+$route['admin/Clear_cartSess'] = 'AJAX/Clear_cartSess';
+$route['admin/remove_fromCart'] = 'AJAX/remove_fromCart';
+
+
+
+
+
 
 
 

@@ -175,4 +175,70 @@ class AJAX extends CI_Controller {
 			echo json_encode($vendorDetails);
 		}
 	}
+	public function Add_idtoCart()
+	{
+
+		$item_code = $this->input->post('item_code');
+		$qtyValue = $this->input->post('qtyValue');
+
+		if ($item_code == null) {
+			echo "Error! Item code doesn't exist.";
+			exit();
+		}
+		if ($qtyValue == null) {
+			echo "Warning! Input Quantity.";
+			exit();
+		}
+		if (isset($item_code) || isset($qtyValue)) {
+
+			if (!isset($_SESSION['cart_sess'])) {
+				$_SESSION['cart_sess'] = array();
+			}
+
+			$data = array(
+				'item_code' => $item_code, 
+				'qty' => $qtyValue, 
+			);
+
+			if (isset($_SESSION['cart_sess'])) {
+	
+				foreach ($_SESSION['cart_sess'] as $row) {
+					if ($row['item_code'] == $item_code) {
+						echo "PRODUCT EXIST";
+						exit();
+					}
+				}
+
+				array_push($_SESSION['cart_sess'],$data);
+				echo "Product added to cart.";
+				exit();
+			}
+			
+		}
+	}
+	public function Clear_cartSess()
+	{
+		unset($_SESSION['cart_sess']);
+		redirect($_SERVER['HTTP_REFERER']);
+	}
+	public function remove_fromCart()
+	{
+
+		$item_code = $this->input->get('item_code');
+		if (isset($_SESSION['cart_sess'])) {
+			$cart_sess = $_SESSION['cart_sess'];
+			$key = array_search($item_code, array_column($cart_sess, 'item_code'));
+			unset($_SESSION['cart_sess'][$key]);
+			if (empty($_SESSION['cart_sess'])) {
+				unset($_SESSION['cart_sess']);
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+
+		}
+	}
 }

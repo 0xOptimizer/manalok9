@@ -17,7 +17,7 @@
 							<label class="input-label" for="in-productcode">ITEM CODE</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-7 offset-md-1 mb-5">
-							<input id="in-productname" type="text" class="form-control standard-input-pad" name="product-name" placeholder="Dog Snacks 200G">
+							<input id="in-productname" type="text" class="form-control standard-input-pad" name="product-name" placeholder="Dog Snacks 200G" autocomplete="off">
 							<label class="input-label" for="in-productname">ITEM NAME</label>
 						</div>	
 						<div class="form-group col-12 col-sm-12 col-md-5 col-md-11 m-auto mb-5">

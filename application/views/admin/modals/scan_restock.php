@@ -28,7 +28,7 @@
 						</div>
 						<div class="col-12 col-sm-5">
 							<p>
-								<input id="" class="release_num form-control" type="number" name="" placeholder="Quantity">
+								<input id="" class="release_num form-control quantity_val" type="number" name="" placeholder="Quantity" required="">
 							</p>
 						</div>
 

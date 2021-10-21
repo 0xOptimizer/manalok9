@@ -39,11 +39,10 @@ date_default_timezone_set('Asia/Manila');
 				<div class="row">
 					<div class="col-12 col-md-12">
 						<h3>Restock</h3>
-						
 					</div>
 					<div class="col-12 col-md-12 pt-4 pb-2">
 						<button type="button" class="scnrestock-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> Use Scanner</button>
-						<button type="button" class="viewRestockCart-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-cart"></i> Cart</button>
+						<button type="button" class="viewRestockCart-btn btn btn-sm-secondary ml-auto" style="font-size: 12px;"><i class="bi bi-cart"></i> Cart</button>
 					</div>
 					<p class="text-subtitle text-muted">Approve or cancel product for restocking.
 						<br>
@@ -124,6 +123,42 @@ date_default_timezone_set('Asia/Manila');
 					</table>
 				</div>
 			</section>
+			<div id="carT_shop" class="col-12">
+				<?php if (isset($_SESSION['cart_sess'])): ?>
+				<table>
+					<thead>
+						<td>
+								Item Code
+							</td>
+							<td>
+								Quantity
+							</td>
+					</thead>
+					<tbody>
+							
+							<?php foreach ($_SESSION['cart_sess'] as $row): ?>
+								<tr>
+									<td>
+										<?php print $row['item_code']; ?>
+									</td>
+									<td>
+										<?php print $row['qty']; ?>
+									</td>
+									<td>
+										<a class="remove_fm_cart" href="<?=base_url()?>admin/remove_fromCart?item_code=<?php print $row['item_code']; ?>"> Remove </a>
+									</td>
+								</tr>
+							<?php endforeach ?>
+
+					</tbody>
+				</table>
+				<?php else: ?>
+					<span>Cart is empty.</span>
+				<?php endif ?>
+			</div>
+			<?php if (isset($_SESSION['cart_sess'])): ?>
+				<a href="Clear_cartSess">Clear Cart</a>
+			<?php endif ?>
 		</div>
 	</div>
 </div>
@@ -217,6 +252,39 @@ $(document).ready(function() {
 	$('#Restock_modalclose').on('click', function() {
 		$('#scanrestock_modal').modal('toggle');
 	});
+	// CART
+	$('#restock_submit').on('click', function() {
+
+		var itCode = $('.code_prev').html();
+		var qtyValue = $('.quantity_val').val();
+		$.ajax({
+			url: 'Add_idtoCart',
+			type: "post",
+			data: {
+				item_code: itCode,
+				qtyValue: qtyValue
+			},
+			success: function(response) {
+				alert(response);
+				
+			}
+		});
+	});
+	// $('.remove_fm_cart').on('click', function() {
+	// 	var itCode = $(this).data('value');
+	// 	$.ajax({
+	// 		url: 'remove_fromCart',
+	// 		type: "post",
+	// 		data: {
+	// 			item_code: itCode
+	// 		},
+	// 		success: function(response) {
+	// 			alert(response);
+				
+	// 		}
+	// 	});
+	// });
+	
 });
 </script>
 
