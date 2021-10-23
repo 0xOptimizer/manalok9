@@ -130,4 +130,12 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->delete('tb_itemcode');
 		return $result;
 	}
+	public function UpdateStock_fromCart($nCode,$newStock)
+	{
+
+		$this->db->set('InStock', $newStock);
+		$this->db->where('Code', $nCode);
+		$result = $this->db->update('products');
+		return $result;
+	}
 }

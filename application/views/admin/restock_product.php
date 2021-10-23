@@ -123,47 +123,13 @@ date_default_timezone_set('Asia/Manila');
 					</table>
 				</div>
 			</section>
-			<div id="carT_shop" class="col-12">
-				<?php if (isset($_SESSION['cart_sess'])): ?>
-				<table>
-					<thead>
-						<td>
-								Item Code
-							</td>
-							<td>
-								Quantity
-							</td>
-					</thead>
-					<tbody>
-							
-							<?php foreach ($_SESSION['cart_sess'] as $row): ?>
-								<tr>
-									<td>
-										<?php print $row['item_code']; ?>
-									</td>
-									<td>
-										<?php print $row['qty']; ?>
-									</td>
-									<td>
-										<a class="remove_fm_cart" href="<?=base_url()?>admin/remove_fromCart?item_code=<?php print $row['item_code']; ?>"> Remove </a>
-									</td>
-								</tr>
-							<?php endforeach ?>
-
-					</tbody>
-				</table>
-				<?php else: ?>
-					<span>Cart is empty.</span>
-				<?php endif ?>
-			</div>
-			<?php if (isset($_SESSION['cart_sess'])): ?>
-				<a href="Clear_cartSess">Clear Cart</a>
-			<?php endif ?>
+			
 		</div>
 	</div>
 </div>
 <!-- Release scanner modal -->
-<?php $this->load->view('admin/modals/scan_restock.php'); ?>
+<?php $this->load->view('admin/modals/scan_restock'); ?>
+<?php $this->load->view('admin/modals/restock_cart_modal'); ?>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -253,7 +219,25 @@ $(document).ready(function() {
 		$('#scanrestock_modal').modal('toggle');
 	});
 	// CART
-	$('#restock_submit').on('click', function() {
+	function Get_Cardjson() {
+		$('#carT_shop').empty();
+		$.getJSON('get_Cartdata', function(data){
+			$.each(data, function (index, value) {
+				$('#carT_shop').append('<tr><td>'+ value.item_code +'</td><td>'+ value.qty +'</td><td></td><td><a href="#" class="remove_fm_cart" id="'+ value.item_code +'">Remove</a></td></tr>');
+			});
+		});
+		return;
+	}
+	$('.viewRestockCart-btn').on('click', function() {
+		$('#restock_cart_modals').modal('toggle');
+		Get_Cardjson();
+	});
+	$('#Restockcart_modalclose').on('click', function() {
+		$('#restock_cart_modals').modal('toggle');
+		Get_Cardjson();
+	});
+	
+	$(document).on("click", "#restock_submit", function() {
 
 		var itCode = $('.code_prev').html();
 		var qtyValue = $('.quantity_val').val();
@@ -266,25 +250,29 @@ $(document).ready(function() {
 			},
 			success: function(response) {
 				alert(response);
-				
+				Get_Cardjson();
+
 			}
 		});
 	});
-	// $('.remove_fm_cart').on('click', function() {
-	// 	var itCode = $(this).data('value');
-	// 	$.ajax({
-	// 		url: 'remove_fromCart',
-	// 		type: "post",
-	// 		data: {
-	// 			item_code: itCode
-	// 		},
-	// 		success: function(response) {
-	// 			alert(response);
-				
-	// 		}
-	// 	});
-	// });
-	
+	$(document).on("click", ".remove_fm_cart", function() {
+
+		var itCode = $(this).attr('id');
+		$.ajax({
+			url: 'remove_fromCart',
+			type: "post",
+			data: {
+				item_code: itCode
+			},
+			success: function(response) {
+				alert(response);
+				Get_Cardjson();
+
+			}
+
+		});
+	});
+
 });
 </script>
 

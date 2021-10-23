@@ -1554,4 +1554,36 @@ class Admin extends MY_Controller {
 			}
 		}
 	}
+	public function Restock_from_cart()
+	{
+		if (!isset($_SESSION['cart_sess'])) {
+			### PROMPT ERROR CART EMPTY OR NO SESSION CART
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			$cart_data = $_SESSION['cart_sess'];
+			foreach ($cart_data as $row => $val) {
+				$Code = $val['item_code'];
+
+				$CheckProduct_restock = $this->Model_Selects->CheckProduct_restock($Code);
+
+				if ($CheckProduct_restock->num_rows() > 0) {
+					$cpres = $CheckProduct_restock->row_array();
+
+					$dbCode = $cpres['Code'];
+					$dbInStock = $cpres['InStock'];
+
+					$nCode = $val['item_code'];
+					$nInStock = $val['qty'];
+
+					$newStock = $nInStock + $dbInStock;
+					$UpdateStock_fromCart = $this->Model_Updates->UpdateStock_fromCart($nCode,$newStock);
+				}
+			}
+			unset($_SESSION['cart_sess']);
+			redirect($_SERVER['HTTP_REFERER']);
+			
+		}
+	}
 }

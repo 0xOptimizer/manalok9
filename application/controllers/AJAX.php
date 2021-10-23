@@ -181,14 +181,17 @@ class AJAX extends CI_Controller {
 		$item_code = $this->input->post('item_code');
 		$qtyValue = $this->input->post('qtyValue');
 
+		$prompt_text = '';
+
 		if ($item_code == null) {
-			echo "Error! Item code doesn't exist.";
+			echo 'Error! Item code doesn\'t exist.';
 			exit();
 		}
 		if ($qtyValue == null) {
-			echo "Warning! Input Quantity.";
+			echo 'Warning! Input Quantity.';
 			exit();
 		}
+
 		if (isset($item_code) || isset($qtyValue)) {
 
 			if (!isset($_SESSION['cart_sess'])) {
@@ -202,18 +205,20 @@ class AJAX extends CI_Controller {
 
 			if (isset($_SESSION['cart_sess'])) {
 	
-				foreach ($_SESSION['cart_sess'] as $row) {
-					if ($row['item_code'] == $item_code) {
-						echo "PRODUCT EXIST";
+				foreach ($_SESSION['cart_sess'] as $row => $val) {
+					if ($val['item_code'] == $item_code) {
+						$_SESSION['cart_sess'][$row]['qty'] = $val['qty'] + $qtyValue;
+						echo 'Quantity added to existing product in cart.';
 						exit();
 					}
 				}
 
 				array_push($_SESSION['cart_sess'],$data);
-				echo "Product added to cart.";
+				echo 'Product added to cart.';
+
 				exit();
 			}
-			
+
 		}
 	}
 	public function Clear_cartSess()
@@ -224,21 +229,42 @@ class AJAX extends CI_Controller {
 	public function remove_fromCart()
 	{
 
-		$item_code = $this->input->get('item_code');
+		$item_code = $this->input->post('item_code');
 		if (isset($_SESSION['cart_sess'])) {
 			$cart_sess = $_SESSION['cart_sess'];
 			$key = array_search($item_code, array_column($cart_sess, 'item_code'));
+
 			unset($_SESSION['cart_sess'][$key]);
+
+			$final_session = array_values($_SESSION['cart_sess']);
+			$_SESSION['cart_sess'] = $final_session;
 			if (empty($_SESSION['cart_sess'])) {
 				unset($_SESSION['cart_sess']);
 			}
-			redirect($_SERVER['HTTP_REFERER']);
+			echo 'Product removed from cart.';
+			exit();
 		
 		}
 		else
 		{
-			redirect($_SERVER['HTTP_REFERER']);
+			// redirect($_SERVER['HTTP_REFERER']);
+			echo 'error';
+			exit();
 
+		}
+	}
+	public function get_Cartdata()
+	{
+		if (isset($_SESSION['cart_sess'])) {
+			foreach ($_SESSION['cart_sess'] as $row) {
+				$data = array();
+				$data['item_code'] = $row['item_code'];
+				$data['qty'] = $row['qty'];
+				$cart_data[] = $data;
+			}
+			$jsondata = json_encode($cart_data);
+			
+			echo $jsondata;
 		}
 	}
 }
