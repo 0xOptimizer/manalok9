@@ -167,26 +167,38 @@
 													<span class="footerHead">
 														CATEGORY OF ACCOUNT:
 													</span><br>
-													<span class="billCategory text-center">
-														NONE
+													<span class="dcCategory text-center">
+														CONFIRMED DISTRIBUTOR
 													</span>
 												</td>
-												<td class="footerHead">Less: Outright Discount</td>
+												<td class="footerHead">
+													Less: Outright Discount
+													( <span class="dcOutright text-light">15</span>% )
+												</td>
 												<td class="text-center">0.00</td>
 												<td></td>
 											</tr>
 											<tr style="border-color: #a7852d;">
-												<td class="footerHead">Volume Discount</td>
+												<td class="footerHead">
+													Volume Discount
+													( <span class="dcVolume text-light">10</span>% )
+												</td>
 												<td class="text-center">0.00</td>
 												<td></td>
 											</tr>
 											<tr style="border-color: #a7852d;">
-												<td class="footerHead">PBD Discount</td>
+												<td class="footerHead">
+													PBD Discount
+													( <span class="dcPBD text-light">5</span>% )
+												</td>
 												<td class="text-center">0.00</td>
 												<td></td>
 											</tr>
 											<tr style="border-color: #a7852d;">
-												<td class="footerHead">Manpower Discount</td>
+												<td class="footerHead">
+													Manpower Discount
+													( <span class="dcManpower text-light">5</span>% )
+												</td>
 												<td class="text-center">0.00</td>
 												<td></td>
 											</tr>

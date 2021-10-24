@@ -73,6 +73,9 @@ $route['admin/settings_itemcodepage'] = 'Admin/view_settings_itemcode';
 $route['admin/product_releasing'] = 'Admin/product_releasing';
 $route['admin/product_restocking'] = 'Admin/product_restocking';
 
+$route['admin/bills'] = 'Admin/bills';
+$route['admin/invoices'] = 'Admin/invoices';
+
 
 
 // Users

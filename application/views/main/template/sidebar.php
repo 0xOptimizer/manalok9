@@ -50,7 +50,7 @@
 						<span>Users</span>
 					</a>
 				</li>
-				<li class="sidebar-item sidebar-admin-vendors">
+				<li class="sidebar-item sidebar-admin-vendors pt-3">
 					<a href="<?=base_url().'admin/vendors'?>" class='sidebar-link'>
 						<i class="bi bi-shop-window"></i>
 						<span>Vendors</span>
@@ -63,8 +63,14 @@
 							<span>Purchase Orders</span>
 						</a>
 					</li>
+					<li class="sidebar-item sidebar-admin-bills">
+						<a href="<?=base_url().'admin/bills'?>" class='sidebar-link'>
+							<i class="bi bi-cash"></i>
+							<span>Bills</span>
+						</a>
+					</li>
 				<?php endif; ?>
-				<li class="sidebar-item sidebar-admin-clients">
+				<li class="sidebar-item sidebar-admin-clients pt-3">
 					<a href="<?=base_url().'admin/clients'?>" class='sidebar-link'>
 						<i class="bi bi-people-fill"></i>
 						<span>Clients</span>
@@ -75,6 +81,12 @@
 						<a href="<?=base_url().'admin/sales_orders'?>" class='sidebar-link'>
 							<i class="bi bi-receipt"></i>
 							<span>Sales Orders</span>
+						</a>
+					</li>
+					<li class="sidebar-item sidebar-admin-invoices">
+						<a href="<?=base_url().'admin/invoices'?>" class='sidebar-link'>
+							<i class="bi bi-cash"></i>
+							<span>Invoices</span>
 						</a>
 					</li>
 				<?php endif; ?>

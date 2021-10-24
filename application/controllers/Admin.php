@@ -206,6 +206,18 @@ class Admin extends MY_Controller {
 			redirect(base_url());
 		}
 	}
+	public function bills()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Bills';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/bills', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
 	public function view_sales_order()
 	{
 		if ($this->session->userdata('Privilege') > 1) {
@@ -226,6 +238,18 @@ class Admin extends MY_Controller {
 			$header['pageTitle'] = 'Sales Orders Summary';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 			$this->load->view('admin/sales_orders_summary', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function invoices()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Invoices';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/invoices', $data);
 		} else {
 			redirect(base_url());
 		}

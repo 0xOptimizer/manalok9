@@ -406,8 +406,9 @@ $(document).ready(function() {
 		// hide ship to bill button
 		$('.shipToBillingClient').hide();
 		if ($('#ShipToNo').val() == 'shipToBillingClient') {
-			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
-			$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			// $('.newShipInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+			$('.shipName').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+			// $('.shipName').addClass('viewonly').attr('readonly', '').removeAttr('required');
 			// clear inputs
 			$('.shipName').val('');
 			$('.shipNo').val('');
@@ -575,7 +576,7 @@ $(document).ready(function() {
 			t.preventDefault();
 		}
 	});
-	$(document).on('click', '.shipToBillingClient', function(t) { // when shipping to new client
+	$(document).on('click', '.shipToBillingClient', function(t) { // when pressed shipping to new client
 		$('.shipName').addClass('viewonly').attr('readonly', '').removeAttr('required');
 		$('.shipNameIcon').addClass('bi-check-circle-fill text-success'); // change name icon
 		if ($('.shipNameIcon').hasClass('bi-x-circle-fill')) {
@@ -600,6 +601,40 @@ $(document).ready(function() {
 
 			$('.shipCategory option[value=' + $('.billCategory').val() + ']').prop('selected', true);
 			hideShipNameDropdown();
+		}
+	});
+
+	$(document).on('change', '.billCategory', function(e) {
+		switch ($(this).val()) {
+			case '0':
+				$('.dcCategory').html('CONFIRMED DISTRIBUTOR');
+				$('.dcOutright').html('15');
+				$('.dcVolume').html('10');
+				$('.dcPBD').html('5');
+				$('.dcManpower').html('5');
+				break;
+			case '1':
+				$('.dcCategory').html('DISTRIBUTOR ON PROBATION');
+				$('.dcOutright').html('12');
+				$('.dcVolume').html('10');
+				$('.dcPBD').html('5');
+				$('.dcManpower').html('5');
+				break;
+			case '2':
+				$('.dcCategory').html('DIRECT DEALER');
+				$('.dcOutright').html('10');
+				$('.dcVolume').html('10');
+				$('.dcPBD').html('5');
+				$('.dcManpower').html('');
+				break;
+			case '3':
+				$('.dcCategory').html('DIRECT END USER');
+				$('.dcOutright').html('10');
+				$('.dcVolume').html('10');
+				$('.dcPBD').html('5');
+				$('.dcManpower').html('');
+				break;
+			default: break;
 		}
 	});
 });

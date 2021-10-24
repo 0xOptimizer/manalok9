@@ -44,7 +44,7 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 		<div class="page-heading">
 			<div class="page-title">
 				<div class="row">
-					<div class="col-12 col-md-6">
+					<div class="col-12">
 						<h3>Purchase Order ID #<?=$purchaseOrder['ID']?>
 							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
@@ -206,6 +206,154 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 				</div>
 			</section>
 		</div>
+		<div class="page-heading">
+			<div class="page-title">
+				<div class="row">
+					<div class="col-12">
+						<h3>
+							Billing
+						</h3>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<button type="button" class="purchasebilling-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
+					</div>
+				</div>
+			</div>
+			<section>
+				<div class="row">
+					<div class="col-sm-12 table-responsive">
+						<table id="billsTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">ID</th>
+								<th class="text-center">BILL #</th>
+								<th class="text-center">VENDOR</th>
+								<th class="text-center">AMOUNT</th>
+								<th class="text-center">DATE</th>
+								<th class="text-center">MODE OF PAYMENT</th>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="text-center">
+										<span class="db-identifier" style="font-style: italic; font-size: 12px;">
+											1
+										</span>
+									</td>
+									<td class="text-center">
+										B-000001
+									</td>
+									<td class="text-center">
+										John Doe
+									</td>
+									<td class="text-center">
+										500.00
+									</td>
+									<td class="text-center">
+										2021-10-22
+									</td>
+									<td class="text-center">
+										CASH
+									</td>
+								</tr>
+								<tr>
+									<td class="text-center">
+										<span class="db-identifier" style="font-style: italic; font-size: 12px;">
+											2
+										</span>
+									</td>
+									<td class="text-center">
+										B-000002
+									</td>
+									<td class="text-center">
+										Jane Doe
+									</td>
+									<td class="text-center">
+										1,500.00
+									</td>
+									<td class="text-center">
+										2021-10-24
+									</td>
+									<td class="text-center">
+										CASH
+									</td>
+								</tr>
+								<tr>
+									<td class="font-weight-bold text-center" colspan="3">TOTAL</td>
+									<td class="font-weight-bold text-center">2,000.00</td>
+									<td colspan="2"></td>
+								</tr>
+								<tr style="border-color: #a7852d;">
+									<td class="font-weight-bold text-center" colspan="3">REMAINING PAYMENT</td>
+									<td class="font-weight-bold text-center">20,000.00</td>
+									<td colspan="2"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="PurchaseBilling" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-md" role="document">
+		<!-- <form id="formAddPurchaseOrder" action="<?php echo base_url() . 'FORM_addPurchaseOrder';?>" method="POST" enctype="multipart/form-data"> -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> PO Billing</h4>
+				</div>
+				<div class="modal-body">
+					<!-- <input type="hidden" name="productCount" id="ProductsCount" required> -->
+					<div class="row">
+						<div class="col-12">
+							<div class="mx-auto">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text">
+												TOTAL REMAINING PAYMENT
+											</span>
+										</div>
+										<div class="row">
+											<span style="font-size: 1.5em; color: #ebebeb;">
+												<b>
+													20,000.00
+												</b>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-sm-12 col-md-6">
+							<label class="input-label">VENDOR NAME</label>
+							<input type="text" class="form-control" name="name" placeholder="John Doe" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-6">
+							<label class="input-label">AMOUNT</label>
+							<input type="number" class="form-control" name="amount" placeholder="0.00" step="0.000001" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-6">
+							<label class="input-label">DATE</label>
+							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-6">
+							<label class="input-label">MODE OF PAYMENT</label>
+							<!-- <select class="form-control" name="mode">
+								<option value="0" selected>None</option>
+							</select> -->
+							<input type="text" class="form-control" name="mode" placeholder="Cash" required>
+						</div>
+					</div>
+				</div>
+				<div class="feedback-form modal-footer">
+					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Bill</button>
+				</div>
+			</div>
+		<!-- </form> -->
 	</div>
 </div>
 
@@ -226,6 +374,15 @@ $(document).ready(function() {
 		sDom: 'lrtip',
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
+	});
+	// var tableBills = $('#billsTable').DataTable( {
+	// 	sDom: 'lrtip',
+	// 	'bLengthChange': false,
+	// 	'order': [[ 0, 'desc' ]],
+	// });
+
+	$('.purchasebilling-btn').on('click', function() {
+		$('#PurchaseBilling').modal('toggle');
 	});
 
 	$(document).on('click', '.removeot-btn', function() {
