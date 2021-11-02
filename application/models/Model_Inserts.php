@@ -68,4 +68,16 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('tb_itemcode', $data);
 		return $result;
 	}
+	public function Insertto_releasingcart($data)
+	{
+		$result = $this->db->insert('cart_release', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 }

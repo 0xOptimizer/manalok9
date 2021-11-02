@@ -270,6 +270,9 @@ class Admin extends MY_Controller {
 		$header['pageTitle'] = 'Release Transactions';
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$data['Filter_releaseprod'] = $this->Model_Selects->Filter_releaseprod();
+
+		$user_id = $_SESSION['UserID'];
+		$data['cart_releasing'] = $this->Model_Selects->cart_releasing($user_id);
 		$this->load->view('admin/release_product', $data);
 	}
 	public function product_restocking()
@@ -1603,11 +1606,129 @@ class Admin extends MY_Controller {
 
 					$newStock = $nInStock + $dbInStock;
 					$UpdateStock_fromCart = $this->Model_Updates->UpdateStock_fromCart($nCode,$newStock);
+
+					// Fetch data
+					$code = $Code;
+					$type = 0;
+					$amount = $nInStock;
+					$date = '';
+
+					$getProductByCode = $this->Model_Selects->GetProductByCode($code);
+					$get_prdsCol = $getProductByCode->row_array();
+
+					$total_price = $nInStock * $get_prdsCol['Price_PerItem'];
+
+					$transactionID = '';
+					$transactionID .= strtoupper($code);
+					$transactionID .= '-';
+					$transactionID .= strtoupper(uniqid());
+
+					$data = array(
+						'Code' => $code,
+						'TransactionID' => $transactionID,
+						'Type' => $type,
+						'Amount' => $amount,
+						'Date' => $date,
+						'DateAdded' => date('Y-m-d h:i:s A'),
+						'Status' => 1,
+						'UserID' => $user_id,
+						'PriceUnit' => $get_prdsCol['Price_PerItem'],
+						'PriceTotal' => $total_price,
+					);
+					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+					if ($insertNewTransaction == TRUE) {
+
+						$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
+					}
 				}
 			}
 			unset($_SESSION['cart_sess']);
 			redirect($_SERVER['HTTP_REFERER']);
 			
 		}
+	}
+	public function release_fromcart()
+	{
+		$this->load->model('Model_Updates');
+
+		$user_id = $this->session->userdata('UserID');
+		$status = 0;
+		$Getsum_releasequantity = $this->Model_Selects->Getsum_releasequantity($user_id,$status);
+		foreach ($Getsum_releasequantity->result_array() as $row) {
+
+			// FROM CART RELEASE
+			$cart_id = $row['cart_id'];
+			$Code = $row['item_code'];
+			$cart_quantity = $row['quantity'];
+			$total_price = $row['total_price'];
+
+			$Get_ProductRow = $this->Model_Selects->Get_ProductRow($Code);
+			if ($Get_ProductRow->num_rows() > 0) {
+				// UPDATE RELEASE
+				$gprow = $Get_ProductRow->row_array();
+
+				$Released = $cart_quantity + $gprow['Released'];
+				$UpdateReleasedata = $this->Model_Updates->UpdateReleasedata($Code,$Released);
+				if ($UpdateReleasedata == true) {
+					// UPDATE CART ID STATUS TO APPROVED
+					$Update_CartRelease = $this->Model_Updates->Update_CartRelease($cart_id);
+					if ($Update_CartRelease == true) {
+
+						// Fetch data
+						$code = $Code;
+						$type = 1;
+						$amount = $cart_quantity;
+						$date = $row['time_stamp'];
+						
+						$getProductByCode = $this->Model_Selects->GetProductByCode($code);
+						$get_prdsCol = $getProductByCode->row_array();
+
+
+						$transactionID = '';
+						$transactionID .= strtoupper($code);
+						$transactionID .= '-';
+						$transactionID .= strtoupper(uniqid());
+
+						$data = array(
+							'Code' => $code,
+							'TransactionID' => $transactionID,
+							'Type' => $type,
+							'Amount' => $amount,
+							'Date' => $date,
+							'DateAdded' => date('Y-m-d h:i:s A'),
+							'Status' => 1,
+							'UserID' => $user_id,
+							'PriceUnit' => $get_prdsCol['Price_PerItem'],
+							'PriceTotal' => $total_price,
+						);
+						$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+						if ($insertNewTransaction == TRUE) {
+
+							$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
+							redirect($_SERVER['HTTP_REFERER']);
+						}
+						else
+						{
+							redirect($_SERVER['HTTP_REFERER']);
+						}
+					}
+					else
+					{
+						echo "ERROR1";
+					}
+				}
+				else
+				{
+					echo 'ERROR2';
+				}
+			}
+			else
+			{
+				echo 'ERROR3';
+			}
+
+		}
+		
+
 	}
 }

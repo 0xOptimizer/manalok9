@@ -17,6 +17,7 @@ class AJAX extends CI_Controller {
 		$this->load->model('Model_Inserts');
 		date_default_timezone_set('Asia/Manila');
 		$this->load->model('Model_Logbook');
+		$this->load->model('Model_Updates');
 	}
 
 	public function getUserLogs()
@@ -266,5 +267,81 @@ class AJAX extends CI_Controller {
 			
 			echo $jsondata;
 		}
+	}
+	public function add_cart_releasing()
+	{
+		date_default_timezone_set('Asia/Manila');
+
+		$item_code = $this->input->post('item_code');
+		$qtyValue = $this->input->post('qtyValue');
+
+		$prompt_text = '';
+
+		if ($item_code == null) {
+			echo 'item code error';
+			exit();
+		}
+		if ($qtyValue == null) {
+			echo 'quantity error';
+			exit();
+		}
+
+		// CHECK STOCK\
+		$Code = $item_code;
+		$CheckStocks_releasing = $this->Model_Selects->CheckStocks_releasing($Code);
+		$csrrr = $CheckStocks_releasing->row_array();
+
+		if ($CheckStocks_releasing->num_rows() < 1) {
+			echo 'product null';
+			exit();
+		}
+
+		// PROMPT STOCK IS LOW
+		if ($csrrr['InStock'] < $qtyValue) {
+			echo 'low stock';
+			exit();
+		}
+
+		// PREPARE DATA
+		$tota_p = $csrrr['Price_PerItem'] * $qtyValue;
+		$data = array(
+			'user_id' => $this->session->userdata('UserID'),
+			'item_code' => $item_code,
+			'quantity' => $qtyValue,
+			'total_price' => $tota_p,
+			'time_stamp' => date('Y-m-d H:i:s'),
+			'status' => 0
+		);
+		// INSERT TO CART RELEASING
+		$Insertto_releasingcart = $this->Model_Inserts->Insertto_releasingcart($data);
+
+
+		if ($Insertto_releasingcart == TRUE) {
+
+			// UPDATE STOCK INSTOCK - QUANTITY
+			$nCode = $csrrr['Code'];
+			$InStock = $csrrr['InStock'] - $qtyValue;
+			$updata = array(
+				'Code' => $nCode,
+				'InStock' => $InStock
+			);
+			$Update_releasedata = $this->Model_Updates->Update_releasedata($updata);
+			
+			if ($Update_releasedata == TRUE) {
+				echo 'success';
+				exit();
+			}
+			else
+			{
+				echo 'error';
+				exit();
+			}
+		}
+		else
+		{
+			echo 'error';
+			exit();
+		}
+
 	}
 }

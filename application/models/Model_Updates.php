@@ -138,4 +138,41 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('products');
 		return $result;
 	}
+	public function Update_releasedata($updata)
+	{
+		extract($updata);
+		$this->db->where('Code', $Code);
+	   $this->db->update('products', array('InStock' => $InStock));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function UpdateReleasedata($Code,$Released)
+	{
+		$this->db->where('Code', $Code);
+	   $this->db->update('products', array('Released' => $Released));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Update_CartRelease($cart_id)
+	{
+		$this->db->where('cart_id', $cart_id);
+	   $this->db->update('cart_release', array('status' => 1));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

@@ -425,5 +425,35 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');  
 		return $result;
 	}
-	
+	public function CheckStocks_releasing($Code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function cart_releasing($user_id)
+	{
+		$this->db->select('*');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('status', '0');
+		$result = $this->db->get('cart_release');
+		return $result;
+	}
+	public function Getsum_releasequantity($user_id,$status)
+	{
+		$this->db->select('*');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('status', $status);
+		$result = $this->db->get('cart_release');
+		return $result;
+	}
+
+	public function Get_ProductRow($Code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
 }

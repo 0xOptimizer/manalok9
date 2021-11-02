@@ -137,8 +137,13 @@ $route['admin/Clear_cartSess'] = 'AJAX/Clear_cartSess';
 $route['admin/remove_fromCart'] = 'AJAX/remove_fromCart';
 $route['admin/get_Cartdata'] = 'AJAX/get_Cartdata';
 
+$route['admin/add_cart_releasing'] = 'AJAX/add_cart_releasing';
+
+
 // CART
 $route['admin/Restock_from_cart'] = 'Admin/Restock_from_cart';
+
+$route['admin/release_fromcart'] = 'Admin/release_fromcart';
 
 
 

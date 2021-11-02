@@ -42,7 +42,8 @@ date_default_timezone_set('Asia/Manila');
 						
 					</div>
 					<div class="col-12 col-md-12 pt-4 pb-2">
-						<button type="button" class="scnrelease-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> USE SCANNER</button>
+						<button type="button" class="scnrelease-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> Use Scanner</button>
+						<button type="button" class="viewReleaseCart-btn btn btn-sm-secondary ml-auto" style="font-size: 12px;"><i class="bi bi-cart"></i> Cart</button>
 					</div>
 					<p class="text-subtitle text-muted">Approve or cancel product for releasing.</p>
 				</div>
@@ -125,6 +126,7 @@ date_default_timezone_set('Asia/Manila');
 </div>
 <!-- Release scanner modal -->
 <?php $this->load->view('admin/modals/scan_release.php'); ?>
+<?php $this->load->view('admin/modals/release_cart_modal'); ?>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -209,6 +211,63 @@ $(document).ready(function() {
 	$('.release_num').on('keyup change', function() {
 		$calPriceAmount = $('.Price_PerItem_prev').text() * $(this).val(); 
 		$('.Total_PerItem_prev').html($calPriceAmount);
+	});
+
+	// CART JAVASCRIPT
+	$('#Release_modalclose').on('click', function() {
+		$('#release_cart_modals').modal('toggle');
+	});
+	$('.viewReleaseCart-btn').on('click', function() {
+		$('#release_cart_modals').modal('toggle');
+	});
+
+	// // // ADD TO CART FOR RELEASING
+	$(document).on("click", "#release_submit", function() {
+		var itCode = $('.code_prev').html();
+		var qtyValue = $('.quantity_val').val();
+		$.ajax({
+			url: 'add_cart_releasing',
+			type: 'post',
+			data: {
+				item_code: itCode,
+				qtyValue: qtyValue
+			},
+			success: function(response) {
+				switch(response)
+				{
+					case	'item code error':
+					alert('Error! Item code doesn\'t exist.');
+					break;
+
+					case	'quantity error':
+					alert('Warning! Input Quantity.');
+					break;
+
+					case	'product null':
+					alert('Warning! Product doesn\'t exist.');
+					break;
+
+					case	'low stock':
+					alert('Warning! Quantity exceeds current stocks.');
+					break;
+
+					case	'success':
+					alert('Product added to cart.');
+					location.reload();
+					break;
+					
+					case 'error':
+					alert('Error! Please try again.');
+					break;
+
+					default:
+					alert('Please try again.');
+				}
+			},
+			error: function (request, status, error) {
+				console.log(request.responseText);
+			}
+		});
 	});
 });
 </script>
