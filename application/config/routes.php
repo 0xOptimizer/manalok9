@@ -120,6 +120,9 @@ $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
+$route['Add_newProductV2'] = 'Admin/Add_newProductV2';
+
+
 
 // AJAX REQUEST
 $route['getTransactionDetails'] = 'Admin/getTransactionDetails';

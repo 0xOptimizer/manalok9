@@ -785,6 +785,83 @@ class Admin extends MY_Controller {
 			redirect('admin/products');
 		}
 	}
+	public function Add_newProductV2()
+	{
+		require 'vendor/autoload.php';
+
+		// INSERT TO TABLE PRODUCT DETAILS
+		$prd_brand1 = $this->input->post('prd_brand1');
+		$prd_line = $this->input->post('prd_line');
+		$prd_type = $this->input->post('prd_type');
+		$prd_variant = $this->input->post('prd_variant');
+		$prd_size = $this->input->post('prd_size');
+		$prd_brand2 = $this->input->post('prd_brand2');
+		$prd_char = $this->input->post('prd_char');
+		$prd_chartype = $this->input->post('prd_chartype');
+		// INSERT TO TABLE PRODUCTS
+		$product_code = $this->input->post('product_code');
+		$unit_cost = $this->input->post('unit_cost');
+		$unit_price = $this->input->post('unit_price');
+		$product_name = $this->input->post('product_name');
+		$product_description = $this->input->post('product_description');
+
+		// VALIDATE VALUES
+		if ($prd_brand1 == null || $prd_line == null || $prd_type == null || $prd_variant == null || $prd_size == null || $prd_brand2 == null || $prd_char == null || $prd_chartype == null || $product_code == null || $unit_cost == null || $unit_price == null || $product_name == null || $product_description == null) {
+			redirect('admin/products');
+		}
+		// CHECK PRODUCT IN DATABASE IF EXIST
+		$Code = $product_code;
+		$CheckProduct_byCode = $this->Model_Selects->CheckProduct_byCode($Code);
+		if ($CheckProduct_byCode->num_rows() > 0) {
+			// CANCEL INSERT PROMPT PRODUCT EXIST
+			redirect('admin/products');
+		}
+		else
+		{
+			// BARCODE GENEREATOR
+			$colorblk = [0, 0, 0];
+			$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+			file_put_contents('assets/barcode_images/'.$product_code.'-pbarcode.png', $generator->getBarcode($product_code, $generator::TYPE_CODE_128, 3, 60, $colorblk));
+
+			// Insert
+			$data = array(
+				'Code' => $product_code,
+				'Product_Name' => $product_name,
+				'Product_Category' => $prd_type,
+				'Product_Weight' => $prd_size,
+				'Price_PerItem' => $unit_price,
+				'Cost_PerItem' => $unit_cost,
+				'Description' => $product_description,
+				'DateAdded' => date('Y-m-d h:i:s A'),
+				'Barcode_Images' => 'assets/barcode_images/'.$product_code.'-pbarcode.png',
+			);
+			$insertNewProduct = $this->Model_Inserts->InsertNewProduct($data);
+			if ($insertNewProduct == TRUE) {
+				$data = array(
+					'item_code' => $product_code,
+					'first_brand' => $prd_brand1,
+					'second_brand' => $prd_brand2,
+					'prd_char' => $prd_char,
+					'char_type' => $prd_chartype,
+					'prd_line' => $prd_line,
+					'prd_type' => $prd_type,
+					'prd_variant' => $prd_variant,
+					'prd_size' => $prd_size,
+				);
+				$InsertPrd_Details = $this->Model_Inserts->InsertPrd_Details($data);
+
+				$this->session->set_flashdata('highlight-id', $product_code);
+				$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($description ? ' ' . $description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
+
+				redirect('admin/products');
+			}
+			else
+			{
+				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				redirect('admin/products');
+			}
+		}
+	}
 	public function FORM_addNewTransaction()
 	{	
 		// Fetch data

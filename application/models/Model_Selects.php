@@ -456,4 +456,11 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function CheckProduct_byCode($Code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
 }

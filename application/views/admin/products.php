@@ -78,7 +78,8 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="newproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW PRODUCT</button>
+						<!-- <button type="button" class="newproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW PRODUCT</button> -->
+						<button type="button" class="addproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD PRODUCT</button>
 						|
 						<!-- <button type="button" class="newtransaction-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cart-plus"></i> NEW TRANSACTION</button> -->
 						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
@@ -155,6 +156,7 @@ if ($this->session->flashdata('highlight-id')) {
 </div>
 <!-- New product modal -->
 <?php $this->load->view('admin/modals/add_product.php'); ?>
+<?php $this->load->view('admin/modals/add_productV2.php'); ?>
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
 
@@ -178,6 +180,10 @@ $(document).ready(function() {
 	$('.newproduct-btn').on('click', function() {
 		$('#newProductModal').modal('toggle');
 	});
+	$('.addproduct-btn').on('click', function() {
+		$('#add_productModal').modal('toggle');
+	});
+	
 	$('.newtransaction-btn').on('click', function() {
 		$('#newTransactionModal').modal('toggle');
 	});
@@ -196,6 +202,28 @@ $(document).ready(function() {
 		this.style.height = "auto";
 		this.style.height = (this.scrollHeight) + "px";
 	});
+
+	// ADD NEW PRODUCT MODAL
+	$('#generate_code').on('click', function() {
+		var set_brand1 = $('.set_brand1').find('option:selected').val();
+		var set_line = $('.set_line').find('option:selected').val();
+		var set_type = $('.set_type').find('option:selected').val();
+		var set_variant = $('.set_variant').find('option:selected').val();
+		var set_size = $('.set_size').find('option:selected').val();
+		var set_char = $('.set_char').find('option:selected').val();
+		
+		
+
+		if (set_brand1 == "" || set_line == "" || set_type == "" || set_variant == "" || set_size == "" || set_char == "") {
+			alert('Option not selected.');
+		}
+		else
+		{
+			$('.product_codegen').val(set_brand1 + set_char + set_line + set_type + set_variant + set_size);
+			alert('ID generated : ' + set_brand1 + set_char + set_line + set_type + set_variant + set_size)
+		}
+	});
+
 });
 </script>
 

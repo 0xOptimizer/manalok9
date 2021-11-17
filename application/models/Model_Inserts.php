@@ -79,5 +79,9 @@ class Model_Inserts extends CI_Model {
 			return false;
 		}
 	}
-	
+	public function InsertPrd_Details($data)
+	{
+		$result = $this->db->insert('product_details', $data);
+		return $result;
+	}
 }
