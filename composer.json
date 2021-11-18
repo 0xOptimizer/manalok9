@@ -13,7 +13,8 @@
 	"require": {
 		"php": ">=5.3.7",
 		"phpmailer/phpmailer": "^6.5",
-		"phpoffice/phpspreadsheet": "^1.18"
+		"phpoffice/phpspreadsheet": "^1.18",
+		"picqer/php-barcode-generator": "^2.2"
 	},
 	"suggest": {
 		"paragonie/random_compat": "Provides better randomness in PHP 5.x"

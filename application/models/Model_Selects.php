@@ -53,7 +53,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('UserID', $userID);
-		$this->db->order_by('ID', 'desc');
+		$this->db->order_by('DateAdded', 'desc');
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
@@ -138,63 +138,81 @@ class Model_Selects extends CI_Model {
 		return $result;
 	}
 
-	// PURCHASE ORDERS
-	public function GetAllOrders()
+	// VENDORS
+	public function GetVendors()
 	{
 		$this->db->select('*');
 		$this->db->order_by('ID', 'desc');
-		$result = $this->db->get('purchase_orders');  
+		$result = $this->db->get('vendors');
 		return $result;
 	}
-	public function GetOrders($status)
+	public function GetVendorByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('vendors');
+		return $result;
+	}
+	public function GetVendorByNo($no)
+	{
+		$this->db->select('*');
+		$this->db->where('VendorNo', $no);
+		$result = $this->db->get('vendors');
+		return $result;
+	}
+	// CLIENTS
+	public function GetClients()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('clients');
+		return $result;
+	}
+	public function GetClientByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('clients');
+		return $result;
+	}
+	public function GetClientByNo($no)
+	{
+		$this->db->select('*');
+		$this->db->where('ClientNo', $no);
+		$result = $this->db->get('clients');
+		return $result;
+	}
+
+	// SALES
+	public function GetAllSalesOrders()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('sales_orders');  
+		return $result;
+	}
+	public function GetSalesOrders($status)
 	{
 		$this->db->select('*');
 		$this->db->order_by('ID', 'desc');
 		$this->db->where('Status', $status);
-		$result = $this->db->get('purchase_orders');
+		$result = $this->db->get('sales_orders');
 		return $result;
 	}
-	public function GetPurchaseOrderByID($id)
+	public function GetSalesOrderByNo($orderNo)
 	{
 		$this->db->select('*');
-		$this->db->where('ID', $id);
-		$result = $this->db->get('purchase_orders');  
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
-	public function MaxOrderID()
-	{
-		$this->db->select_max('ID');
-		$result = $this->db->get('purchase_orders');
-		return $result->row_array()['ID'];
-	}
-	public function GetOrderTransactions($orderID)
+
+	public function GetAllReleases()
 	{
 		$this->db->select('*');
-		$this->db->where('PurchaseOrderID', $orderID);
-		$result = $this->db->get('products_transactions');
-		return $result;
-	}
-	public function GetAllOrderedTransactions()
-	{
-		$this->db->select('*');
-		$this->db->where('PurchaseOrderID !=', NULL);
-		$this->db->order_by('Code', 'asc');
-		$result = $this->db->get('products_transactions');
-		return $result;
-	}
-	public function GetOrderedTransactions($status)
-	{
-		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '1' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.ID = ot.PurchaseOrderID AND Status = $status)";
-		$result = $this->db->query($sql);
-		return $result;
-	}
-	public function GetTransactionsReleasedUnordered()
-	{
-		$this->db->select('*');
-		$this->db->where('PurchaseOrderID', NULL);
 		$this->db->where('Type', '1');
-		$this->db->where('Status', '0');
-		$result = $this->db->get('products_transactions');
+		$this->db->order_by('DateAdded', 'desc');
+		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
 	public function GetTransactionsByTID($id)
@@ -202,6 +220,247 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('TransactionID', $id);
 		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function GetTransactionsByOrderNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetTransactionsReleasedUnordered()
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', NULL);
+		$this->db->where('Type', '1');
+		$this->db->where('Status', '0');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetAllSalesOrderedTransactions()
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo !=', NULL);
+		$this->db->where('Type', '1');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetSalesOrderedTransactions($status)
+	{
+		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '1' AND EXISTS(SELECT * FROM sales_orders AS so WHERE so.OrderNo = ot.OrderNo AND Status = $status)";
+		$result = $this->db->query($sql);
+		return $result;
+	}
+
+	public function GetStockedProducts()
+	{
+		$this->db->select('*');
+		$this->db->where('InStock >', '0');
+		$this->db->order_by('ID', 'asc');
+		$result = $this->db->get('products'); 
+		return $result;
+	}
+	// PURCHASE
+	public function GetAllPurchaseOrders()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+	public function GetPurchaseOrders($status)
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('Status', $status);
+		$result = $this->db->get('purchase_orders');
+		return $result;
+	}
+	public function GetPurchaseOrderByNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+
+	public function GetAllRestocks()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', '0');
+		$this->db->order_by('DateAdded', 'desc');
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	// public function GetTransactionsByTID($id)
+	// {
+	// 	$this->db->select('*');
+	// 	$this->db->where('TransactionID', $id);
+	// 	$result = $this->db->get('products_transactions');  
+	// 	return $result;
+	// }
+	// public function GetTransactionsByOrderNo($orderNo)
+	// {
+	// 	$this->db->select('*');
+	// 	$this->db->where('OrderNo', $orderNo);
+	// 	$result = $this->db->get('products_transactions');
+	// 	return $result;
+	// }
+	public function GetTransactionsRestockedUnordered()
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', NULL);
+		$this->db->where('Type', '0');
+		$this->db->where('Status', '0');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetAllPurchaseOrderedTransactions() // remove duplicate?
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo !=', NULL);
+		$this->db->where('Type', '0');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetPurchaseOrderedTransactions($status)
+	{
+		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '0' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.OrderNo = ot.OrderNo AND Status = $status)";
+		$result = $this->db->query($sql);
+		return $result;
+	}
+
+	// NAME SEARCH
+	public function FindVendorName($name)
+	{
+		$this->db->select('Name, VendorNo');
+		$this->db->like('Name', $name);
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('vendors');  
+		return $result;
+	}
+	public function FindVendorAll()
+	{
+		$this->db->select('Name, VendorNo');
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('vendors');  
+		return $result;
+	}
+	public function FindClientName($name)
+	{
+		$this->db->select('Name, ClientNo');
+		$this->db->like('Name', $name);
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('clients');  
+		return $result;
+	}
+	public function FindClientAll()
+	{
+		$this->db->select('Name, ClientNo');
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('6');
+		$result = $this->db->get('clients');  
+		return $result;
+	}
+
+	public function Get_productByPID($product_id)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $product_id);
+		$result = $this->db->get('products');  
+		return $result;
+	}
+	public function AllItem_Code()
+	{
+		$this->db->select('*');
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
+	public function GetPROdtype()
+	{
+		$this->db->distinct();
+		$this->db->select('Prod_Type');
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
+
+	public function CheckItemcode_byuid($uniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('uniqueID', $uniqueID);
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
+	public function CheckItemCode($prod_itemcode)
+	{
+		$this->db->select('*');
+		$this->db->where('ItemCode', $prod_itemcode);
+		$result = $this->db->get('tb_itemcode');  
+		return $result;
+	}
+	public function Filter_releaseprod()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', 1);
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function Filter_restockprod()
+	{
+		$this->db->select('*');
+		$this->db->where('Type', 0);
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
+	public function CheckProduct_restock($Code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');  
+		return $result;
+	}
+	public function CheckStocks_releasing($Code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function cart_releasing($user_id)
+	{
+		$this->db->select('*');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('status', '0');
+		$result = $this->db->get('cart_release');
+		return $result;
+	}
+	public function Getsum_releasequantity($user_id,$status)
+	{
+		$this->db->select('*');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('status', $status);
+		$result = $this->db->get('cart_release');
+		return $result;
+	}
+
+	public function Get_ProductRow($Code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function CheckProduct_byCode($Code)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
 		return $result;
 	}
 }

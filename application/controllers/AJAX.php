@@ -17,6 +17,7 @@ class AJAX extends CI_Controller {
 		$this->load->model('Model_Inserts');
 		date_default_timezone_set('Asia/Manila');
 		$this->load->model('Model_Logbook');
+		$this->load->model('Model_Updates');
 	}
 
 	public function getUserLogs()
@@ -133,5 +134,214 @@ class AJAX extends CI_Controller {
 				<i class="bi bi-exclamation-triangle-fill"></i> Email address is required
 			</span>';
 		}
+	}
+
+	// CLIENT NAME SEARCH
+	public function searchClientName()
+	{
+		$search = $this->input->get('search');
+		if (strlen($search) > 0) {
+			$searchResult = $this->Model_Selects->FindClientName($search)->result_array();
+
+			echo json_encode($searchResult);
+		}
+	}
+	public function searchClientDetails()
+	{
+		$no = $this->input->get('no');
+		if (strlen($no) > 0) {
+			$clientDetails = $this->Model_Selects->GetClientByNo($no)->row_array();
+
+			echo json_encode($clientDetails);
+		}
+	}
+	// VENDOR NAME SEARCH
+	public function searchVendorName()
+	{
+		$search = $this->input->get('search');
+		if (strlen($search) > 0) {
+			$searchResult = $this->Model_Selects->FindVendorName($search)->result_array();
+
+			echo json_encode($searchResult);
+		} else {
+			echo json_encode($this->Model_Selects->FindVendorAll()->result_array());
+		}
+	}
+	public function searchVendorDetails()
+	{
+		$no = $this->input->get('no');
+		if (strlen($no) > 0) {
+			$vendorDetails = $this->Model_Selects->GetVendorByNo($no)->row_array();
+
+			echo json_encode($vendorDetails);
+		}
+	}
+	public function Add_idtoCart()
+	{
+
+		$item_code = $this->input->post('item_code');
+		$qtyValue = $this->input->post('qtyValue');
+
+		$prompt_text = '';
+
+		if ($item_code == null) {
+			echo 'Error! Item code doesn\'t exist.';
+			exit();
+		}
+		if ($qtyValue == null) {
+			echo 'Warning! Input Quantity.';
+			exit();
+		}
+
+		if (isset($item_code) || isset($qtyValue)) {
+
+			if (!isset($_SESSION['cart_sess'])) {
+				$_SESSION['cart_sess'] = array();
+			}
+
+			$data = array(
+				'item_code' => $item_code, 
+				'qty' => $qtyValue, 
+			);
+
+			if (isset($_SESSION['cart_sess'])) {
+	
+				foreach ($_SESSION['cart_sess'] as $row => $val) {
+					if ($val['item_code'] == $item_code) {
+						$_SESSION['cart_sess'][$row]['qty'] = $val['qty'] + $qtyValue;
+						echo 'Quantity added to existing product in cart.';
+						exit();
+					}
+				}
+
+				array_push($_SESSION['cart_sess'],$data);
+				echo 'Product added to cart.';
+
+				exit();
+			}
+
+		}
+	}
+	public function Clear_cartSess()
+	{
+		unset($_SESSION['cart_sess']);
+		redirect($_SERVER['HTTP_REFERER']);
+	}
+	public function remove_fromCart()
+	{
+
+		$item_code = $this->input->post('item_code');
+		if (isset($_SESSION['cart_sess'])) {
+			$cart_sess = $_SESSION['cart_sess'];
+			$key = array_search($item_code, array_column($cart_sess, 'item_code'));
+
+			unset($_SESSION['cart_sess'][$key]);
+
+			$final_session = array_values($_SESSION['cart_sess']);
+			$_SESSION['cart_sess'] = $final_session;
+			if (empty($_SESSION['cart_sess'])) {
+				unset($_SESSION['cart_sess']);
+			}
+			echo 'Product removed from cart.';
+			exit();
+		
+		}
+		else
+		{
+			// redirect($_SERVER['HTTP_REFERER']);
+			echo 'error';
+			exit();
+
+		}
+	}
+	public function get_Cartdata()
+	{
+		if (isset($_SESSION['cart_sess'])) {
+			foreach ($_SESSION['cart_sess'] as $row) {
+				$data = array();
+				$data['item_code'] = $row['item_code'];
+				$data['qty'] = $row['qty'];
+				$cart_data[] = $data;
+			}
+			$jsondata = json_encode($cart_data);
+			
+			echo $jsondata;
+		}
+	}
+	public function add_cart_releasing()
+	{
+		date_default_timezone_set('Asia/Manila');
+
+		$item_code = $this->input->post('item_code');
+		$qtyValue = $this->input->post('qtyValue');
+
+		$prompt_text = '';
+
+		if ($item_code == null) {
+			echo 'item code error';
+			exit();
+		}
+		if ($qtyValue == null) {
+			echo 'quantity error';
+			exit();
+		}
+
+		// CHECK STOCK\
+		$Code = $item_code;
+		$CheckStocks_releasing = $this->Model_Selects->CheckStocks_releasing($Code);
+		$csrrr = $CheckStocks_releasing->row_array();
+
+		if ($CheckStocks_releasing->num_rows() < 1) {
+			echo 'product null';
+			exit();
+		}
+
+		// PROMPT STOCK IS LOW
+		if ($csrrr['InStock'] < $qtyValue) {
+			echo 'low stock';
+			exit();
+		}
+
+		// PREPARE DATA
+		$tota_p = $csrrr['Price_PerItem'] * $qtyValue;
+		$data = array(
+			'user_id' => $this->session->userdata('UserID'),
+			'item_code' => $item_code,
+			'quantity' => $qtyValue,
+			'total_price' => $tota_p,
+			'time_stamp' => date('Y-m-d H:i:s'),
+			'status' => 0
+		);
+		// INSERT TO CART RELEASING
+		$Insertto_releasingcart = $this->Model_Inserts->Insertto_releasingcart($data);
+
+
+		if ($Insertto_releasingcart == TRUE) {
+
+			// UPDATE STOCK INSTOCK - QUANTITY
+			$nCode = $csrrr['Code'];
+			$InStock = $csrrr['InStock'] - $qtyValue;
+			$updata = array(
+				'Code' => $nCode,
+				'InStock' => $InStock
+			);
+			$Update_releasedata = $this->Model_Updates->Update_releasedata($updata);
+			
+			if ($Update_releasedata == TRUE) {
+				echo 'success';
+				exit();
+			}
+			else
+			{
+				echo 'error';
+				exit();
+			}
+		}
+		else
+		{
+			echo 'error';
+			exit();
+		}
+
 	}
 }

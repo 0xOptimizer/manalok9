@@ -55,13 +55,28 @@ $route['translate_uri_dashes'] = FALSE;
 
 $route['admin'] = 'Admin';
 $route['admin/users'] = 'Admin/users';
+$route['admin/vendors'] = 'Admin/vendors';
+$route['admin/clients'] = 'Admin/clients';
 $route['admin/products'] = 'Admin/products';
 $route['admin/viewproduct'] = 'Admin/view_product';
 $route['admin/inventory'] = 'Admin/inventory';
 $route['admin/security'] = 'Admin/security';
 $route['admin/view_transactions'] = 'Admin/view_transactions';
-$route['admin/orders'] = 'Admin/orders';
-$route['admin/viewsummary'] = 'Admin/view_order_summary';
+
+$route['admin/purchase_orders'] = 'Admin/purchase_orders';
+$route['admin/view_purchase_order'] = 'Admin/view_purchase_order';
+$route['admin/view_purchase_summary'] = 'Admin/view_purchase_orders_summary';
+$route['admin/sales_orders'] = 'Admin/sales_orders';
+$route['admin/view_sales_order'] = 'Admin/view_sales_order';
+$route['admin/view_sales_summary'] = 'Admin/view_sales_orders_summary';
+$route['admin/settings_itemcodepage'] = 'Admin/view_settings_itemcode';
+$route['admin/product_releasing'] = 'Admin/product_releasing';
+$route['admin/product_restocking'] = 'Admin/product_restocking';
+
+$route['admin/bills'] = 'Admin/bills';
+$route['admin/invoices'] = 'Admin/invoices';
+
+
 
 // Users
 $route['user'] = 'Users';
@@ -80,22 +95,62 @@ $route['FORM_addNewUser'] = 'Admin/FORM_addNewUser';
 $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
 $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
 $route['FORM_selfAddNewUser'] = 'Admin/FORM_selfAddNewUser';
+
+$route['FORM_addNewVendor'] = 'Admin/FORM_addNewVendor';
+$route['FORM_updateVendor'] = 'Admin/FORM_updateVendor';
+$route['FORM_addNewClient'] = 'Admin/FORM_addNewClient';
+$route['FORM_updateClient'] = 'Admin/FORM_updateClient';
+
 $route['FORM_addPurchaseOrder'] = 'Admin/FORM_addPurchaseOrder';
 $route['FORM_approvePurchaseOrder'] = 'Admin/FORM_approvePurchaseOrder';
+$route['FORM_addSalesOrder'] = 'Admin/FORM_addSalesOrder';
+$route['FORM_approveSalesOrder'] = 'Admin/FORM_approveSalesOrder';
+$route['FORM_removePurchaseOrderTransaction'] = 'Admin/FORM_removePurchaseOrderTransaction';
+$route['FORM_removeSalesOrderTransaction'] = 'Admin/FORM_removeSalesOrderTransaction';
 
-$route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
 $route['AJAX_sendRegistrationEmail'] = 'AJAX/sendRegistrationEmail';
+
+$route['get_productDetails'] = 'Admin/get_productDetails';
+$route['admin/SubmitNewItemcode'] = 'Admin/SubmitNewItemcode';
+$route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
+
+
 
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
+$route['Add_newProductV2'] = 'Admin/Add_newProductV2';
+
+
 
 // AJAX REQUEST
 $route['getTransactionDetails'] = 'Admin/getTransactionDetails';
 $route['FORM_approveTransaction'] = 'Admin/FORM_approveTransaction';
-$route['getPurchaseDetails'] = 'Admin/getPurchaseDetails';
-$route['FORM_removePurchaseOrderTransaction'] = 'Admin/FORM_removePurchaseOrderTransaction';
+$route['getVendorDetails'] = 'Admin/getVendorDetails';
+$route['getClientDetails'] = 'Admin/getClientDetails';
+
+$route['admin/getUserLogs'] = 'AJAX/getUserLogs';
+$route['admin/searchClientName'] = 'AJAX/searchClientName';
+$route['admin/searchClientDetails'] = 'AJAX/searchClientDetails';
+$route['admin/searchVendorName'] = 'AJAX/searchVendorName';
+$route['admin/searchVendorDetails'] = 'AJAX/searchVendorDetails';
+$route['admin/Add_idtoCart'] = 'AJAX/Add_idtoCart';
+$route['admin/Clear_cartSess'] = 'AJAX/Clear_cartSess';
+$route['admin/remove_fromCart'] = 'AJAX/remove_fromCart';
+$route['admin/get_Cartdata'] = 'AJAX/get_Cartdata';
+
+$route['admin/add_cart_releasing'] = 'AJAX/add_cart_releasing';
+
+
+// CART
+$route['admin/Restock_from_cart'] = 'Admin/Restock_from_cart';
+
+$route['admin/release_fromcart'] = 'Admin/release_fromcart';
+
+
+
+
 
 
 // Database backup

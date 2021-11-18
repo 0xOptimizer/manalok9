@@ -5,24 +5,26 @@ date_default_timezone_set('Asia/Manila');
 
 switch ($this->input->get('sortOrders')) {
 	case 'rejected':
-		$getPurchaseOrders = $this->Model_Selects->GetOrders('0');
-		$GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions('0');
+		$sort = '0';
 		break;
-	case 'forApproval':
-		$getPurchaseOrders = $this->Model_Selects->GetOrders('1');
-		$GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions('1');
+	case 'pending':
+		$sort = '1';
 		break;
 	case 'waitingForPayment':
-		$getPurchaseOrders = $this->Model_Selects->GetOrders('2');
-		$GetOrderedTransactions = $this->Model_Selects->GetOrderedTransactions('2');
+		$sort = '2';
 		break;
 	
-	default:
-		$getPurchaseOrders = $this->Model_Selects->GetAllOrders();
-		$GetOrderedTransactions = $this->Model_Selects->GetAllOrderedTransactions();
-		break;
+	default: break;
+}
+if (isset($sort)) {
+	$getPurchaseOrders = $this->Model_Selects->GetPurchaseOrders($sort);
+	$GetPurchaseOrderedTransactions = $this->Model_Selects->GetPurchaseOrderedTransactions($sort);
+} else {
+	$getPurchaseOrders = $this->Model_Selects->GetAllPurchaseOrders();
+	$GetPurchaseOrderedTransactions = $this->Model_Selects->GetAllPurchaseOrderedTransactions();
 }
 
+// exit();
 ?>
 
 </head>
@@ -34,7 +36,7 @@ switch ($this->input->get('sortOrders')) {
 			<a href="#" class="burger-btn d-block d-xl-none">
 				<i class="bi bi-justify fs-3"></i>
 			</a>
-			<a href="<?=base_url() . 'admin/orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO PURCHASE ORDERS</a>
+			<a href="<?=base_url() . 'admin/purchase_orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO PURCHASE ORDERS</a>
 		</header>
 
 		<div class="page-heading">
@@ -50,10 +52,10 @@ switch ($this->input->get('sortOrders')) {
 						</h3>
 					</div>
 					<div class="col-12 col-md-4">
-						<form id="sortOrders" action="<?php echo base_url() . 'admin/viewsummary';?>" method="GET" enctype="multipart/form-data">
+						<form id="sortOrders" action="<?php echo base_url() . 'admin/view_purchase_summary';?>" method="GET" enctype="multipart/form-data">
 							<select id="sortSelect" name="sortOrders" class="form-control">
 								<option selected>ALL</option>
-								<option value="forApproval">FOR APPROVAL</option>
+								<option value="pending">PENDING</option>
 								<option value="waitingForPayment">WAITING FOR PAYMENT</option>
 								<option value="rejected">REJECTED</option>
 							</select>
@@ -66,13 +68,13 @@ switch ($this->input->get('sortOrders')) {
 				<div class="table-responsive">
 					<table id="ordersTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th class="text-center">DATE OF P.O</th>
-							<th class="text-center">PURCHASE ORDER NO.</th>
-							<th class="text-center">AMOUNT OF P.O</th>
-							<th class="text-center">CLIENT'S NAME</th>
+							<th class="text-center">DATE</th>
+							<th class="text-center">PURCHASE ORDER #</th>
+							<th class="text-center">AMOUNT</th>
+							<th class="text-center">VENDOR'S NAME</th>
 							<th class="text-center">ADDRESS</th>
 							<?php
-							$transactionProductCodes = array_unique(array_column($GetOrderedTransactions->result_array(), 'Code'));
+							$transactionProductCodes = array_unique(array_column($GetPurchaseOrderedTransactions->result_array(), 'Code'));
 							foreach ($transactionProductCodes as $key => $val): ?>
 								<th class="text-center"><?=$val?></th>
 							<?php endforeach; ?>
@@ -83,28 +85,28 @@ switch ($this->input->get('sortOrders')) {
 								foreach ($getPurchaseOrders->result_array() as $row): ?>
 									<tr>
 										<?php
-										$poTransactions = $this->Model_Selects->GetOrderTransactions($row["ID"])->result_array();
-										$totalAmount = array_sum(array_column($poTransactions, 'Amount'));
+										$soTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo'])->result_array();
+										$totalAmount = array_sum(array_column($soTransactions, 'Amount'));
 										?>
 										<td class="text-center">
-											<?=$row['DateCreation']?>
+											<?=$row['Date']?>
 										</td>
 										<td class="text-center">
-											<?=$row['SeriesNo']?>
+											<?=$row['OrderNo']?>
 										</td>
 										<td class="text-center">
 											<?=$totalAmount?>
 										</td>
 										<td class="text-center">
-											<?=$row['ClientName']?>
+											<?=$this->Model_Selects->GetVendorByNo($row['VendorNo'])->row_array()['Name']?>
 										</td>
 										<td class="text-center">
-											<?=$row['ShipAddress']?>
+											<?=$this->Model_Selects->GetVendorByNo($row['VendorNo'])->row_array()['Address']?>
 										</td>
 										<?php
 										foreach ($transactionProductCodes as $key => $val):
 											$qty = 0;
-											foreach ($poTransactions as $row) {
+											foreach ($soTransactions as $row) {
 												if ($val == $row['Code']) {
 													$qty += $row['Amount'];
 												}
@@ -139,7 +141,7 @@ switch ($this->input->get('sortOrders')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
 
 <script>
-$('.sidebar-admin-orders').addClass('active');
+$('.sidebar-admin-purchase-orders').addClass('active');
 $(document).ready(function() {
 	<?php if ($this->input->get('sortOrders')): ?>
 		$('#sortSelect').find("[value='" + "<?=$this->input->get('sortOrders');?>" + "']").attr('selected', '');; 

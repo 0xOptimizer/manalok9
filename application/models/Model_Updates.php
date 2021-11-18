@@ -57,19 +57,31 @@ class Model_Updates extends CI_Model {
 	public function UpdatePurchaseOrder($data)
 	{
 		extract($data);
-		$this->db->where('ID', $OrderID);
+		$this->db->where('OrderNo', $OrderNo);
 		$this->db->set(array(
 			'Status' => $Status,
 		));
 		$result = $this->db->update('purchase_orders');
 		return $result;
 	}
+	// SALES ORDERS
+	public function UpdateSalesOrder($data)
+	{
+		extract($data);
+		$this->db->where('OrderNo', $OrderNo);
+		$this->db->set(array(
+			'Status' => $Status,
+		));
+		$result = $this->db->update('sales_orders');
+		return $result;
+	}
+	// ORDER / TRANSACTIONS
 	public function UpdateTransaction($data)
 	{
 		extract($data);
 		$this->db->where('ID', $transactionID);
 		$this->db->set(array(
-			'PurchaseOrderID' => $OrderID,
+			'OrderNo' => $OrderNo,
 		));
 		$result = $this->db->update('products_transactions');
 		return $result;
@@ -78,12 +90,89 @@ class Model_Updates extends CI_Model {
 	{
 		extract($data);
 		$this->db->set(array(
-			'PurchaseOrderID' => NULL,
+			'OrderNo' => NULL,
 			'Status' => '0',
 			'Date_Approval' => NULL,
 		));
 		$this->db->where('TransactionID', $TransactionID);
 		$result = $this->db->update('products_transactions');
 		return $result;
+	}
+	public function RejectOrderTransaction($data)
+	{
+		extract($data);
+		$this->db->set(array(
+			'Status' => '0',
+			'Date_Approval' => NULL,
+		));
+		$this->db->where('TransactionID', $TransactionID);
+		$result = $this->db->update('products_transactions');
+		return $result;
+	}
+
+	// VENDORS
+	public function UpdateVendor($data, $vendorID)
+	{
+		$this->db->where('ID', $vendorID);
+		$result = $this->db->update('vendors', $data);
+		return $result;
+	}
+	// CLIENTS
+	public function UpdateClient($data, $clientID)
+	{
+		$this->db->where('ID', $clientID);
+		$result = $this->db->update('clients', $data);
+		return $result;
+	}
+	public function remove_itemCode($uniqueID)
+	{
+		$this->db->where('uniqueID', $uniqueID);
+		$result = $this->db->delete('tb_itemcode');
+		return $result;
+	}
+	public function UpdateStock_fromCart($nCode,$newStock)
+	{
+
+		$this->db->set('InStock', $newStock);
+		$this->db->where('Code', $nCode);
+		$result = $this->db->update('products');
+		return $result;
+	}
+	public function Update_releasedata($updata)
+	{
+		extract($updata);
+		$this->db->where('Code', $Code);
+	   $this->db->update('products', array('InStock' => $InStock));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function UpdateReleasedata($Code,$Released)
+	{
+		$this->db->where('Code', $Code);
+	   $this->db->update('products', array('Released' => $Released));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Update_CartRelease($cart_id)
+	{
+		$this->db->where('cart_id', $cart_id);
+	   $this->db->update('cart_release', array('status' => 1));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

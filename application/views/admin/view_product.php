@@ -171,9 +171,9 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-sm-12 col-lg-4">
 						<b>MONITORING</b>
 						<div class="row">
-							<div class="col-sm-12 mt-2">
+							<!-- <div class="col-sm-12 mt-2">
 								<button type="button" class="newtransaction-btn btn btn-info"><i class="bi bi-cart-plus"></i> ADD A NEW TRANSACTION</button>
-							</div>
+							</div> -->
 							<div class="col-sm-12 mt-4">
 								<span style="font-size: 12px;">THIS WEEK</span>
 							</div>

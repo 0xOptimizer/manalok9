@@ -109,7 +109,7 @@ class Main extends MY_Controller {
 							$historyData = array(
 								'UserID' => $row['UserID'],
 								'LoginEmail' => $email,
-								'LoginPassword' => password_hash($password, PASSWORD_BYCRYPT),
+								'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 								'Agent' => $agent,
 								'Platform' => $platform,
 								'IPAddress' => $ipAddress,
