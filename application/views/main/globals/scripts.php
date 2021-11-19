@@ -30,6 +30,9 @@ $(document).ready(function() {
 		let defaultText = $(this).text();
 		$(this).html('<i class="spinner-border spinner-border-sm"></i> <span>' + defaultText + "</span>");
 	});
+	$('.generatereport-btn').on('click', function() {
+		$('#generateReport').modal('toggle');
+	});
 });
 </script>
 <noscript>

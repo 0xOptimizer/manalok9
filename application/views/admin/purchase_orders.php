@@ -71,7 +71,7 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
 						<button type="button" class="newpurchaseorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW PURCHASE ORDER</button>
 						|
-						<button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
+						<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 						<a href="view_purchase_summary">
 							<button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-list"></i> SUMMARY</button>
 						</a>
@@ -148,6 +148,9 @@ if ($this->session->flashdata('highlight-id')) {
 	</div>
 </div>
 <?php $this->load->view('admin/modals/add_purchase_order'); ?>
+
+<?php $this->load->view('admin/modals/generate_report')?>
+
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -156,6 +159,8 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
 
 <script>
 $('.sidebar-admin-purchase-orders').addClass('active');
@@ -172,7 +177,58 @@ $(document).ready(function() {
 		sDom: 'lrtip',
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
-	});
+		buttons: [
+            {
+	            extend: 'print',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4, 5 ]
+	            },
+	            customize: function ( doc ) {
+	            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
+					$(doc.document.body).find('h1').css('font-size', '24px');
+					$(doc.document.body).find('h1').css('text-align', 'center'); 
+				}
+	        },
+	        {
+	            extend: 'copyHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4, 5 ]
+	            }
+	        },
+	        {
+	            extend: 'excelHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4, 5 ]
+	            }
+	        },
+	        {
+	            extend: 'csvHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4, 5 ]
+	            }
+	        },
+	        {
+	            extend: 'pdfHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4, 5 ]
+	            }
+	        }
+    ]});
+    $('body').on('click', '#generateReport-Print', function () {
+        table.button('0').trigger();
+    });
+    $('body').on('click', '#generateReport-Copy', function () {
+        table.button('1').trigger();
+    });
+    $('body').on('click', '#generateReport-Excel', function () {
+        table.button('2').trigger();
+    });
+    $('body').on('click', '#generateReport-CSV', function () {
+        table.button('3').trigger();
+    });
+    $('body').on('click', '#generateReport-PDF', function () {
+        table.button('4').trigger();
+    });
 	$('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
 	});

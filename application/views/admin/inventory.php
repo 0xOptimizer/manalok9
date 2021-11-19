@@ -55,13 +55,13 @@ if ($getAllProducts->num_rows() > 0) {
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
 						<button type="button" class="btn btn-sm-success">TOTAL</button>
-						<button type="button" class="btn btn-sm-secondary">MONTHLY</button>
-						<button type="button" class="btn btn-sm-secondary">SEMI-ANNUAL</button>
-						<button type="button" class="btn btn-sm-secondary">ANNUAL</button>
-						<button type="button" class="btn btn-sm-secondary">CUSTOM DATE</button>
+						<button type="button" class="btn btn-sm-secondary disabled-hover">MONTHLY</button>
+						<button type="button" class="btn btn-sm-secondary disabled-hover">SEMI-ANNUAL</button>
+						<button type="button" class="btn btn-sm-secondary disabled-hover">ANNUAL</button>
+						<button type="button" class="btn btn-sm-secondary disabled-hover">CUSTOM DATE</button>
 						<?php if ($this->session->userdata('Privilege') > 1): ?>
 							|
-							<button type="button" class="btn btn-sm-primary">GENERATE REPORT</button>
+							<button type="button" class="generatereport-btn btn btn-sm-primary">GENERATE REPORT</button>
 						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
@@ -118,6 +118,7 @@ if ($getAllProducts->num_rows() > 0) {
 		</div>
 	</div>
 </div>
+<?php $this->load->view('admin/modals/generate_report')?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -126,6 +127,8 @@ if ($getAllProducts->num_rows() > 0) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
 
 <script>
 $('.sidebar-admin-inventory').addClass('active');
@@ -134,6 +137,57 @@ $(document).ready(function() {
 		sDom: 'lrtip',
 		"bLengthChange": false,
     	"order": [[ 1, "desc" ]],
+    	buttons: [
+            {
+	            extend: 'print',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            },
+	            customize: function ( doc ) {
+	            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
+					$(doc.document.body).find('h1').css('font-size', '24px');
+					$(doc.document.body).find('h1').css('text-align', 'center'); 
+				}
+	        },
+	        {
+	            extend: 'copyHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        },
+	        {
+	            extend: 'excelHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        },
+	        {
+	            extend: 'csvHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        },
+	        {
+	            extend: 'pdfHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        }
+    ]});
+    $('body').on('click', '#generateReport-Print', function () {
+        table.button('0').trigger();
+    });
+    $('body').on('click', '#generateReport-Copy', function () {
+        table.button('1').trigger();
+    });
+    $('body').on('click', '#generateReport-Excel', function () {
+        table.button('2').trigger();
+    });
+    $('body').on('click', '#generateReport-CSV', function () {
+        table.button('3').trigger();
+    });
+    $('body').on('click', '#generateReport-PDF', function () {
+        table.button('4').trigger();
     });
     $('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
