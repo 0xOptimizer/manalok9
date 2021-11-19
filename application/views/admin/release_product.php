@@ -161,11 +161,15 @@ $(document).ready(function() {
 					type: "LiveStream",
 					target: document.querySelector('#scanner_area'),
 					constraints: {
-						width: 1280,
-						height: 720,
+						width: 1920,
+						height: 1080,
 						facingMode: "environment"
 					},
 				},
+				locator: {
+                patchSize: "large",
+                halfSample: true
+            },
 				decoder: {
 					readers: [
 					"code_128_reader"

@@ -821,7 +821,7 @@ class Admin extends MY_Controller {
 			// BARCODE GENEREATOR
 			$colorblk = [0, 0, 0];
 			$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
-			file_put_contents('assets/barcode_images/'.$product_code.'-pbarcode.png', $generator->getBarcode($product_code, $generator::TYPE_CODE_128, 3, 60, $colorblk));
+			file_put_contents('assets/barcode_images/'.$product_code.'-pbarcode.png', $generator->getBarcode($product_code, $generator::TYPE_CODE_128, 4, 70, $colorblk));
 
 			// Insert
 			$data = array(
