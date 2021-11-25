@@ -325,7 +325,7 @@ a:hover {
 	background-color: rgba(55, 155, 55, 0.08);
 }
 .disabled-hover {
-	cursor: disabled;
+	cursor: not-allowed !important;
 }
 .border-blue {
 	border: 2px solid #607080;
@@ -405,6 +405,11 @@ a:hover {
 	border-radius: 6px;
 	border: 2px solid #a7852d;
 	color: #a7852d;
+}
+.standard-card-btn-success {
+	border-radius: 6px;
+	border: 2px solid #198754;
+	color: #198754;
 }
 .standard-card-btn .card-btn-icon {
 	font-size: 28px;

@@ -75,7 +75,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<section class="section">
 				<div class="row">
 					<div class="col-sm-12 col-lg-8">
-						<b>LATEST TRANSACTIONS - <button type="button" class="btn btn-sm-primary">GENERATE REPORT</button></b>
+						<b>LATEST TRANSACTIONS - <button type="button" class="generatereport-btn btn btn-sm-primary">GENERATE REPORT</button></b>
 						<div class="table-responsive">
 							<table id="productsTable" class="table">
 								<thead style="font-size: 12px;">
@@ -199,7 +199,8 @@ if ($this->session->flashdata('highlight-id')) {
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
 
-<?php $this->load->view('main/globals/scripts.php'); ?>
+<?php $this->load->view('admin/modals/generate_report')?>
+
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -208,6 +209,8 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
 
 <script>
 $('.sidebar-admin-products').addClass('active');
@@ -220,68 +223,71 @@ $(document).ready(function() {
 		$('#newTransactionModal').modal('toggle');
 		$('#transaction-code').val(productCode);
 	});
-	/*
 	var table = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
-		"bLengthChange": false,
-    	"order": [[ 1, "desc" ]],
-    	buttons: [
-        {
-            extend: 'print',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            },
-            customize: function ( doc ) {
-            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/img/wercher_logo.png" width="63px" height="56px" />');
-				$(doc.document.body).find('h1').css('font-size', '24px');
-				$(doc.document.body).find('h1').css('text-align', 'center'); 
-			}
-        },
-        {
-            extend: 'copyHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'excelHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'csvHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        },
-        {
-            extend: 'pdfHtml5',
-            exportOptions: {
-                columns: [ 1, 3, 4, 6 ]
-            }
-        }
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+		buttons: [
+            {
+	            extend: 'print',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            },
+	            customize: function ( doc ) {
+	            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
+					$(doc.document.body).find('h1').css('font-size', '24px');
+					$(doc.document.body).find('h1').css('text-align', 'center'); 
+				},
+				title: function(){
+		            var printTitle = productCode;
+		            return printTitle
+		        }
+	        },
+	        {
+	            extend: 'copyHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        },
+	        {
+	            extend: 'excelHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        },
+	        {
+	            extend: 'csvHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        },
+	        {
+	            extend: 'pdfHtml5',
+	            exportOptions: {
+	                columns: [ 0, 1, 2, 3, 4 ]
+	            }
+	        }
     ]});
-	$('#ExportPrint').on('click', function () {
+    $('body').on('click', '#generateReport-Print', function () {
         table.button('0').trigger();
     });
-    $('#ExportCopy').on('click', function () {
+    $('body').on('click', '#generateReport-Copy', function () {
         table.button('1').trigger();
     });
-    $('#ExportExcel').on('click', function () {
+    $('body').on('click', '#generateReport-Excel', function () {
         table.button('2').trigger();
     });
-    $('#ExportCSV').on('click', function () {
+    $('body').on('click', '#generateReport-CSV', function () {
         table.button('3').trigger();
     });
-    $('#ExportPDF').on('click', function () {
+    $('body').on('click', '#generateReport-PDF', function () {
         table.button('4').trigger();
     });
-    */
 });
 </script>
 
 <script src="<?=base_url()?>/assets/js/main.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 </body>
 
 </html>
