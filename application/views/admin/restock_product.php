@@ -164,8 +164,8 @@ $(document).ready(function() {
 					type: "LiveStream",
 					target: document.querySelector('#scanner_area'),
 					constraints: {
-						width: 1280,
-						height: 720,
+						width: 1080,
+						height: 1920,
 						facingMode: "environment"
 					},
 				},

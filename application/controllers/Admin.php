@@ -834,6 +834,7 @@ class Admin extends MY_Controller {
 				'Description' => $product_description,
 				'DateAdded' => date('Y-m-d h:i:s A'),
 				'Barcode_Images' => 'assets/barcode_images/'.$product_code.'-pbarcode.png',
+				'Status' => 1, // Status = added
 			);
 			$insertNewProduct = $this->Model_Inserts->InsertNewProduct($data);
 			if ($insertNewProduct == TRUE) {
@@ -1807,5 +1808,28 @@ class Admin extends MY_Controller {
 		}
 		
 
+	}
+	public function move_to_archive()
+	{
+		$Code = $this->input->get('code');
+		// CHECK IF CODE EXIST
+		$CheckProduct_byCode = $this->Model_Selects->CheckProduct_byCode($Code);
+		if ($CheckProduct_byCode->num_rows() > 0) {
+			// UPDATE STATUS SET TO 2 = ARCHIVED
+			$MoveProd_toarchive = $this->Model_Updates->MoveProd_toarchive($Code);
+			if ($MoveProd_toarchive == true) {
+				redirect($_SERVER['HTTP_REFERER']);
+
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']);
+
+			}
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+		}
 	}
 }
