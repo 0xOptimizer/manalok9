@@ -1847,11 +1847,6 @@ class Admin extends MY_Controller {
 		
 
 	}
-<<<<<<< HEAD
-
-
-
-
 	public function FORM_addAccount()
 	{	
 		$name = $this->input->post('name');
@@ -1925,7 +1920,10 @@ class Admin extends MY_Controller {
 		{
 			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 			redirect('admin/journals');
-=======
+		}
+	}
+	
+
 	public function move_to_archive()
 	{
 		$Code = $this->input->get('code');
@@ -1947,7 +1945,9 @@ class Admin extends MY_Controller {
 		else
 		{
 			redirect($_SERVER['HTTP_REFERER']);
->>>>>>> ed94596fe06cccf8cb17d6500394f040fb7cf54a
+
 		}
 	}
+
+	
 }
