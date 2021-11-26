@@ -284,6 +284,32 @@ class Admin extends MY_Controller {
 		$data['Filter_restockprod'] = $this->Model_Selects->Filter_restockprod();
 		$this->load->view('admin/restock_product', $data);
 	}
+
+
+	public function journals()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Journals';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/journal_transactions', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function accounts()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Accounts';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/accounts', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
 	
 
 	// Form inputs
@@ -1539,6 +1565,18 @@ class Admin extends MY_Controller {
 			exit();
 		}
 	}
+	public function getJournalDetails()
+	{
+		$journalID = $this->input->get('journal_id');
+		$getJournalByID = $this->Model_Selects->GetJournalByID($journalID)->row_array();
+		print json_encode($getJournalByID);
+	}
+	public function getJournalTransactions()
+	{
+		$journalID = $this->input->get('journal_id');
+		$GetTransactionsByJournalID = $this->Model_Selects->GetTransactionsByJournalID($journalID)->result_array();
+		print json_encode($GetTransactionsByJournalID);
+	}
 
 	### UNIQUE ID START
 	public function crypto_rand_secure($min, $max)
@@ -1807,5 +1845,85 @@ class Admin extends MY_Controller {
 		}
 		
 
+	}
+
+
+
+
+	public function FORM_addAccount()
+	{	
+		$name = $this->input->post('name');
+		$type = $this->input->post('type');
+		$description = $this->input->post('description');
+
+		// Insert
+		$data = array(
+			'Name' => $name,
+			'Type' => $type,
+			'Description' => $description,
+		);
+		$getAccountByName = $this->Model_Selects->getAccountByName($name);
+		if ($getAccountByName->num_rows() < 1) {
+			$insertAccount = $this->Model_Inserts->InsertAccount($data);
+			if ($insertAccount == TRUE) {
+				$accountID = $this->db->insert_id();
+				$this->session->set_flashdata('highlight-id', $accountID);
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('created a new account.', 'added a new account' . ($name ? ' ' . $name : '') . ' [ID: ' . $accountID . '].', base_url('admin/accounts'));
+				redirect('admin/accounts');
+			}
+			else
+			{
+				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				redirect('admin/accounts');
+			}
+		} else {
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Account with the same name already exists. ['. $name .']');
+			redirect('admin/accounts');
+		}
+	}
+
+	public function FORM_addJournal()
+	{	
+		$description = $this->input->post('description');
+		$date = $this->input->post('date');
+		$total = $this->input->post('total');
+
+		$transactionCount = $this->input->post('transactions-count');
+
+		// Insert
+		$data = array(
+			'Description' => $description,
+			'Date' => $date
+		);
+		$insertJournal = $this->Model_Inserts->InsertJournal($data);
+		if ($insertJournal == TRUE) {
+			$journalID = $this->db->insert_id();
+
+			// create new journal transactions
+			for ($i = 0; $i < $transactionCount; $i++) {
+				$accountID = trim($this->input->post('accountIDInput_' . $i));
+				$debit = trim($this->input->post('debitInput_' . $i));
+				$credit = trim($this->input->post('creditInput_' . $i));
+
+				$data = array(
+					'JournalID' => $journalID,
+					'AccountID' => $accountID,
+					'Debit' => $debit,
+					'Credit' => $credit,
+				);
+				$insertJournalTransaction = $this->Model_Inserts->InsertJournalTransaction($data);
+			}
+
+			$this->session->set_flashdata('highlight-id', $journalID);
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('created a new journal.', 'added a new journal' . ($name ? ' ' . $name : '') . ' [ID: ' . $journalID . '].', base_url('admin/journals'));
+			redirect('admin/journals');
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/journals');
+		}
 	}
 }

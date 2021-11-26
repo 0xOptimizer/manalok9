@@ -76,6 +76,9 @@ $route['admin/product_restocking'] = 'Admin/product_restocking';
 $route['admin/bills'] = 'Admin/bills';
 $route['admin/invoices'] = 'Admin/invoices';
 
+$route['admin/accounts'] = 'Admin/accounts';
+$route['admin/journals'] = 'Admin/journals';
+
 
 
 // Users
@@ -115,6 +118,8 @@ $route['get_productDetails'] = 'Admin/get_productDetails';
 $route['admin/SubmitNewItemcode'] = 'Admin/SubmitNewItemcode';
 $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 
+$route['FORM_addAccount'] = 'Admin/FORM_addAccount';
+$route['FORM_addJournal'] = 'Admin/FORM_addJournal';
 
 
 // Products
@@ -129,6 +134,8 @@ $route['getTransactionDetails'] = 'Admin/getTransactionDetails';
 $route['FORM_approveTransaction'] = 'Admin/FORM_approveTransaction';
 $route['getVendorDetails'] = 'Admin/getVendorDetails';
 $route['getClientDetails'] = 'Admin/getClientDetails';
+
+$route['getJournalDetails'] = 'Admin/getJournalDetails';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['admin/searchClientName'] = 'AJAX/searchClientName';
