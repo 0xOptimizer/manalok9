@@ -514,4 +514,11 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function GetAllProductsv2()
+	{
+		$this->db->select('*');
+		$this->db->where('Status', 1);
+		$result = $this->db->get('products');
+		return $result;
+	}
 }

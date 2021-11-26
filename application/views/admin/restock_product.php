@@ -164,8 +164,13 @@ $(document).ready(function() {
 					type: "LiveStream",
 					target: document.querySelector('#scanner_area'),
 					constraints: {
+<<<<<<< HEAD
 						width: 1920,
 						height: 1080,
+=======
+						width: 1080,
+						height: 1920,
+>>>>>>> ed94596fe06cccf8cb17d6500394f040fb7cf54a
 						facingMode: "environment"
 					},
 				},

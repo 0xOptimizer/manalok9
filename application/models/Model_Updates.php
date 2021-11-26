@@ -175,4 +175,16 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+	public function MoveProd_toarchive($Code)
+	{
+		$this->db->where('Code', $Code);
+	   $this->db->update('products', array('Status' => 2));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

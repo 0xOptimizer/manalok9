@@ -15,6 +15,7 @@ if ($date == date('M j, Y')) {
 
 // Fetch products
 $getAllProducts = $this->Model_Selects->GetAllProducts();
+$getAllProductsv2 = $this->Model_Selects->GetAllProductsv2();
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -48,6 +49,11 @@ if ($this->session->flashdata('highlight-id')) {
 	.num-noarrow {
 	  -moz-appearance: textfield;
 	}
+	.modal-content-custom  {
+    -webkit-border-radius: 0px !important;
+    -moz-border-radius: 0px !important;
+    border-radius: 0px !important; 
+}
 </style>
 
 </head>
@@ -67,9 +73,9 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-12 col-md-6">
 						<h3>Products
 							<span class="text-center success-banner-sm">
-								<i class="bi bi-bag-fill"></i> <?=$getAllProducts->num_rows();?> TOTAL
+								<i class="bi bi-bag-fill"></i> <?=$getAllProductsv2->num_rows();?> TOTAL
 							</span>
-							<?php if ($getAllProducts->num_rows() <= 0): ?>
+							<?php if ($getAllProductsv2->num_rows() <= 0): ?>
 								<span class="info-banner-sm">
 									<i class="bi bi-exclamation-diamond-fill"></i> No products found.
 								</span>
@@ -109,10 +115,12 @@ if ($this->session->flashdata('highlight-id')) {
 							<th></th>
 						</thead>
 						<tbody>
+							<!-- TEMPORARY REMOVED -->
+							<!-- data-code="<?=$row['Code'];?>" data-urlredirect="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>" -->
 							<?php
-							if ($getAllProducts->num_rows() > 0):
-								foreach ($getAllProducts->result_array() as $row): ?>
-									<tr data-code="<?=$row['Code'];?>" data-urlredirect="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>">
+							if ($getAllProductsv2->num_rows() > 0):
+								foreach ($getAllProductsv2->result_array() as $row): ?>
+									<tr>
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
@@ -139,10 +147,22 @@ if ($this->session->flashdata('highlight-id')) {
 										<td>
 											<?=$row['Released']?>
 										</td>
-										<td>
-											<a href="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>"><i class="bi bi-eye" style="color: #a7852d;"></i></a>
-											<i class="bi bi-pencil"></i>
-											<i class="bi bi-trash text-danger"></i>
+										<td class="text-center">
+											<span style="margin-right: 5px;">
+												<a href="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>">
+													<i class="bi bi-eye" style="color: #408AF7;"></i>
+												</a>
+											</span>
+											<span style="margin-right: 5px;">
+												<a href="#">
+													<i class="bi bi-pencil" style="color: #229F4B;"></i>
+												</a>
+											</span>
+											<span style="margin-right: 5px;">
+												<a class="delete_product" href="#" data-value="<?php echo $row['Code'] ;?>">
+													<i class="bi bi-trash" style="color: #CF3939;"></i>
+												</a>
+											</span>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -159,6 +179,8 @@ if ($this->session->flashdata('highlight-id')) {
 <?php $this->load->view('admin/modals/add_productV2.php'); ?>
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
+<!-- Prompts modal -->
+<?php $this->load->view('admin/modals/prompts/prompt_delete.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -223,7 +245,17 @@ $(document).ready(function() {
 			alert('ID generated : ' + set_brand1 + set_char + set_line + set_type + set_variant + set_size)
 		}
 	});
-
+	// DELETE PRODUCT
+	$('.delete_product').on('click', function() {
+		$('#prompt_delete').modal('toggle');
+		$('#item_id').text($(this).attr('data-value'));
+		$('#movetoarchive').prop("href", '<?=base_url()?>admin/move_to_archive?code='+$(this).attr('data-value'));
+		
+	});
+	$('#cancel_movetoarchive').on('click', function() {
+		$('#prompt_delete').modal('toggle');
+	});
+	
 });
 </script>
 
