@@ -379,6 +379,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('JournalID', $id);
+		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('journal_transactions');  
 		return $result;
 	}

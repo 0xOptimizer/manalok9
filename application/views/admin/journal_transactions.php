@@ -197,7 +197,7 @@ $(document).ready(function() {
 	// view JOURNAL
 	<?php
 	foreach ($getAccounts->result_array() as $key => $val) {
-		$accountsGet[$val['ID']] = $val['Description'];
+		$accountsGet[$val['ID']] = $val['Name'];
 	}
 	?>
 	var accounts_get = <?=json_encode($accountsGet)?>;
@@ -231,7 +231,7 @@ $(document).ready(function() {
 			success: function (response) {
 				for (var i = response.length - 1; i >= 0; i--) {
 					$('.total-row').before($('<tr>').attr({ class: 'view_transaction_row' })
-						.append($('<td>').text(accounts_get[response[i].ID]))
+						.append($('<td>').text(accounts_get[response[i].AccountID]))
 						.append($('<td>').attr({ class: 'view_debit' }).text(response[i].Debit))
 						.append($('<td>').attr({ class: 'view_credit' }).text(response[i].Credit))
 					);

@@ -1887,7 +1887,6 @@ class Admin extends MY_Controller {
 	{	
 		$description = $this->input->post('description');
 		$date = $this->input->post('date');
-		$total = $this->input->post('total');
 
 		$transactionCount = $this->input->post('transactions-count');
 
@@ -1917,7 +1916,7 @@ class Admin extends MY_Controller {
 
 			$this->session->set_flashdata('highlight-id', $journalID);
 			// LOGBOOK
-			$this->Model_Logbook->LogbookEntry('created a new journal.', 'added a new journal' . ($name ? ' ' . $name : '') . ' [ID: ' . $journalID . '].', base_url('admin/journals'));
+			$this->Model_Logbook->LogbookEntry('created a new journal.', 'added a new journal [ID: ' . $journalID . '].', base_url('admin/journals'));
 			redirect('admin/journals');
 		}
 		else

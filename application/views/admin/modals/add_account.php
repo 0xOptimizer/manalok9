@@ -9,7 +9,7 @@
 					<div class="row">
 						<div class="form-group col-sm-12">
 							<label class="input-label">ACCOUNT NAME</label>
-							<input type="text" class="form-control viewonly" placeholder="Supplies / Accounts Payable / etc." name="name">
+							<input type="text" class="form-control viewonly" placeholder="Supplies / Accounts Payable / etc." name="name" autocomplete="off">
 						</div>
 						<div class="form-group col-sm-12">
 							<label class="input-label">ACCOUNT TYPE</label>
