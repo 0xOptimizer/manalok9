@@ -521,4 +521,55 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function CheckBrand_Char($data)
+	{
+		extract($data);
+		$this->db->select('*');
+		$this->db->where('Brand_Name', $Brand_Name);
+		$this->db->where('Brand_Char', $Brand_Char);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function All_Brands()
+	{
+		$this->db->select('*');
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function CheckBrand_Data($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function CheckBrand_Properties($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_properties');
+		return $result;
+	}
+	public function CheckBrand_Variants($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_vcpd');
+		return $result;
+	}
+	public function CheckBrand_Sizes($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
+	public function CheckBrand_UniqueID($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	
 }

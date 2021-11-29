@@ -100,4 +100,41 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('product_details', $data);
 		return $result;
 	}
+	public function Insert_BrandCategory($data)
+	{
+		$result = $this->db->insert('brand_category', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Insert_BrandProperties($data)
+	{
+		$result = $this->db->insert('brand_properties', $data);
+		return $result;
+	}
+	public function Insert_BrandVariants($data)
+	{
+		$result = $this->db->insert('brand_vcpd', $data);
+		return $result;
+	}
+	public function Insert_BrandSizes($data)
+	{
+		$result = $this->db->insert('brand_size', $data);
+		return $result;
+	}
+	public function AddBrand_Var($data)
+	{
+		$this->db->insert('brand_vcpd', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
