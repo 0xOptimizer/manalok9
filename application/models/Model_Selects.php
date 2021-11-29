@@ -571,5 +571,11 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('brand_category');
 		return $result;
 	}
-	
+	public function CheckBrand_id($id)
+	{
+		$this->db->select('*');
+		$this->db->where('id', $id);
+		$result = $this->db->get('brand_vcpd');
+		return $result;
+	}
 }

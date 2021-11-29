@@ -125,6 +125,8 @@ $route['view_settings_bcat'] = 'Admin/view_settings_bcat';
 $route['Add_BrandCategory'] = 'Admin/Add_BrandCategory';
 $route['Update_BrandCategory'] = 'Admin/Update_BrandCategory';
 $route['Add_BrandVariant'] = 'Admin/Add_BrandVariant';
+$route['remove_addVariants'] = 'Admin/remove_addVariants';
+
 
 
 

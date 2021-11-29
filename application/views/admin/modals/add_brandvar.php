@@ -17,6 +17,7 @@
                     <tr>
                       <td>VARIANT / COLOR / PRINT / DESCRIPTION</td>
                       <td>ABBR</td>
+                      <td></td>
                     </tr>
                   </thead>
                   <tbody class="variants_sectionsss">

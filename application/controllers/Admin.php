@@ -11,9 +11,11 @@ class Admin extends MY_Controller {
 		$this->load->model('Model_Security');
 		$this->load->model('Model_Inserts');
 		$this->load->model('Model_Logbook');
+		$this->load->model('Model_Deletes');
 		if($this->Model_Security->CheckPrivilegeLevel() >= 1) {
 			$this->load->model('Model_Inserts');
 			$this->load->model('Model_Updates');
+
 			$this->globalData['userID'] = 'N/A';
 			if ($this->session->userdata('UserID')) {
 				$this->globalData['userID'] = $this->session->userdata('UserID');
@@ -2122,8 +2124,8 @@ class Admin extends MY_Controller {
 			if ($CheckBrand_UniqueID->num_rows() > 0) {
 				$data = array(
 					'UniqueID' => $uid,
-					'Vcpd' => $vcpd,
-					'Vcpd_Abbr' => $vcpdabr,
+					'Vcpd' => strtoupper($vcpd),
+					'Vcpd_Abbr' => strtoupper($vcpdabr),
 				);
 				$AddBrand_Var = $this->Model_Inserts->AddBrand_Var($data);
 				if ($AddBrand_Var == true) {
@@ -2141,6 +2143,25 @@ class Admin extends MY_Controller {
 				echo "It doesn'\t exist!";
 				exit();
 			}
+		}
+	}
+	public function remove_addVariants()
+	{
+		$id = $this->input->get('id');
+		$CheckBrand_id = $this->Model_Selects->CheckBrand_id($id);
+		if ($CheckBrand_id->num_rows() > 0) {
+			$RemoveVariantBrand = $this->Model_Deletes->RemoveVariantBrand($id);
+			if ($RemoveVariantBrand == true) {
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+			}
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 		}
 	}
 }

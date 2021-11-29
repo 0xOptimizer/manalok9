@@ -243,7 +243,7 @@ $(document).ready(function() {
 				$('.variants_sectionsss').empty();
 				for (var i = 0; i < data['Brand_Variants'].length; i++) {
 					
-					$('.variants_sectionsss').append('<tr class="row_varid" data-value="'+ data['Brand_Variants'][i].id +'"><td>'+ data['Brand_Variants'][i].Vcpd +'</td> <td>'+ data['Brand_Variants'][i].Vcpd_Abbr +'</td></tr>');
+					$('.variants_sectionsss').append('<tr class="row_varid" data-value="'+ data['Brand_Variants'][i].id +'"><td>'+ data['Brand_Variants'][i].Vcpd +'</td> <td>'+ data['Brand_Variants'][i].Vcpd_Abbr +'</td><td><a href="<?=base_url()?>remove_addVariants?id='+data['Brand_Variants'][i].id+'"><i class="bi bi-trash"></i></td></tr>');
 				}
 				
 			},
@@ -277,7 +277,7 @@ $(document).ready(function() {
 						$('.variants_sectionsss').empty();
 						for (var i = 0; i < data['Brand_Variants'].length; i++) {
 
-							$('.variants_sectionsss').append('<tr class="row_varid" data-value="'+ data['Brand_Variants'][i].id +'"><td>'+ data['Brand_Variants'][i].Vcpd +'</td> <td>'+ data['Brand_Variants'][i].Vcpd_Abbr +'</td></tr>');
+							$('.variants_sectionsss').append('<tr class="row_varid" data-value="'+ data['Brand_Variants'][i].id +'"><td>'+ data['Brand_Variants'][i].Vcpd +'</td> <td>'+ data['Brand_Variants'][i].Vcpd_Abbr +'</td><td><a href="<?=base_url()?>remove_addVariants?id='+data['Brand_Variants'][i].id+'"><i class="bi bi-trash"></i></td></tr>');
 						}
 
 					},
