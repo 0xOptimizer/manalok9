@@ -254,7 +254,6 @@ $(document).ready(function() {
 		let subTotal = 0;
 		$.each($('.productTotal'), function(i, val) {
 			subTotal += parseFloat($(this).data('product-total'));
-			console.log($(this).data('product-total'));
 		});
 		$('.productsTotal .subTotal, .total').html(subTotal.toFixed(2));
 		// empty transaction

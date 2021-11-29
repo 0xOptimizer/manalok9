@@ -166,6 +166,10 @@ $(document).ready(function() {
 						facingMode: "environment"
 					},
 				},
+				locator: {
+                patchSize: "large",
+                halfSample: true
+            },
 				decoder: {
 					readers: [
 					"code_128_reader"

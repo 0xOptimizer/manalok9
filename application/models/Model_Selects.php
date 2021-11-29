@@ -294,20 +294,6 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
-	// public function GetTransactionsByTID($id)
-	// {
-	// 	$this->db->select('*');
-	// 	$this->db->where('TransactionID', $id);
-	// 	$result = $this->db->get('products_transactions');  
-	// 	return $result;
-	// }
-	// public function GetTransactionsByOrderNo($orderNo)
-	// {
-	// 	$this->db->select('*');
-	// 	$this->db->where('OrderNo', $orderNo);
-	// 	$result = $this->db->get('products_transactions');
-	// 	return $result;
-	// }
 	public function GetTransactionsRestockedUnordered()
 	{
 		$this->db->select('*');
@@ -330,6 +316,71 @@ class Model_Selects extends CI_Model {
 	{
 		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '0' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.OrderNo = ot.OrderNo AND Status = $status)";
 		$result = $this->db->query($sql);
+		return $result;
+	}
+
+	public function GetAccounts()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetAccountSelection()
+	{
+		$this->db->select('*');
+		$this->db->order_by('Name', 'desc');
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetAccountByName($name)
+	{
+		$this->db->select('*');
+		$this->db->where('Name', $name);
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetAccountByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetJournals()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('journals');  
+		return $result;
+	}
+	public function GetJournalByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('journals');  
+		return $result;
+	}
+	public function GetTransactions()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('journal_transactions');  
+		return $result;
+	}
+	public function GetTransactionByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('journal_transactions');  
+		return $result;
+	}
+	public function GetTransactionsByJournalID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('JournalID', $id);
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('journal_transactions');  
 		return $result;
 	}
 
