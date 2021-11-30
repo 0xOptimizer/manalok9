@@ -121,6 +121,18 @@ $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 $route['FORM_addAccount'] = 'Admin/FORM_addAccount';
 $route['FORM_addJournal'] = 'Admin/FORM_addJournal';
 
+$route['view_settings_bcat'] = 'Admin/view_settings_bcat';
+$route['Add_BrandCategory'] = 'Admin/Add_BrandCategory';
+$route['Update_BrandCategory'] = 'Admin/Update_BrandCategory';
+$route['Add_BrandVariant'] = 'Admin/Add_BrandVariant';
+$route['remove_addVariants'] = 'Admin/remove_addVariants';
+
+
+
+
+
+
+
 
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
@@ -150,6 +162,9 @@ $route['admin/remove_fromCart'] = 'AJAX/remove_fromCart';
 $route['admin/get_Cartdata'] = 'AJAX/get_Cartdata';
 
 $route['admin/add_cart_releasing'] = 'AJAX/add_cart_releasing';
+$route['GetBrand_data'] = 'AJAX/GetBrand_data';
+
+
 
 
 // CART

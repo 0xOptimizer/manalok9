@@ -42,8 +42,8 @@ date_default_timezone_set('Asia/Manila');
 						
 					</div>
 					<div class="col-12 col-md-12 pt-4 pb-2">
-						<button type="button" class="scnrelease-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> Use Scanner</button>
-						<button type="button" class="viewReleaseCart-btn btn btn-sm-secondary ml-auto" style="font-size: 12px;"><i class="bi bi-cart"></i> Cart</button>
+						<button type="button" class="scnrelease-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> USE SCANNER</button>
+						<button type="button" class="viewReleaseCart-btn btn btn-sm-secondary ml-auto" style="font-size: 12px;"><i class="bi bi-cart"></i> CART</button>
 					</div>
 					<p class="text-subtitle text-muted">Approve or cancel product for releasing.</p>
 				</div>

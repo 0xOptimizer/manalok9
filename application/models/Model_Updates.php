@@ -187,4 +187,17 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+	public function Update_BrandCat($UniqueID,$data)
+	{
+		$this->db->where('UniqueID', $UniqueID);
+	   $this->db->update('brand_category', $data);
+	   return true;
+	}
+	public function Update_BrandProperty($UniqueID,$data)
+	{
+		$this->db->where('UniqueID', $UniqueID);
+	   $this->db->update('brand_properties', $data);
+	   return true;
+	}
+	
 }
