@@ -60,7 +60,7 @@
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CATEGORY</label>
-									<select class="form-control viewonly billCategory newBillInput shipToBillInput" name="bill-category" readonly>
+									<select class="form-control viewonly billCategory newBillInput shipToBillInput" name="bill-category" readonly disabled>
 										<option value="0" selected>CONFIRMED DISTRIBUTOR</option>
 										<option value="1">DISTRIBUTOR ON PROBATION</option>
 										<option value="2">DIRECT DEALER</option>
@@ -114,7 +114,7 @@
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CATEGORY</label>
-									<select class="form-control viewonly shipCategory newShipInput" name="ship-category" readonly>
+									<select class="form-control viewonly shipCategory newShipInput" name="ship-category" readonly disabled>
 										<option value="0" selected>CONFIRMED DISTRIBUTOR</option>
 										<option value="1">DISTRIBUTOR ON PROBATION</option>
 										<option value="2">DIRECT DEALER</option>
@@ -133,7 +133,7 @@
 						</div>
 						<hr>
 						<!-- Bottom Part -->
-						<div class="col-sm-12 col-md-6">
+						<div class="col-sm-12 col-md-8">
 							<div class="row">
 								<div class="col-sm-12 table-responsive">
 									<label class="input-label">SALES ITEMS</label>
@@ -171,35 +171,55 @@
 														CONFIRMED DISTRIBUTOR
 													</span>
 												</td>
-												<td class="footerHead">
+												<td class="footerHead text-center">
 													Less: Outright Discount
 													( <span class="dcOutright text-light">15</span>% )
+	<div class="checkbox">
+		<label>
+			<input class="cbDiscount cbDiscountOutright" type="checkbox" name="discount-outright">
+		</label>
+	</div>
 												</td>
-												<td class="text-center">0.00</td>
+												<td class="text-center dcOutrightAmt">0.00</td>
 												<td></td>
 											</tr>
 											<tr style="border-color: #a7852d;">
-												<td class="footerHead">
+												<td class="footerHead text-center">
 													Volume Discount
 													( <span class="dcVolume text-light">10</span>% )
+	<div class="checkbox">
+		<label>
+			<input class="cbDiscount cbDiscountVolume" type="checkbox" name="discount-volume">
+		</label>
+	</div>
 												</td>
-												<td class="text-center">0.00</td>
+												<td class="text-center dcVolumeAmt">0.00</td>
 												<td></td>
 											</tr>
 											<tr style="border-color: #a7852d;">
-												<td class="footerHead">
+												<td class="footerHead text-center">
 													PBD Discount
 													( <span class="dcPBD text-light">5</span>% )
+	<div class="checkbox">
+		<label>
+			<input class="cbDiscount cbDiscountPBD" type="checkbox" name="discount-pbd">
+		</label>
+	</div>
 												</td>
-												<td class="text-center">0.00</td>
+												<td class="text-center dcPBDAmt">0.00</td>
 												<td></td>
 											</tr>
 											<tr style="border-color: #a7852d;">
-												<td class="footerHead">
+												<td class="footerHead text-center">
 													Manpower Discount
 													( <span class="dcManpower text-light">5</span>% )
+	<div class="checkbox">
+		<label>
+			<input class="cbDiscount cbDiscountManpower" type="checkbox" name="discount-manpower">
+		</label>
+	</div>
 												</td>
-												<td class="text-center">0.00</td>
+												<td class="text-center dcManpowerAmt">0.00</td>
 												<td></td>
 											</tr>
 											<tr style="border-color: #a7852d;">
@@ -214,7 +234,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-6">
+						<div class="col-sm-12 col-md-4">
 							<div class="row">
 								<?php $getAllProducts = $this->Model_Selects->GetStockedProducts(); ?>
 								<div class="col-sm-0 col-md-6">

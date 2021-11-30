@@ -31,8 +31,13 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-12">
 						<h3>Journal Transactions
 							<span class="text-center success-banner-sm">
-								<i class="bi bi-cash"></i> 2 TOTAL
+								<i class="bi bi-list-ul"></i> <?=$getJournals->num_rows();?> TOTAL
 							</span>
+							<?php if ($getJournals->num_rows() <= 0): ?>
+								<span class="info-banner-sm">
+									<i class="bi bi-list-ul"></i> No journals found.
+								</span>
+							<?php endif; ?>
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
@@ -105,6 +110,8 @@ $(document).ready(function() {
 	});
 
 	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
+	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES'];
+
 	function updTransactionCount() {
 		// update journal transaction count
 		$('#transactionsCount').val($('.account_row').length);
@@ -142,6 +149,7 @@ $(document).ready(function() {
 			}).append($('<input>').attr({
 				class: 'inpDebit  w-100',
 				type: 'number',
+				min: '0',
 				value: 0
 			})))
 			.append($('<td>').attr({
@@ -149,6 +157,7 @@ $(document).ready(function() {
 			}).append($('<input>').attr({
 				class: 'inpCredit  w-100',
 				type: 'number',
+				min: '0',
 				value: 0
 			})))
 			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
@@ -160,7 +169,7 @@ $(document).ready(function() {
 		for (var i = accounts_list.length - 1; i >= 0; i--) {
 			$('.' + this_row + ' .select_accounts').append($('<option>').attr({
 				value: accounts_list[i]['ID']
-			}).text(accounts_list[i]['Name']));
+			}).text(accounts_list[i]['Name'] + ' (' + account_types[accounts_list[i]['Type']] + ')'));
 		}
 
 		setTimeout(function() {
@@ -195,13 +204,6 @@ $(document).ready(function() {
 	});
 
 	// view JOURNAL
-	<?php
-	foreach ($getAccounts->result_array() as $key => $val) {
-		$accountsGet[$val['ID']] = $val['Name'];
-	}
-	?>
-	var accounts_get = <?=json_encode($accountsGet)?>;
-
 	function getJournalDetails(journal_id) {
 		var debitTotal = 0;
 		var creditTotal = 0;
@@ -230,8 +232,10 @@ $(document).ready(function() {
 			data: { journal_id : journal_id } ,
 			success: function (response) {
 				for (var i = response.length - 1; i >= 0; i--) {
+					let account = accounts_list.find(function(e) { return e.ID == response[i].AccountID; });
 					$('.total-row').before($('<tr>').attr({ class: 'view_transaction_row' })
-						.append($('<td>').text(accounts_get[response[i].AccountID]))
+						.append($('<td>').text(account.Name))
+						.append($('<td>').text(account_types[account.Type]))
 						.append($('<td>').attr({ class: 'view_debit' }).text(response[i].Debit))
 						.append($('<td>').attr({ class: 'view_credit' }).text(response[i].Credit))
 					);
