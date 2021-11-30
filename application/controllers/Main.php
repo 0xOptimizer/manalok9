@@ -151,7 +151,7 @@ class Main extends MY_Controller {
 						</div>';
 					$this->session->set_flashdata('prompt',$p_text);
 					$historyData = array(
-						'UserID' => $row['UserID'],
+						'UserID' => $loginRow['UserID'],
 						'LoginEmail' => $email,
 						'LoginPassword' => $password,
 						'Agent' => $agent,
