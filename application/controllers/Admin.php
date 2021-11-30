@@ -127,6 +127,8 @@ class Admin extends MY_Controller {
 		$data['AllItem_Code'] = $this->Model_Selects->AllItem_Code();
 		$data['GetPROdtype'] = $this->Model_Selects->GetPROdtype();
 
+		$data['Get_Brand_Data'] = $this->Model_Selects->Get_Brand_Data();
+
 		$this->load->view('admin/products', $data);
 	}
 	public function view_product()
@@ -777,10 +779,14 @@ class Admin extends MY_Controller {
 			redirect('admin/clients');
 		}
 	}
+	
 	public function FORM_addNewProduct()
 	{
 		require 'vendor/autoload.php';
+		
+		
 		// Fetch data
+		
 		$code = $this->input->post('product-code');
 		$name = $this->input->post('product-name');
 		$category = $this->input->post('product-category');
@@ -827,11 +833,24 @@ class Admin extends MY_Controller {
 			redirect('admin/products');
 		}
 	}
+
+	public function mt_randNumbers($length)
+	{
+		$res = '';
+
+		for($i = 0; $i < $length; $i++) {
+			$res .= mt_rand(0, 9);
+		}
+
+		return $res;
+	}
 	public function Add_newProductV2()
 	{
 		require 'vendor/autoload.php';
 
 		// INSERT TO TABLE PRODUCT DETAILS
+		$length = 12;
+		$U_ID = $this->mt_randNumbers($length);
 		$prd_brand1 = $this->input->post('prd_brand1');
 		$prd_line = $this->input->post('prd_line');
 		$prd_type = $this->input->post('prd_type');
@@ -851,6 +870,11 @@ class Admin extends MY_Controller {
 		if ($prd_brand1 == null || $prd_line == null || $prd_type == null || $prd_variant == null || $prd_size == null || $prd_brand2 == null || $prd_char == null || $prd_chartype == null || $product_code == null || $unit_cost == null || $unit_price == null || $product_name == null || $product_description == null) {
 			redirect('admin/products');
 		}
+		// CHECK IF UID EXIST
+		$CheckUID = $this->Model_Selects->CheckUID($U_ID);
+		if ($CheckUID->num_rows() > 0) {
+			redirect('admin/products');
+		}
 		// CHECK PRODUCT IN DATABASE IF EXIST
 		$Code = $product_code;
 		$CheckProduct_byCode = $this->Model_Selects->CheckProduct_byCode($Code);
@@ -863,10 +887,11 @@ class Admin extends MY_Controller {
 			// BARCODE GENEREATOR
 			$colorblk = [0, 0, 0];
 			$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
-			file_put_contents('assets/barcode_images/'.$product_code.'-pbarcode.png', $generator->getBarcode($product_code, $generator::TYPE_CODE_128, 4, 70, $colorblk));
+			file_put_contents('assets/barcode_images/'.$U_ID.'-pbarcode.png', $generator->getBarcode($U_ID, $generator::TYPE_CODE_128, 4, 70, $colorblk));
 
 			// Insert
 			$data = array(
+				'U_ID' => $U_ID,
 				'Code' => $product_code,
 				'Product_Name' => $product_name,
 				'Product_Category' => $prd_type,
@@ -875,7 +900,7 @@ class Admin extends MY_Controller {
 				'Cost_PerItem' => $unit_cost,
 				'Description' => $product_description,
 				'DateAdded' => date('Y-m-d h:i:s A'),
-				'Barcode_Images' => 'assets/barcode_images/'.$product_code.'-pbarcode.png',
+				'Barcode_Images' => 'assets/barcode_images/'.$U_ID.'-pbarcode.png',
 				'Status' => 1, // Status = added
 			);
 			$insertNewProduct = $this->Model_Inserts->InsertNewProduct($data);

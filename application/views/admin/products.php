@@ -255,6 +255,81 @@ $(document).ready(function() {
 	$('#cancel_movetoarchive').on('click', function() {
 		$('#prompt_delete').modal('toggle');
 	});
+	// FILL SELECTS
+	$('#sel_brandname').on('change', function() {
+		var uid = $(this).find("option:selected").attr('data-value');
+
+		$.ajax({
+			url: '<?=base_url()?>Fill_Select_BrandData',
+			type: 'post',
+			data: { uid : uid } ,
+			success: function (response) {
+				
+				var data = $.parseJSON(response);
+				if (data['status_response'] == 0) {
+					// CLEAR ALL SELECT
+					$('#sel_brandchar').empty();
+					$('#sel_brandtype').empty();
+					$('#sel_brandnameabbr').empty();
+					$('#sel_brandline').empty();
+					$('#sel_brandtypess').empty();
+					$('#sel_brandvariants').empty();
+					$('#sel_brandsizes').empty();
+				}
+				else
+				{
+					$('#sel_brandchar').empty();
+					$('#sel_brandtype').empty();
+					$('#sel_brandnameabbr').empty();
+					$('#sel_brandline').empty();
+					$('#sel_brandtypess').empty();
+					$('#sel_brandvariants').empty();
+					$('#sel_brandsizes').empty();
+					
+
+					
+					for (var i = 0; i < data['brand_category'].length; i++) {
+						var brand_char = data['brand_category'][i].Brand_Char;
+						var brand_type = data['brand_category'][i].Brand_Type;
+
+						$('#sel_brandchar').append('<option value="'+brand_char+'">'+brand_char+'</option>');
+						
+						$('#sel_brandtype').append('<option value="'+brand_type+'">'+brand_type+'</option>');
+					}
+					for (var i = 0; i < data['brand_properties'].length; i++) {
+
+						var Brand_Abbr = data['brand_properties'][i].Brand_Abbr;
+						var prd_line = data['brand_properties'][i].Product_Line;
+						var prd_lineabbr = data['brand_properties'][i].Product_line_Abbr;
+						var prd_type = data['brand_properties'][i].Product_Type;
+						var prd_typeabbr = data['brand_properties'][i].Product_Type_Abbr;
+
+						$('#sel_brandnameabbr').append('<option value="'+Brand_Abbr+'">'+Brand_Abbr+'</option>');
+						$('#sel_brandline').append('<option value="'+prd_lineabbr+'">'+prd_line+'</option>');
+						$('#sel_brandtypess').append('<option value="'+prd_typeabbr+'">'+prd_type+'</option>');
+					}
+					for (var i = 0; i < data['brand_variants'].length; i++) {
+						var vcpd = data['brand_variants'][i].Vcpd;
+						var vcpd_abbr = data['brand_variants'][i].Vcpd_Abbr;
+						$('#sel_brandvariants').append('<option value="'+vcpd_abbr+'">'+vcpd+'</option>');
+					}
+					for (var i = 0; i < data['brand_sizes'].length; i++) {
+						var product_size = data['brand_sizes'][i].Product_Size;
+						var product_size_Abbr = data['brand_sizes'][i].Product_Size_Abbr;
+						$('#sel_brandsizes').append('<option value="'+product_size_Abbr+'">'+product_size+'</option>');
+					}
+
+				}
+				
+				console.log(data);
+				
+				
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+			}
+		});
+	});
 	
 });
 </script>

@@ -151,6 +151,8 @@ $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
 $route['Add_newProductV2'] = 'Admin/Add_newProductV2';
 $route['move_to_archive'] = 'Admin/move_to_archive';
+$route['Fill_Select_BrandData'] = 'AJAX/Fill_Select_BrandData';
+
 
 
 // AJAX REQUEST

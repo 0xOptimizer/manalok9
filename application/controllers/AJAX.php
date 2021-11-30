@@ -438,4 +438,30 @@ class AJAX extends CI_Controller {
 		}
 		
 	}
+	public function Fill_Select_BrandData()
+	{
+		$UniqueID = $this->input->post('uid');
+		if (empty($UniqueID)) {
+			$data['status_response'] = array('status' => 0, );
+		}
+		else
+		{
+			$data['status_response'] = array('status' => 1, );
+		}
+
+		$CheckBrand_Data = $this->Model_Selects->CheckBrand_Data($UniqueID);
+		$data['brand_category'] = $CheckBrand_Data->result_array();
+
+		$CheckBrand_Properties = $this->Model_Selects->CheckBrand_Properties($UniqueID);
+		$data['brand_properties'] = $CheckBrand_Properties->result_array();
+
+		$CheckBrand_Variants = $this->Model_Selects->CheckBrand_Variants($UniqueID);
+		$data['brand_variants'] = $CheckBrand_Variants->result_array();
+		
+		$CheckBrand_Sizes = $this->Model_Selects->CheckBrand_Sizes($UniqueID);
+		$data['brand_sizes'] = $CheckBrand_Sizes->result_array();
+		
+		$result = json_encode($data);
+		echo $result;
+	}
 }

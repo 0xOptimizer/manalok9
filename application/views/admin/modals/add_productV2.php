@@ -12,32 +12,23 @@
 								BRAND
 							</h5>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="" class="form-control standard-input-pad select-first-gray" name="prd_brand2" required="">
-									<option selected="" value="SDN">SDN</option>
-									<option value="SDS">SDS</option>
-									<option value="SCB">SCB</option>
-									<option value="POT">POT</option>
-									<option value="MK9">MK9</option>
+								<select id="sel_brandname" class="form-control standard-input-pad select-first-gray" name="prd_brand2" required="">
+									<option selected="" value=""></option>
+									<?php foreach ($Get_Brand_Data->result_array() as $row): ?>
+										<option value="<?php echo $row['Brand_Name']; ?>" data-value="<?php echo $row['UniqueID']; ?>"><?php echo $row['Brand_Name']; ?></option>
+									<?php endforeach ?>
 								</select>
 								<label class="input-label" for="">BRAND</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="" class="form-control standard-input-pad select-first-gray set_char" name="prd_char" required="">
-									<option selected="" value="001">001</option>
-									<option value="002">002</option>
-									<option value="003">003</option>
-									<option value="004">004</option>
-									<option value="005">005</option>
+								<select id="sel_brandchar" class="form-control standard-input-pad select-first-gray set_char sel_brandchar" name="prd_char" required="">
+									
 								</select>
 								<label class="input-label" for="">CHAR</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="" class="form-control standard-input-pad select-first-gray" name="prd_chartype" required="">
-									<option selected="" value="DGFD">DOG FOOD</option>
-									<option value="DGSP">DOG SOAP</option>
-									<option value="DGPR">DOG POWDER</option>
-									<option value="TS">TSHIRT</option>
-									<option value="SD">SANDO</option>
+								<select id="sel_brandtype" class="form-control standard-input-pad select-first-gray" name="prd_chartype" required="">
+									
 								</select>
 								<label class="input-label" for="">TYPE</label>
 							</div>
@@ -47,57 +38,32 @@
 								Properties
 							</h5>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select class="form-control standard-input-pad select-first-gray set_brand1" name="prd_brand1" required="">
-									<option selected="" value="SND"> SDN </option>
-									<option value="SDS"> SDS </option>
-									<option value="SCB"> SCB </option>
-									<option value="POT"> POWTECH </option>
-									<option value="MK9"> MANALOK9 </option>
+								<select id="sel_brandnameabbr" class="form-control standard-input-pad select-first-gray set_brand1" name="prd_brand1" required="">
+									
 								</select>
-								<label class="input-label" for="">BRAND</label>
+								<label class="input-label" for="">BRAND (ABBR)</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="" class="form-control standard-input-pad select-first-gray set_line" name="prd_line" required="">
-									<option selected="" value="DGFD">DOG FOOD</option>
-									<option value="DGSP">DOG SOAP</option>
-									<option value="DGPR">DOG POWDER</option>
-									<option value="MDSE">MERCHANDISE</option>
+								<select id="sel_brandline" class="form-control standard-input-pad select-first-gray set_line" name="prd_line" required="">
+									
 								</select>
 								<label class="input-label" for="">LINE</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="" class="form-control standard-input-pad select-first-gray set_type" name="prd_type" required="">
-									<option selected="" value="PREM">PREMIUM</option>
-									<option value="TS">TSHIRT</option>
-									<option value="SD">SANDO</option>
-									<option value="FM">FACEMASK</option>
-									<option value="SJ">SPORTJUG</option>
-									<option value="UBL">UMBRELLA</option>
+								<select id="sel_brandtypess" class="form-control standard-input-pad select-first-gray set_type" name="prd_type" required="">
+									
 								</select>
 								<label class="input-label" for="">TYPE</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-8">
-								<select id="" class="form-control standard-input-pad select-first-gray set_variant" name="prd_variant" required="">
-									<option selected="" value="ORIG">ORIGINAL</option>
-									<option value="BF">BEEF</option>
-									<option value="LMB">LAMB</option>
-									<option value="YP">YOUNG PUPPIES</option>
-									<option value="MC">MINTY COOL</option>
-									<option value="51ORIG">5 IN1 ORIGINAL</option>
+								<select id="sel_brandvariants" class="form-control standard-input-pad select-first-gray set_variant" name="prd_variant" required="">
+									
 								</select>
 								<label class="input-label" for="">VARIANT / COLOR / PRINT / DESCRIPTION</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="" class="form-control standard-input-pad select-first-gray set_size" name="prd_size" required="">
-									<option selected="" value="XS">Extra Small</option>
-									<option value="S">Small</option>
-									<option value="M">Medium</option>
-									<option value="L">Large</option>
-									<option value="XL">Extra Large</option>
-									<option value="XXL">Double Extra Large</option>
-									<option value="500G">500 G</option>
-									<option value="1KG">1 KG</option>
-									<option value="2KG">2 KG</option>
+								<select id="sel_brandsizes" class="form-control standard-input-pad select-first-gray set_size" name="prd_size" required="">
+									
 								</select>
 								<label class="input-label" for="">SIZE</label>
 							</div>
@@ -128,10 +94,12 @@
 								<textarea rows="10" class="form-control standard-input-pad" name="product_description"></textarea>
 								<label class="input-label">DESCRIPTION</label>
 							</div>
+							
 						</div>
 					</div>
 				</div>
 				<div class="feedback-form modal-footer">
+					
 					<a href="#" id="generate_code">Generate SKU</a>
 					<button type="submit" class="btn btn-success"><i class="bi bi-check-square"></i> ADD NEW PRODUCT</button>
 				</div>
