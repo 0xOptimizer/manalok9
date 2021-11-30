@@ -388,4 +388,54 @@ class AJAX extends CI_Controller {
 		$jsondata = json_encode($response);
 		echo $jsondata;
 	}
+	public function Add_BrandSizes()
+	{
+		$UniqueID = $this->input->post('uid');
+		if (empty($UniqueID)) {
+			echo 'Error! Please Try Again';
+			exit();
+		}
+		$GetAll_BrandSizes = $this->Model_Selects->GetAll_BrandSizes($UniqueID);
+		$result = $GetAll_BrandSizes->result_array();
+			
+		$result = json_encode($result);
+		echo $result;
+		exit();
+	}
+	public function AddNew_BrandSizes()
+	{
+		$UniqueID = $this->input->post('uid');
+		$Product_Size = $this->input->post('prd_size');
+		$Product_Size_Abbr = $this->input->post('prd_sizeabbr');
+
+		if (empty($UniqueID) || empty($Product_Size) || empty($Product_Size_Abbr)) {
+			echo "Warning! Empty fields please try again.";
+			exit();
+		}
+		$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
+		if ($CheckBrand_UniqueID->num_rows() > 0) {
+			$data = array(
+				'UniqueID' => $UniqueID,
+				'Product_Size' => strtoupper($Product_Size),
+				'Product_Size_Abbr' => strtoupper($Product_Size_Abbr),
+			);
+			$Add_NewBrandsize = $this->Model_Inserts->Add_NewBrandsize($data);
+			if ($Add_NewBrandsize == true) {
+
+				echo "Succes! New size added.";
+				exit();
+			}
+			else
+			{
+				echo "Error! Please try again.";
+				exit();
+			}
+		}
+		else
+		{
+			echo "Error! Please try again.";
+				exit();
+		}
+		
+	}
 }

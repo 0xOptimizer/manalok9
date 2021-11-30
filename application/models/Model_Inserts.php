@@ -147,4 +147,16 @@ class Model_Inserts extends CI_Model {
 			return false;
 		}
 	}
+	public function Add_NewBrandsize($data)
+	{
+		$this->db->insert('brand_size', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 }

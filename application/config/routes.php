@@ -132,11 +132,18 @@ $route['FORM_removeInvoice'] = 'Admin/FORM_removeInvoice';
 $route['FORM_scheduleDelivery'] = 'Admin/FORM_scheduleDelivery';
 $route['FORM_markDelivered'] = 'Admin/FORM_markDelivered';
 $route['FORM_markReceived'] = 'Admin/FORM_markReceived';
+
+// BRAND ROUTES
 $route['view_settings_bcat'] = 'Admin/view_settings_bcat';
 $route['Add_BrandCategory'] = 'Admin/Add_BrandCategory';
 $route['Update_BrandCategory'] = 'Admin/Update_BrandCategory';
 $route['Add_BrandVariant'] = 'Admin/Add_BrandVariant';
 $route['remove_addVariants'] = 'Admin/remove_addVariants';
+$route['Add_BrandSizes'] = 'AJAX/Add_BrandSizes';
+$route['AddNew_BrandSizes'] = 'AJAX/AddNew_BrandSizes';
+$route['remove_addSizes'] = 'Admin/remove_addSizes';
+
+
 
 
 // Products
@@ -168,16 +175,10 @@ $route['admin/add_cart_releasing'] = 'AJAX/add_cart_releasing';
 $route['GetBrand_data'] = 'AJAX/GetBrand_data';
 
 
-
-
 // CART
 $route['admin/Restock_from_cart'] = 'Admin/Restock_from_cart';
 
 $route['admin/release_fromcart'] = 'Admin/release_fromcart';
-
-
-
-
 
 
 // Database backup

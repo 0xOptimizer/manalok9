@@ -2368,4 +2368,24 @@ class Admin extends MY_Controller {
 			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 		}
 	}
+	public function remove_addSizes()
+	{
+		$id = $this->input->get('id');
+		$CheckSizeID = $this->Model_Selects->CheckSizeID($id);
+		if ($CheckSizeID->num_rows() > 0) {
+			$remove_size_id = $this->Model_Deletes->remove_size_id($id);
+			if ($remove_size_id == true) {
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+			}
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+		}
+	}
+	
 }

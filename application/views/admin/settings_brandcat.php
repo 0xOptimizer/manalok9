@@ -104,6 +104,7 @@ date_default_timezone_set('Asia/Manila');
 <?php $this->load->view('admin/modals/view_brandcat.php'); ?>
 <?php $this->load->view('admin/modals/update_brandcat.php'); ?>
 <?php $this->load->view('admin/modals/add_brandvar.php'); ?>
+<?php $this->load->view('admin/modals/add_brandsize.php'); ?>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -325,13 +326,61 @@ $(document).ready(function() {
 		
 	});
 	//--------------- ADD SIZES ---------------//
+	function Get_BrandSizes(uid) {
+		var uid = uid;
+		$.ajax({
+			url: '<?=base_url()?>Add_BrandSizes',
+			type: 'post',
+			data: { uid : uid } ,
+			success: function (response) {
+				var data = $.parseJSON(response);
+				$('.sizes_sectionsss').empty();
+				for (var i = 0; i < data.length; i++) {
+
+					$('.sizes_sectionsss').append('<tr class="row_sizeid" data-value="'+ data[i].id +'"><td>'+ data[i].Product_Size +'</td> <td>'+ data[i].Product_Size_Abbr +'</td><td><a href="<?=base_url()?>remove_addSizes?id='+data[i].id+'"><i class="bi bi-trash"></i></td></tr>');
+				}
+				
+				console.log(data);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+			}
+		});
+	}
 	$('#add_brandsizes').click(function() {
 		var uid = $(this).attr('data-value');
-		alert(uid);
+		Get_BrandSizes(uid);
 		$('#view_brandcat').modal('toggle');
+		$('#add_brandsize').modal('toggle');
+		$('#add_sizeiud').val(uid);
+		
+
 	});
 
+	$('#modaldis_addsize').click(function() {
+		$('#view_brandcat').modal('toggle');
+		$('#add_brandsize').modal('toggle');
+	});
 
+	$('#add_sizeSubmit').click(function() {
+		var uid = $('#add_sizeiud').val();
+		var prd_size = $('#Add_prd_size').val();
+		var prd_sizeabbr = $('#add_prd_sizeabbr').val();
+
+		$.ajax({
+			url: '<?=base_url()?>AddNew_BrandSizes',
+			type: 'post',
+			data: { uid : uid , prd_size : prd_size ,prd_sizeabbr : prd_sizeabbr } ,
+			success: function (response) {
+				alert(response);
+				Get_BrandSizes(uid);
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+			}
+		});
+	});
+	
 
 	//--------------- REMOVE ---------------//
 	$( ".btn-removebrand" ).click(function() {

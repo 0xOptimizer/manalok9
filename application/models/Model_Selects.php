@@ -620,4 +620,18 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('brand_vcpd');
 		return $result;
 	}
+	public function GetAll_BrandSizes($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
+	public function CheckSizeID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('id', $id);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
 }
