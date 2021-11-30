@@ -132,7 +132,13 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php if ($row['Status'] == '1'): ?>
 												<span><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 											<?php elseif ($row['Status'] == '2'): ?>
-												<span><i class="bi bi-cash" style="color:#E4B55B;"></i> Waiting For Payment</span>
+												<span><i class="bi bi-cash" style="color:#E4B55B;"></i> For Invoicing</span>
+											<?php elseif ($row['Status'] == '3'): ?>
+												<span><i class="bi bi-truck" style="color:#E4B55B;"></i> For Delivery</span>
+											<?php elseif ($row['Status'] == '4'): ?>
+												<span><i class="bi bi-check2" style="color:#E4B55B;"></i> Delivered</span>
+											<?php elseif ($row['Status'] == '5'): ?>
+												<span><i class="bi bi-check-circle text-success"></i> Received</span>
 											<?php else: ?>
 												<span><i class="bi bi-trash text-danger"></i> Rejected</span>
 											<?php endif; ?>
@@ -255,13 +261,45 @@ $(document).ready(function() {
 		$.each($('.productTotal'), function(i, val) {
 			subTotal += parseFloat($(this).data('product-total'));
 		});
-		$('.productsTotal .subTotal, .total').html(subTotal.toFixed(2));
+		$('.productsTotal .subTotal').html(subTotal.toFixed(2));
 		// empty transaction
 		if ($('.orderProduct').length > 0) {
 			$('.noProduct').hide();
 		} else {
 			$('.noProduct').show();
 		}
+
+		var totalDiscount = 0;
+		if ($('.cbDiscountOutright').is(':checked')) {
+			let discount = parseFloat($('.dcOutright').html()) * 0.01;
+			totalDiscount += subTotal * discount;
+			$('.dcOutrightAmt').html((subTotal * discount).toFixed(2));
+		} else {
+			$('.dcOutrightAmt').html('0.00');
+		}
+		if ($('.cbDiscountVolume').is(':checked')) {
+			let discount = parseFloat($('.dcVolume').html()) * 0.01;
+			totalDiscount += subTotal * discount;
+			$('.dcVolumeAmt').html((subTotal * discount).toFixed(2));
+		} else {
+			$('.dcVolumeAmt').html('0.00');
+		}
+		if ($('.cbDiscountPBD').is(':checked')) {
+			let discount = parseFloat($('.dcPBD').html()) * 0.01;
+			totalDiscount += subTotal * discount;
+			$('.dcPBDAmt').html((subTotal * discount).toFixed(2));
+		} else {
+			$('.dcPBDAmt').html('0.00');
+		}
+		if ($('.cbDiscountManpower').is(':checked')) {
+			let discount = parseFloat($('.dcManpower').html()) * 0.01;
+			totalDiscount += subTotal * discount;
+			$('.dcManpowerAmt').html((subTotal * discount).toFixed(2));
+		} else {
+			$('.dcManpowerAmt').html('0.00');
+		}
+
+		$('.total').html((subTotal - totalDiscount).toFixed(2));
 	}
 	$(document).on('click', '.add-product-row', function() {
 		let opClassName = 'op' + $(this).data('id');
@@ -399,6 +437,7 @@ $(document).ready(function() {
 					$('.billTerritory').val(response.TerritoryManager);
 
 					$('.billCategory option[value=' + response.Category + ']').prop('selected', true);
+					$('.billCategory').change();
 
 					$('#BillToNo').val(response.ClientNo); // change client no input
 
@@ -413,6 +452,7 @@ $(document).ready(function() {
 
 	$(document).on('click', '.newBillClient', function(t) { // on clicking the new vendor button on dropdown
 		$('.newBillInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+		$('.billCategory').removeAttr('disabled');
 		// clear inputs
 		$('.billName').val('');
 		$('.billNo').val('');
@@ -423,6 +463,7 @@ $(document).ready(function() {
 		$('.billTIN').val('');
 		$('.billTerritory').val('');
 		$('.billCategory option[value=0]').prop('selected', true);
+		$('.billCategory').change();
 		// change no value
 		$('.billNo').val($('.billNo').data('newcno'));
 		$('#BillToNo').val('newBillClient');
@@ -451,12 +492,14 @@ $(document).ready(function() {
 			$('.billTIN').val('');
 			$('.billTerritory').val('');
 			$('.billCategory option[value=0]').prop('selected', true);
+			$('.billCategory').change();
 			// change no value
 			$('.billNo').val('');
 			$('#BillToNo').val('');
 			// change icon
 			$('.billNameIcon').removeClass('bi-backspace-fill text-light');
 			$('.billNameIcon').addClass('bi-x-circle-fill text-danger');
+			$('.billCategory').attr('disabled', '');
 		}
 		hideBillNameDropdown();
 		// hide ship to bill button
@@ -573,6 +616,7 @@ $(document).ready(function() {
 
 	$(document).on('click', '.newShipClient', function(t) { // on clicking the new vendor button on dropdown
 		$('.newShipInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+		$('.shipCategory').removeAttr('disabled');
 		// clear inputs
 		$('.shipName').val('');
 		$('.shipNo').val('');
@@ -615,6 +659,7 @@ $(document).ready(function() {
 			// change icon
 			$('.shipNameIcon').removeClass('bi-backspace-fill text-light');
 			$('.shipNameIcon').addClass('bi-x-circle-fill text-danger');
+			$('.shipCategory').attr('disabled', '');
 		}
 		hideShipNameDropdown();
 	});
@@ -681,17 +726,22 @@ $(document).ready(function() {
 				$('.dcOutright').html('10');
 				$('.dcVolume').html('10');
 				$('.dcPBD').html('5');
-				$('.dcManpower').html('');
+				$('.dcManpower').html('0');
 				break;
 			case '3':
 				$('.dcCategory').html('DIRECT END USER');
 				$('.dcOutright').html('10');
 				$('.dcVolume').html('10');
 				$('.dcPBD').html('5');
-				$('.dcManpower').html('');
+				$('.dcManpower').html('0');
 				break;
 			default: break;
 		}
+		updProductCount();
+	});
+
+	$(document).on('change', '.cbDiscount', function(e) {
+		updProductCount();
 	});
 });
 </script>

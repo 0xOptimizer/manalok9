@@ -79,6 +79,7 @@ $route['admin/invoices'] = 'Admin/invoices';
 $route['admin/accounts'] = 'Admin/accounts';
 $route['admin/journals'] = 'Admin/journals';
 
+$route['admin/accounting_test'] = 'Admin/accounting_test';
 
 
 // Users
@@ -121,14 +122,22 @@ $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 $route['FORM_addAccount'] = 'Admin/FORM_addAccount';
 $route['FORM_addJournal'] = 'Admin/FORM_addJournal';
 
+$route['FORM_addPOBill'] = 'Admin/FORM_addPOBill';
+$route['FORM_addSOInvoice'] = 'Admin/FORM_addSOInvoice';
+
+$route['FORM_removeBill'] = 'Admin/FORM_removeBill';
+$route['FORM_removeInvoice'] = 'Admin/FORM_removeInvoice';
+
+$route['FORM_scheduleDelivery'] = 'Admin/FORM_scheduleDelivery';
+$route['FORM_markDelivered'] = 'Admin/FORM_markDelivered';
+$route['FORM_markReceived'] = 'Admin/FORM_markReceived';
+
 
 // Products
 $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
 $route['Add_newProductV2'] = 'Admin/Add_newProductV2';
 $route['move_to_archive'] = 'Admin/move_to_archive';
-
-
 
 
 // AJAX REQUEST

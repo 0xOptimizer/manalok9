@@ -11,6 +11,7 @@ class Admin extends MY_Controller {
 		$this->load->model('Model_Security');
 		$this->load->model('Model_Inserts');
 		$this->load->model('Model_Logbook');
+		$this->load->model('Model_Updates');
 		if($this->Model_Security->CheckPrivilegeLevel() >= 1) {
 			$this->load->model('Model_Inserts');
 			$this->load->model('Model_Updates');
@@ -306,6 +307,18 @@ class Admin extends MY_Controller {
 			$header['pageTitle'] = 'Accounts';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 			$this->load->view('admin/accounts', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function accounting_test()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'accounting_test';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/accounting_test', $data);
 		} else {
 			redirect(base_url());
 		}
@@ -878,7 +891,7 @@ class Admin extends MY_Controller {
 				$InsertPrd_Details = $this->Model_Inserts->InsertPrd_Details($data);
 
 				$this->session->set_flashdata('highlight-id', $product_code);
-				$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($description ? ' ' . $description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
+				$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($product_description ? ' ' . $product_description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
 
 				redirect('admin/products');
 			}
@@ -1338,6 +1351,58 @@ class Admin extends MY_Controller {
 				$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
 			}
 
+			// check account category
+			$shipClientDetails = $this->Model_Selects->GetClientByNo($shipToNo)->row_array();
+			$discounts = array();
+			switch ($shipClientDetails['Category']) { // get account discounts
+				case '0':
+					$discounts = array(
+						'Outright' => 15,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 5,
+					); break;
+				case '1':
+					$discounts = array(
+						'Outright' => 12,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 5,
+					); break;
+				case '2':
+					$discounts = array(
+						'Outright' => 10,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 0,
+					); break;
+				case '3':
+					$discounts = array(
+						'Outright' => 10,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 0,
+					); break;
+			}
+			$dcOutright = $this->input->post('discount-outright');
+			$dcVolume = $this->input->post('discount-volume');
+			$dcPBD = $this->input->post('discount-pbd');
+			$dcManpower = $this->input->post('discount-manpower');
+
+			$totalDiscount = 0; // compute total discount
+			if ($dcOutright == 'on') {
+				$totalDiscount += $discounts['Outright'];
+			}
+			if ($dcVolume == 'on') {
+				$totalDiscount += $discounts['Volume'];
+			}
+			if ($dcPBD == 'on') {
+				$totalDiscount += $discounts['PBD'];
+			}
+			if ($dcManpower == 'on') {
+				$totalDiscount += $discounts['Manpower'];
+			}
+
 			// INSERT SALES ORDER
 			$data = array(
 				'OrderNo' => $orderNo,
@@ -1345,6 +1410,7 @@ class Admin extends MY_Controller {
 				'DateCreation' => date('Y-m-d h:i:s A'),
 				'BillToClientNo' => $billToNo,
 				'ShipToClientNo' => $shipToNo,
+				'Discount' => $totalDiscount,
 				'Status' => '1',
 			);
 			$insertNewSalesOrder = $this->Model_Inserts->InsertSalesOrder($data);
@@ -1353,9 +1419,8 @@ class Admin extends MY_Controller {
 				// create new release transactions
 				for ($i = 0; $i < $productCount; $i++) {
 					$code = trim($this->input->post('productCodeInput_' . $i));
-					$unitPrice = trim($this->input->post('productPriceInput_' . $i));
 					$qty = trim($this->input->post('productQtyInput_' . $i));
-					$getProductByCode = $this->Model_Selects->GetProductByCode($code)->row_array();
+					$p_details = $this->Model_Selects->GetProductByCode($code)->row_array();
 
 					$data = array(
 						'Code' => $code,
@@ -1363,7 +1428,7 @@ class Admin extends MY_Controller {
 						'OrderNo' => $orderNo,
 						'Type' => '1',
 						'Amount' => $qty,
-						'PriceUnit' => $unitPrice,
+						'PriceUnit' => $p_details['Price_PerItem'],
 						'Date' => $date,
 						'DateAdded' => date('Y-m-d h:i:s A'),
 						'Status' => 0,
@@ -1706,6 +1771,7 @@ class Admin extends MY_Controller {
 		else
 		{
 			$cart_data = $_SESSION['cart_sess'];
+			$user_id = $_SESSION['UserID'];
 			foreach ($cart_data as $row => $val) {
 				$Code = $val['item_code'];
 
@@ -1902,6 +1968,12 @@ class Admin extends MY_Controller {
 				$debit = trim($this->input->post('debitInput_' . $i));
 				$credit = trim($this->input->post('creditInput_' . $i));
 
+				if ($debit > 0) {
+					$credit = 0;
+				} elseif ($credit > 0) {
+					$debit = 0;
+				}
+
 				$data = array(
 					'JournalID' => $journalID,
 					'AccountID' => $accountID,
@@ -1922,7 +1994,139 @@ class Admin extends MY_Controller {
 			redirect('admin/journals');
 		}
 	}
-	
+	public function FORM_addPOBill()
+	{
+		$purchaseOrderNo = $this->input->post('purchase-order-no');
+		$amount = $this->input->post('amount');
+		$modeOfPayment = $this->input->post('mode-payment');
+		$date = $this->input->post('date');
+
+		// Insert
+		$data = array(
+			'BillNo' => "B-" . str_pad($this->db->count_all('bills') + 1, 6, '0', STR_PAD_LEFT),
+			'OrderNo' => $purchaseOrderNo,
+			'Amount' => $amount,
+			'ModeOfPayment' => $modeOfPayment,
+			'Date' => $date,
+		);
+		$insertBill = $this->Model_Inserts->InsertBill($data);
+		if ($insertBill == TRUE) {
+			$billID = $this->db->insert_id();
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
+			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+		}
+	}
+	public function FORM_addSOInvoice()
+	{
+		$salesOrderNo = $this->input->post('sales-order-no');
+		$amount = $this->input->post('amount');
+		$modeOfPayment = $this->input->post('mode-payment');
+		$date = $this->input->post('date');
+
+		// Insert
+		$data = array(
+			'InvoiceNo' => "I-" . str_pad($this->db->count_all('invoices') + 1, 6, '0', STR_PAD_LEFT),
+			'OrderNo' => $salesOrderNo,
+			'Amount' => $amount,
+			'ModeOfPayment' => $modeOfPayment,
+			'Date' => $date,
+		);
+		$insertInvoice = $this->Model_Inserts->InsertInvoice($data);
+		if ($insertInvoice == TRUE) {
+			$invoiceID = $this->db->insert_id();
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '].', base_url('admin/invoices'));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+	public function FORM_removeBill()
+	{
+		$billNo = $this->input->get('bno');
+		if ($this->session->userdata('Privilege') > 1 && $billNo != NULL) {
+			$result = $this->Model_Updates->remove_bill($billNo);
+		}
+		redirect($_SERVER['HTTP_REFERER']);
+	}
+	public function FORM_removeInvoice()
+	{
+		$invoiceNo = $this->input->get('ino');
+		if ($this->session->userdata('Privilege') > 1 && $invoiceNo != NULL) {
+			$result = $this->Model_Updates->remove_invoice($invoiceNo);
+		}
+		redirect($_SERVER['HTTP_REFERER']);
+	}
+	public function FORM_scheduleDelivery() {
+		$salesOrderNo = $this->input->post('order-no');
+		$date = $this->input->post('date');
+
+		// Update
+		$data = array(
+			'DateDelivery' => $date,
+			'Status' => '3',
+		);
+		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+		if ($UpdateSalesOrder == TRUE) {
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('scheduled delivery.', 'scheduled delivery for sales order [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+	public function FORM_markDelivered() {
+		$salesOrderNo = $this->input->post('order-no');
+
+		// Update
+		$data = array(
+			'Status' => '4',
+		);
+		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+		if ($UpdateSalesOrder == TRUE) {
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('marked SO as delivered.', 'sales order marked as delivered [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+	public function FORM_markReceived() {
+		$salesOrderNo = $this->input->post('order-no');
+
+		// Update
+		$data = array(
+			'Status' => '5',
+		);
+		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+		if ($UpdateSalesOrder == TRUE) {
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('marked SO as received.', 'sales order marked as received [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
 
 	public function move_to_archive()
 	{

@@ -32,8 +32,13 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-12">
 						<h3>Accounts
 							<span class="text-center success-banner-sm">
-								<i class="bi bi-cash"></i> 6 TOTAL
+								<i class="bi bi-list-ul"></i> <?=$getAccounts->num_rows();?> TOTAL
 							</span>
+							<?php if ($getAccounts->num_rows() <= 0): ?>
+								<span class="info-banner-sm">
+									<i class="bi bi-list-ul"></i> No accounts found.
+								</span>
+							<?php endif; ?>
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">

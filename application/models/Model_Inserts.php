@@ -57,10 +57,20 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('purchase_orders', $data);
 		return $result;
 	}
+	public function InsertBill($data)
+	{
+		$result = $this->db->insert('bills', $data);
+		return $result;
+	}
 	// SALES ORDERS
 	public function InsertSalesOrder($data)
 	{
 		$result = $this->db->insert('sales_orders', $data);
+		return $result;
+	}
+	public function InsertInvoice($data)
+	{
+		$result = $this->db->insert('invoices', $data);
 		return $result;
 	}
 	public function InsertAccount($data)

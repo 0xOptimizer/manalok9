@@ -12,6 +12,8 @@ $getPurchaseOrderByOrderNo = $this->Model_Selects->GetPurchaseOrderByNo($orderNo
 $purchaseOrder = $getPurchaseOrderByOrderNo->row_array();
 $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orderNo);
 
+$getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
+
 ?>
 <style>
 	.rotate-text {
@@ -144,60 +146,57 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 								<h6>DATE CREATION</h6>
 								<label><?=$purchaseOrder['DateCreation']?></label>
 							</div>
+							<?php 
+							$v_details = $this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array();
+							?>
 							<div class="col-12 mb-3">
-								<h6>PURCHASE FROM</h6>
-								<label><?=$this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array()['Name']?></label>
+								<h6>PURCHASED FROM</h6>
+								<label><?=$v_details['Name']?> (<?=$purchaseOrder['VendorNo']?>)</label>
 							</div>
 							<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($purchaseOrder['OrderNo']); ?>
-							<?php if ($orderTransactions->num_rows() > 0): ?>
-								<div class="col-12 mb-2">
-									<div class="card">
-										<div class="text-center p-2">
-											<div class="row">
-												<span class="head-text">
-													TOTAL ITEMS
-												</span>
-											</div>
-											<div class="row">
-												<span style="font-size: 1.5em; color: #ebebeb;">
-													<b>
-														<?=$orderTransactions->num_rows()?>
-													</b>
-												</span>
-											</div>
-											<div class="row">
-												<span class="head-text">
-													TOTAL PRICE
-												</span>
-											</div>
-											<div class="row">
-												<span style="font-size: 1.5em; color: #ebebeb;">
-													<b>
-														<?php
-														if ($orderTransactions->num_rows() > 0) {
-															$transactionsPriceTotal = 0;
-															foreach ($orderTransactions->result_array() as $transaction) {
-																$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
-															}
-															echo number_format($transactionsPriceTotal, 2);
-														} else {
-															echo '0';
-														}
-														?>
-													</b>
-												</span>
-											</div>
+							<div class="col-12 mb-2">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text">
+												TOTAL ITEMS
+											</span>
+										</div>
+										<div class="row">
+											<span style="font-size: 1.5em; color: #ebebeb;">
+												<b>
+													<?=$orderTransactions->num_rows()?>
+												</b>
+											</span>
+										</div>
+										<div class="row">
+											<span class="head-text">
+												TOTAL PRICE
+											</span>
+										</div>
+										<div class="row">
+											<span style="font-size: 1.5em; color: #ebebeb;">
+												<b>
+													<?php
+													$transactionsPriceTotal = 0;
+													foreach ($orderTransactions->result_array() as $transaction) {
+														$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+													}
+													echo number_format($transactionsPriceTotal, 2);
+													?>
+												</b>
+											</span>
 										</div>
 									</div>
 								</div>
-							<?php endif; ?>
+							</div>
 							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<div class="col-12 text-center">
 									<form id="approvePurchaseOrder" action="<?php echo base_url() . 'FORM_approvePurchaseOrder';?>" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
 										<input id="orderApproved" type="hidden" name="approved">
-										<button type="button" class="btn btn-danger rejectOrder"><i class="bi bi-trash-fill"></i> Reject</button>
-										<button type="button" class="btn btn-success approveOrder"><i class="bi bi-check2"></i> Approve</button>
+										<button type="button" class="btn btn-danger rejectOrder"><i class="bi bi-trash-fill"></i> REJECT</button>
+										<button type="button" class="btn btn-success approveOrder"><i class="bi bi-check2"></i> APPROVE</button>
 									</form>
 								</div>
 							<?php endif; ?>
@@ -211,7 +210,7 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 				<div class="row">
 					<div class="col-12">
 						<h3>
-							Billing
+							Bills
 						</h3>
 					</div>
 				</div>
@@ -226,15 +225,41 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 					<div class="col-sm-12 table-responsive">
 						<table id="billsTable" class="standard-table table">
 							<thead style="font-size: 12px;">
-								<th class="text-center">ID</th>
 								<th class="text-center">BILL #</th>
 								<th class="text-center">VENDOR</th>
 								<th class="text-center">AMOUNT</th>
 								<th class="text-center">DATE</th>
 								<th class="text-center">MODE OF PAYMENT</th>
+								<th class="text-center"></th>
 							</thead>
 							<tbody>
-								<tr>
+							<?php if ($getPOBills->num_rows() > 0):
+								foreach ($getPOBills->result_array() as $row): ?>
+									<tr>
+										<td class="text-center">
+											<?=$row['BillNo']?>
+										</td>
+										<td class="text-center">
+											<?=$v_details['Name']?>
+										</td>
+										<td class="text-center">
+											<?=number_format($row['Amount'], 2)?>
+										</td>
+										<td class="text-center">
+											<?=$row['Date']?>
+										</td>
+										<td class="text-center">
+											<?=$row['ModeOfPayment']?>
+										</td>
+										<td>
+											<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
+												<button type="button" class="btn removeBill"><i class="bi bi-x-square text-danger"></i></button>
+											</a>
+										</td>
+									</tr>
+							<?php endforeach;
+							endif; ?>
+								<!-- <tr>
 									<td class="text-center">
 										<span class="db-identifier" style="font-style: italic; font-size: 12px;">
 											1
@@ -277,16 +302,19 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 									<td class="text-center">
 										CASH
 									</td>
-								</tr>
+								</tr> -->
+								<?php
+								$total_bill_amount = $this->Model_Selects->GetTotalBillsByPONo($purchaseOrder['OrderNo'])->row_array()['Amount'];
+								?>
 								<tr>
-									<td class="font-weight-bold text-center" colspan="3">TOTAL</td>
-									<td class="font-weight-bold text-center">2,000.00</td>
-									<td colspan="2"></td>
+									<td class="font-weight-bold text-center" colspan="2">TOTAL</td>
+									<td class="font-weight-bold text-center"><?=number_format($total_bill_amount, 2)?></td>
+									<td colspan="3"></td>
 								</tr>
 								<tr style="border-color: #a7852d;">
-									<td class="font-weight-bold text-center" colspan="3">REMAINING PAYMENT</td>
-									<td class="font-weight-bold text-center">20,000.00</td>
-									<td colspan="2"></td>
+									<td class="font-weight-bold text-center" colspan="2">REMAINING PAYMENT</td>
+									<td class="font-weight-bold text-center"><?=number_format($transactionsPriceTotal - $total_bill_amount, 2)?></td>
+									<td colspan="3"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -298,29 +326,50 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 </div>
 <div class="modal fade" id="PurchaseBilling" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
-		<!-- <form id="formAddPurchaseOrder" action="<?php echo base_url() . 'FORM_addPurchaseOrder';?>" method="POST" enctype="multipart/form-data"> -->
+		<form id="formAddPOBill" action="<?php echo base_url() . 'FORM_addPOBill';?>" method="POST">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> PO Billing</h4>
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> PO Bills</h4>
 				</div>
 				<div class="modal-body">
-					<!-- <input type="hidden" name="productCount" id="ProductsCount" required> -->
+					<?php
+					$v_details = $this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array();
+					?>
+					<input type="hidden" name="purchase-order-no" value="<?=$purchaseOrder['OrderNo']?>" required>
 					<div class="row">
 						<div class="col-12">
 							<div class="mx-auto">
 								<div class="card">
 									<div class="text-center p-2">
 										<div class="row">
-											<span class="head-text">
-												TOTAL REMAINING PAYMENT
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.5em; color: #ebebeb;">
-												<b>
-													20,000.00
-												</b>
-											</span>
+											<div class="col-12 col-md-6">
+												<div class="row">
+													<span class="head-text">
+														VENDOR NAME
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.5em; color: #ebebeb;">
+														<b>
+															<?=$v_details['Name']?>
+														</b>
+													</span>
+												</div>
+											</div>
+											<div class="col-12 col-md-6">
+												<div class="row">
+													<span class="head-text">
+														VENDOR #
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.5em; color: #ebebeb;">
+														<b>
+															<?=$v_details['VendorNo']?>
+														</b>
+													</span>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -328,24 +377,17 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 						</div>
 					</div>
 					<div class="row">
-						<div class="form-group col-sm-12 col-md-6">
-							<label class="input-label">VENDOR NAME</label>
-							<input type="text" class="form-control" name="name" placeholder="John Doe" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-6">
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">AMOUNT</label>
 							<input type="number" class="form-control" name="amount" placeholder="0.00" step="0.000001" required>
 						</div>
-						<div class="form-group col-sm-12 col-md-6">
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
+							<label class="input-label" name="mode-payment">MODE OF PAYMENT</label>
+							<input type="text" class="form-control" name="mode-payment" placeholder="Cash" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">DATE</label>
 							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-6">
-							<label class="input-label">MODE OF PAYMENT</label>
-							<!-- <select class="form-control" name="mode">
-								<option value="0" selected>None</option>
-							</select> -->
-							<input type="text" class="form-control" name="mode" placeholder="Cash" required>
 						</div>
 					</div>
 				</div>
@@ -353,7 +395,7 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Bill</button>
 				</div>
 			</div>
-		<!-- </form> -->
+		</form>
 	</div>
 </div>
 
@@ -394,7 +436,7 @@ $(document).ready(function() {
 		}
 	});
 	$(document).on('click', '.rejectOrder', function() {
-		if (!confirm('Reject Purchase Order?')) {
+		if (!confirm('Reject Purchase Order? (This action cannot be undone)')) {
 			event.preventDefault();
 		} else {
 			$('#orderApproved').val('0');
@@ -402,11 +444,17 @@ $(document).ready(function() {
 		}
 	});
 	$(document).on('click', '.approveOrder', function() {
-		if (!confirm('Approve Purchase Order?')) {
+		if (!confirm('Approve Purchase Order? (This action cannot be undone)')) {
 			event.preventDefault();
 		} else {
 			$('#orderApproved').val('1');
 			$('#approvePurchaseOrder').submit();
+		}
+	});
+
+	$(document).on('click', '.removeBill', function() {
+		if (!confirm('Remove Bill?')) {
+			event.preventDefault();
 		}
 	});
 });

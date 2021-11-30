@@ -206,6 +206,27 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
+	public function GetInvoices()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('invoices');  
+		return $result;
+	}
+	public function GetInvoicesBySONo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('invoices');  
+		return $result;
+	}
+	public function GetTotalInvoicesBySONo($orderNo)
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('invoices');  
+		return $result;
+	}
 
 	public function GetAllReleases()
 	{
@@ -283,6 +304,27 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('OrderNo', $orderNo);
 		$result = $this->db->get('purchase_orders');  
+		return $result;
+	}
+	public function GetBills()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('bills');  
+		return $result;
+	}
+	public function GetBillsByPONo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('bills');  
+		return $result;
+	}
+	public function GetTotalBillsByPONo($orderNo)
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('bills');  
 		return $result;
 	}
 
