@@ -12,9 +12,11 @@ class Admin extends MY_Controller {
 		$this->load->model('Model_Inserts');
 		$this->load->model('Model_Logbook');
 		$this->load->model('Model_Updates');
+		$this->load->model('Model_Deletes');
 		if($this->Model_Security->CheckPrivilegeLevel() >= 1) {
 			$this->load->model('Model_Inserts');
 			$this->load->model('Model_Updates');
+
 			$this->globalData['userID'] = 'N/A';
 			if ($this->session->userdata('UserID')) {
 				$this->globalData['userID'] = $this->session->userdata('UserID');
@@ -264,6 +266,7 @@ class Admin extends MY_Controller {
 		$data['AllItem_Code'] = $this->Model_Selects->AllItem_Code();
 		$this->load->view('admin/settings_itemcode', $data);
 	}
+
 	public function product_releasing()
 	{
 		$data = [];
@@ -2153,5 +2156,216 @@ class Admin extends MY_Controller {
 		}
 	}
 
-	
+	// SETTINGS BRAND CATEGORY
+	public function view_settings_bcat()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Brand Category Settings';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		// GET ALL BRANDS
+		$data['All_Brands'] = $this->Model_Selects->All_Brands();
+		$this->load->view('admin/settings_brandcat', $data);
+	}
+	public function Add_BrandCategory()
+	{
+
+		$brand_name = $this->input->post('brand_name');
+		$brand_char = $this->input->post('brand_char');
+		$brand_type = $this->input->post('brand_type');
+
+		$brand_name_abbr = $this->input->post('brand_name_abbr');
+		$brand_type_abbr = $this->input->post('brand_type_abbr');
+		$prod_line = $this->input->post('prod_line');
+		$prod_line_abbr = $this->input->post('prod_line_abbr');
+		$prod_type = $this->input->post('prod_type');
+		$prod_type_abbr = $this->input->post('prod_type_abbr');
+
+		$prod_size = $this->input->post('prod_size');
+		$prod_size_abbr = $this->input->post('prod_size_abbr');
+		$vcpd = $this->input->post('vcpd');
+		$vcpd_abbr = $this->input->post('vcpd_abbr');
+
+		$length = 22;
+		$UniqueID = $this->getToken($length);
+
+		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			$data = array(
+				'Brand_Name' => strtoupper($brand_name),
+				'Brand_Char' => strtoupper($brand_char),
+			);
+			$CheckBrand_Char = $this->Model_Selects->CheckBrand_Char($data);
+			if ($CheckBrand_Char->num_rows() > 0) {
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			else
+			{
+
+				$data = 
+				array(
+					'Brand_Name' => strtoupper($brand_name),
+					'Brand_Char' => str_pad($brand_char, 3, '0', STR_PAD_LEFT),
+					'Brand_Type' => strtoupper($brand_type),
+					'UniqueID' => $UniqueID,
+				);
+
+				$Insert_BrandCategory = $this->Model_Inserts->Insert_BrandCategory($data);
+				if ($Insert_BrandCategory == true) {
+					$data = array(
+						'UniqueID' => $UniqueID,
+						'Brand_Abbr' => strtoupper($brand_name_abbr),
+						'Brand_Type_Abbr' => strtoupper($brand_type_abbr),
+						'Product_Line' => strtoupper($prod_line),
+						'Product_line_Abbr' => strtoupper($prod_line_abbr),
+						'Product_Type' => strtoupper($prod_type),
+						'Product_Type_Abbr' => strtoupper($prod_type_abbr),
+					);
+					$Insert_BrandProperties = $this->Model_Inserts->Insert_BrandProperties($data);
+
+					if (!empty($prod_size) || !empty($prod_size_abbr)) {
+						$data = array(
+							'UniqueID' => $UniqueID,
+							'Product_Size' => strtoupper($prod_size),
+							'Product_Size_Abbr' => strtoupper($prod_size_abbr),
+						);
+						$Insert_BrandSizes = $this->Model_Inserts->Insert_BrandSizes($data);
+					}
+					
+					if (!empty($vcpd) || !empty($vcpd_abbr)) {
+						$data = array(
+							'UniqueID' => $UniqueID,
+							'Vcpd' => strtoupper($vcpd),
+							'Vcpd_Abbr' => strtoupper($vcpd_abbr),
+						);
+						$Insert_BrandVariants = $this->Model_Inserts->Insert_BrandVariants($data);
+					}
+					
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+				else
+				{
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+			}
+		}
+	}
+	public function Update_BrandCategory()
+	{
+
+		$UniqueID = $this->input->post('uid');
+		$brand_name = $this->input->post('brand_name');
+		$brand_char = $this->input->post('brand_char');
+		$brand_type = $this->input->post('brand_type');
+
+		$brand_name_abbr = $this->input->post('brand_name_abbr');
+		$brand_type_abbr = $this->input->post('brand_type_abbr');
+		$prod_line = $this->input->post('prod_line');
+		$prod_line_abbr = $this->input->post('prod_line_abbr');
+		$prod_type = $this->input->post('prod_type');
+		$prod_type_abbr = $this->input->post('prod_type_abbr');
+
+		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
+			if ($CheckBrand_UniqueID->num_rows() > 0) {
+				$data = array(
+					'Brand_Name' => strtoupper($brand_name),
+					'Brand_Char' => str_pad($brand_char, 3, '0', STR_PAD_LEFT),
+					'Brand_Type' => strtoupper($brand_type),
+				);
+				$Update_BrandCat = $this->Model_Updates->Update_BrandCat($UniqueID,$data);
+				if ($Update_BrandCat == true) {
+					$data = array(
+						'Brand_Abbr' => strtoupper($brand_name_abbr),
+						'Brand_Type_Abbr' => strtoupper($brand_type_abbr),
+						'Product_Line' => strtoupper($prod_line),
+						'Product_line_Abbr' => strtoupper($prod_line_abbr),
+						'Product_Type' => strtoupper($prod_type),
+						'Product_Type_Abbr' => strtoupper($prod_type_abbr),
+					);
+					$Update_BrandProperty = $this->Model_Updates->Update_BrandProperty($UniqueID,$data);
+					if ($Update_BrandProperty == true) {
+						redirect($_SERVER['HTTP_REFERER']);
+
+					}
+					else
+					{
+						redirect($_SERVER['HTTP_REFERER']);
+
+					}
+				}
+				else
+				{
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+		}
+	}
+	public function Add_BrandVariant()
+	{
+		$uid = $this->input->post('uid');
+		$vcpd = $this->input->post('vcpd');
+		$vcpdabr = $this->input->post('vcpdabr');
+		if (empty($uid) || empty($vcpd) || empty($vcpdabr)) {
+			echo "Empty Fields!";
+			exit();
+		}
+		else
+		{
+			$UniqueID = $uid;
+			$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
+			if ($CheckBrand_UniqueID->num_rows() > 0) {
+				$data = array(
+					'UniqueID' => $uid,
+					'Vcpd' => strtoupper($vcpd),
+					'Vcpd_Abbr' => strtoupper($vcpdabr),
+				);
+				$AddBrand_Var = $this->Model_Inserts->AddBrand_Var($data);
+				if ($AddBrand_Var == true) {
+					echo "Variant added!";
+					exit();
+				}
+				else
+				{
+					echo "Error";
+					exit();
+				}
+			}
+			else
+			{
+				echo "It doesn'\t exist!";
+				exit();
+			}
+		}
+	}
+	public function remove_addVariants()
+	{
+		$id = $this->input->get('id');
+		$CheckBrand_id = $this->Model_Selects->CheckBrand_id($id);
+		if ($CheckBrand_id->num_rows() > 0) {
+			$RemoveVariantBrand = $this->Model_Deletes->RemoveVariantBrand($id);
+			if ($RemoveVariantBrand == true) {
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+			}
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+		}
+	}
 }

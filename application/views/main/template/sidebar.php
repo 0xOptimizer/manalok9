@@ -106,10 +106,16 @@
 				</li>
 
 				<li class="sidebar-title">SETTINGS</li>
-				<li class="sidebar-item sidebar-admin-settings-itemcode">
+				<!-- <li class="sidebar-item sidebar-admin-settings-itemcode">
 					<a href="<?=base_url().'admin/settings_itemcodepage'?>" class='sidebar-link'>
 						<i class="bi bi-list-ol"></i>
 						<span>Item Code </span>
+					</a>
+				</li> -->
+				<li class="sidebar-item sidebar-admin-settings-bcat">
+					<a href="<?=base_url().'admin/view_settings_bcat'?>" class='sidebar-link'>
+						<i class="bi bi-list-ol"></i>
+						<span>Brand Category</span>
 					</a>
 				</li>
 				<!-- <li class="sidebar-item sidebar-admin-transactions">

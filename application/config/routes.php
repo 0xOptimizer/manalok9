@@ -122,6 +122,7 @@ $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 $route['FORM_addAccount'] = 'Admin/FORM_addAccount';
 $route['FORM_addJournal'] = 'Admin/FORM_addJournal';
 
+
 $route['FORM_addPOBill'] = 'Admin/FORM_addPOBill';
 $route['FORM_addSOInvoice'] = 'Admin/FORM_addSOInvoice';
 
@@ -131,6 +132,11 @@ $route['FORM_removeInvoice'] = 'Admin/FORM_removeInvoice';
 $route['FORM_scheduleDelivery'] = 'Admin/FORM_scheduleDelivery';
 $route['FORM_markDelivered'] = 'Admin/FORM_markDelivered';
 $route['FORM_markReceived'] = 'Admin/FORM_markReceived';
+$route['view_settings_bcat'] = 'Admin/view_settings_bcat';
+$route['Add_BrandCategory'] = 'Admin/Add_BrandCategory';
+$route['Update_BrandCategory'] = 'Admin/Update_BrandCategory';
+$route['Add_BrandVariant'] = 'Admin/Add_BrandVariant';
+$route['remove_addVariants'] = 'Admin/remove_addVariants';
 
 
 // Products
@@ -159,6 +165,9 @@ $route['admin/remove_fromCart'] = 'AJAX/remove_fromCart';
 $route['admin/get_Cartdata'] = 'AJAX/get_Cartdata';
 
 $route['admin/add_cart_releasing'] = 'AJAX/add_cart_releasing';
+$route['GetBrand_data'] = 'AJAX/GetBrand_data';
+
+
 
 
 // CART
