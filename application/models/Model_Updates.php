@@ -75,6 +75,12 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('sales_orders');
 		return $result;
 	}
+	public function UpdateSalesOrderByOrderNo($orderNo, $data)
+	{
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->update('sales_orders', $data);
+		return $result;
+	}
 	// ORDER / TRANSACTIONS
 	public function UpdateTransaction($data)
 	{
@@ -122,6 +128,18 @@ class Model_Updates extends CI_Model {
 	{
 		$this->db->where('ID', $clientID);
 		$result = $this->db->update('clients', $data);
+		return $result;
+	}
+	public function remove_bill($billNo)
+	{
+		$this->db->where('BillNo', $billNo);
+		$result = $this->db->delete('bills');
+		return $result;
+	}
+	public function remove_invoice($invoiceNo)
+	{
+		$this->db->where('InvoiceNo', $invoiceNo);
+		$result = $this->db->delete('invoices');
 		return $result;
 	}
 	public function remove_itemCode($uniqueID)
@@ -187,4 +205,17 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+	public function Update_BrandCat($UniqueID,$data)
+	{
+		$this->db->where('UniqueID', $UniqueID);
+	   $this->db->update('brand_category', $data);
+	   return true;
+	}
+	public function Update_BrandProperty($UniqueID,$data)
+	{
+		$this->db->where('UniqueID', $UniqueID);
+	   $this->db->update('brand_properties', $data);
+	   return true;
+	}
+	
 }

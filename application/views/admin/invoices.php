@@ -3,8 +3,8 @@ $globalHeader;
 
 date_default_timezone_set('Asia/Manila');
 
-// Fetch vendors
-// $getVendors = $this->Model_Selects->GetVendors();
+// Fetch invoices
+$getInvoices = $this->Model_Selects->GetInvoices();
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -30,8 +30,13 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-12 col-md-8">
 						<h3>Invoices
 							<span class="text-center success-banner-sm">
-								<i class="bi bi-cash"></i> 2 TOTAL
+								<i class="bi bi-cash"></i> <?=$getInvoices->num_rows();?> TOTAL
 							</span>
+							<?php if ($getInvoices->num_rows() <= 0): ?>
+								<span class="info-banner-sm">
+									<i class="bi bi-exclamation-diamond-fill"></i> No Invoices found.
+								</span>
+							<?php endif; ?>
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-4 mr-auto pt-4 pb-2" style="margin-top: -15px;">
@@ -48,18 +53,61 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="table-responsive">
 					<table id="invoicesTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th>ID</th>
-							<th>SO #</th>
-							<th>ORDER DATE</th>
-							<th>CLIENT NAME</th>
-							<th>AMOUNT DUE</th>
-							<th>PAYMENT DATE</th>
-							<th>PARTIAL / FULL</th>
-							<th>BALANCE</th>
-							<th>MODE OF PAYMENT</th>
+							<th class="text-center">ID</th>
+							<th class="text-center">SO #</th>
+							<th class="text-center">ORDER DATE</th>
+							<th class="text-center">INVOICE DATE</th>
+							<th class="text-center">CLIENT NAME</th>
+							<th class="text-center">AMOUNT PAID</th>
+							<th class="text-center">AMOUNT DUE</th>
+							<th class="text-center">MODE OF PAYMENT</th>
 						</thead>
 						<tbody>
-							<tr class="tr_invoice_modal">
+							<?php if ($getInvoices->num_rows() > 0):
+								foreach ($getInvoices->result_array() as $row): ?>
+									<tr data-urlredirect="<?=base_url() . 'admin/view_sales_order?orderNo=' . $row['OrderNo'];?>">
+										<td class="text-center">
+											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+										</td>
+										<td class="text-center">
+											<?=$row['OrderNo']?>
+										</td>
+										<?php
+										$so_details = $this->Model_Selects->GetSalesOrderByNo($row['OrderNo'])->row_array();
+										$client_details = $this->Model_Selects->GetClientByNo($so_details['BillToClientNo'])->row_array();
+										$total_invoice_amount = $this->Model_Selects->GetTotalInvoicesBySONo($row['OrderNo'])->row_array()['Amount'];
+										?>
+										<td class="text-center">
+											<?=$so_details['Date']?>
+										</td>
+										<td class="text-center">
+											<?=$row['Date']?>
+										</td>
+										<td class="text-center">
+											<?=$client_details['Name']?>
+										</td>
+										<td class="text-center">
+											<?=number_format($total_invoice_amount, 2)?>
+										</td>
+										<td class="text-center">
+											<?php
+											$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo']);
+											if ($orderTransactions->num_rows() > 0) {
+												$transactionsPriceTotal = 0;
+												foreach ($orderTransactions->result_array() as $transaction) {
+													$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+												}
+												echo number_format($transactionsPriceTotal - $total_invoice_amount, 2);
+											}
+											?>
+										</td>
+										<td class="text-center">
+											<?=$row['ModeOfPayment']?>
+										</td>
+									</tr>
+							<?php endforeach;
+							endif; ?>
+							<!-- <tr class="tr_invoice_modal">
 								<td>
 									<span class="db-identifier" style="font-style: italic; font-size: 12px;">1</span>
 								</td>
@@ -116,7 +164,7 @@ if ($this->session->flashdata('highlight-id')) {
 								<td class="modePayment">
 									CARD
 								</td>
-							</tr>
+							</tr> -->
 						</tbody>
 					</table>
 				</div>
@@ -124,7 +172,7 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<div class="modal fade" id="SalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- <div class="modal fade" id="SalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -164,7 +212,7 @@ if ($this->session->flashdata('highlight-id')) {
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -191,18 +239,18 @@ $(document).ready(function() {
 		table.search($(this).val()).draw();
 	});
 
-	$(document).on('click', '.tr_invoice_modal', function() {
-		$('.m_orderno').text($(this).children('.soNo').html());
-		$('.m_orderdate').text($(this).children('.oDate').html());
-		$('.m_vendorname').text($(this).children('.vName').html());
-		$('.m_amountdue').text($(this).children('.aDue').html());
-		$('.m_paymentdate').text($(this).children('.pDate').html());
-		$('.m_partialfull').text($(this).children('.partialFull').html());
-		$('.m_balance').text($(this).children('.balance').html());
-		$('.m_modepayment').text($(this).children('.modePayment').html());
+	// $(document).on('click', '.tr_invoice_modal', function() {
+	// 	$('.m_orderno').text($(this).children('.soNo').html());
+	// 	$('.m_orderdate').text($(this).children('.oDate').html());
+	// 	$('.m_vendorname').text($(this).children('.vName').html());
+	// 	$('.m_amountdue').text($(this).children('.aDue').html());
+	// 	$('.m_paymentdate').text($(this).children('.pDate').html());
+	// 	$('.m_partialfull').text($(this).children('.partialFull').html());
+	// 	$('.m_balance').text($(this).children('.balance').html());
+	// 	$('.m_modepayment').text($(this).children('.modePayment').html());
 
-		$('#SalesOrderModal').modal('toggle');
-	});
+	// 	$('#SalesOrderModal').modal('toggle');
+	// });
 });
 </script>
 

@@ -12,33 +12,33 @@
 							<label class="input-label" for="in-client-no">CLIENT #</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
-							<input id="in-name" type="text" class="form-control standard-input-pad" name="add-name" placeholder="John Doe">
+							<input id="in-name" type="text" class="form-control standard-input-pad" name="add-name" placeholder="John Doe" required>
 							<label class="input-label" for="in-name">NAME</label>
 						</div>
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="in-tin" type="text" class="form-control standard-input-pad" name="add-tin" placeholder="123 456 789 000">
+							<input id="in-tin" type="text" class="form-control standard-input-pad" name="add-tin" placeholder="123 456 789 000" required>
 							<label class="input-label" for="in-tin">TIN</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5  offset-md-1 mb-3">
-							<input id="in-address" type="text" class="form-control standard-input-pad" name="add-address" placeholder="M. Santos St.">
+							<input id="in-address" type="text" class="form-control standard-input-pad" name="add-address" placeholder="M. Santos St." required>
 							<label class="input-label" for="in-address">ADDRESS</label>
 						</div>
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="in-city-state-province-zip" type="text" class="form-control standard-input-pad" name="add-city-state-province-zip" placeholder="Antipolo, Rizal, 1870">
+							<input id="in-city-state-province-zip" type="text" class="form-control standard-input-pad" name="add-city-state-province-zip" placeholder="Antipolo, Rizal, 1870" required>
 							<label class="input-label" for="in-city-state-province-zip">CITY, STATE/PROVINCE, ZIP</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5  offset-md-1 mb-3">
 							<input id="in-country" type="text" class="form-control standard-input-pad" name="add-country" placeholder="Philippines">
-							<label class="input-label" for="in-country">COUNTRY</label>
+							<label class="input-label" for="in-country" required>COUNTRY</label>
 						</div>
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="in-contact-num" type="text" class="form-control standard-input-pad" name="add-contact-num" placeholder="09123456789">
+							<input id="in-contact-num" type="text" class="form-control standard-input-pad" name="add-contact-num" placeholder="09123456789" required>
 							<label class="input-label" for="in-contact-num">CONTACT #</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
@@ -53,7 +53,7 @@
 					</div>
 					<div class="form-row d-flex flex-wrap">
 						<div class="form-group col-12 col-sm-12 col-md-11 m-auto mb-3">
-							<input id="in-territory-manager" type="text" class="form-control standard-input-pad" name="add-territory-manager" placeholder="Jane Doe">
+							<input id="in-territory-manager" type="text" class="form-control standard-input-pad" name="add-territory-manager" placeholder="Jane Doe"  required>
 							<label class="input-label" for="in-territory-manager">TERRITORY MANAGER</label>
 						</div>
 					</div>

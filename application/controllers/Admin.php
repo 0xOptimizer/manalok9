@@ -11,9 +11,12 @@ class Admin extends MY_Controller {
 		$this->load->model('Model_Security');
 		$this->load->model('Model_Inserts');
 		$this->load->model('Model_Logbook');
+		$this->load->model('Model_Updates');
+		$this->load->model('Model_Deletes');
 		if($this->Model_Security->CheckPrivilegeLevel() >= 1) {
 			$this->load->model('Model_Inserts');
 			$this->load->model('Model_Updates');
+
 			$this->globalData['userID'] = 'N/A';
 			if ($this->session->userdata('UserID')) {
 				$this->globalData['userID'] = $this->session->userdata('UserID');
@@ -123,6 +126,8 @@ class Admin extends MY_Controller {
 		### FILL SELECT OPTIONS
 		$data['AllItem_Code'] = $this->Model_Selects->AllItem_Code();
 		$data['GetPROdtype'] = $this->Model_Selects->GetPROdtype();
+
+		$data['Get_Brand_Data'] = $this->Model_Selects->Get_Brand_Data();
 
 		$this->load->view('admin/products', $data);
 	}
@@ -263,6 +268,7 @@ class Admin extends MY_Controller {
 		$data['AllItem_Code'] = $this->Model_Selects->AllItem_Code();
 		$this->load->view('admin/settings_itemcode', $data);
 	}
+
 	public function product_releasing()
 	{
 		$data = [];
@@ -283,6 +289,44 @@ class Admin extends MY_Controller {
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$data['Filter_restockprod'] = $this->Model_Selects->Filter_restockprod();
 		$this->load->view('admin/restock_product', $data);
+	}
+
+
+	public function journals()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Journals';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/journal_transactions', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function accounts()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Accounts';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/accounts', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function accounting_test()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'accounting_test';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/accounting_test', $data);
+		} else {
+			redirect(base_url());
+		}
 	}
 	
 
@@ -735,10 +779,14 @@ class Admin extends MY_Controller {
 			redirect('admin/clients');
 		}
 	}
+	
 	public function FORM_addNewProduct()
 	{
 		require 'vendor/autoload.php';
+		
+		
 		// Fetch data
+		
 		$code = $this->input->post('product-code');
 		$name = $this->input->post('product-name');
 		$category = $this->input->post('product-category');
@@ -785,11 +833,24 @@ class Admin extends MY_Controller {
 			redirect('admin/products');
 		}
 	}
+
+	public function mt_randNumbers($length)
+	{
+		$res = '';
+
+		for($i = 0; $i < $length; $i++) {
+			$res .= mt_rand(0, 9);
+		}
+
+		return $res;
+	}
 	public function Add_newProductV2()
 	{
 		require 'vendor/autoload.php';
 
 		// INSERT TO TABLE PRODUCT DETAILS
+		$length = 12;
+		$U_ID = $this->mt_randNumbers($length);
 		$prd_brand1 = $this->input->post('prd_brand1');
 		$prd_line = $this->input->post('prd_line');
 		$prd_type = $this->input->post('prd_type');
@@ -809,6 +870,11 @@ class Admin extends MY_Controller {
 		if ($prd_brand1 == null || $prd_line == null || $prd_type == null || $prd_variant == null || $prd_size == null || $prd_brand2 == null || $prd_char == null || $prd_chartype == null || $product_code == null || $unit_cost == null || $unit_price == null || $product_name == null || $product_description == null) {
 			redirect('admin/products');
 		}
+		// CHECK IF UID EXIST
+		$CheckUID = $this->Model_Selects->CheckUID($U_ID);
+		if ($CheckUID->num_rows() > 0) {
+			redirect('admin/products');
+		}
 		// CHECK PRODUCT IN DATABASE IF EXIST
 		$Code = $product_code;
 		$CheckProduct_byCode = $this->Model_Selects->CheckProduct_byCode($Code);
@@ -821,10 +887,11 @@ class Admin extends MY_Controller {
 			// BARCODE GENEREATOR
 			$colorblk = [0, 0, 0];
 			$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
-			file_put_contents('assets/barcode_images/'.$product_code.'-pbarcode.png', $generator->getBarcode($product_code, $generator::TYPE_CODE_128, 3, 60, $colorblk));
+			file_put_contents('assets/barcode_images/'.$U_ID.'-pbarcode.png', $generator->getBarcode($U_ID, $generator::TYPE_CODE_128, 4, 70, $colorblk));
 
 			// Insert
 			$data = array(
+				'U_ID' => $U_ID,
 				'Code' => $product_code,
 				'Product_Name' => $product_name,
 				'Product_Category' => $prd_type,
@@ -833,7 +900,7 @@ class Admin extends MY_Controller {
 				'Cost_PerItem' => $unit_cost,
 				'Description' => $product_description,
 				'DateAdded' => date('Y-m-d h:i:s A'),
-				'Barcode_Images' => 'assets/barcode_images/'.$product_code.'-pbarcode.png',
+				'Barcode_Images' => 'assets/barcode_images/'.$U_ID.'-pbarcode.png',
 				'Status' => 1, // Status = added
 			);
 			$insertNewProduct = $this->Model_Inserts->InsertNewProduct($data);
@@ -852,7 +919,7 @@ class Admin extends MY_Controller {
 				$InsertPrd_Details = $this->Model_Inserts->InsertPrd_Details($data);
 
 				$this->session->set_flashdata('highlight-id', $product_code);
-				$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($description ? ' ' . $description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
+				$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($product_description ? ' ' . $product_description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
 
 				redirect('admin/products');
 			}
@@ -1312,6 +1379,58 @@ class Admin extends MY_Controller {
 				$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
 			}
 
+			// check account category
+			$shipClientDetails = $this->Model_Selects->GetClientByNo($shipToNo)->row_array();
+			$discounts = array();
+			switch ($shipClientDetails['Category']) { // get account discounts
+				case '0':
+					$discounts = array(
+						'Outright' => 15,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 5,
+					); break;
+				case '1':
+					$discounts = array(
+						'Outright' => 12,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 5,
+					); break;
+				case '2':
+					$discounts = array(
+						'Outright' => 10,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 0,
+					); break;
+				case '3':
+					$discounts = array(
+						'Outright' => 10,
+						'Volume' => 10,
+						'PBD' => 5,
+						'Manpower' => 0,
+					); break;
+			}
+			$dcOutright = $this->input->post('discount-outright');
+			$dcVolume = $this->input->post('discount-volume');
+			$dcPBD = $this->input->post('discount-pbd');
+			$dcManpower = $this->input->post('discount-manpower');
+
+			$totalDiscount = 0; // compute total discount
+			if ($dcOutright == 'on') {
+				$totalDiscount += $discounts['Outright'];
+			}
+			if ($dcVolume == 'on') {
+				$totalDiscount += $discounts['Volume'];
+			}
+			if ($dcPBD == 'on') {
+				$totalDiscount += $discounts['PBD'];
+			}
+			if ($dcManpower == 'on') {
+				$totalDiscount += $discounts['Manpower'];
+			}
+
 			// INSERT SALES ORDER
 			$data = array(
 				'OrderNo' => $orderNo,
@@ -1319,6 +1438,7 @@ class Admin extends MY_Controller {
 				'DateCreation' => date('Y-m-d h:i:s A'),
 				'BillToClientNo' => $billToNo,
 				'ShipToClientNo' => $shipToNo,
+				'Discount' => $totalDiscount,
 				'Status' => '1',
 			);
 			$insertNewSalesOrder = $this->Model_Inserts->InsertSalesOrder($data);
@@ -1327,9 +1447,8 @@ class Admin extends MY_Controller {
 				// create new release transactions
 				for ($i = 0; $i < $productCount; $i++) {
 					$code = trim($this->input->post('productCodeInput_' . $i));
-					$unitPrice = trim($this->input->post('productPriceInput_' . $i));
 					$qty = trim($this->input->post('productQtyInput_' . $i));
-					$getProductByCode = $this->Model_Selects->GetProductByCode($code)->row_array();
+					$p_details = $this->Model_Selects->GetProductByCode($code)->row_array();
 
 					$data = array(
 						'Code' => $code,
@@ -1337,7 +1456,7 @@ class Admin extends MY_Controller {
 						'OrderNo' => $orderNo,
 						'Type' => '1',
 						'Amount' => $qty,
-						'PriceUnit' => $unitPrice,
+						'PriceUnit' => $p_details['Price_PerItem'],
 						'Date' => $date,
 						'DateAdded' => date('Y-m-d h:i:s A'),
 						'Status' => 0,
@@ -1540,6 +1659,18 @@ class Admin extends MY_Controller {
 			exit();
 		}
 	}
+	public function getJournalDetails()
+	{
+		$journalID = $this->input->get('journal_id');
+		$getJournalByID = $this->Model_Selects->GetJournalByID($journalID)->row_array();
+		print json_encode($getJournalByID);
+	}
+	public function getJournalTransactions()
+	{
+		$journalID = $this->input->get('journal_id');
+		$GetTransactionsByJournalID = $this->Model_Selects->GetTransactionsByJournalID($journalID)->result_array();
+		print json_encode($GetTransactionsByJournalID);
+	}
 
 	### UNIQUE ID START
 	public function crypto_rand_secure($min, $max)
@@ -1668,6 +1799,7 @@ class Admin extends MY_Controller {
 		else
 		{
 			$cart_data = $_SESSION['cart_sess'];
+			$user_id = $_SESSION['UserID'];
 			foreach ($cart_data as $row => $val) {
 				$Code = $val['item_code'];
 
@@ -1809,6 +1941,221 @@ class Admin extends MY_Controller {
 		
 
 	}
+	public function FORM_addAccount()
+	{	
+		$name = $this->input->post('name');
+		$type = $this->input->post('type');
+		$description = $this->input->post('description');
+
+		// Insert
+		$data = array(
+			'Name' => $name,
+			'Type' => $type,
+			'Description' => $description,
+		);
+		$getAccountByName = $this->Model_Selects->getAccountByName($name);
+		if ($getAccountByName->num_rows() < 1) {
+			$insertAccount = $this->Model_Inserts->InsertAccount($data);
+			if ($insertAccount == TRUE) {
+				$accountID = $this->db->insert_id();
+				$this->session->set_flashdata('highlight-id', $accountID);
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('created a new account.', 'added a new account' . ($name ? ' ' . $name : '') . ' [ID: ' . $accountID . '].', base_url('admin/accounts'));
+				redirect('admin/accounts');
+			}
+			else
+			{
+				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				redirect('admin/accounts');
+			}
+		} else {
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Account with the same name already exists. ['. $name .']');
+			redirect('admin/accounts');
+		}
+	}
+
+	public function FORM_addJournal()
+	{	
+		$description = $this->input->post('description');
+		$date = $this->input->post('date');
+
+		$transactionCount = $this->input->post('transactions-count');
+
+		// Insert
+		$data = array(
+			'Description' => $description,
+			'Date' => $date
+		);
+		$insertJournal = $this->Model_Inserts->InsertJournal($data);
+		if ($insertJournal == TRUE) {
+			$journalID = $this->db->insert_id();
+
+			// create new journal transactions
+			for ($i = 0; $i < $transactionCount; $i++) {
+				$accountID = trim($this->input->post('accountIDInput_' . $i));
+				$debit = trim($this->input->post('debitInput_' . $i));
+				$credit = trim($this->input->post('creditInput_' . $i));
+
+				if ($debit > 0) {
+					$credit = 0;
+				} elseif ($credit > 0) {
+					$debit = 0;
+				}
+
+				$data = array(
+					'JournalID' => $journalID,
+					'AccountID' => $accountID,
+					'Debit' => $debit,
+					'Credit' => $credit,
+				);
+				$insertJournalTransaction = $this->Model_Inserts->InsertJournalTransaction($data);
+			}
+
+			$this->session->set_flashdata('highlight-id', $journalID);
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('created a new journal.', 'added a new journal [ID: ' . $journalID . '].', base_url('admin/journals'));
+			redirect('admin/journals');
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/journals');
+		}
+	}
+	public function FORM_addPOBill()
+	{
+		$purchaseOrderNo = $this->input->post('purchase-order-no');
+		$amount = $this->input->post('amount');
+		$modeOfPayment = $this->input->post('mode-payment');
+		$date = $this->input->post('date');
+
+		// Insert
+		$data = array(
+			'BillNo' => "B-" . str_pad($this->db->count_all('bills') + 1, 6, '0', STR_PAD_LEFT),
+			'OrderNo' => $purchaseOrderNo,
+			'Amount' => $amount,
+			'ModeOfPayment' => $modeOfPayment,
+			'Date' => $date,
+		);
+		$insertBill = $this->Model_Inserts->InsertBill($data);
+		if ($insertBill == TRUE) {
+			$billID = $this->db->insert_id();
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
+			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+		}
+	}
+	public function FORM_addSOInvoice()
+	{
+		$salesOrderNo = $this->input->post('sales-order-no');
+		$amount = $this->input->post('amount');
+		$modeOfPayment = $this->input->post('mode-payment');
+		$date = $this->input->post('date');
+
+		// Insert
+		$data = array(
+			'InvoiceNo' => "I-" . str_pad($this->db->count_all('invoices') + 1, 6, '0', STR_PAD_LEFT),
+			'OrderNo' => $salesOrderNo,
+			'Amount' => $amount,
+			'ModeOfPayment' => $modeOfPayment,
+			'Date' => $date,
+		);
+		$insertInvoice = $this->Model_Inserts->InsertInvoice($data);
+		if ($insertInvoice == TRUE) {
+			$invoiceID = $this->db->insert_id();
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '].', base_url('admin/invoices'));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+	public function FORM_removeBill()
+	{
+		$billNo = $this->input->get('bno');
+		if ($this->session->userdata('Privilege') > 1 && $billNo != NULL) {
+			$result = $this->Model_Updates->remove_bill($billNo);
+		}
+		redirect($_SERVER['HTTP_REFERER']);
+	}
+	public function FORM_removeInvoice()
+	{
+		$invoiceNo = $this->input->get('ino');
+		if ($this->session->userdata('Privilege') > 1 && $invoiceNo != NULL) {
+			$result = $this->Model_Updates->remove_invoice($invoiceNo);
+		}
+		redirect($_SERVER['HTTP_REFERER']);
+	}
+	public function FORM_scheduleDelivery() {
+		$salesOrderNo = $this->input->post('order-no');
+		$date = $this->input->post('date');
+
+		// Update
+		$data = array(
+			'DateDelivery' => $date,
+			'Status' => '3',
+		);
+		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+		if ($UpdateSalesOrder == TRUE) {
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('scheduled delivery.', 'scheduled delivery for sales order [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+	public function FORM_markDelivered() {
+		$salesOrderNo = $this->input->post('order-no');
+
+		// Update
+		$data = array(
+			'Status' => '4',
+		);
+		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+		if ($UpdateSalesOrder == TRUE) {
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('marked SO as delivered.', 'sales order marked as delivered [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+	public function FORM_markReceived() {
+		$salesOrderNo = $this->input->post('order-no');
+
+		// Update
+		$data = array(
+			'Status' => '5',
+		);
+		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+		if ($UpdateSalesOrder == TRUE) {
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('marked SO as received.', 'sales order marked as received [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+		else
+		{
+			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+
 	public function move_to_archive()
 	{
 		$Code = $this->input->get('code');
@@ -1830,6 +2177,240 @@ class Admin extends MY_Controller {
 		else
 		{
 			redirect($_SERVER['HTTP_REFERER']);
+
 		}
 	}
+
+	// SETTINGS BRAND CATEGORY
+	public function view_settings_bcat()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Brand Category Settings';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		// GET ALL BRANDS
+		$data['All_Brands'] = $this->Model_Selects->All_Brands();
+		$this->load->view('admin/settings_brandcat', $data);
+	}
+	public function Add_BrandCategory()
+	{
+
+		$brand_name = $this->input->post('brand_name');
+		$brand_char = $this->input->post('brand_char');
+		$brand_type = $this->input->post('brand_type');
+
+		$brand_name_abbr = $this->input->post('brand_name_abbr');
+		$brand_type_abbr = $this->input->post('brand_type_abbr');
+		$prod_line = $this->input->post('prod_line');
+		$prod_line_abbr = $this->input->post('prod_line_abbr');
+		$prod_type = $this->input->post('prod_type');
+		$prod_type_abbr = $this->input->post('prod_type_abbr');
+
+		$prod_size = $this->input->post('prod_size');
+		$prod_size_abbr = $this->input->post('prod_size_abbr');
+		$vcpd = $this->input->post('vcpd');
+		$vcpd_abbr = $this->input->post('vcpd_abbr');
+
+		$length = 22;
+		$UniqueID = $this->getToken($length);
+
+		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			$data = array(
+				'Brand_Name' => strtoupper($brand_name),
+				'Brand_Char' => strtoupper($brand_char),
+			);
+			$CheckBrand_Char = $this->Model_Selects->CheckBrand_Char($data);
+			if ($CheckBrand_Char->num_rows() > 0) {
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			else
+			{
+
+				$data = 
+				array(
+					'Brand_Name' => strtoupper($brand_name),
+					'Brand_Char' => str_pad($brand_char, 3, '0', STR_PAD_LEFT),
+					'Brand_Type' => strtoupper($brand_type),
+					'UniqueID' => $UniqueID,
+				);
+
+				$Insert_BrandCategory = $this->Model_Inserts->Insert_BrandCategory($data);
+				if ($Insert_BrandCategory == true) {
+					$data = array(
+						'UniqueID' => $UniqueID,
+						'Brand_Abbr' => strtoupper($brand_name_abbr),
+						'Brand_Type_Abbr' => strtoupper($brand_type_abbr),
+						'Product_Line' => strtoupper($prod_line),
+						'Product_line_Abbr' => strtoupper($prod_line_abbr),
+						'Product_Type' => strtoupper($prod_type),
+						'Product_Type_Abbr' => strtoupper($prod_type_abbr),
+					);
+					$Insert_BrandProperties = $this->Model_Inserts->Insert_BrandProperties($data);
+
+					if (!empty($prod_size) || !empty($prod_size_abbr)) {
+						$data = array(
+							'UniqueID' => $UniqueID,
+							'Product_Size' => strtoupper($prod_size),
+							'Product_Size_Abbr' => strtoupper($prod_size_abbr),
+						);
+						$Insert_BrandSizes = $this->Model_Inserts->Insert_BrandSizes($data);
+					}
+					
+					if (!empty($vcpd) || !empty($vcpd_abbr)) {
+						$data = array(
+							'UniqueID' => $UniqueID,
+							'Vcpd' => strtoupper($vcpd),
+							'Vcpd_Abbr' => strtoupper($vcpd_abbr),
+						);
+						$Insert_BrandVariants = $this->Model_Inserts->Insert_BrandVariants($data);
+					}
+					
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+				else
+				{
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+			}
+		}
+	}
+	public function Update_BrandCategory()
+	{
+
+		$UniqueID = $this->input->post('uid');
+		$brand_name = $this->input->post('brand_name');
+		$brand_char = $this->input->post('brand_char');
+		$brand_type = $this->input->post('brand_type');
+
+		$brand_name_abbr = $this->input->post('brand_name_abbr');
+		$brand_type_abbr = $this->input->post('brand_type_abbr');
+		$prod_line = $this->input->post('prod_line');
+		$prod_line_abbr = $this->input->post('prod_line_abbr');
+		$prod_type = $this->input->post('prod_type');
+		$prod_type_abbr = $this->input->post('prod_type_abbr');
+
+		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
+			if ($CheckBrand_UniqueID->num_rows() > 0) {
+				$data = array(
+					'Brand_Name' => strtoupper($brand_name),
+					'Brand_Char' => str_pad($brand_char, 3, '0', STR_PAD_LEFT),
+					'Brand_Type' => strtoupper($brand_type),
+				);
+				$Update_BrandCat = $this->Model_Updates->Update_BrandCat($UniqueID,$data);
+				if ($Update_BrandCat == true) {
+					$data = array(
+						'Brand_Abbr' => strtoupper($brand_name_abbr),
+						'Brand_Type_Abbr' => strtoupper($brand_type_abbr),
+						'Product_Line' => strtoupper($prod_line),
+						'Product_line_Abbr' => strtoupper($prod_line_abbr),
+						'Product_Type' => strtoupper($prod_type),
+						'Product_Type_Abbr' => strtoupper($prod_type_abbr),
+					);
+					$Update_BrandProperty = $this->Model_Updates->Update_BrandProperty($UniqueID,$data);
+					if ($Update_BrandProperty == true) {
+						redirect($_SERVER['HTTP_REFERER']);
+
+					}
+					else
+					{
+						redirect($_SERVER['HTTP_REFERER']);
+
+					}
+				}
+				else
+				{
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+		}
+	}
+	public function Add_BrandVariant()
+	{
+		$uid = $this->input->post('uid');
+		$vcpd = $this->input->post('vcpd');
+		$vcpdabr = $this->input->post('vcpdabr');
+		if (empty($uid) || empty($vcpd) || empty($vcpdabr)) {
+			echo "Empty Fields!";
+			exit();
+		}
+		else
+		{
+			$UniqueID = $uid;
+			$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
+			if ($CheckBrand_UniqueID->num_rows() > 0) {
+				$data = array(
+					'UniqueID' => $uid,
+					'Vcpd' => strtoupper($vcpd),
+					'Vcpd_Abbr' => strtoupper($vcpdabr),
+				);
+				$AddBrand_Var = $this->Model_Inserts->AddBrand_Var($data);
+				if ($AddBrand_Var == true) {
+					echo "Variant added!";
+					exit();
+				}
+				else
+				{
+					echo "Error";
+					exit();
+				}
+			}
+			else
+			{
+				echo "It doesn'\t exist!";
+				exit();
+			}
+		}
+	}
+	public function remove_addVariants()
+	{
+		$id = $this->input->get('id');
+		$CheckBrand_id = $this->Model_Selects->CheckBrand_id($id);
+		if ($CheckBrand_id->num_rows() > 0) {
+			$RemoveVariantBrand = $this->Model_Deletes->RemoveVariantBrand($id);
+			if ($RemoveVariantBrand == true) {
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+			}
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+		}
+	}
+	public function remove_addSizes()
+	{
+		$id = $this->input->get('id');
+		$CheckSizeID = $this->Model_Selects->CheckSizeID($id);
+		if ($CheckSizeID->num_rows() > 0) {
+			$remove_size_id = $this->Model_Deletes->remove_size_id($id);
+			if ($remove_size_id == true) {
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+			else
+			{
+				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+			}
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
+		}
+	}
+	
 }

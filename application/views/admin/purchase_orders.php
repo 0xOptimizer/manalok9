@@ -132,7 +132,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php if ($row['Status'] == '1'): ?>
 												<span><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 											<?php elseif ($row['Status'] == '2'): ?>
-												<span><i class="bi bi-cash" style="color:#E4B55B;"></i> Received</span>
+												<span><i class="bi bi-check-circle text-success"></i> Received</span>
 											<?php else: ?>
 												<span><i class="bi bi-trash text-danger"></i> Rejected</span>
 											<?php endif; ?>
@@ -254,7 +254,6 @@ $(document).ready(function() {
 		let subTotal = 0;
 		$.each($('.productTotal'), function(i, val) {
 			subTotal += parseFloat($(this).data('product-total'));
-			console.log($(this).data('product-total'));
 		});
 		$('.productsTotal .subTotal, .total').html(subTotal.toFixed(2));
 		// empty transaction

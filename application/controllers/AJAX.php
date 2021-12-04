@@ -344,4 +344,124 @@ class AJAX extends CI_Controller {
 		}
 
 	}
+	public function GetBrand_data()
+	{
+		$UniqueID = $this->input->post('uid');
+		$CheckBrand_Data = $this->Model_Selects->CheckBrand_Data($UniqueID);
+		if ($CheckBrand_Data->num_rows() > 0) {
+			// GET ALL DATA
+			$cbd = $CheckBrand_Data->row_array();
+			$response['Brand'] = array(
+				
+				'Brand_Name' => $cbd['Brand_Name'],
+				'Brand_Char' => $cbd['Brand_Char'],
+				'Brand_Type' => $cbd['Brand_Type'],
+				'UniqueID' => $cbd['UniqueID'],
+			);
+
+			$CheckBrand_Properties = $this->Model_Selects->CheckBrand_Properties($UniqueID);
+			$cbp = $CheckBrand_Properties->row_array();
+			$response['Brand_Properties'] = array(
+				'Brand_Abbr' => $cbp['Brand_Abbr'],
+				'Brand_Type_Abbr' => $cbp['Brand_Type_Abbr'],
+				'Product_Line' => $cbp['Product_Line'],
+				'Product_line_Abbr' => $cbp['Product_line_Abbr'],
+				'Product_Type' => $cbp['Product_Type'],
+				'Product_Type_Abbr' => $cbp['Product_Type_Abbr'],
+			);
+
+			$CheckBrand_Variants = $this->Model_Selects->CheckBrand_Variants($UniqueID);
+			$response['Brand_Variants'] = $CheckBrand_Variants->result_array();
+			$CheckBrand_Sizes = $this->Model_Selects->CheckBrand_Sizes($UniqueID);
+			$response['Brand_Sizes'] = $CheckBrand_Sizes->result_array();
+			
+		}
+		else
+		{
+			// RESPONSE
+			$response['Error'] = array(
+				'error404' => 'Data not found.',
+			);
+			
+		}
+
+		$jsondata = json_encode($response);
+		echo $jsondata;
+	}
+	public function Add_BrandSizes()
+	{
+		$UniqueID = $this->input->post('uid');
+		if (empty($UniqueID)) {
+			echo 'Error! Please Try Again';
+			exit();
+		}
+		$GetAll_BrandSizes = $this->Model_Selects->GetAll_BrandSizes($UniqueID);
+		$result = $GetAll_BrandSizes->result_array();
+			
+		$result = json_encode($result);
+		echo $result;
+		exit();
+	}
+	public function AddNew_BrandSizes()
+	{
+		$UniqueID = $this->input->post('uid');
+		$Product_Size = $this->input->post('prd_size');
+		$Product_Size_Abbr = $this->input->post('prd_sizeabbr');
+
+		if (empty($UniqueID) || empty($Product_Size) || empty($Product_Size_Abbr)) {
+			echo "Warning! Empty fields please try again.";
+			exit();
+		}
+		$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
+		if ($CheckBrand_UniqueID->num_rows() > 0) {
+			$data = array(
+				'UniqueID' => $UniqueID,
+				'Product_Size' => strtoupper($Product_Size),
+				'Product_Size_Abbr' => strtoupper($Product_Size_Abbr),
+			);
+			$Add_NewBrandsize = $this->Model_Inserts->Add_NewBrandsize($data);
+			if ($Add_NewBrandsize == true) {
+
+				echo "Succes! New size added.";
+				exit();
+			}
+			else
+			{
+				echo "Error! Please try again.";
+				exit();
+			}
+		}
+		else
+		{
+			echo "Error! Please try again.";
+				exit();
+		}
+		
+	}
+	public function Fill_Select_BrandData()
+	{
+		$UniqueID = $this->input->post('uid');
+		if (empty($UniqueID)) {
+			$data['status_response'] = array('status' => 0, );
+		}
+		else
+		{
+			$data['status_response'] = array('status' => 1, );
+		}
+
+		$CheckBrand_Data = $this->Model_Selects->CheckBrand_Data($UniqueID);
+		$data['brand_category'] = $CheckBrand_Data->result_array();
+
+		$CheckBrand_Properties = $this->Model_Selects->CheckBrand_Properties($UniqueID);
+		$data['brand_properties'] = $CheckBrand_Properties->result_array();
+
+		$CheckBrand_Variants = $this->Model_Selects->CheckBrand_Variants($UniqueID);
+		$data['brand_variants'] = $CheckBrand_Variants->result_array();
+		
+		$CheckBrand_Sizes = $this->Model_Selects->CheckBrand_Sizes($UniqueID);
+		$data['brand_sizes'] = $CheckBrand_Sizes->result_array();
+		
+		$result = json_encode($data);
+		echo $result;
+	}
 }

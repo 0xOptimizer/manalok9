@@ -206,6 +206,27 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
+	public function GetInvoices()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('invoices');  
+		return $result;
+	}
+	public function GetInvoicesBySONo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('invoices');  
+		return $result;
+	}
+	public function GetTotalInvoicesBySONo($orderNo)
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('invoices');  
+		return $result;
+	}
 
 	public function GetAllReleases()
 	{
@@ -285,6 +306,27 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('purchase_orders');  
 		return $result;
 	}
+	public function GetBills()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('bills');  
+		return $result;
+	}
+	public function GetBillsByPONo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('bills');  
+		return $result;
+	}
+	public function GetTotalBillsByPONo($orderNo)
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('bills');  
+		return $result;
+	}
 
 	public function GetAllRestocks()
 	{
@@ -294,20 +336,6 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products_transactions');  
 		return $result;
 	}
-	// public function GetTransactionsByTID($id)
-	// {
-	// 	$this->db->select('*');
-	// 	$this->db->where('TransactionID', $id);
-	// 	$result = $this->db->get('products_transactions');  
-	// 	return $result;
-	// }
-	// public function GetTransactionsByOrderNo($orderNo)
-	// {
-	// 	$this->db->select('*');
-	// 	$this->db->where('OrderNo', $orderNo);
-	// 	$result = $this->db->get('products_transactions');
-	// 	return $result;
-	// }
 	public function GetTransactionsRestockedUnordered()
 	{
 		$this->db->select('*');
@@ -330,6 +358,71 @@ class Model_Selects extends CI_Model {
 	{
 		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '0' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.OrderNo = ot.OrderNo AND Status = $status)";
 		$result = $this->db->query($sql);
+		return $result;
+	}
+
+	public function GetAccounts()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetAccountSelection()
+	{
+		$this->db->select('*');
+		$this->db->order_by('Name', 'desc');
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetAccountByName($name)
+	{
+		$this->db->select('*');
+		$this->db->where('Name', $name);
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetAccountByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('accounts');  
+		return $result;
+	}
+	public function GetJournals()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('journals');  
+		return $result;
+	}
+	public function GetJournalByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('journals');  
+		return $result;
+	}
+	public function GetTransactions()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('journal_transactions');  
+		return $result;
+	}
+	public function GetTransactionByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('journal_transactions');  
+		return $result;
+	}
+	public function GetTransactionsByJournalID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('JournalID', $id);
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('journal_transactions');  
 		return $result;
 	}
 
@@ -467,6 +560,90 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('Status', 1);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function CheckBrand_Char($data)
+	{
+		extract($data);
+		$this->db->select('*');
+		$this->db->where('Brand_Name', $Brand_Name);
+		$this->db->where('Brand_Char', $Brand_Char);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function All_Brands()
+	{
+		$this->db->select('*');
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function CheckBrand_Data($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function CheckBrand_Properties($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_properties');
+		return $result;
+	}
+	public function CheckBrand_Variants($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_vcpd');
+		return $result;
+	}
+	public function CheckBrand_Sizes($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
+	public function CheckBrand_UniqueID($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function CheckBrand_id($id)
+	{
+		$this->db->select('*');
+		$this->db->where('id', $id);
+		$result = $this->db->get('brand_vcpd');
+		return $result;
+	}
+	public function GetAll_BrandSizes($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
+	public function CheckSizeID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('id', $id);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
+	public function Get_Brand_Data()
+	{
+		$this->db->select('*');
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function CheckUID($U_ID)
+	{
+		$this->db->select('*');
+		$this->db->where('U_ID', $U_ID);
 		$result = $this->db->get('products');
 		return $result;
 	}

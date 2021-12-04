@@ -70,7 +70,7 @@
 						</div>
 						<hr>
 						<!-- Bottom Part -->
-						<div class="col-sm-12 col-md-6">
+						<div class="col-sm-12 col-md-8">
 							<div class="row">
 								<div class="col-sm-12 table-responsive">
 									<label class="input-label">PURCHASE ITEMS</label>
@@ -132,7 +132,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-12 col-md-6">
+						<div class="col-sm-12 col-md-4">
 							<div class="row">
 								<?php $getAllProducts = $this->Model_Selects->GetAllProducts(); ?>
 								<div class="col-sm-0 col-md-6">

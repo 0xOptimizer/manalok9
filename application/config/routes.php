@@ -76,6 +76,10 @@ $route['admin/product_restocking'] = 'Admin/product_restocking';
 $route['admin/bills'] = 'Admin/bills';
 $route['admin/invoices'] = 'Admin/invoices';
 
+$route['admin/accounts'] = 'Admin/accounts';
+$route['admin/journals'] = 'Admin/journals';
+
+$route['admin/accounting_test'] = 'Admin/accounting_test';
 
 
 // Users
@@ -115,6 +119,31 @@ $route['get_productDetails'] = 'Admin/get_productDetails';
 $route['admin/SubmitNewItemcode'] = 'Admin/SubmitNewItemcode';
 $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 
+$route['FORM_addAccount'] = 'Admin/FORM_addAccount';
+$route['FORM_addJournal'] = 'Admin/FORM_addJournal';
+
+
+$route['FORM_addPOBill'] = 'Admin/FORM_addPOBill';
+$route['FORM_addSOInvoice'] = 'Admin/FORM_addSOInvoice';
+
+$route['FORM_removeBill'] = 'Admin/FORM_removeBill';
+$route['FORM_removeInvoice'] = 'Admin/FORM_removeInvoice';
+
+$route['FORM_scheduleDelivery'] = 'Admin/FORM_scheduleDelivery';
+$route['FORM_markDelivered'] = 'Admin/FORM_markDelivered';
+$route['FORM_markReceived'] = 'Admin/FORM_markReceived';
+
+// BRAND ROUTES
+$route['view_settings_bcat'] = 'Admin/view_settings_bcat';
+$route['Add_BrandCategory'] = 'Admin/Add_BrandCategory';
+$route['Update_BrandCategory'] = 'Admin/Update_BrandCategory';
+$route['Add_BrandVariant'] = 'Admin/Add_BrandVariant';
+$route['remove_addVariants'] = 'Admin/remove_addVariants';
+$route['Add_BrandSizes'] = 'AJAX/Add_BrandSizes';
+$route['AddNew_BrandSizes'] = 'AJAX/AddNew_BrandSizes';
+$route['remove_addSizes'] = 'Admin/remove_addSizes';
+
+
 
 
 // Products
@@ -122,7 +151,7 @@ $route['FORM_addNewProduct'] = 'Admin/FORM_addNewProduct';
 $route['FORM_addNewTransaction'] = 'Admin/FORM_addNewTransaction';
 $route['Add_newProductV2'] = 'Admin/Add_newProductV2';
 $route['move_to_archive'] = 'Admin/move_to_archive';
-
+$route['Fill_Select_BrandData'] = 'AJAX/Fill_Select_BrandData';
 
 
 
@@ -131,6 +160,8 @@ $route['getTransactionDetails'] = 'Admin/getTransactionDetails';
 $route['FORM_approveTransaction'] = 'Admin/FORM_approveTransaction';
 $route['getVendorDetails'] = 'Admin/getVendorDetails';
 $route['getClientDetails'] = 'Admin/getClientDetails';
+
+$route['getJournalDetails'] = 'Admin/getJournalDetails';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['admin/searchClientName'] = 'AJAX/searchClientName';
@@ -143,16 +174,13 @@ $route['admin/remove_fromCart'] = 'AJAX/remove_fromCart';
 $route['admin/get_Cartdata'] = 'AJAX/get_Cartdata';
 
 $route['admin/add_cart_releasing'] = 'AJAX/add_cart_releasing';
+$route['GetBrand_data'] = 'AJAX/GetBrand_data';
 
 
 // CART
 $route['admin/Restock_from_cart'] = 'Admin/Restock_from_cart';
 
 $route['admin/release_fromcart'] = 'Admin/release_fromcart';
-
-
-
-
 
 
 // Database backup
