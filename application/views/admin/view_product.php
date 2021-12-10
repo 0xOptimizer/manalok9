@@ -75,7 +75,10 @@ if ($this->session->flashdata('highlight-id')) {
 			<section class="section">
 				<div class="row">
 					<div class="col-sm-12 col-lg-8">
-						<b>LATEST TRANSACTIONS - <button type="button" class="generatereport-btn btn btn-sm-primary">GENERATE REPORT</button></b>
+						<b>LATEST TRANSACTIONS - 
+							<button type="button" class="generatereport-btn btn btn-sm-primary">GENERATE REPORT</button>
+							<button type="button" class="btn-add_transaction btn btn-sm-success">ADD TRANSACTION</button>
+						</b>
 						<div class="table-responsive">
 							<table id="productsTable" class="table">
 								<thead style="font-size: 12px;">
@@ -112,12 +115,12 @@ if ($this->session->flashdata('highlight-id')) {
 														switch ($row['Status']) {
 															case '0':
 																echo '<span class="text-center info-banner-sm">
-																		<i class="bi bi-asterisk"></i>&nbsp;Pending Approval
+																		Pending Approval
 																	</span>';
 																break;
 															case '1':
 																echo '<span class="text-center success-banner-sm">
-																		<i class="bi bi-check-circle-fill"></i>&nbsp;Approved
+																		Approved
 																	</span>';
 																break;
 															
@@ -197,7 +200,7 @@ if ($this->session->flashdata('highlight-id')) {
 	</div>
 </div>
 <!-- New transactions modal -->
-<?php $this->load->view('admin/modals/add_transaction.php'); ?>
+<?php $this->load->view('admin/modals/add_newTransaction.php'); ?>
 
 <?php $this->load->view('admin/modals/generate_report')?>
 
@@ -223,6 +226,7 @@ $(document).ready(function() {
 		$('#newTransactionModal').modal('toggle');
 		$('#transaction-code').val(productCode);
 	});
+	
 	var table = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
 		'bLengthChange': false,
@@ -283,6 +287,15 @@ $(document).ready(function() {
     $('body').on('click', '#generateReport-PDF', function () {
         table.button('4').trigger();
     });
+
+    // NEW TRANSACTION
+    var skuCode = '<?=$code;?>';
+    $('.btn-add_transaction').on('click', function() {
+		$('#new_transactionModal').modal('toggle');
+		
+		$('#transaction-code').val(skuCode);
+		$('#transaction-codes').html(skuCode);
+	});
 });
 </script>
 

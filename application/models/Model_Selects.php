@@ -647,4 +647,18 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function CheckSKU_Code($skuCode)
+	{
+		$this->db->select('*');
+		$this->db->where('Code', $skuCode);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function GetProductDetails($skuCode)
+	{
+		$this->db->select('*');
+		$this->db->where('item_code', $skuCode);
+		$result = $this->db->get('product_details');
+		return $result;
+	}
 }

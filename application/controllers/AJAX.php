@@ -181,18 +181,25 @@ class AJAX extends CI_Controller {
 
 		$item_code = $this->input->post('item_code');
 		$qtyValue = $this->input->post('qtyValue');
+		$skuCode = $this->input->post('item_code');
 
 		$prompt_text = '';
 
-		if ($item_code == null) {
+
+		if (empty($item_code)) {
 			echo 'Error! Item code doesn\'t exist.';
 			exit();
 		}
-		if ($qtyValue == null) {
+		if (empty($qtyValue)) {
 			echo 'Warning! Input Quantity.';
 			exit();
 		}
 
+		$CheckSKU_Code = $this->Model_Selects->CheckSKU_Code($skuCode);
+		if ($CheckSKU_Code->num_rows() < 1) {
+			echo 'Product not found!';
+			exit();
+		}
 		if (isset($item_code) || isset($qtyValue)) {
 
 			if (!isset($_SESSION['cart_sess'])) {
@@ -274,18 +281,23 @@ class AJAX extends CI_Controller {
 
 		$item_code = $this->input->post('item_code');
 		$qtyValue = $this->input->post('qtyValue');
+		$skuCode =  $this->input->post('item_code');
 
 		$prompt_text = '';
 
-		if ($item_code == null) {
+		if (empty($item_code)) {
 			echo 'item code error';
 			exit();
 		}
-		if ($qtyValue == null) {
+		if (empty($qtyValue)) {
 			echo 'quantity error';
 			exit();
 		}
-
+		$CheckSKU_Code = $this->Model_Selects->CheckSKU_Code($skuCode);
+		if ($CheckSKU_Code->num_rows() < 1) {
+			echo 'Product not found!';
+			exit();
+		}
 		// CHECK STOCK\
 		$Code = $item_code;
 		$CheckStocks_releasing = $this->Model_Selects->CheckStocks_releasing($Code);
@@ -463,5 +475,40 @@ class AJAX extends CI_Controller {
 		
 		$result = json_encode($data);
 		echo $result;
+	}
+	public function Check_sku_code()
+	{
+		$skuCode = $this->input->post('sku_code');
+		if (empty($skuCode)) {
+			$data['status'] = array('message' => 'SKU EMPTY', );
+			$result = json_encode($data);
+			echo $result;
+			exit();
+		}
+		else
+		{
+			$CheckSKU_Code = $this->Model_Selects->CheckSKU_Code($skuCode);
+			if ($CheckSKU_Code->num_rows() > 0) {
+
+				$data['status'] = array('message' => 'SKU FOUND', );
+
+				$data['products'] = $CheckSKU_Code->row_array();
+
+				$GetProductDetails = $this->Model_Selects->GetProductDetails($skuCode);
+
+				$data['product_details'] = $GetProductDetails->row_array();
+
+				$result = json_encode($data);
+				echo $result;
+				exit();
+			}
+			else
+			{
+				$data['status'] = array('message' => 'SKU NULL', );
+				$result = json_encode($data);
+				echo $result;
+				exit();
+			}
+		}
 	}
 }

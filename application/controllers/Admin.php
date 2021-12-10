@@ -2412,5 +2412,93 @@ class Admin extends MY_Controller {
 			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 		}
 	}
-	
+	public function FORM_NewTransaction()
+	{
+		$skuCode = $this->input->post('transaction-code');
+		$Trans_Type = $this->input->post('transaction-type');
+		$Amount = $this->input->post('transaction-amount');
+		$Trans_Date = $this->input->post('transaction-date');
+
+		if (empty($skuCode) || empty($Amount) || empty($Trans_Date)) {
+			// redirect('admin/viewproduct?code=' . $skuCode);
+			echo 'NULL VALUE';
+		}
+		else
+		{
+			// CHECK PRODUCT IF IT EXIST
+			
+			$transactionID = '';
+			$transactionID .= strtoupper($skuCode);
+			$transactionID .= '-';
+			$transactionID .= strtoupper(uniqid());
+
+			$CheckSKU_Code = $this->Model_Selects->CheckSKU_Code($skuCode);
+
+			if ($CheckSKU_Code->num_rows() > 0) {
+				$prd_details = $CheckSKU_Code->row_array();
+				$c_stock = $prd_details['InStock'];
+				$price_peritem = $prd_details['Cost_PerItem'];
+
+				if ($Trans_Type <= 0) {
+
+					// RESTOCK
+					
+					$priceTotal = $price_peritem * $Amount;
+
+					$code = $skuCode;
+					$inStock = $c_stock + $Amount;
+
+				}
+				else
+				{
+
+					// RELEASE
+					
+					$priceTotal = $price_peritem * $Amount;
+
+					$code = $skuCode;
+					if ($c_stock < $Amount) {
+						// LOW STOCK
+						redirect('admin/viewproduct?code=' . $skuCode);
+					}
+					else
+					{
+						$inStock = $c_stock - $Amount;
+					}
+
+				}
+
+				$data = array(
+					'Code' => $skuCode,
+					'TransactionID' => $transactionID,
+					'Type' => $Trans_Type,
+					'Amount' => $Amount,
+					'Date' => $Trans_Date,
+					'DateAdded' => date('Y-m-d h:i:s A'),
+					'Status' => 0,
+					'UserID' => $this->session->userdata('UserID'),
+
+					'PriceTotal' => $priceTotal,
+				);
+				$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+				if ($insertNewTransaction == true) {
+					
+					// $updateStocksCount = $this->Model_Updates->UpdateStocksCount($code, $inStock);
+					redirect('admin/viewproduct?code=' . $skuCode);
+				}
+				else
+				{
+					// ERROR
+					redirect('admin/viewproduct?code=' . $skuCode);
+					
+				}
+			}
+			else
+			{
+				// PROMPT PRODUCT DOESNT EXIST
+				redirect('admin/viewproduct?code=' . $skuCode);
+				
+			}
+		}
+	}
 }
