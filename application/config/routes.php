@@ -186,6 +186,10 @@ $route['FORM_NewTransaction'] = 'Admin/FORM_NewTransaction';
 
 $route['admin/Check_sku_code'] = 'AJAX/Check_sku_code';
 
+// TRASH BIN
+$route['admin/trash_bin'] = 'Admin/trash_bin';
+$route['admin/redo_arch'] = 'Admin/redo_arch';
+$route['admin/delete_prd'] = 'Admin/delete_prd';
 
 
 

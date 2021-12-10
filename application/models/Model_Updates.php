@@ -217,5 +217,11 @@ class Model_Updates extends CI_Model {
 	   $this->db->update('brand_properties', $data);
 	   return true;
 	}
+	public function UpdateStatus_Retrived($ID)
+	{
+		$this->db->where('ID', $ID);
+	   $this->db->update('products',array('Status' => 1, ));
+	   return true;
+	}
 	
 }

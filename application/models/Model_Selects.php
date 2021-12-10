@@ -661,4 +661,18 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('product_details');
 		return $result;
 	}
+	public function Trashed_Products()
+	{
+		$this->db->select('*');
+		$this->db->where('Status', 2);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function CheckPrd_id($ID)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $ID);
+		$result = $this->db->get('products');
+		return $result;
+	}
 }

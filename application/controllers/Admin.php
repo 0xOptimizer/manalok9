@@ -2501,4 +2501,49 @@ class Admin extends MY_Controller {
 			}
 		}
 	}
+	public function trash_bin()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Trash';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+
+		// GET ALL PRODUCTS IN TRASH
+		$data['Trashed_Products'] = $this->Model_Selects->Trashed_Products();
+
+		$this->load->view('admin/trash_bin', $data);
+	}
+	public function redo_arch()
+	{
+		$ID = $this->input->get('prd_id');
+		$CheckPrd_id = $this->Model_Selects->CheckPrd_id($ID);
+		if ($CheckPrd_id->num_rows() > 0) {
+			$UpdateStatus_Retrived = $this->Model_Updates->UpdateStatus_Retrived($ID);
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
+	public function delete_prd()
+	{
+		$ID = $this->input->get('prd_id');
+		$CheckPrd_id = $this->Model_Selects->CheckPrd_id($ID);
+		if ($CheckPrd_id->num_rows() > 0) {
+			$Delete_product = $this->Model_Deletes->Delete_product($ID);
+			if ($Delete_product == true) {
+				$prd_dtls = $CheckPrd_id->row_array();
+				$skuCode = $prd_dtls['Code'];
+				$deletePrd_details = $this->Model_Deletes->deletePrd_details($skuCode);
+				$deletePrd_trans = $this->Model_Deletes->deletePrd_trans($skuCode);
+
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
 }
