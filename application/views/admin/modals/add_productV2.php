@@ -73,7 +73,7 @@
 								Details
 							</h5>
 							<div class="form-group col-12 col-sm-12 col-md-6">
-								<input class="form-control standard-input-pad product_codegen" type="text" name="product_code" autocomplete="off" placeholder="">
+								<input class="form-control standard-input-pad product_codegen" type="text" name="product_code" autocomplete="off" placeholder="" readonly>
 								<label class="input-label">SKU</label>
 
 							</div>

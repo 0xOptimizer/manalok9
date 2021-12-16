@@ -27,5 +27,24 @@ class Model_Deletes extends CI_Model {
 			return false;
 		}
 	}
+	public function Delete_product($ID)
+	{
+		$this->db->where('ID', $ID);
+		$result = $this->db->delete('products');
+		return $result;
+	}
+	public function deletePrd_details($skuCode)
+	{
+		$this->db->where('item_code', $skuCode);
+		$result = $this->db->delete('product_details');
+		return $result;
+	}
+	public function deletePrd_trans($skuCode)
+	{
+		$this->db->where('Code', $skuCode);
+		$result = $this->db->delete('products_transactions');
+		return $result;
+	}
 	
+
 }

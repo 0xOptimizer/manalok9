@@ -133,6 +133,12 @@
 						<span>My Activities</span>
 					</a>
 				</li>
+				<li class="sidebar-item sidebar-employee-trash">
+					<a href="<?=base_url()?>admin/trash_bin" class='sidebar-link'>
+						<i class="bi bi-trash-fill"></i>
+						<span>Trash Bin</span>
+					</a>
+				</li>
 
 				<!-- <li class="sidebar-title">DEMO</li> -->
 

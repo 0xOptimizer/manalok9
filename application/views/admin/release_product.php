@@ -43,6 +43,7 @@ date_default_timezone_set('Asia/Manila');
 					</div>
 					<div class="col-12 col-md-12 pt-4 pb-2">
 						<button type="button" class="scnrelease-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-upc-scan"></i> USE SCANNER</button>
+						<button type="button" class="man_release-btn btn btn-sm-primary ml-auto" style="font-size: 12px;"><i class="bi bi-plus-square"></i> ADD TRANSACTION</button>
 						<button type="button" class="viewReleaseCart-btn btn btn-sm-secondary ml-auto" style="font-size: 12px;"><i class="bi bi-cart"></i> CART</button>
 					</div>
 					<p class="text-subtitle text-muted">Approve or cancel product for releasing.</p>
@@ -127,6 +128,7 @@ date_default_timezone_set('Asia/Manila');
 <!-- Release scanner modal -->
 <?php $this->load->view('admin/modals/scan_release.php'); ?>
 <?php $this->load->view('admin/modals/release_cart_modal'); ?>
+<?php $this->load->view('admin/modals/manual_release'); ?>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -229,6 +231,108 @@ $(document).ready(function() {
 	$(document).on("click", "#release_submit", function() {
 		var itCode = $('.code_prev').html();
 		var qtyValue = $('.quantity_val').val();
+		$.ajax({
+			url: 'add_cart_releasing',
+			type: 'post',
+			data: {
+				item_code: itCode,
+				qtyValue: qtyValue
+			},
+			success: function(response) {
+				switch(response)
+				{
+					case	'item code error':
+					alert('Error! Item code doesn\'t exist.');
+					break;
+
+					case	'quantity error':
+					alert('Warning! Input Quantity.');
+					break;
+
+					case	'product null':
+					alert('Warning! Product doesn\'t exist.');
+					break;
+
+					case	'low stock':
+					alert('Warning! Quantity exceeds current stocks.');
+					break;
+
+					case	'success':
+					alert('Product added to cart.');
+					location.reload();
+					break;
+					
+					case 'error':
+					alert('Error! Please try again.');
+					break;
+
+					default:
+					alert('Please try again.');
+				}
+			},
+			error: function (request, status, error) {
+				console.log(request.responseText);
+			}
+		});
+	});
+	$('.man_release-btn').on('click', function() {
+		$('#release_manually').modal('toggle');
+	});
+	$('.Modal_Close_custom').on('click', function() {
+		$('#release_manually').modal('toggle');
+	});
+	function Clear_prdDetails() {
+		$('#man_prd_bname').html('N/A');
+		$('#man_prd_name').html('N/A');
+		$('#man_prd_stock').html('N/A');
+		$('#man_prd_rel').html('N/A');
+		$('#man_prd_ucost').html('N/A');
+		$('#man_prd_uprice').html('N/A');
+	}
+	$(document).on("change", "#sku_Code", function() {
+
+		var sku_code = $(this).val();
+
+		$.ajax({
+			url: 'Check_sku_code',
+			type: "post",
+			data: {
+				sku_code: sku_code
+			},
+			success: function(response) {
+
+				var data = $.parseJSON(response);
+
+				switch(data['status']['message'])
+				{
+					case 'SKU EMPTY':
+						alert('SKU is empty.');
+						Clear_prdDetails();
+					break;
+					case 'SKU NULL':
+						alert('Product not found! Please try again.');
+						Clear_prdDetails();
+					break;
+
+					case 'SKU FOUND':
+						$('#man_prd_bname').html(data['product_details']['Second_brand']);
+						$('#man_prd_name').html(data['products']['Product_Name']);
+						$('#man_prd_stock').html(data['products']['InStock']);
+						$('#man_prd_rel').html(data['products']['Released']);
+						$('#man_prd_ucost').html(data['products']['Price_PerItem']);
+						$('#man_prd_uprice').html(data['products']['Cost_PerItem']);
+						
+					break;
+
+					default:
+						console.log('Error!......');
+				}
+			}
+		});
+	});
+	$(document).on("click", "#release_submit_manual", function() {
+		var itCode = $('#sku_Code').val();
+		var qtyValue = $('#m_quantity').val();
 		$.ajax({
 			url: 'add_cart_releasing',
 			type: 'post',
