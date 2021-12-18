@@ -1924,17 +1924,17 @@ class Admin extends MY_Controller {
 					}
 					else
 					{
-						echo "ERROR1";
+						redirect($_SERVER['HTTP_REFERER']);
 					}
 				}
 				else
 				{
-					echo 'ERROR2';
+					redirect($_SERVER['HTTP_REFERER']);
 				}
 			}
 			else
 			{
-				echo 'ERROR3';
+				redirect($_SERVER['HTTP_REFERER']);
 			}
 
 		}
