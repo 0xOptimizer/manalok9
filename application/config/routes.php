@@ -184,6 +184,7 @@ $route['admin/release_fromcart'] = 'Admin/release_fromcart';
 $route['FORM_NewTransaction'] = 'Admin/FORM_NewTransaction';
 
 
+
 $route['admin/Check_sku_code'] = 'AJAX/Check_sku_code';
 
 // TRASH BIN
@@ -195,3 +196,6 @@ $route['admin/delete_prd'] = 'Admin/delete_prd';
 
 // Database backup
 $route['database_backup'] = 'Admin/database_backup';
+
+// DELETE BRAND
+$route['Del_brand'] = 'Admin/Del_brand';

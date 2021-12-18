@@ -88,7 +88,7 @@ date_default_timezone_set('Asia/Manila');
 										<td class="d-flex flex-wrap justify-content-center">
 											<a class="btn-viewbrand" style="margin-left: 6px; margin-right: 6px;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-eye"></i> </a>
 											<a class="btn-updatebrand" style="margin-left: 6px; margin-right: 6px;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-pencil-square"></i> </a>
-											<a class="btn-removebrand" style="margin-left: 6px; margin-right: 6px;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-trash"></i> </a>
+											<a class="btn-removebrand" style="margin-left: 6px; margin-right: 6px;" href="<?=base_url()?>Del_brand?uid=<?php echo $row['UniqueID']; ?>" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-trash"></i> </a>
 										</td>
 									</tr>
 								<?php } ?>
@@ -383,10 +383,21 @@ $(document).ready(function() {
 	
 
 	//--------------- REMOVE ---------------//
-	$( ".btn-removebrand" ).click(function() {
-		var uid = $(this).attr('data-value');
-		alert(uid);
-	});
+	// $( ".btn-removebrand" ).click(function() {
+	// 	var uid = $(this).attr('data-value');
+	// 	$.ajax({
+	// 		url: '<?=base_url()?>Delete_brand',
+	// 		type: 'post',
+	// 		data: { uid : uid } ,
+	// 		success: function (response) {
+	// 			alert(response);
+	// 			Get_BrandSizes(uid);
+	// 		},
+	// 		error: function(jqXHR, textStatus, errorThrown) {
+	// 			console.log(textStatus, errorThrown);
+	// 		}
+	// 	});
+	// });
 	
 
 

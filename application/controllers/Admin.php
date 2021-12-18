@@ -2546,4 +2546,26 @@ class Admin extends MY_Controller {
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 	}
+	public function Del_brand()
+	{
+		$UniqueID = $this->input->get('uid');
+		$ChecBrand_Cat = $this->Model_Selects->ChecBrand_Cat($UniqueID);
+		$ChecBrand_Prop = $this->Model_Selects->ChecBrand_Prop($UniqueID);
+		$ChecBrand_Size = $this->Model_Selects->ChecBrand_Size($UniqueID);
+
+		if ($ChecBrand_Cat->num_rows() > 0) {
+			$this->Model_Deletes->remove_brands($UniqueID);
+			if ($ChecBrand_Prop->num_rows() > 0) {
+				$this->Model_Deletes->remove_brandsprop($UniqueID);
+			}
+			if ($ChecBrand_Size->num_rows() > 0) {
+				$this->Model_Deletes->remove_brandssize($UniqueID);
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
 }

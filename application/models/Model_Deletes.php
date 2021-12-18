@@ -45,6 +45,24 @@ class Model_Deletes extends CI_Model {
 		$result = $this->db->delete('products_transactions');
 		return $result;
 	}
+	public function remove_brands($UniqueID)
+	{
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->delete('brand_category');
+		return $result;
+	}
+	public function remove_brandsprop($UniqueID)
+	{
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->delete('brand_properties');
+		return $result;
+	}
+	public function remove_brandssize($UniqueID)
+	{
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->delete('brand_size');
+		return $result;
+	}
 	
 
 }

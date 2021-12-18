@@ -675,4 +675,25 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function ChecBrand_Cat($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function ChecBrand_Prop($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_properties');
+		return $result;
+	}
+	public function ChecBrand_Size($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
 }
