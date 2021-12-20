@@ -1915,7 +1915,7 @@ class Admin extends MY_Controller {
 						if ($insertNewTransaction == TRUE) {
 
 							$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
-							redirect($_SERVER['HTTP_REFERER']);
+							
 						}
 						else
 						{
@@ -1938,7 +1938,7 @@ class Admin extends MY_Controller {
 			}
 
 		}
-		
+		redirect($_SERVER['HTTP_REFERER']);
 
 	}
 	public function FORM_addAccount()
