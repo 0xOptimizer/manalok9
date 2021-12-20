@@ -223,5 +223,17 @@ class Model_Updates extends CI_Model {
 	   $this->db->update('products',array('Status' => 1, ));
 	   return true;
 	}
+	public function UpdatePriceProduct($ID,$data)
+	{
+		$this->db->where('ID', $ID);
+	   $this->db->update('products',$data);
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	
 }

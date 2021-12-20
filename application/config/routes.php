@@ -199,3 +199,6 @@ $route['database_backup'] = 'Admin/database_backup';
 
 // DELETE BRAND
 $route['Del_brand'] = 'Admin/Del_brand';
+// UPDATE PRODUCTS
+$route['Get_ProductJSON'] = 'AJAX/Get_ProductJSON';
+$route['UpdatePricesss'] = 'Admin/UpdatePricesss';

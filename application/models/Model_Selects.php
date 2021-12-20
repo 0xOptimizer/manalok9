@@ -696,4 +696,26 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('brand_size');
 		return $result;
 	}
+	public function GetProduct_ID($ID)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $ID);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function GetProduct_Prop($item_code)
+	{
+		$this->db->select('*');
+		$this->db->where('item_code', $item_code);
+		$result = $this->db->get('product_details');
+		return $result;
+	}
+	public function CheckProduct_BY_ID($ID)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $ID);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	
 }

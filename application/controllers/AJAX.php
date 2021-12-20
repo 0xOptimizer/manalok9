@@ -511,4 +511,43 @@ class AJAX extends CI_Controller {
 			}
 		}
 	}
+	public function Get_ProductJSON()
+	{
+		$ID = $this->input->post('prd_id');
+		// GET PRODUCT DATA
+		$GetProduct_ID = $this->Model_Selects->GetProduct_ID($ID);
+		if ($GetProduct_ID->num_rows() > 0) {
+			// FOUND GET DETAILS AND PROPERTIES
+			$prd_result = $GetProduct_ID->row_array();
+
+			$item_code = $prd_result['Code'];
+
+			$GetProduct_Prop = $this->Model_Selects->GetProduct_Prop($item_code);
+			if ($GetProduct_Prop->num_rows() > 0) {
+				$prd_result_prop = $GetProduct_Prop->row_array();
+			}
+
+			$data['prd_status'] = array(
+				'status' => 'success',
+				'message' => 'product details fetch',
+			);
+			$data['prd_details'] = $prd_result;
+			$data['prd_properties'] = $prd_result_prop;
+			
+			$result = json_encode($data);
+			echo $result;
+			exit();
+		}
+		else
+		{
+			// NOT FOUND
+			$data['prd_status'] = array(
+				'status' => 'error',
+				'message' => 'product doesn\'t exist',
+			);
+			$result = json_encode($data);
+			echo $result;
+			exit();
+		}
+	}
 }

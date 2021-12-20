@@ -2568,4 +2568,50 @@ class Admin extends MY_Controller {
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 	}
+	public function UpdatePricesss()
+	{
+		$ID = $this->input->post('unit_id');
+		$Price_PerItem = $this->input->post('unit_price');
+		$Cost_PerItem = $this->input->post('unit_cost');
+
+		if (empty($ID) || empty($Price_PerItem) || empty($Cost_PerItem)) {
+			// NULL VALUE
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			// VALUE EXIST CHECK ID IF EXIST IN DATABASE
+			$CheckProduct_BY_ID = $this->Model_Selects->CheckProduct_BY_ID($ID);
+			if ($CheckProduct_BY_ID->num_rows() > 0) {
+				// UPDATE PRICES
+				$data = array(
+					'Price_PerItem' => $Price_PerItem, 
+					'Cost_PerItem' => $Cost_PerItem, 
+				);
+				$UpdatePriceProduct = $this->Model_Updates->UpdatePriceProduct($ID,$data);
+				if ($UpdatePriceProduct == true) {
+					// PROMPT SUCCESS
+					$prompt = 'success';
+
+					$this->session->set_flashdata('prompt_toast', $prompt);
+
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+				else
+				{
+					// PROMPT ERROR
+					redirect($_SERVER['HTTP_REFERER']);
+
+				}
+			}
+			else
+			{
+				// ID DOESNT EXIST
+				redirect($_SERVER['HTTP_REFERER']);
+
+			}
+		}
+	}
+
+
 }
