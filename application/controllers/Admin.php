@@ -2612,6 +2612,24 @@ class Admin extends MY_Controller {
 			}
 		}
 	}
-
+	public function removeFCartrelease()
+	{
+		$cart_id = $this->input->get('c_id');
+		if (empty($cart_id)) {
+			// PROMPT URL QUERY STRING EMPTY
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		// CHECK CART ID
+		$CheckCart_ByID = $this->Model_Selects->CheckCart_ByID($cart_id);
+		if ($CheckCart_ByID->num_rows() > 0) {
+			$RemoveCart_rel = $this->Model_Deletes->RemoveCart_rel($cart_id);
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			// PROMPT CART ID NOT FOUND
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
 
 }

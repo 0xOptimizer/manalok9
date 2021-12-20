@@ -63,6 +63,11 @@ class Model_Deletes extends CI_Model {
 		$result = $this->db->delete('brand_size');
 		return $result;
 	}
-	
+	public function RemoveCart_rel($cart_id)
+	{
+		$this->db->where('cart_id', $cart_id);
+		$result = $this->db->delete('cart_release');
+		return $result;
+	}
 
 }

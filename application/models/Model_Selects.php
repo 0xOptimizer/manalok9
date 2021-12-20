@@ -717,5 +717,11 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
-	
+	public function CheckCart_ByID($cart_id)
+	{
+		$this->db->select('*');
+		$this->db->where('cart_id', $cart_id);
+		$result = $this->db->get('cart_release');
+		return $result;
+	}
 }

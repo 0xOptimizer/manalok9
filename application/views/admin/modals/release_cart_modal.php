@@ -25,7 +25,7 @@
                 <?php echo $row['time_stamp']; ?>
               </div>
               <div class="col-12 mb-2">
-                <a href="#"> Cancel </a>
+                <a href="<?=base_url()?>removeFCartrelease?c_id=<?php echo $row['cart_id']; ?>"> Cancel </a>
               </div>
             </div>
           <?php } ?>

@@ -202,3 +202,6 @@ $route['Del_brand'] = 'Admin/Del_brand';
 // UPDATE PRODUCTS
 $route['Get_ProductJSON'] = 'AJAX/Get_ProductJSON';
 $route['UpdatePricesss'] = 'Admin/UpdatePricesss';
+// REMOVE FROM CART RELEASE
+$route['removeFCartrelease'] = 'Admin/removeFCartrelease';
+
