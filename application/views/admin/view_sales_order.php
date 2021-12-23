@@ -77,11 +77,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 										<th class="text-center">TRANSACTION ID</th>
 										<th class="text-center">AMOUNT</th>
 										<th class="text-center">PRICE</th>
-										<th class="text-center">TRANSACTION DATE</th>
-										<?php if ($salesOrder['Status'] != '0'): ?>
-											<th class="text-center">STATUS</th>
-										<?php endif; ?>
-										<th class="text-center">USER</th>
+										<th class="text-center">TOTAL</th>
 									</thead>
 									<tbody>
 										<?php
@@ -104,23 +100,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 														<?=number_format($row['PriceUnit'], 2)?>
 													</td>
 													<td class="text-center">
-														<?=$row['Date']?>
-													</td>
-													<?php if ($salesOrder['Status'] != '0'): ?>
-														<td class="text-center">
-															<?php if ($row['Status'] == '0'): ?>
-																<span class="text-center info-banner-sm">
-																	<i class="bi bi-asterisk"></i>&nbsp;Pending
-																</span>
-															<?php elseif ($row['Status'] == '1'): ?>
-																<span class="text-center success-banner-sm">
-																	<i class="bi bi-check-circle-fill"></i>&nbsp;Approved
-																</span>
-															<?php endif; ?>
-														</td>
-													<?php endif; ?>
-													<td class="text-center">
-														<?=$row['UserID']?>
+														<?=number_format($row['Amount'].$row['PriceUnit'], 2)?>
 													</td>
 												</tr>
 										<?php endforeach;
@@ -145,11 +125,20 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 							?>
 							<div class="col-12">
 								<h6>BILL TO</h6>
-								<label><?=$c_details['Name']?></label>
+								<label><?=$c_details['Name']?> (
+									<a href="<?=base_url() . 'admin/clients#'. $c_details["ClientNo"]?>">
+										<i class="bi bi-eye"></i> <?=$c_details['ClientNo']?>
+									</a>
+								)</label>
 							</div>
 							<div class="col-12 mb-3">
+								<?php $st_details = $this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array(); ?>
 								<h6>SHIP TO</h6>
-								<label><?=$this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array()['Name']?></label>
+								<label><?=$st_details['Name']?> (
+									<a href="<?=base_url() . 'admin/clients#'. $st_details["ClientNo"]?>">
+										<i class="bi bi-eye"></i> <?=$st_details['ClientNo']?>
+									</a>
+								)</label>
 							</div>
 							<?php if ($salesOrder['Status'] == '3'): ?>
 								<div class="col-12 mb-3">

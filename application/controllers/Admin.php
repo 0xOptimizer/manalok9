@@ -344,6 +344,46 @@ class Admin extends MY_Controller {
 		$comment = $this->input->post('adminComment');
 		$privilege = $this->input->post('userPrivilege');
 
+		// USER RESTRICTIONS
+		$userRestrictions = array(
+			'products_view' => $this->input->post('products_view'),
+			'products_add' => $this->input->post('products_add'),
+			'products_edit' => $this->input->post('products_edit'),
+			'products_delete' => $this->input->post('products_delete'),
+			'releasing' => $this->input->post('releasing'),
+			'restocking' => $this->input->post('restocking'),
+			'inventory_view' => $this->input->post('inventory_view'),
+			'users_view' => $this->input->post('users_view'),
+			'users_add' => $this->input->post('users_add'),
+			'users_edit' => $this->input->post('users_edit'),
+			'vendors_view' => $this->input->post('vendors_view'),
+			'vendors_add' => $this->input->post('vendors_add'),
+			'vendors_edit' => $this->input->post('vendors_edit'),
+			'vendors_delete' => $this->input->post('vendors_delete'),
+			'purchase_orders_view' => $this->input->post('purchase_orders_view'),
+			'purchase_orders_add' => $this->input->post('purchase_orders_add'),
+			'purchase_orders_approve' => $this->input->post('purchase_orders_approve'),
+			'purchase_orders_bill_creation' => $this->input->post('purchase_orders_bill_creation'),
+			'bills_view' => $this->input->post('bills_view'),
+			'sales_orders_view' => $this->input->post('sales_orders_view'),
+			'sales_orders_add' => $this->input->post('sales_orders_add'),
+			'sales_orders_mark_for_invoicing' => $this->input->post('sales_orders_mark_for_invoicing'),
+			'sales_orders_schedule_delivery' => $this->input->post('sales_orders_schedule_delivery'),
+			'sales_orders_mark_as_delivered' => $this->input->post('sales_orders_mark_as_delivered'),
+			'sales_orders_mark_as_received' => $this->input->post('sales_orders_mark_as_received'),
+			'sales_orders_invoice_creation' => $this->input->post('sales_orders_invoice_creation'),
+			'invoice_view' => $this->input->post('invoice_view'),
+			'brand_category_view' => $this->input->post('brand_category_view'),
+			'trash_bin_view' => $this->input->post('trash_bin_view'),
+			'accounts_view' => $this->input->post('accounts_view'),
+			'accounts_add' => $this->input->post('accounts_add'),
+			'accounts_edit' => $this->input->post('accounts_edit'),
+			'journal_transactions_view' => $this->input->post('journal_transactions_view'),
+			'journal_transactions_add' => $this->input->post('journal_transactions_add'),
+			'journal_transactions_delete' => $this->input->post('journal_transactions_delete')
+		);
+
+
 		$pImageChecker = $this->input->post('pImageChecker');
 		$userID = uniqid();
 		
@@ -415,6 +455,17 @@ class Admin extends MY_Controller {
 		if ($insertNewEmployee == TRUE) {
 			$this->session->set_flashdata('isApplicantAdded', 'true');
 			// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
+			
+			// INSERT USER RESTRICTIONS
+			foreach ($userRestrictions as $key => $val) {
+				$data = array(
+					'UserID' => $userID,
+					'Action' => $key,
+					'Allowed' => $val,
+				);
+				$this->Model_Inserts->InsertUserRestrictions($data);
+			}
+
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('created a new user.', 'added a new user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Applicant ID: <b>' . $userID . '</b>');
@@ -446,6 +497,45 @@ class Admin extends MY_Controller {
 
 		$loginEmail = $this->input->post('loginEmail');
 		$loginPassword = $this->input->post('newLoginPassword');
+
+		// USER RESTRICTIONS
+		$userRestrictions = array(
+			'products_view' => $this->input->post('products_view_update'),
+			'products_add' => $this->input->post('products_add_update'),
+			'products_edit' => $this->input->post('products_edit_update'),
+			'products_delete' => $this->input->post('products_delete_update'),
+			'releasing' => $this->input->post('releasing_update'),
+			'restocking' => $this->input->post('restocking_update'),
+			'inventory_view' => $this->input->post('inventory_view_update'),
+			'users_view' => $this->input->post('users_view_update'),
+			'users_add' => $this->input->post('users_add_update'),
+			'users_edit' => $this->input->post('users_edit_update'),
+			'vendors_view' => $this->input->post('vendors_view_update'),
+			'vendors_add' => $this->input->post('vendors_add_update'),
+			'vendors_edit' => $this->input->post('vendors_edit_update'),
+			'vendors_delete' => $this->input->post('vendors_delete_update'),
+			'purchase_orders_view' => $this->input->post('purchase_orders_view_update'),
+			'purchase_orders_add' => $this->input->post('purchase_orders_add_update'),
+			'purchase_orders_approve' => $this->input->post('purchase_orders_approve_update'),
+			'purchase_orders_bill_creation' => $this->input->post('purchase_orders_bill_creation_update'),
+			'bills_view' => $this->input->post('bills_view_update'),
+			'sales_orders_view' => $this->input->post('sales_orders_view_update'),
+			'sales_orders_add' => $this->input->post('sales_orders_add_update'),
+			'sales_orders_mark_for_invoicing' => $this->input->post('sales_orders_mark_for_invoicing_update'),
+			'sales_orders_schedule_delivery' => $this->input->post('sales_orders_schedule_delivery_update'),
+			'sales_orders_mark_as_delivered' => $this->input->post('sales_orders_mark_as_delivered_update'),
+			'sales_orders_mark_as_received' => $this->input->post('sales_orders_mark_as_received_update'),
+			'sales_orders_invoice_creation' => $this->input->post('sales_orders_invoice_creation_update'),
+			'invoice_view' => $this->input->post('invoice_view_update'),
+			'brand_category_view' => $this->input->post('brand_category_view_update'),
+			'trash_bin_view' => $this->input->post('trash_bin_view_update'),
+			'accounts_view' => $this->input->post('accounts_view_update'),
+			'accounts_add' => $this->input->post('accounts_add_update'),
+			'accounts_edit' => $this->input->post('accounts_edit_update'),
+			'journal_transactions_view' => $this->input->post('journal_transactions_view_update'),
+			'journal_transactions_add' => $this->input->post('journal_transactions_add_update'),
+			'journal_transactions_delete' => $this->input->post('journal_transactions_delete_update')
+		);
 		
 		$config['upload_path'] = './uploads/'.$userID;
 		$config['allowed_types'] = 'gif|jpg|png';
@@ -512,6 +602,27 @@ class Admin extends MY_Controller {
 		);
 		$updateEmployee = $this->Model_Updates->UpdateUser($data, $userID);
 		if ($updateEmployee == TRUE) {
+			// UPDATE RESTRICTIONS
+			$allUserRestrictions = $this->Model_Selects->GetUserRestrictions($userID);
+
+			if ($allUserRestrictions->num_rows() != sizeof($userRestrictions)) { // if incorrect amount of restrictions, delete current and add new
+				$this->Model_Deletes->Delete_user_restriction($userID);
+				foreach ($userRestrictions as $key => $val) {
+					$data = array(
+						'UserID' => $userID,
+						'Action' => $key,
+						'Allowed' => $val,
+					);
+					$this->Model_Inserts->InsertUserRestrictions($data);
+				}
+			} else {
+				foreach ($userRestrictions as $key => $val) {
+					$data = array(
+						'Allowed' => $val,
+					);
+					$this->Model_Updates->UpdateUserRestriction($userID, $key, $data);
+				}
+			}
 			$this->Model_Logbook->LogbookEntry('updated user details.', 'updated details of user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
 			if ($loginEmail != NULL && $loginPassword != NULL) {
 				$loginData = array(
@@ -1061,7 +1172,7 @@ class Admin extends MY_Controller {
 				$data = array(
 					'TransactionID' => $TransactionID,
 					'Status' => 1,
-					'Date_Approval' => date('Y-m-d-H-i-s'),
+					'Date_Approval' => date('Y-m-d h:i:s A'),
 				);
 				$this->Model_Updates->ApproveTransaction($data);
 				if ($CheckIFApproved['Type'] == 0) {
@@ -1162,9 +1273,8 @@ class Admin extends MY_Controller {
 				// create new restock transactions
 				for ($i = 0; $i < $productCount; $i++) {
 					$code = trim($this->input->post('productCodeInput_' . $i));
-					$unitPrice = trim($this->input->post('productPriceInput_' . $i));
 					$qty = trim($this->input->post('productQtyInput_' . $i));
-					$getProductByCode = $this->Model_Selects->GetProductByCode($code)->row_array();
+					$p_details = $this->Model_Selects->GetProductByCode($code)->row_array();
 
 					$data = array(
 						'Code' => $code,
@@ -1172,11 +1282,12 @@ class Admin extends MY_Controller {
 						'OrderNo' => $orderNo,
 						'Type' => '0',
 						'Amount' => $qty,
-						'PriceUnit' => $unitPrice,
+						'PriceUnit' => $p_details['Cost_PerItem'],
 						'Date' => $date,
 						'DateAdded' => date('Y-m-d h:i:s A'),
 						'Status' => 0,
 						'UserID' => $this->session->userdata('UserID'),
+						'PriceTotal' => $qty * $p_details['Cost_PerItem'],
 					);
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 				}
@@ -1211,7 +1322,7 @@ class Admin extends MY_Controller {
 						$dataTransaction = array(
 							'TransactionID' => $t['TransactionID'],
 							'Status' => '1',
-							'Date_Approval' => date('Y-m-d-H-i-s'),
+							'Date_Approval' => date('Y-m-d h:i:s A'),
 						);
 						// RESTOCK
 						$NewStock = $p['InStock'] + $t['Amount'];
@@ -1461,6 +1572,7 @@ class Admin extends MY_Controller {
 						'DateAdded' => date('Y-m-d h:i:s A'),
 						'Status' => 0,
 						'UserID' => $this->session->userdata('UserID'),
+						'PriceTotal' => $qty * $p_details['Price_PerItem'],
 					);
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 				}
@@ -1500,7 +1612,7 @@ class Admin extends MY_Controller {
 							$dataTransaction = array(
 								'TransactionID' => $t['TransactionID'],
 								'Status' => '1',
-								'Date_Approval' => date('Y-m-d-H-i-s'),
+								'Date_Approval' => date('Y-m-d h:i:s A'),
 							);
 							// RELEASE
 							$NewStock = $p['InStock'] - $t['Amount'];
@@ -1617,15 +1729,15 @@ class Admin extends MY_Controller {
 	// VENDOR / CLIENT
 	public function getVendorDetails()
 	{
-		$vendorID = $this->input->get('vendor_id');
-		$getVendorByID = $this->Model_Selects->GetVendorByID($vendorID)->row_array();
-		print json_encode($getVendorByID);
+		$vendorNo = $this->input->get('vendor_no');
+		$getVendorByNo = $this->Model_Selects->GetVendorByNo($vendorNo)->row_array();
+		print json_encode($getVendorByNo);
 	}
 	public function getClientDetails()
 	{
-		$clientID = $this->input->get('client_id');
-		$getClientByID = $this->Model_Selects->GetClientByID($clientID)->row_array();
-		print json_encode($getClientByID);
+		$clientNo = $this->input->get('client_no');
+		$getClientByNo = $this->Model_Selects->GetClientByNo($clientNo)->row_array();
+		print json_encode($getClientByNo);
 	}
 	public function get_productDetails()
 	{
@@ -2005,8 +2117,8 @@ class Admin extends MY_Controller {
 				$data = array(
 					'JournalID' => $journalID,
 					'AccountID' => $accountID,
-					'Debit' => $debit,
-					'Credit' => $credit,
+					'Debit' => (int)$debit,
+					'Credit' => (int)$credit,
 				);
 				$insertJournalTransaction = $this->Model_Inserts->InsertJournalTransaction($data);
 			}

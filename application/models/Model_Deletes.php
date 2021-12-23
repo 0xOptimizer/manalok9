@@ -46,5 +46,11 @@ class Model_Deletes extends CI_Model {
 		return $result;
 	}
 	
+	public function Delete_user_restriction($userID)
+	{
+		$this->db->where('UserID', $userID);
+		$result = $this->db->delete('user_restrictions');
+		return $result;
+	}
 
 }

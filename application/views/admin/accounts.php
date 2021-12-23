@@ -6,7 +6,7 @@ date_default_timezone_set('Asia/Manila');
 // Fetch Accounts
 $getAccounts = $this->Model_Selects->GetAccounts();
 
-$account_types = array('REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES');
+$account_types = array('REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY');
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';

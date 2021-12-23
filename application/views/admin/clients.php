@@ -69,7 +69,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php
 							if ($getClients->num_rows() > 0):
 								foreach ($getClients->result_array() as $row): ?>
-									<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
+									<tr class="tr_class_modal" data-no="<?=$row['ClientNo']?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
@@ -134,6 +134,12 @@ $(document).ready(function() {
 	$('.newclient-btn').on('click', function() {
 		$('#newClientModal').modal('toggle');
 	});
+
+	if(window.location.hash && window.location.hash.substring(0, 3) == '#C-') {
+		var client_no = window.location.hash.substring(1, 9);
+		$('#ClientModal').modal('toggle');
+		getClientDetails(client_no);
+	}
 	
 	var table = $('#clientsTable').DataTable( {
 		sDom: 'lrtip',
@@ -144,12 +150,12 @@ $(document).ready(function() {
 		table.search($(this).val()).draw();
 	});
 
-	function getClientDetails(client_id) {
+	function getClientDetails(client_no) {
 		$.ajax({
 			url: 'getClientDetails',
 			type: 'GET',
 			dataType: 'JSON',
-			data: { client_id : client_id } ,
+			data: { client_no : client_no } ,
 			success: function (response) {
 				$('.m_clientid').text(response.ID).val(response.ID);
 				$('.m_clientno').text(response.ClientNo).val(response.ClientNo);
@@ -177,13 +183,13 @@ $(document).ready(function() {
 	}
 	$('.tr_class_modal').on('click', function() {
 		$('#ClientModal').modal('toggle');
-		getClientDetails($(this).data('id'));
+		getClientDetails($(this).data('no'));
 	}).on('click', 'i', function(e) {
 		e.stopPropagation();
 	});
 	$('.btn-update-client').on('click', function() {
 		$('#UpdateClientModal').modal('toggle');
-		getClientDetails($(this).parents('tr').data('id'));
+		getClientDetails($(this).parents('tr').data('no'));
 	});
 });
 </script>

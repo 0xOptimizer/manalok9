@@ -22,6 +22,13 @@ class Model_Updates extends CI_Model {
 			return $result;
 		}
 	}
+	public function UpdateUserRestriction($userID, $action, $data)
+	{
+		$this->db->where(array('UserID'=> $userID, 'Action' => $action));
+		$result = $this->db->update('user_restrictions', $data);
+		return $result;
+	}
+
 	public function UpdateStocksCount($code, $inStock)
 	{
 		$this->db->where('Code', $code);

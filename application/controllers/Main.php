@@ -131,7 +131,7 @@ class Main extends MY_Controller {
 						$historyData = array(
 							'UserID' => $row['UserID'],
 							'LoginEmail' => $email,
-							'LoginPassword' => $password,
+							'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 							'Agent' => $agent,
 							'Platform' => $platform,
 							'IPAddress' => $ipAddress,
@@ -153,7 +153,7 @@ class Main extends MY_Controller {
 					$historyData = array(
 						'UserID' => $loginRow['UserID'],
 						'LoginEmail' => $email,
-						'LoginPassword' => $password,
+						'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 						'Agent' => $agent,
 						'Platform' => $platform,
 						'IPAddress' => $ipAddress,
@@ -173,9 +173,9 @@ class Main extends MY_Controller {
 						</div>';
 				$this->session->set_flashdata('prompt',$p_text);
 				$historyData = array(
-					'UserID' => $row['UserID'],
+					'UserID' => '',
 					'LoginEmail' => $email,
-					'LoginPassword' => $password,
+					'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 					'Agent' => $agent,
 					'Platform' => $platform,
 					'IPAddress' => $ipAddress,

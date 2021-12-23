@@ -176,6 +176,8 @@ $route['admin/get_Cartdata'] = 'AJAX/get_Cartdata';
 $route['admin/add_cart_releasing'] = 'AJAX/add_cart_releasing';
 $route['GetBrand_data'] = 'AJAX/GetBrand_data';
 
+$route['admin/getUserRestrictions'] = 'AJAX/getUserRestrictions';
+
 
 // CART
 $route['admin/Restock_from_cart'] = 'Admin/Restock_from_cart';

@@ -32,5 +32,12 @@ class MY_Controller extends CI_Controller {
 			'DateAdded' => date('Y-m-d h:i:s A'),
 		);
 		$LogUser = $this->Model_Security->LogUser($data);
+
+		if ((!isset($userID) || $userID == '') && $pageURL != base_url()) {
+			redirect(base_url());
+		}
+		if (isset($userID) && $userID != '' && $pageURL == base_url()) {
+			redirect(base_url() . 'admin');
+		}
 	}
 }

@@ -27,12 +27,21 @@ class Model_Security extends CI_Model {
 		$this->db->select('*');
 		$this->db->order_by('ID', 'desc');
 		$this->db->where('LoginEmail', $email);
-		$result = $this->db->get('users_login');  
+		$result = $this->db->get('users_login');
 		return $result;
 	}
 	public function LogUser($data)
 	{
 		$result = $this->db->insert('security_log', $data);
+		return $result;
+	}
+
+
+	public function CheckUserRestriction($user_id, $action) {
+		$this->db->select('*');
+		$this->db->where('UserID', $user_id);
+		$this->db->where('Action', $action);
+		$result = $this->db->get('user_restrictions')->row_array()['Allowed'];
 		return $result;
 	}
 }
