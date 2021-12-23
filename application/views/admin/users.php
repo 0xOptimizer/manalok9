@@ -63,6 +63,7 @@ $globalHeader;
 						<tr>
 							<td>
 								<div class="row">
+									<?php if ($this->session->userdata('UserRestrictions')['users_add'] == 1): ?>
 									<div class="col-xs-12 col-sm-6 col-md-3">
 										<div class="card employee-card-hover employee-add-new">
 											<div class="card-body text-center">
@@ -72,6 +73,7 @@ $globalHeader;
 											</div>
 										</div>
 									</div>
+									<?php endif; ?>
 									<?php
 									$getAllUsers = $this->Model_Selects->GetAllUsers();
 									if ($getAllUsers->num_rows() > 0):
@@ -174,12 +176,16 @@ $globalHeader;
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['users_add'] == 1): ?>
 <!-- New user prompt -->
 <?php $this->load->view('admin/modals/users_registration.php'); ?>
 <!-- Create a new employee modal -->
 <?php $this->load->view('admin/modals/create_employee_modal.php'); ?>
+<?php endif; ?>
+<?php if ($this->session->userdata('UserRestrictions')['users_edit'] == 1): ?>
 <!-- Update employee modal -->
 <?php $this->load->view('admin/modals/update_employee_modal.php'); ?>
+<?php endif; ?>
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

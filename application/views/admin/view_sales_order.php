@@ -196,7 +196,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 									</div>
 								</div>
 							</div>
-							<?php if ($salesOrder['Status'] == '1'): ?>
+							<?php if ($salesOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['sales_orders_mark_for_invoicing'] == 1): ?>
 								<div class="col-12 text-center">
 									<h6>MARK FOR INVOICING</h6>
 								</div>
@@ -208,13 +208,13 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 										<button type="button" class="btn btn-success approveOrder"><i class="bi bi-check2"></i> APPROVE</button>
 									</form>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '2'): ?>
+							<?php elseif ($salesOrder['Status'] == '2' && $this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery'] == 1): ?>
 								<div class="col-12 text-center">
 									<button type="button" class="btn btn-success deliveryschedule-btn">
 										<i class="bi bi-truck"></i> SCHEDULE FOR DELIVERY
 									</button>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '3'): ?>
+							<?php elseif ($salesOrder['Status'] == '3' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_delivered'] == 1): ?>
 								<div class="col-12 text-center">
 									<form id="formMarkDelivered" action="<?php echo base_url() . 'FORM_markDelivered';?>" method="POST">
 										<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>">
@@ -223,7 +223,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 										</button>
 									</form>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '4'): ?>
+							<?php elseif ($salesOrder['Status'] == '4' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_received'] == 1): ?>
 								<div class="col-12 text-center">
 									<form id="formMarkReceived" action="<?php echo base_url() . 'FORM_markReceived';?>" method="POST">
 										<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>">
@@ -232,7 +232,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 										</button>
 									</form>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '5'): ?>
+							<?php elseif ($salesOrder['Status'] == '5' && $this->session->userdata('UserRestrictions')['sales_orders_fulfill'] == 1): ?>
 								<div class="col-12 text-center">
 									<h5 class="text-success">SALES ORDER FULFILLED</h5>
 								</div>
@@ -252,11 +252,13 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 							</h3>
 						</div>
 					</div>
+					<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation'] == 1): ?>
 					<div class="row">
 						<div class="col-12">
 							<button type="button" class="salesinvoicing-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
 						</div>
 					</div>
+					<?php endif; ?>
 				</div>
 				<section>
 					<div class="row">
@@ -297,50 +299,6 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 										</tr>
 								<?php endforeach;
 								endif; ?>
-									<!-- <tr>
-										<td class="text-center">
-											<span class="db-identifier" style="font-style: italic; font-size: 12px;">
-												1
-											</span>
-										</td>
-										<td class="text-center">
-											I-000001
-										</td>
-										<td class="text-center">
-											John Doe
-										</td>
-										<td class="text-center">
-											500.00
-										</td>
-										<td class="text-center">
-											2021-10-22
-										</td>
-										<td class="text-center">
-											CASH
-										</td>
-									</tr>
-									<tr>
-										<td class="text-center">
-											<span class="db-identifier" style="font-style: italic; font-size: 12px;">
-												2
-											</span>
-										</td>
-										<td class="text-center">
-											I-000002
-										</td>
-										<td class="text-center">
-											Jane Doe
-										</td>
-										<td class="text-center">
-											1,500.00
-										</td>
-										<td class="text-center">
-											2021-10-24
-										</td>
-										<td class="text-center">
-											CASH
-										</td>
-									</tr> -->
 									<?php
 									$total_invoice_amount = $this->Model_Selects->GetTotalInvoicesBySONo($salesOrder['OrderNo'])->row_array()['Amount'];
 									?>
@@ -363,6 +321,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 		<?php endif; ?>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation'] == 1): ?>
 <div class="modal fade" id="SalesInvoicing" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
 		<form id="formAddSOInvoice" action="<?php echo base_url() . 'FORM_addSOInvoice';?>" method="POST">
@@ -437,6 +396,8 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 		</form>
 	</div>
 </div>
+<?php endif; ?>
+<?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery'] == 1): ?>
 <div class="modal fade" id="DeliveryScheduling" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
 		<form id="formScheduleDelivery" action="<?php echo base_url() . 'FORM_scheduleDelivery';?>" method="POST">
@@ -458,6 +419,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 		</form>
 	</div>
 </div>
+<?php endif; ?>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

@@ -40,7 +40,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<?php if ($this->session->userdata('UserRestrictions')['vendors_add'] == 1): ?>
 						<button type="button" class="newvendor-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-shop-window"></i> NEW VENDOR</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -92,8 +94,12 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['ProductServiceKind']?>
 										</td>
 										<td>
+											<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
 											<i class="bi bi-pencil btn-update-vendor"></i>
+											<?php endif; ?>
+											<?php if ($this->session->userdata('UserRestrictions')['vendors_delete'] == 1): ?>
 											<i class="bi bi-trash text-danger"></i>
+											<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -106,9 +112,13 @@ if ($this->session->flashdata('highlight-id')) {
 	</div>
 </div>
 <!-- New vendor modal -->
+<?php if ($this->session->userdata('UserRestrictions')['vendors_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_vendor.php'); ?>
+<?php endif; ?>
 <?php $this->load->view('admin/modals/vendor_modal.php'); ?>
+<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
 <?php $this->load->view('admin/modals/update_vendor.php'); ?>
+<?php endif; ?>
 
 <?php $this->load->view('admin/modals/generate_report')?>
 

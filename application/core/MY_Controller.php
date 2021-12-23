@@ -33,7 +33,7 @@ class MY_Controller extends CI_Controller {
 		);
 		$LogUser = $this->Model_Security->LogUser($data);
 
-		if ((!isset($userID) || $userID == '') && $pageURL != base_url()) {
+		if ((!isset($userID) || $userID == '') && $pageURL != base_url() && $pageURL != base_url('FORM_loginValidation')) {
 			redirect(base_url());
 		}
 		if (isset($userID) && $userID != '' && $pageURL == base_url()) {

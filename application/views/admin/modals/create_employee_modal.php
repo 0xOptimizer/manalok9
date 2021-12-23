@@ -87,11 +87,11 @@
 										</div>
 									</div>
 									<div class="form-check form-switch mt-2">
-										<input class="form-check-input" type="checkbox" name="releasing" id="releaseView">
+										<input class="form-check-input" type="checkbox" name="releasing_view" id="releaseView">
 										<label class="form-check-label fw-bolder" for="releaseView">RELEASE</label>
 									</div>
 									<div class="form-check form-switch mt-2">
-										<input class="form-check-input" type="checkbox" name="restocking" id="restockView">
+										<input class="form-check-input" type="checkbox" name="restocking_view" id="restockView">
 										<label class="form-check-label fw-bolder" for="restockView">RESTOCK</label>
 									</div>
 									<div class="form-check form-switch mt-2">
@@ -153,6 +153,24 @@
 										<label class="form-check-label fw-bolder" for="billsView_New">BILLS</label>
 									</div>
 									<div class="form-check form-switch mt-2">
+										<input class="form-check-input actionMain" type="checkbox" name="clients_view" id="clientsView_New">
+										<label class="form-check-label fw-bolder" for="clientsView_New">CLIENTS</label>
+									</div>
+									<div class="col-sm-12 actionSub">
+										<div class="form-check form-switch">
+											<input class="form-check-input" type="checkbox" name="clients_add" id="clientsAdd_New" disabled="">
+											<label class="form-check-label" for="clientsAdd_New">Add</label>
+										</div>
+										<div class="form-check form-switch">
+											<input class="form-check-input" type="checkbox" name="clients_edit" id="clientsEdit_New" disabled="">
+											<label class="form-check-label" for="clientsEdit_New">Edit</label>
+										</div>
+										<div class="form-check form-switch">
+											<input class="form-check-input" type="checkbox" name="clients_delete" id="clientsDelete_New" disabled="">
+											<label class="form-check-label" for="clientsDelete_New">Delete</label>
+										</div>
+									</div>
+									<div class="form-check form-switch mt-2">
 										<input class="form-check-input actionMain" type="checkbox" name="sales_orders_view" id="salesOrdersView_New">
 										<label class="form-check-label fw-bolder" for="salesOrdersView_New">SALES ORDERS</label>
 									</div>
@@ -176,6 +194,10 @@
 										<div class="form-check form-switch">
 											<input class="form-check-input" type="checkbox" name="sales_orders_mark_as_received" id="salesOrdersMarkAsReceived_New" disabled="">
 											<label class="form-check-label" for="salesOrdersMarkAsReceived_New">Mark as Received</label>
+										</div>
+										<div class="form-check form-switch">
+											<input class="form-check-input" type="checkbox" name="sales_orders_fulfill" id="salesOrdersMarkAsFulfilled_New" disabled="">
+											<label class="form-check-label" for="salesOrdersMarkAsFulfilled_New">Mark as Fulfilled</label>
 										</div>
 										<div class="form-check form-switch">
 											<input class="form-check-input" type="checkbox" name="sales_orders_invoice_creation" id="salesOrdersInvoicesCreation_New" disabled="">

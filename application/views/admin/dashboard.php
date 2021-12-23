@@ -49,11 +49,6 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 					<div class="row">
 						<div class="col-12 col-md-6 order-md-1 order-last">
 							<h3>Dashboard</h3>
-							<?php
-
-							print_r($this->Model_Security->CheckUserRestriction('a', 'unko')->row_array());
-
-							?>
 						</div>
 					</div>
 				</div>

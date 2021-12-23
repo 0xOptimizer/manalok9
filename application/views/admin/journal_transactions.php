@@ -41,7 +41,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
 						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW TRANSACTION</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -69,7 +71,9 @@ if ($this->session->flashdata('highlight-id')) {
 										<td><?=$row['Date']?></td>
 										<td><?=$row['Description']?></td>
 										<td>
+											<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
 											<i class="bi bi-trash text-danger"></i>
+										<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -81,7 +85,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_journal_transaction'); ?>
+<?php endif; ?>
 <?php $this->load->view('admin/modals/journal_modal.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

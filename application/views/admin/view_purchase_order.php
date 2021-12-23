@@ -101,10 +101,6 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 										endif; ?>
 									</tbody>
 								</table>
-								<form id="removePurchaseOrderTransaction" action="<?php echo base_url() . 'FORM_removePurchaseOrderTransaction';?>" method="POST" enctype="multipart/form-data">
-									<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
-									<input id="rOTTransactionID" type="hidden" name="transaction_id">
-								</form>
 							</div>
 						</div>
 					</div>
@@ -166,7 +162,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 									</div>
 								</div>
 							</div>
-							<?php if ($purchaseOrder['Status'] == '1'): ?>
+							<?php if ($purchaseOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['purchase_orders_approve'] == 1): ?>
 								<div class="col-12 text-center">
 									<form id="approvePurchaseOrder" action="<?php echo base_url() . 'FORM_approvePurchaseOrder';?>" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
@@ -190,11 +186,13 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 						</h3>
 					</div>
 				</div>
+				<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
 				<div class="row">
 					<div class="col-12">
 						<button type="button" class="purchasebilling-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
 					</div>
 				</div>
+				<?php endif; ?>
 			</div>
 			<section>
 				<div class="row">
@@ -256,6 +254,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
 <div class="modal fade" id="PurchaseBilling" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
 		<form id="formAddPOBill" action="<?php echo base_url() . 'FORM_addPOBill';?>" method="POST">
@@ -330,6 +329,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 		</form>
 	</div>
 </div>
+<?php endif; ?>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

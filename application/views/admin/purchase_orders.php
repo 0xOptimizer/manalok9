@@ -69,8 +69,10 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add'] == 1): ?>
 						<button type="button" class="newpurchaseorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW PURCHASE ORDER</button>
 						|
+						<?php endif; ?>
 						<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 						<a href="view_purchase_summary">
 							<button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-list"></i> SUMMARY</button>
@@ -147,7 +149,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_purchase_order'); ?>
+<?php endif; ?>
 
 <?php $this->load->view('admin/modals/generate_report')?>
 

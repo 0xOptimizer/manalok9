@@ -95,6 +95,12 @@ class Main extends MY_Controller {
 								$fullName = $fullName . '...';
 								$isFullNameHoverable = true;
 							}
+
+							$UserRestrictions = array();
+							foreach ($this->Model_Selects->GetUserRestrictions($row['UserID'])->result_array() as $restrictions) {
+								$UserRestrictions[$restrictions['Action']] = $restrictions['Allowed'];
+							}
+
 							$data = array(
 								'UserID' => $row['UserID'],
 								'FirstName' => $firstName,
@@ -104,6 +110,7 @@ class Main extends MY_Controller {
 								'Image' => $row['Image'],
 								'FullName' => $fullName,
 								'Privilege' => ($row['Privilege'] ? $row['Privilege'] : '0'),
+								'UserRestrictions' => $UserRestrictions,
 							);
 							$this->session->set_userdata($data);
 							$historyData = array(
