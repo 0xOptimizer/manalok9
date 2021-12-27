@@ -100,6 +100,10 @@ date_default_timezone_set('Asia/Manila');
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
+
 <?php $this->load->view('admin/modals/add_brandcat.php'); ?>
 <?php $this->load->view('admin/modals/view_brandcat.php'); ?>
 <?php $this->load->view('admin/modals/update_brandcat.php'); ?>
@@ -324,7 +328,7 @@ $(document).ready(function() {
 
 	$('#modaladddis').click(function() {
 		$('#add_Brandvars').modal('toggle');
-		$('.btn-viewbrand').trigger('click');
+		// $('.btn-viewbrand').trigger('click');
 		
 	});
 	//--------------- ADD SIZES ---------------//
@@ -362,7 +366,7 @@ $(document).ready(function() {
 	$('#modaldis_addsize').click(function() {
 		
 		$('#add_brandsize').modal('toggle');
-		$('.btn-viewbrand').trigger('click');
+		// $('.btn-viewbrand').trigger('click');
 
 	});
 

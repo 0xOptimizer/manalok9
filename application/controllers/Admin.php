@@ -868,11 +868,27 @@ class Admin extends MY_Controller {
 
 		// VALIDATE VALUES
 		if ($prd_brand1 == null || $prd_line == null || $prd_type == null || $prd_variant == null || $prd_size == null || $prd_brand2 == null || $prd_char == null || $prd_chartype == null || $product_code == null || $unit_cost == null || $unit_price == null || $product_name == null || $product_description == null) {
+			
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Complete all required data.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect('admin/products');
 		}
 		// CHECK IF UID EXIST
 		$CheckUID = $this->Model_Selects->CheckUID($U_ID);
 		if ($CheckUID->num_rows() > 0) {
+
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Product exist! Please check UID code.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect('admin/products');
 		}
 		// CHECK PRODUCT IN DATABASE IF EXIST
@@ -880,6 +896,13 @@ class Admin extends MY_Controller {
 		$CheckProduct_byCode = $this->Model_Selects->CheckProduct_byCode($Code);
 		if ($CheckProduct_byCode->num_rows() > 0) {
 			// CANCEL INSERT PROMPT PRODUCT EXIST
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Product exist! Please check SKU code.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect('admin/products');
 		}
 		else
@@ -921,11 +944,26 @@ class Admin extends MY_Controller {
 				$this->session->set_flashdata('highlight-id', $product_code);
 				$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($product_description ? ' ' . $product_description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
 
+				$prompt_txt =
+				'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> New product added.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect('admin/products');
 			}
 			else
 			{
 				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please! Try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect('admin/products');
 			}
 		}
@@ -2165,17 +2203,37 @@ class Admin extends MY_Controller {
 			// UPDATE STATUS SET TO 2 = ARCHIVED
 			$MoveProd_toarchive = $this->Model_Updates->MoveProd_toarchive($Code);
 			if ($MoveProd_toarchive == true) {
+				// SUCCESS
+				$prompt_txt =
+				'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Product moved to archive.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 
 			}
 			else
 			{
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect($_SERVER['HTTP_REFERER']);
 
 			}
 		}
 		else
 		{
+			$prompt_txt =
+			'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Error!</strong> Product doesn\'t exist.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect($_SERVER['HTTP_REFERER']);
 
 		}
@@ -2215,6 +2273,14 @@ class Admin extends MY_Controller {
 		$UniqueID = $this->getToken($length);
 
 		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Complete all required data.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 		else
@@ -2225,6 +2291,14 @@ class Admin extends MY_Controller {
 			);
 			$CheckBrand_Char = $this->Model_Selects->CheckBrand_Char($data);
 			if ($CheckBrand_Char->num_rows() > 0) {
+
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Brand exist please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			else
@@ -2269,10 +2343,25 @@ class Admin extends MY_Controller {
 						$Insert_BrandVariants = $this->Model_Inserts->Insert_BrandVariants($data);
 					}
 					
+					$prompt_txt =
+					'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> New brand added.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					redirect($_SERVER['HTTP_REFERER']);
 				}
 				else
 				{
+
+					$prompt_txt =
+					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Error!</strong> Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					redirect($_SERVER['HTTP_REFERER']);
 				}
 			}
@@ -2294,6 +2383,14 @@ class Admin extends MY_Controller {
 		$prod_type_abbr = $this->input->post('prod_type_abbr');
 
 		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Complete all required data.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 		else
@@ -2317,22 +2414,53 @@ class Admin extends MY_Controller {
 					);
 					$Update_BrandProperty = $this->Model_Updates->Update_BrandProperty($UniqueID,$data);
 					if ($Update_BrandProperty == true) {
+
+						$prompt_txt =
+						'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Success!</strong> Brand updated.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
 						redirect($_SERVER['HTTP_REFERER']);
 
 					}
 					else
 					{
+
+						$prompt_txt =
+						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Property not updated.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 						redirect($_SERVER['HTTP_REFERER']);
 
 					}
 				}
 				else
 				{
+
+					$prompt_txt =
+					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Error!</strong> Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					redirect($_SERVER['HTTP_REFERER']);
 				}
 			}
 			else
 			{
+
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Brand doesn\'t exist.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 		}
@@ -2381,15 +2509,38 @@ class Admin extends MY_Controller {
 		if ($CheckBrand_id->num_rows() > 0) {
 			$RemoveVariantBrand = $this->Model_Deletes->RemoveVariantBrand($id);
 			if ($RemoveVariantBrand == true) {
+
+				$prompt_txt =
+				'<div class="alert alert-succes position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Variant removed.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			else
 			{
+
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 			}
 		}
 		else
 		{
+			$prompt_txt =
+			'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Error!</strong> Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 		}
 	}
@@ -2400,15 +2551,33 @@ class Admin extends MY_Controller {
 		if ($CheckSizeID->num_rows() > 0) {
 			$remove_size_id = $this->Model_Deletes->remove_size_id($id);
 			if ($remove_size_id == true) {
+				$prompt_txt =
+				'<div class="alert alert-succes position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Size removed.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			else
 			{
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 			}
 		}
 		else
 		{
+			$prompt_txt =
+			'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Error!</strong> Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 		}
 	}

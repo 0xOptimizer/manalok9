@@ -50,10 +50,13 @@ if ($this->session->flashdata('highlight-id')) {
 	  -moz-appearance: textfield;
 	}
 	.modal-content-custom  {
-    -webkit-border-radius: 0px !important;
-    -moz-border-radius: 0px !important;
-    border-radius: 0px !important; 
-}
+		-webkit-border-radius: 0px !important;
+		-moz-border-radius: 0px !important;
+		border-radius: 0px !important;
+	}
+	.alert {
+		border-radius: 0px;
+	}
 </style>
 
 </head>
@@ -149,7 +152,7 @@ if ($this->session->flashdata('highlight-id')) {
 												</a>
 											</span>
 											<span style="margin-right: 5px;">
-												<a id="update_prd" href="#" data-value="<?=$row['ID']?>">
+												<a class="update_prd" href="#" data-value="<?=$row['ID']?>">
 													<i class="bi bi-pencil" style="color: #229F4B;"></i>
 												</a>
 											</span>
@@ -169,6 +172,10 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
+
 <!-- New product modal -->
 <?php $this->load->view('admin/modals/add_productV2.php'); ?>
 <!-- New transactions modal -->
@@ -350,7 +357,7 @@ $(document).ready(function() {
 		});
 	}
 
-	$('#update_prd').on('click', function() {
+	$('.update_prd').on('click', function() {
 		var prd_id = $(this).attr('data-value');
 		Get_ProductJSON(prd_id)
 	});
