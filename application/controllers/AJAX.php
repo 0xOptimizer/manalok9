@@ -58,6 +58,20 @@ class AJAX extends CI_Controller {
 			echo json_encode($userHistory);
 		}
 	}
+	public function getUserRestrictions()
+	{
+		$id = $this->input->get('userID');
+		if (strlen($id) > 0) {
+			$userRestrictions = $this->Model_Selects->GetUserRestrictions($id)->result_array();
+
+			foreach ($userRestrictions as $key => $row) {
+
+				$userRestrictions[$key] = $row;
+			}
+
+			echo json_encode($userRestrictions);
+		}
+	}
 	public function validateEmailRegistration()
 	{
 		$email = $this->input->post('email');

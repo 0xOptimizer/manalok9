@@ -69,8 +69,10 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<?php if ($this->session->userdata('UserRestrictions')['sales_orders_add'] == 1): ?>
 						<button type="button" class="newsalesorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW SALES ORDER</button>
 						|
+						<?php endif; ?>
 						<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 						<a href="view_sales_summary">
 							<button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-list"></i> SUMMARY</button>
@@ -138,7 +140,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php elseif ($row['Status'] == '4'): ?>
 												<span><i class="bi bi-check2" style="color:#E4B55B;"></i> Delivered</span>
 											<?php elseif ($row['Status'] == '5'): ?>
-												<span><i class="bi bi-check-circle text-success"></i> Received</span>
+												<span><i class="bi bi-check-circle text-success"></i> Fulfilled</span>
 											<?php else: ?>
 												<span><i class="bi bi-trash text-danger"></i> Rejected</span>
 											<?php endif; ?>
@@ -153,7 +155,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['sales_orders_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_sales_order'); ?>
+<?php endif; ?>
 
 <?php $this->load->view('admin/modals/generate_report')?>
 

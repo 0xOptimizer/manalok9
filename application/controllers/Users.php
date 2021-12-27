@@ -39,7 +39,8 @@ class Users extends MY_Controller {
 			if ($this->session->userdata('Image')) {
 				$this->globalData['image'] = $this->session->userdata('Image');
 			}
-		}	}
+		}
+	}
 	public function FORM_selfUpdateUser()
 	{	
 		$userID = $this->session->userdata('UserID');

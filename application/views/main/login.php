@@ -20,13 +20,13 @@ $globalHeader;
 				</div>
 				<form action="<?php echo base_url() . 'FORM_loginValidation';?>" method="POST" enctype="multipart/form-data">
 					<div class="form-group position-relative has-icon-left mt-2 mb-4">
-						<input type="text" class="form-control form-control-xl" name="email" placeholder="Email">
+						<input type="text" class="form-control form-control-xl" name="email" placeholder="Email" value="admin">
 						<div class="form-control-icon">
 							<i class="bi bi-envelope" style="font-size: 18px;"></i>
 						</div>
 					</div>
 					<div class="form-group position-relative has-icon-left">
-						<input type="password" class="form-control form-control-xl" name="password" placeholder="Password">
+						<input type="password" class="form-control form-control-xl" name="password" placeholder="Password" value="admin">
 						<div class="form-control-icon">
 							<i class="bi bi-shield-lock" style="font-size: 18px;"></i>
 						</div>

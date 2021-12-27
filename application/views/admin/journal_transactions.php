@@ -41,7 +41,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
 						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW TRANSACTION</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -59,6 +61,7 @@ if ($this->session->flashdata('highlight-id')) {
 						<thead style="font-size: 12px;">
 							<th>DATE</th>
 							<th>DESCRIPTION</th>
+							<th></th>
 						</thead>
 						<tbody>
 							<?php
@@ -67,6 +70,11 @@ if ($this->session->flashdata('highlight-id')) {
 									<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
 										<td><?=$row['Date']?></td>
 										<td><?=$row['Description']?></td>
+										<td>
+											<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
+											<i class="bi bi-trash text-danger"></i>
+										<?php endif; ?>
+										</td>
 									</tr>
 							<?php endforeach;
 							endif; ?>
@@ -77,7 +85,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_journal_transaction'); ?>
+<?php endif; ?>
 <?php $this->load->view('admin/modals/journal_modal.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -99,7 +109,7 @@ $(document).ready(function() {
 	var table = $('#transactionsTable').DataTable( {
 		sDom: 'lrtip',
 		"bLengthChange": false,
-		"order": [[ 0, "asc" ]],
+		"order": [[ 0, "desc" ]],
 	});
 	$('#tableSearch').on('keyup change', function() {
 		table.search($(this).val()).draw();
@@ -110,7 +120,7 @@ $(document).ready(function() {
 	});
 
 	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
-	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES'];
+	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
 
 	function updTransactionCount() {
 		// update journal transaction count
@@ -139,12 +149,27 @@ $(document).ready(function() {
 			.attr({
 				class: 'account_row highlighted ' + this_row,
 			}).data('id', $('.account_row').length)
-			.append($('<td>').attr({
+			.append($('<td>').attr({ // column-1
 				class: ''
 			}).append($('<select>').attr({
 				class: 'select_accounts inpAccountID w-100'
-			})))
-			.append($('<td>').attr({
+			}).append($('<optgroup>').attr({
+				class: 'type_0',
+				label: 'REVENUES'
+			})).append($('<optgroup>').attr({
+				class: 'type_1',
+				label: 'ASSETS'
+			})).append($('<optgroup>').attr({
+				class: 'type_2',
+				label: 'LIABILITIES'
+			})).append($('<optgroup>').attr({
+				class: 'type_3',
+				label: 'EXPENSES'
+			})).append($('<optgroup>').attr({
+				class: 'type_4',
+				label: 'EQUITIES'
+			}))))
+			.append($('<td>').attr({ // column-2
 				class: ''
 			}).append($('<input>').attr({
 				class: 'inpDebit  w-100',
@@ -152,7 +177,7 @@ $(document).ready(function() {
 				min: '0',
 				value: 0
 			})))
-			.append($('<td>').attr({
+			.append($('<td>').attr({ // column-3
 				class: ''
 			}).append($('<input>').attr({
 				class: 'inpCredit  w-100',
@@ -167,9 +192,9 @@ $(document).ready(function() {
 		);
 
 		for (var i = accounts_list.length - 1; i >= 0; i--) {
-			$('.' + this_row + ' .select_accounts').append($('<option>').attr({
+			$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
 				value: accounts_list[i]['ID']
-			}).text(accounts_list[i]['Name'] + ' (' + account_types[accounts_list[i]['Type']] + ')'));
+			}).text(accounts_list[i]['Name']));
 		}
 
 		setTimeout(function() {
@@ -179,6 +204,10 @@ $(document).ready(function() {
 
 		updTransactionCount();
 	});
+
+	// add two two transaction accounts
+	$('.add-account-row').click(); $('.add-account-row').click();
+
 	$(document).on('click', '.remove-account-row', function() {
 		$(this).parents('tr').remove();
 

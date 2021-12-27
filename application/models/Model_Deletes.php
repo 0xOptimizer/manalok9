@@ -45,6 +45,7 @@ class Model_Deletes extends CI_Model {
 		$result = $this->db->delete('products_transactions');
 		return $result;
 	}
+
 	public function remove_brands($UniqueID)
 	{
 		$this->db->where('UniqueID', $UniqueID);
@@ -67,6 +68,12 @@ class Model_Deletes extends CI_Model {
 	{
 		$this->db->where('cart_id', $cart_id);
 		$result = $this->db->delete('cart_release');
+	}
+	
+	public function Delete_user_restriction($userID)
+	{
+		$this->db->where('UserID', $userID);
+		$result = $this->db->delete('user_restrictions');
 		return $result;
 	}
 

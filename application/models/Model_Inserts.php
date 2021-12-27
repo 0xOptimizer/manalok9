@@ -44,6 +44,12 @@ class Model_Inserts extends CI_Model {
 		return $result;
 	}
 
+	public function InsertUserRestrictions($data)
+	{
+		$result = $this->db->insert('user_restrictions', $data);
+		return $result;
+	}
+
 	// LOGBOOK
 	public function InsertLogbook($data)
 	{

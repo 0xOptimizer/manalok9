@@ -63,6 +63,7 @@ $globalHeader;
 						<tr>
 							<td>
 								<div class="row">
+									<?php if ($this->session->userdata('UserRestrictions')['users_add'] == 1): ?>
 									<div class="col-xs-12 col-sm-6 col-md-3">
 										<div class="card employee-card-hover employee-add-new">
 											<div class="card-body text-center">
@@ -72,6 +73,7 @@ $globalHeader;
 											</div>
 										</div>
 									</div>
+									<?php endif; ?>
 									<?php
 									$getAllUsers = $this->Model_Selects->GetAllUsers();
 									if ($getAllUsers->num_rows() > 0):
@@ -174,12 +176,16 @@ $globalHeader;
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['users_add'] == 1): ?>
 <!-- New user prompt -->
 <?php $this->load->view('admin/modals/users_registration.php'); ?>
 <!-- Create a new employee modal -->
 <?php $this->load->view('admin/modals/create_employee_modal.php'); ?>
+<?php endif; ?>
+<?php if ($this->session->userdata('UserRestrictions')['users_edit'] == 1): ?>
 <!-- Update employee modal -->
 <?php $this->load->view('admin/modals/update_employee_modal.php'); ?>
+<?php endif; ?>
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -197,6 +203,7 @@ $(document).ready(function() {
 	$('.employee-add-new').on('click', function() {
 		$('#userRegistration').modal('toggle');
 	});
+	// $('#UpdateEmployeeModal').modal('toggle');
 	$('.employee-standard-card').on('click', function() {
 		$('#UpdateDefaultImage').val($(this).data('image'));
 		$('#UpdateUserID').val($(this).data('userid'));
@@ -233,9 +240,24 @@ $(document).ready(function() {
 		$('.save-btn').html('<i class="bi bi-check-square"></i> Save Changes');
 		$('#UpdateEmployeeModal').modal('toggle');
 
+		var id = $('#UpdateUserID').val();
+		$('.allowedActions_Update .form-check-input').attr('disabled', '');
+		// get restrictions 
+		$.get('getUserRestrictions', { dataType: 'json', userID: id })
+		.done(function(data) {
+			var userRestrictions = $.parseJSON(data);
+			$('.allowedActions_Update .form-check-input').removeAttr('checked');
+			$.each(userRestrictions, function(index, val) {
+				if (val.Allowed == '1') {
+					$('.allowedActions_Update [name="'+ val.Action +'_update"][id$="_Update"]').attr('checked', '');
+				} else {
+					$('.allowedActions_Update [name="'+ val.Action +'_update"][id$="_Update"]').removeAttr('checked');
+				}
+			});
+		});
+
 		// get user logs
 		$('#attendanceLogTable tbody').html('');
-		var id = $('#UpdateUserID').val();
 		if ($(this).html().length > 0) {
 			$.get('getUserLogs', { dataType: 'json', userID: id })
 			.done(function(data) {
@@ -285,6 +307,13 @@ $(document).ready(function() {
 			});
 			$('#LoginPassword').attr('readonly', true);
 			$('.newpass-btn-group').fadeIn('fast');
+
+			$.each($('.allowedActions_Update .actionMain'), function(index, val) {
+				$(val).removeAttr('disabled');
+				if($(val).is(':checked')) {
+					$(val).parent().next('.actionSub').find('input').removeAttr('disabled');
+				}
+			});
 		} else {
 			$('#UpdateEmployeeModal').find('.modal-body').find('input').each(function() {
 				$(this).attr('readonly', true);
@@ -383,6 +412,15 @@ $(document).ready(function() {
 				// $('.comment-pen_' + id).html('<i class="bi bi-pen-fill"></i>');
 			}
 		});
+	});
+
+	$('body').on('click', '.actionMain', function() {
+		if($(this).is(':checked')) {
+			$(this).parent().next('.actionSub').find('input').removeAttr('disabled');
+		} else {
+			$(this).parent().next('.actionSub').find('input').prop('checked', false);
+			$(this).parent().next('.actionSub').find('input').attr('disabled', '');
+		}
 	});
 });
 </script>

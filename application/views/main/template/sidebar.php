@@ -20,49 +20,70 @@
 						<span>Dashboard</span>
 					</a>
 				</li>
-				<li class="sidebar-item sidebar-admin-products">
-					<a href="<?=base_url().'admin/products'?>" class='sidebar-link'>
-						<i class="bi bi-bag-fill"></i>
-						<span>Products</span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-release_product">
-					<a href="<?=base_url()?>admin/product_releasing" class='sidebar-link'>
-						<i class="bi bi-card-checklist"></i>
-						<span>Release </span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-restock_product">
-					<a href="<?=base_url()?>admin/product_restocking" class='sidebar-link'>
-						<i class="bi bi-card-list"></i>
-						<span>Restock </span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-inventory">
-					<a href="<?=base_url().'admin/inventory'?>" class='sidebar-link'>
-						<i class="bi bi-cart-fill"></i>
-						<span>Inventory</span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-employees">
-					<a href="<?=base_url().'admin/users'?>" class='sidebar-link'>
-						<i class="bi bi-person-lines-fill"></i>
-						<span>Users</span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-vendors pt-3">
-					<a href="<?=base_url().'admin/vendors'?>" class='sidebar-link'>
-						<i class="bi bi-shop-window"></i>
-						<span>Vendors</span>
-					</a>
-				</li>
-				<?php if ($this->session->userdata('Privilege') > 1): ?>
+				<?php if ($this->session->userdata('UserRestrictions')['products_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-products">
+						<a href="<?=base_url().'admin/products'?>" class='sidebar-link'>
+							<i class="bi bi-bag-fill"></i>
+							<span>Products</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['releasing_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-release_product">
+						<a href="<?=base_url()?>admin/product_releasing" class='sidebar-link'>
+							<i class="bi bi-card-checklist"></i>
+							<span>Release </span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['restocking_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-restock_product">
+						<a href="<?=base_url()?>admin/product_restocking" class='sidebar-link'>
+							<i class="bi bi-card-list"></i>
+							<span>Restock </span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['inventory_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-inventory">
+						<a href="<?=base_url().'admin/inventory'?>" class='sidebar-link'>
+							<i class="bi bi-cart-fill"></i>
+							<span>Inventory</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['users_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-employees">
+						<a href="<?=base_url().'admin/users'?>" class='sidebar-link'>
+							<i class="bi bi-person-lines-fill"></i>
+							<span>Users</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['vendors_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-vendors pt-3">
+						<a href="<?=base_url().'admin/vendors'?>" class='sidebar-link'>
+							<i class="bi bi-shop-window"></i>
+							<span>Vendors</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-purchase-orders">
 						<a href="<?=base_url().'admin/purchase_orders'?>" class='sidebar-link'>
 							<i class="bi bi-receipt"></i>
 							<span>Purchase Orders</span>
 						</a>
 					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['bills_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-bills">
 						<a href="<?=base_url().'admin/bills'?>" class='sidebar-link'>
 							<i class="bi bi-cash"></i>
@@ -70,19 +91,26 @@
 						</a>
 					</li>
 				<?php endif; ?>
-				<li class="sidebar-item sidebar-admin-clients pt-3">
-					<a href="<?=base_url().'admin/clients'?>" class='sidebar-link'>
-						<i class="bi bi-people-fill"></i>
-						<span>Clients</span>
-					</a>
-				</li>
-				<?php if ($this->session->userdata('Privilege') > 1): ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['clients_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-clients pt-3">
+						<a href="<?=base_url().'admin/clients'?>" class='sidebar-link'>
+							<i class="bi bi-people-fill"></i>
+							<span>Clients</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['sales_orders_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-sales-orders">
 						<a href="<?=base_url().'admin/sales_orders'?>" class='sidebar-link'>
 							<i class="bi bi-receipt"></i>
 							<span>Sales Orders</span>
 						</a>
 					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['invoice_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-invoices">
 						<a href="<?=base_url().'admin/invoices'?>" class='sidebar-link'>
 							<i class="bi bi-cash"></i>
@@ -90,20 +118,27 @@
 						</a>
 					</li>
 				<?php endif; ?>
-				
+
+				<?php if ($this->session->userdata('UserRestrictions')['accounts_view'] == 1 || $this->session->userdata('UserRestrictions')['accounts_view'] == 1): ?>
 				<li class="sidebar-title">ACCOUNTING</li>
-				<li class="sidebar-item sidebar-admin-accounting-accounts">
-					<a href="<?=base_url().'admin/accounts'?>" class='sidebar-link'>
-						<i class="bi bi-list-ul"></i>
-						<span>Accounts</span>
-					</a>
-				</li>
-				<li class="sidebar-item sidebar-admin-accounting-journal-transactions">
-					<a href="<?=base_url().'admin/journals'?>" class='sidebar-link'>
-						<i class="bi bi-list-ul"></i>
-						<span>Journal Transactions</span>
-					</a>
-				</li>
+				<?php endif; ?>
+				<?php if ($this->session->userdata('UserRestrictions')['accounts_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-accounting-accounts">
+						<a href="<?=base_url().'admin/accounts'?>" class='sidebar-link'>
+							<i class="bi bi-list-ul"></i>
+							<span>Accounts</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-accounting-journal-transactions">
+						<a href="<?=base_url().'admin/journals'?>" class='sidebar-link'>
+							<i class="bi bi-list-ul"></i>
+							<span>Journal Transactions</span>
+						</a>
+					</li>
+				<?php endif; ?>
 
 				<li class="sidebar-title">SETTINGS</li>
 				<!-- <li class="sidebar-item sidebar-admin-settings-itemcode">
@@ -112,12 +147,15 @@
 						<span>Item Code </span>
 					</a>
 				</li> -->
-				<li class="sidebar-item sidebar-admin-settings-bcat">
-					<a href="<?=base_url().'admin/view_settings_bcat'?>" class='sidebar-link'>
-						<i class="bi bi-list-ol"></i>
-						<span>Brand Category</span>
-					</a>
-				</li>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['brand_category_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-settings-bcat">
+						<a href="<?=base_url().'admin/view_settings_bcat'?>" class='sidebar-link'>
+							<i class="bi bi-list-ol"></i>
+							<span>Brand Category</span>
+						</a>
+					</li>
+				<?php endif; ?>
 				<!-- <li class="sidebar-item sidebar-admin-transactions">
 					<a href="<?=base_url().'admin/view_transactions'?>" class='sidebar-link'>
 						<i class="bi bi-journal"></i>
@@ -126,19 +164,21 @@
 				</li> -->
 
 				<li class="sidebar-title">YOUR CORNER</li>
-
+	
 				<li class="sidebar-item sidebar-employee-attendance">
 					<a href="<?=base_url().'user'?>" class='sidebar-link'>
 						<i class="bi bi-person-badge-fill"></i>
 						<span>My Activities</span>
 					</a>
 				</li>
-				<li class="sidebar-item sidebar-employee-trash">
-					<a href="<?=base_url()?>admin/trash_bin" class='sidebar-link'>
-						<i class="bi bi-trash-fill"></i>
-						<span>Trash Bin</span>
-					</a>
-				</li>
+				<?php if ($this->session->userdata('UserRestrictions')['trash_bin_view'] == 1): ?>
+					<li class="sidebar-item sidebar-employee-trash">
+						<a href="<?=base_url()?>admin/trash_bin" class='sidebar-link'>
+							<i class="bi bi-trash-fill"></i>
+							<span>Trash Bin</span>
+						</a>
+					</li>
+				<?php endif; ?>
 
 				<!-- <li class="sidebar-title">DEMO</li> -->
 
