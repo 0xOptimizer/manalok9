@@ -94,11 +94,7 @@ class AJAX extends CI_Controller {
 	}
 	public function sendRegistrationEmail()
 	{
-		use PHPMailer\PHPMailer\PHPMailer;
-		use PHPMailer\PHPMailer\SMTP;
-		use PHPMailer\PHPMailer\Exception;
 
-		require 'vendor/autoload.php';
 
 		$email = $this->input->post('email');
 
@@ -120,10 +116,10 @@ class AJAX extends CI_Controller {
 				$smtp->SMTPDebug  = 1;  
 				$smtp->SMTPAuth   = TRUE;
 				$smtp->SMTPSecure = 'tls';
-				$smtp->Port       = 465;
+				$smtp->Port       = 587;
 				$smtp->Host       = 'smtp.gmail.com';
 				$smtp->Username   = 'devt5599@gmail.com';
-				$smtp->Password   = 'team_dev2021_test';
+				$smtp->Password   = '';
 				// ~ email content
 				$smtp->IsHTML(true);
 				$smtp->AddAddress($email, 'recipient-name');
