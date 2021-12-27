@@ -399,6 +399,7 @@ $(document).ready(function() {
 				$('.send-email-banners-group').removeClass('.opacity-4');
 				$('.send-email-banners-group').html(response);
 				$('.registration-email-icon').hide();
+				console.log(response);
 			},
 			error: function(xhr, textStatus, error){
 				$('.send-registration-email-btn').html('<i class="bi bi-check-square"></i> Send Form to Email');
@@ -425,5 +426,6 @@ $(document).ready(function() {
 });
 </script>
 </body>
+
 
 </html>

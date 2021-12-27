@@ -2922,5 +2922,17 @@ class Admin extends MY_Controller {
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 	}
-
+	public function Email_Settings()
+	{
+		$config = Array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'devt5599@gmail.com',
+			'smtp_pass' => 'team_dev2021_test',
+			'mailtype'  => 'html', 
+			'charset'   => 'iso-8859-1'
+		);
+		$this->load->library('email', $config);
+	}
 }
