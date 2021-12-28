@@ -95,6 +95,12 @@ class Main extends MY_Controller {
 								$fullName = $fullName . '...';
 								$isFullNameHoverable = true;
 							}
+
+							$UserRestrictions = array();
+							foreach ($this->Model_Selects->GetUserRestrictions($row['UserID'])->result_array() as $restrictions) {
+								$UserRestrictions[$restrictions['Action']] = $restrictions['Allowed'];
+							}
+
 							$data = array(
 								'UserID' => $row['UserID'],
 								'FirstName' => $firstName,
@@ -104,6 +110,7 @@ class Main extends MY_Controller {
 								'Image' => $row['Image'],
 								'FullName' => $fullName,
 								'Privilege' => ($row['Privilege'] ? $row['Privilege'] : '0'),
+								'UserRestrictions' => $UserRestrictions,
 							);
 							$this->session->set_userdata($data);
 							$historyData = array(
@@ -131,7 +138,7 @@ class Main extends MY_Controller {
 						$historyData = array(
 							'UserID' => $row['UserID'],
 							'LoginEmail' => $email,
-							'LoginPassword' => $password,
+							'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 							'Agent' => $agent,
 							'Platform' => $platform,
 							'IPAddress' => $ipAddress,
@@ -153,7 +160,7 @@ class Main extends MY_Controller {
 					$historyData = array(
 						'UserID' => $loginRow['UserID'],
 						'LoginEmail' => $email,
-						'LoginPassword' => $password,
+						'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 						'Agent' => $agent,
 						'Platform' => $platform,
 						'IPAddress' => $ipAddress,
@@ -173,9 +180,9 @@ class Main extends MY_Controller {
 						</div>';
 				$this->session->set_flashdata('prompt',$p_text);
 				$historyData = array(
-					'UserID' => $row['UserID'],
+					'UserID' => '',
 					'LoginEmail' => $email,
-					'LoginPassword' => $password,
+					'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 					'Agent' => $agent,
 					'Platform' => $platform,
 					'IPAddress' => $ipAddress,

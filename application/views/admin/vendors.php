@@ -40,7 +40,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<?php if ($this->session->userdata('UserRestrictions')['vendors_add'] == 1): ?>
 						<button type="button" class="newvendor-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-shop-window"></i> NEW VENDOR</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -69,7 +71,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php
 							if ($getVendors->num_rows() > 0):
 								foreach ($getVendors->result_array() as $row): ?>
-									<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
+									<tr class="tr_class_modal" data-no="<?=$row['VendorNo']?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
@@ -92,8 +94,12 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['ProductServiceKind']?>
 										</td>
 										<td>
+											<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
 											<i class="bi bi-pencil btn-update-vendor"></i>
+											<?php endif; ?>
+											<?php if ($this->session->userdata('UserRestrictions')['vendors_delete'] == 1): ?>
 											<i class="bi bi-trash text-danger"></i>
+											<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -106,9 +112,13 @@ if ($this->session->flashdata('highlight-id')) {
 	</div>
 </div>
 <!-- New vendor modal -->
+<?php if ($this->session->userdata('UserRestrictions')['vendors_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_vendor.php'); ?>
+<?php endif; ?>
 <?php $this->load->view('admin/modals/vendor_modal.php'); ?>
+<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
 <?php $this->load->view('admin/modals/update_vendor.php'); ?>
+<?php endif; ?>
 
 <?php $this->load->view('admin/modals/generate_report')?>
 
@@ -132,6 +142,13 @@ $(document).ready(function() {
 	$('.newvendor-btn').on('click', function() {
 		$('#newVendorModal').modal('toggle');
 	});
+
+	if(window.location.hash && window.location.hash.substring(0, 3) == '#V-') {
+		var vendor_no = window.location.hash.substring(1, 9);
+		$('#VendorModal').modal('toggle');
+		getVendorDetails(vendor_no);
+	}
+
 	
 	var table = $('#vendorsTable').DataTable( {
 		sDom: 'lrtip',
@@ -193,12 +210,12 @@ $(document).ready(function() {
 		table.search($(this).val()).draw();
 	});
 
-	function getVendorDetails(vendor_id) {
+	function getVendorDetails(vendor_no) {
 		$.ajax({
 			url: 'getVendorDetails',
 			type: 'GET',
 			dataType: 'JSON',
-			data: { vendor_id : vendor_id } ,
+			data: { vendor_no : vendor_no } ,
 			success: function (response) {
 				$('.m_vendorid').text(response.ID).val(response.ID);
 				$('.m_vendorno').text(response.VendorNo).val(response.VendorNo);
@@ -215,13 +232,13 @@ $(document).ready(function() {
 	}
 	$('.tr_class_modal').on('click', function() {
 		$('#VendorModal').modal('toggle');
-		getVendorDetails($(this).data('id'));
+		getVendorDetails($(this).data('no'));
 	}).on('click', 'i', function(e) {
 		e.stopPropagation();
 	});
 	$('.btn-update-vendor').on('click', function() {
 		$('#UpdateVendorModal').modal('toggle');
-		getVendorDetails($(this).parents('tr').data('id'));
+		getVendorDetails($(this).parents('tr').data('no'));
 	});
 });
 </script>

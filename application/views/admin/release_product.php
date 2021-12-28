@@ -63,17 +63,20 @@ date_default_timezone_set('Asia/Manila');
 									ORDER #
 								</th>
 								<th>
-									AMOUNT
+									QUANTITY
 								</th>
 								<th>
 									PRICE
 								</th>
 								<th>
-									DATE ADDED
+									TOTAL
 								</th>
 								<th>
-									ACTION
+									DATE ADDED
 								</th>
+								<!-- <th>
+									ACTION
+								</th> -->
 							</tr>
 						</thead>
 						<tbody>
@@ -103,9 +106,12 @@ date_default_timezone_set('Asia/Manila');
 										<?php print $row['PriceUnit']; ?>
 									</td>
 									<td>
+										<?php print $row['PriceTotal']; ?>
+									</td>
+									<td>
 										<?php print $row['DateAdded']; ?>
 									</td>
-									<td width="100" class="text-center">
+									<!-- <td width="100" class="text-center">
 										<a style="color: #4081E3;" href="#">
 											<span><i style="font-size: 18px;" class="bi bi-eye"></i></span>
 										</a>
@@ -115,7 +121,7 @@ date_default_timezone_set('Asia/Manila');
 										<a style="color: #C84534 ;" href="<?=base_url()?>admin/remove_thisicode?uid=">
 											<span><i style="font-size: 24px;" class="bi bi-x"></i></span>
 										</a>
-									</td>
+									</td> -->
 								</tr>
 							<?php endforeach ?>
 						</tbody>

@@ -6,7 +6,7 @@ date_default_timezone_set('Asia/Manila');
 // Fetch Accounts
 $getAccounts = $this->Model_Selects->GetAccounts();
 
-$account_types = array('REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES');
+$account_types = array('REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY');
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -41,9 +41,11 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php endif; ?>
 						</h3>
 					</div>
+					<?php if ($this->session->userdata('UserRestrictions')['accounts_add'] == 1): ?>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
 						<button type="button" class="newaccount-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW ACCOUNT</button>
 					</div>
+					<?php endif; ?>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
@@ -84,7 +86,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['accounts_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_account'); ?>
+<?php endif; ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

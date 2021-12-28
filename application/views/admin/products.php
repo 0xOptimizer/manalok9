@@ -50,10 +50,13 @@ if ($this->session->flashdata('highlight-id')) {
 	  -moz-appearance: textfield;
 	}
 	.modal-content-custom  {
-    -webkit-border-radius: 0px !important;
-    -moz-border-radius: 0px !important;
-    border-radius: 0px !important; 
-}
+		-webkit-border-radius: 0px !important;
+		-moz-border-radius: 0px !important;
+		border-radius: 0px !important;
+	}
+	.alert {
+		border-radius: 0px;
+	}
 </style>
 
 </head>
@@ -100,11 +103,11 @@ if ($this->session->flashdata('highlight-id')) {
 					</div>
 				</div>
 			</div>
+
 			<section class="section">
 				<div class="table-responsive">
 					<table id="productsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th>ID</th>
 							<th>BARCODE</th>
 							<th>CODE</th>
 							<th>NAME</th>
@@ -115,15 +118,10 @@ if ($this->session->flashdata('highlight-id')) {
 							<th></th>
 						</thead>
 						<tbody>
-							<!-- TEMPORARY REMOVED -->
-							<!-- data-code="<?=$row['Code'];?>" data-urlredirect="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>" -->
 							<?php
 							if ($getAllProductsv2->num_rows() > 0):
 								foreach ($getAllProductsv2->result_array() as $row): ?>
 									<tr>
-										<td>
-											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-										</td>
 										<td width="100">
 											<div class="p-2 text-center" style="background-color: white;">
 												<img src="<?=base_url();?><?=$row['Barcode_Images']?>" width="95" alt="No image">
@@ -154,7 +152,7 @@ if ($this->session->flashdata('highlight-id')) {
 												</a>
 											</span>
 											<span style="margin-right: 5px;">
-												<a href="#">
+												<a class="update_prd" href="#" data-value="<?=$row['ID']?>">
 													<i class="bi bi-pencil" style="color: #229F4B;"></i>
 												</a>
 											</span>
@@ -174,13 +172,18 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
+
 <!-- New product modal -->
-<?php $this->load->view('admin/modals/add_product.php'); ?>
 <?php $this->load->view('admin/modals/add_productV2.php'); ?>
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_transaction.php'); ?>
 <!-- Prompts modal -->
 <?php $this->load->view('admin/modals/prompts/prompt_delete.php'); ?>
+<!-- Update modal -->
+<?php $this->load->view('admin/modals/update_product.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -330,7 +333,60 @@ $(document).ready(function() {
 			}
 		});
 	});
-	
+	// UPDATE PRODUCT
+	function Get_ProductJSON(prd_id) {
+
+		$.ajax({
+			url: '<?=base_url()?>Get_ProductJSON',
+			type: 'post',
+			data: { prd_id : prd_id } ,
+			success: function (result) {
+				var data = $.parseJSON(result);
+				console.log(data);
+				$('#txt_code').text(data['prd_details'].Code);
+				$('#txt_id').val(data['prd_details'].ID);
+				
+				$('#unit_price_uid').val(data['prd_details'].Price_PerItem);
+				$('#unit_cost_uid').val(data['prd_details'].Cost_PerItem);
+
+				$('#update_prdModal').modal('toggle');
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus, errorThrown);
+			}
+		});
+	}
+
+	$('.update_prd').on('click', function() {
+		var prd_id = $(this).attr('data-value');
+		Get_ProductJSON(prd_id)
+	});
+
+	$('#modal_dis').on('click', function() {
+		$('#update_prdModal').modal('toggle');
+	});
+	(function($) {
+		$.fn.inputFilter = function(inputFilter) {
+			return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function() {
+				if (inputFilter(this.value)) {
+					this.oldValue = this.value;
+					this.oldSelectionStart = this.selectionStart;
+					this.oldSelectionEnd = this.selectionEnd;
+				} else if (this.hasOwnProperty("oldValue")) {
+					this.value = this.oldValue;
+					this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+				} else {
+					this.value = "";
+				}
+			});
+		};
+	}(jQuery));
+	$("#unit_price_uid").inputFilter(function(value) {
+  		return /^-?\d*$/.test(value);
+  	});
+  	$("#unit_cost_uid").inputFilter(function(value) {
+  		return /^-?\d*$/.test(value);
+  	});
 });
 </script>
 

@@ -40,7 +40,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<?php if ($this->session->userdata('UserRestrictions')['clients_add'] == 1): ?>
 						<button type="button" class="newclient-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-people-fill"></i> NEW CLIENT</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -69,7 +71,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php
 							if ($getClients->num_rows() > 0):
 								foreach ($getClients->result_array() as $row): ?>
-									<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
+									<tr class="tr_class_modal" data-no="<?=$row['ClientNo']?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
@@ -98,8 +100,12 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['TerritoryManager']?>
 										</td>
 										<td>
+											<?php if ($this->session->userdata('UserRestrictions')['clients_edit'] == 1): ?>
 											<i class="bi bi-pencil btn-update-client"></i>
+											<?php endif; ?>
+											<?php if ($this->session->userdata('UserRestrictions')['clients_delete'] == 1): ?>
 											<i class="bi bi-trash text-danger"></i>
+											<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -111,10 +117,14 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['clients_add'] == 1): ?>
 <!-- New client modal -->
 <?php $this->load->view('admin/modals/add_client.php'); ?>
+<?php endif; ?>
 <?php $this->load->view('admin/modals/client_modal.php'); ?>
+<?php if ($this->session->userdata('UserRestrictions')['clients_edit'] == 1): ?>
 <?php $this->load->view('admin/modals/update_client.php'); ?>
+<?php endif; ?>
 
 <script src="<?=base_url()?>assets/clients/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>assets/js/bootstrap.bundle.min.js"></script>
@@ -134,6 +144,12 @@ $(document).ready(function() {
 	$('.newclient-btn').on('click', function() {
 		$('#newClientModal').modal('toggle');
 	});
+
+	if(window.location.hash && window.location.hash.substring(0, 3) == '#C-') {
+		var client_no = window.location.hash.substring(1, 9);
+		$('#ClientModal').modal('toggle');
+		getClientDetails(client_no);
+	}
 	
 	var table = $('#clientsTable').DataTable( {
 		sDom: 'lrtip',
@@ -144,12 +160,12 @@ $(document).ready(function() {
 		table.search($(this).val()).draw();
 	});
 
-	function getClientDetails(client_id) {
+	function getClientDetails(client_no) {
 		$.ajax({
 			url: 'getClientDetails',
 			type: 'GET',
 			dataType: 'JSON',
-			data: { client_id : client_id } ,
+			data: { client_no : client_no } ,
 			success: function (response) {
 				$('.m_clientid').text(response.ID).val(response.ID);
 				$('.m_clientno').text(response.ClientNo).val(response.ClientNo);
@@ -177,13 +193,13 @@ $(document).ready(function() {
 	}
 	$('.tr_class_modal').on('click', function() {
 		$('#ClientModal').modal('toggle');
-		getClientDetails($(this).data('id'));
+		getClientDetails($(this).data('no'));
 	}).on('click', 'i', function(e) {
 		e.stopPropagation();
 	});
 	$('.btn-update-client').on('click', function() {
 		$('#UpdateClientModal').modal('toggle');
-		getClientDetails($(this).parents('tr').data('id'));
+		getClientDetails($(this).parents('tr').data('no'));
 	});
 });
 </script>

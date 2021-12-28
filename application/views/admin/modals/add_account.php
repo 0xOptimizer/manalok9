@@ -18,6 +18,7 @@
 								<option value="1"> ASSETS </option>
 								<option value="2"> LIABILITIES </option>
 								<option value="3"> EXPENSES </option>
+								<option value="4"> EQUITY </option>
 							</select>
 						</div>
 						<div class="form-group col-sm-12">

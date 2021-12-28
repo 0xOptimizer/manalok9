@@ -51,7 +51,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 							<?php elseif ($purchaseOrder['Status'] == '2'): ?>
-								<span class="info-banner-sm"><i class="bi bi-cash" style="color:#E4B55B;"></i> Received</span>
+								<span class="info-banner-sm text-success"><i class="bi bi-check-circle"></i> Received</span>
 							<?php else: ?>
 								<span class="info-banner-sm text-danger"><i class="bi bi-trash"></i> Rejected</span>
 							<?php endif; ?>
@@ -71,14 +71,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 										<th class="text-center">TRANSACTION ID</th>
 										<th class="text-center">AMOUNT</th>
 										<th class="text-center">PRICE</th>
-										<th class="text-center">TRANSACTION DATE</th>
-										<?php if ($purchaseOrder['Status'] != '0'): ?>
-											<th class="text-center">STATUS</th>
-										<?php endif; ?>
-										<th class="text-center">USER</th>
-										<?php if ($purchaseOrder['Status'] == '1'): ?>
-											<th></th>
-										<?php endif; ?>
+										<th class="text-center">TOTAL</th>
 									</thead>
 									<tbody>
 										<?php
@@ -101,38 +94,13 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 														<?=number_format($row['PriceUnit'], 2)?>
 													</td>
 													<td class="text-center">
-														<?=$row['Date']?>
+														<?=number_format($row['Amount'].$row['PriceUnit'], 2)?>
 													</td>
-													<?php if ($purchaseOrder['Status'] != '0'): ?>
-														<td class="text-center">
-															<?php if ($row['Status'] == '0'): ?>
-																<span class="text-center info-banner-sm">
-																	<i class="bi bi-asterisk"></i>&nbsp;Pending
-																</span>
-															<?php elseif ($row['Status'] == '1'): ?>
-																<span class="text-center success-banner-sm">
-																	<i class="bi bi-check-circle-fill"></i>&nbsp;Approved
-																</span>
-															<?php endif; ?>
-														</td>
-													<?php endif; ?>
-													<td class="text-center">
-														<?=$row['UserID']?>
-													</td>
-													<?php if ($purchaseOrder['Status'] == '1'): ?>
-														<td class="text-center">
-															<i class="bi bi-x-square text-danger removeot-btn" data-transactionid="<?=$row['TransactionID']?>"></i>
-														</td>
-													<?php endif; ?>
 												</tr>
 										<?php endforeach;
 										endif; ?>
 									</tbody>
 								</table>
-								<form id="removePurchaseOrderTransaction" action="<?php echo base_url() . 'FORM_removePurchaseOrderTransaction';?>" method="POST" enctype="multipart/form-data">
-									<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
-									<input id="rOTTransactionID" type="hidden" name="transaction_id">
-								</form>
 							</div>
 						</div>
 					</div>
@@ -151,7 +119,11 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 							?>
 							<div class="col-12 mb-3">
 								<h6>PURCHASED FROM</h6>
-								<label><?=$v_details['Name']?> (<?=$purchaseOrder['VendorNo']?>)</label>
+								<label><?=$v_details['Name']?> (
+									<a href="<?=base_url() . 'admin/vendors#'. $purchaseOrder["VendorNo"]?>">
+										<i class="bi bi-eye"></i> <?=$purchaseOrder['VendorNo']?>
+									</a>
+								)</label>
 							</div>
 							<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($purchaseOrder['OrderNo']); ?>
 							<div class="col-12 mb-2">
@@ -190,7 +162,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 									</div>
 								</div>
 							</div>
-							<?php if ($purchaseOrder['Status'] == '1'): ?>
+							<?php if ($purchaseOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['purchase_orders_approve'] == 1): ?>
 								<div class="col-12 text-center">
 									<form id="approvePurchaseOrder" action="<?php echo base_url() . 'FORM_approvePurchaseOrder';?>" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
@@ -214,11 +186,13 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 						</h3>
 					</div>
 				</div>
+				<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
 				<div class="row">
 					<div class="col-12">
 						<button type="button" class="purchasebilling-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
 					</div>
 				</div>
+				<?php endif; ?>
 			</div>
 			<section>
 				<div class="row">
@@ -259,50 +233,6 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 									</tr>
 							<?php endforeach;
 							endif; ?>
-								<!-- <tr>
-									<td class="text-center">
-										<span class="db-identifier" style="font-style: italic; font-size: 12px;">
-											1
-										</span>
-									</td>
-									<td class="text-center">
-										B-000001
-									</td>
-									<td class="text-center">
-										John Doe
-									</td>
-									<td class="text-center">
-										500.00
-									</td>
-									<td class="text-center">
-										2021-10-22
-									</td>
-									<td class="text-center">
-										CASH
-									</td>
-								</tr>
-								<tr>
-									<td class="text-center">
-										<span class="db-identifier" style="font-style: italic; font-size: 12px;">
-											2
-										</span>
-									</td>
-									<td class="text-center">
-										B-000002
-									</td>
-									<td class="text-center">
-										Jane Doe
-									</td>
-									<td class="text-center">
-										1,500.00
-									</td>
-									<td class="text-center">
-										2021-10-24
-									</td>
-									<td class="text-center">
-										CASH
-									</td>
-								</tr> -->
 								<?php
 								$total_bill_amount = $this->Model_Selects->GetTotalBillsByPONo($purchaseOrder['OrderNo'])->row_array()['Amount'];
 								?>
@@ -324,6 +254,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 		</div>
 	</div>
 </div>
+<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
 <div class="modal fade" id="PurchaseBilling" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
 		<form id="formAddPOBill" action="<?php echo base_url() . 'FORM_addPOBill';?>" method="POST">
@@ -398,6 +329,7 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 		</form>
 	</div>
 </div>
+<?php endif; ?>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

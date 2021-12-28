@@ -58,6 +58,20 @@ class AJAX extends CI_Controller {
 			echo json_encode($userHistory);
 		}
 	}
+	public function getUserRestrictions()
+	{
+		$id = $this->input->get('userID');
+		if (strlen($id) > 0) {
+			$userRestrictions = $this->Model_Selects->GetUserRestrictions($id)->result_array();
+
+			foreach ($userRestrictions as $key => $row) {
+
+				$userRestrictions[$key] = $row;
+			}
+
+			echo json_encode($userRestrictions);
+		}
+	}
 	public function validateEmailRegistration()
 	{
 		$email = $this->input->post('email');
@@ -80,7 +94,10 @@ class AJAX extends CI_Controller {
 	}
 	public function sendRegistrationEmail()
 	{
+
+
 		$email = $this->input->post('email');
+
 		if ($email) {
 			// ~ create token
 			$token = bin2hex(random_bytes(24));
@@ -101,7 +118,7 @@ class AJAX extends CI_Controller {
 				$smtp->SMTPSecure = 'tls';
 				$smtp->Port       = 587;
 				$smtp->Host       = 'smtp.gmail.com';
-				$smtp->Username   = 'jysantos099@gmail.com';
+				$smtp->Username   = 'devt5599@gmail.com';
 				$smtp->Password   = '';
 				// ~ email content
 				$smtp->IsHTML(true);
@@ -509,6 +526,45 @@ class AJAX extends CI_Controller {
 				echo $result;
 				exit();
 			}
+		}
+	}
+	public function Get_ProductJSON()
+	{
+		$ID = $this->input->post('prd_id');
+		// GET PRODUCT DATA
+		$GetProduct_ID = $this->Model_Selects->GetProduct_ID($ID);
+		if ($GetProduct_ID->num_rows() > 0) {
+			// FOUND GET DETAILS AND PROPERTIES
+			$prd_result = $GetProduct_ID->row_array();
+
+			$item_code = $prd_result['Code'];
+
+			$GetProduct_Prop = $this->Model_Selects->GetProduct_Prop($item_code);
+			if ($GetProduct_Prop->num_rows() > 0) {
+				$prd_result_prop = $GetProduct_Prop->row_array();
+			}
+
+			$data['prd_status'] = array(
+				'status' => 'success',
+				'message' => 'product details fetch',
+			);
+			$data['prd_details'] = $prd_result;
+			$data['prd_properties'] = $prd_result_prop;
+			
+			$result = json_encode($data);
+			echo $result;
+			exit();
+		}
+		else
+		{
+			// NOT FOUND
+			$data['prd_status'] = array(
+				'status' => 'error',
+				'message' => 'product doesn\'t exist',
+			);
+			$result = json_encode($data);
+			echo $result;
+			exit();
 		}
 	}
 }

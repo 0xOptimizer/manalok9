@@ -122,6 +122,14 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('logbook'); 
 		return $result;
 	}
+	public function GetUserRestrictions($userID)
+	{
+		$this->db->select('Action, Allowed');
+		$this->db->where('UserID', $userID);
+		$this->db->order_by('ID', 'asc');
+		$result = $this->db->get('user_restrictions'); 
+		return $result;
+	}
 	public function GetDashboardLogs()
 	{
 		$this->db->select('*');
@@ -371,7 +379,7 @@ class Model_Selects extends CI_Model {
 	public function GetAccountSelection()
 	{
 		$this->db->select('*');
-		$this->db->order_by('Name', 'desc');
+		$this->db->order_by('Type', 'desc');
 		$result = $this->db->get('accounts');  
 		return $result;
 	}
@@ -407,7 +415,8 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->order_by('ID', 'desc');
-		$result = $this->db->get('journal_transactions');  
+		$this->db->where('EXISTS(SELECT ID FROM journals WHERE journals.ID = journal_transactions.JournalID)');
+		$result = $this->db->get('journal_transactions');
 		return $result;
 	}
 	public function GetTransactionByID($id)
@@ -673,6 +682,55 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('ID', $ID);
 		$result = $this->db->get('products');
+		return $result;
+	}
+	public function ChecBrand_Cat($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_category');
+		return $result;
+	}
+	public function ChecBrand_Prop($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_properties');
+		return $result;
+	}
+	public function ChecBrand_Size($UniqueID)
+	{
+		$this->db->select('*');
+		$this->db->where('UniqueID', $UniqueID);
+		$result = $this->db->get('brand_size');
+		return $result;
+	}
+	public function GetProduct_ID($ID)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $ID);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function GetProduct_Prop($item_code)
+	{
+		$this->db->select('*');
+		$this->db->where('item_code', $item_code);
+		$result = $this->db->get('product_details');
+		return $result;
+	}
+	public function CheckProduct_BY_ID($ID)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $ID);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function CheckCart_ByID($cart_id)
+	{
+		$this->db->select('*');
+		$this->db->where('cart_id', $cart_id);
+		$result = $this->db->get('cart_release');
 		return $result;
 	}
 }

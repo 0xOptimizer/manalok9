@@ -22,6 +22,13 @@ class Model_Updates extends CI_Model {
 			return $result;
 		}
 	}
+	public function UpdateUserRestriction($userID, $action, $data)
+	{
+		$this->db->where(array('UserID'=> $userID, 'Action' => $action));
+		$result = $this->db->update('user_restrictions', $data);
+		return $result;
+	}
+
 	public function UpdateStocksCount($code, $inStock)
 	{
 		$this->db->where('Code', $code);
@@ -222,6 +229,18 @@ class Model_Updates extends CI_Model {
 		$this->db->where('ID', $ID);
 	   $this->db->update('products',array('Status' => 1, ));
 	   return true;
+	}
+	public function UpdatePriceProduct($ID,$data)
+	{
+		$this->db->where('ID', $ID);
+	   $this->db->update('products',$data);
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 }

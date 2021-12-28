@@ -344,6 +344,51 @@ class Admin extends MY_Controller {
 		$comment = $this->input->post('adminComment');
 		$privilege = $this->input->post('userPrivilege');
 
+		// USER RESTRICTIONS
+		$userRestrictions = array(
+			'products_view' => $this->input->post('products_view'),
+			'products_add' => $this->input->post('products_add'),
+			'products_edit' => $this->input->post('products_edit'),
+			'products_delete' => $this->input->post('products_delete'),
+			'releasing_view' => $this->input->post('releasing_view'),
+			'restocking_view' => $this->input->post('restocking_view'),
+			'inventory_view' => $this->input->post('inventory_view'),
+			'users_view' => $this->input->post('users_view'),
+			'users_add' => $this->input->post('users_add'),
+			'users_edit' => $this->input->post('users_edit'),
+			'vendors_view' => $this->input->post('vendors_view'),
+			'vendors_add' => $this->input->post('vendors_add'),
+			'vendors_edit' => $this->input->post('vendors_edit'),
+			'vendors_delete' => $this->input->post('vendors_delete'),
+			'purchase_orders_view' => $this->input->post('purchase_orders_view'),
+			'purchase_orders_add' => $this->input->post('purchase_orders_add'),
+			'purchase_orders_approve' => $this->input->post('purchase_orders_approve'),
+			'purchase_orders_bill_creation' => $this->input->post('purchase_orders_bill_creation'),
+			'bills_view' => $this->input->post('bills_view'),
+			'clients_view' => $this->input->post('clients_view'),
+			'clients_add' => $this->input->post('clients_add'),
+			'clients_edit' => $this->input->post('clients_edit'),
+			'clients_delete' => $this->input->post('clients_delete'),
+			'sales_orders_view' => $this->input->post('sales_orders_view'),
+			'sales_orders_add' => $this->input->post('sales_orders_add'),
+			'sales_orders_mark_for_invoicing' => $this->input->post('sales_orders_mark_for_invoicing'),
+			'sales_orders_schedule_delivery' => $this->input->post('sales_orders_schedule_delivery'),
+			'sales_orders_mark_as_delivered' => $this->input->post('sales_orders_mark_as_delivered'),
+			'sales_orders_mark_as_received' => $this->input->post('sales_orders_mark_as_received'),
+			'sales_orders_fulfill' => $this->input->post('sales_orders_fulfill'),
+			'sales_orders_invoice_creation' => $this->input->post('sales_orders_invoice_creation'),
+			'invoice_view' => $this->input->post('invoice_view'),
+			'brand_category_view' => $this->input->post('brand_category_view'),
+			'trash_bin_view' => $this->input->post('trash_bin_view'),
+			'accounts_view' => $this->input->post('accounts_view'),
+			'accounts_add' => $this->input->post('accounts_add'),
+			'accounts_edit' => $this->input->post('accounts_edit'),
+			'journal_transactions_view' => $this->input->post('journal_transactions_view'),
+			'journal_transactions_add' => $this->input->post('journal_transactions_add'),
+			'journal_transactions_delete' => $this->input->post('journal_transactions_delete')
+		);
+
+
 		$pImageChecker = $this->input->post('pImageChecker');
 		$userID = uniqid();
 		
@@ -415,6 +460,17 @@ class Admin extends MY_Controller {
 		if ($insertNewEmployee == TRUE) {
 			$this->session->set_flashdata('isApplicantAdded', 'true');
 			// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
+			
+			// INSERT USER RESTRICTIONS
+			foreach ($userRestrictions as $key => $val) {
+				$data = array(
+					'UserID' => $userID,
+					'Action' => $key,
+					'Allowed' => $val,
+				);
+				$this->Model_Inserts->InsertUserRestrictions($data);
+			}
+
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('created a new user.', 'added a new user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
 			// $this->Model_Logbook->LogbookExtendedEntry(0, 'Applicant ID: <b>' . $userID . '</b>');
@@ -446,6 +502,50 @@ class Admin extends MY_Controller {
 
 		$loginEmail = $this->input->post('loginEmail');
 		$loginPassword = $this->input->post('newLoginPassword');
+
+		// USER RESTRICTIONS
+		$userRestrictions = array(
+			'products_view' => $this->input->post('products_view_update'),
+			'products_add' => $this->input->post('products_add_update'),
+			'products_edit' => $this->input->post('products_edit_update'),
+			'products_delete' => $this->input->post('products_delete_update'),
+			'releasing_view' => $this->input->post('releasing_view_update'),
+			'restocking_view' => $this->input->post('restocking_view_update'),
+			'inventory_view' => $this->input->post('inventory_view_update'),
+			'users_view' => $this->input->post('users_view_update'),
+			'users_add' => $this->input->post('users_add_update'),
+			'users_edit' => $this->input->post('users_edit_update'),
+			'vendors_view' => $this->input->post('vendors_view_update'),
+			'vendors_add' => $this->input->post('vendors_add_update'),
+			'vendors_edit' => $this->input->post('vendors_edit_update'),
+			'vendors_delete' => $this->input->post('vendors_delete_update'),
+			'purchase_orders_view' => $this->input->post('purchase_orders_view_update'),
+			'purchase_orders_add' => $this->input->post('purchase_orders_add_update'),
+			'purchase_orders_approve' => $this->input->post('purchase_orders_approve_update'),
+			'purchase_orders_bill_creation' => $this->input->post('purchase_orders_bill_creation_update'),
+			'bills_view' => $this->input->post('bills_view_update'),
+			'clients_view' => $this->input->post('clients_view_update'),
+			'clients_add' => $this->input->post('clients_add_update'),
+			'clients_edit' => $this->input->post('clients_edit_update'),
+			'clients_delete' => $this->input->post('clients_delete_update'),
+			'sales_orders_view' => $this->input->post('sales_orders_view_update'),
+			'sales_orders_add' => $this->input->post('sales_orders_add_update'),
+			'sales_orders_mark_for_invoicing' => $this->input->post('sales_orders_mark_for_invoicing_update'),
+			'sales_orders_schedule_delivery' => $this->input->post('sales_orders_schedule_delivery_update'),
+			'sales_orders_mark_as_delivered' => $this->input->post('sales_orders_mark_as_delivered_update'),
+			'sales_orders_mark_as_received' => $this->input->post('sales_orders_mark_as_received_update'),
+			'sales_orders_fulfill' => $this->input->post('sales_orders_fulfill_update'),
+			'sales_orders_invoice_creation' => $this->input->post('sales_orders_invoice_creation_update'),
+			'invoice_view' => $this->input->post('invoice_view_update'),
+			'accounts_view' => $this->input->post('accounts_view_update'),
+			'accounts_add' => $this->input->post('accounts_add_update'),
+			'accounts_edit' => $this->input->post('accounts_edit_update'),
+			'journal_transactions_view' => $this->input->post('journal_transactions_view_update'),
+			'journal_transactions_add' => $this->input->post('journal_transactions_add_update'),
+			'journal_transactions_delete' => $this->input->post('journal_transactions_delete_update'),
+			'brand_category_view' => $this->input->post('brand_category_view_update'),
+			'trash_bin_view' => $this->input->post('trash_bin_view_update')
+		);
 		
 		$config['upload_path'] = './uploads/'.$userID;
 		$config['allowed_types'] = 'gif|jpg|png';
@@ -512,6 +612,27 @@ class Admin extends MY_Controller {
 		);
 		$updateEmployee = $this->Model_Updates->UpdateUser($data, $userID);
 		if ($updateEmployee == TRUE) {
+			// UPDATE RESTRICTIONS
+			$allUserRestrictions = $this->Model_Selects->GetUserRestrictions($userID);
+
+			if ($allUserRestrictions->num_rows() != sizeof($userRestrictions)) { // if incorrect amount of restrictions, delete current and add new
+				$this->Model_Deletes->Delete_user_restriction($userID);
+				foreach ($userRestrictions as $key => $val) {
+					$data = array(
+						'UserID' => $userID,
+						'Action' => $key,
+						'Allowed' => $val,
+					);
+					$this->Model_Inserts->InsertUserRestrictions($data);
+				}
+			} else {
+				foreach ($userRestrictions as $key => $val) {
+					$data = array(
+						'Allowed' => $val,
+					);
+					$this->Model_Updates->UpdateUserRestriction($userID, $key, $data);
+				}
+			}
 			$this->Model_Logbook->LogbookEntry('updated user details.', 'updated details of user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
 			if ($loginEmail != NULL && $loginPassword != NULL) {
 				$loginData = array(
@@ -868,11 +989,27 @@ class Admin extends MY_Controller {
 
 		// VALIDATE VALUES
 		if ($prd_brand1 == null || $prd_line == null || $prd_type == null || $prd_variant == null || $prd_size == null || $prd_brand2 == null || $prd_char == null || $prd_chartype == null || $product_code == null || $unit_cost == null || $unit_price == null || $product_name == null || $product_description == null) {
+			
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Complete all required data.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect('admin/products');
 		}
 		// CHECK IF UID EXIST
 		$CheckUID = $this->Model_Selects->CheckUID($U_ID);
 		if ($CheckUID->num_rows() > 0) {
+
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Product exist! Please check UID code.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect('admin/products');
 		}
 		// CHECK PRODUCT IN DATABASE IF EXIST
@@ -880,6 +1017,13 @@ class Admin extends MY_Controller {
 		$CheckProduct_byCode = $this->Model_Selects->CheckProduct_byCode($Code);
 		if ($CheckProduct_byCode->num_rows() > 0) {
 			// CANCEL INSERT PROMPT PRODUCT EXIST
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Product exist! Please check SKU code.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect('admin/products');
 		}
 		else
@@ -921,11 +1065,26 @@ class Admin extends MY_Controller {
 				$this->session->set_flashdata('highlight-id', $product_code);
 				$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($product_description ? ' ' . $product_description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
 
+				$prompt_txt =
+				'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> New product added.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect('admin/products');
 			}
 			else
 			{
 				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please! Try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect('admin/products');
 			}
 		}
@@ -1061,7 +1220,7 @@ class Admin extends MY_Controller {
 				$data = array(
 					'TransactionID' => $TransactionID,
 					'Status' => 1,
-					'Date_Approval' => date('Y-m-d-H-i-s'),
+					'Date_Approval' => date('Y-m-d h:i:s A'),
 				);
 				$this->Model_Updates->ApproveTransaction($data);
 				if ($CheckIFApproved['Type'] == 0) {
@@ -1162,9 +1321,8 @@ class Admin extends MY_Controller {
 				// create new restock transactions
 				for ($i = 0; $i < $productCount; $i++) {
 					$code = trim($this->input->post('productCodeInput_' . $i));
-					$unitPrice = trim($this->input->post('productPriceInput_' . $i));
 					$qty = trim($this->input->post('productQtyInput_' . $i));
-					$getProductByCode = $this->Model_Selects->GetProductByCode($code)->row_array();
+					$p_details = $this->Model_Selects->GetProductByCode($code)->row_array();
 
 					$data = array(
 						'Code' => $code,
@@ -1172,11 +1330,12 @@ class Admin extends MY_Controller {
 						'OrderNo' => $orderNo,
 						'Type' => '0',
 						'Amount' => $qty,
-						'PriceUnit' => $unitPrice,
+						'PriceUnit' => $p_details['Cost_PerItem'],
 						'Date' => $date,
 						'DateAdded' => date('Y-m-d h:i:s A'),
 						'Status' => 0,
 						'UserID' => $this->session->userdata('UserID'),
+						'PriceTotal' => $qty * $p_details['Cost_PerItem'],
 					);
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 				}
@@ -1211,7 +1370,7 @@ class Admin extends MY_Controller {
 						$dataTransaction = array(
 							'TransactionID' => $t['TransactionID'],
 							'Status' => '1',
-							'Date_Approval' => date('Y-m-d-H-i-s'),
+							'Date_Approval' => date('Y-m-d h:i:s A'),
 						);
 						// RESTOCK
 						$NewStock = $p['InStock'] + $t['Amount'];
@@ -1461,6 +1620,7 @@ class Admin extends MY_Controller {
 						'DateAdded' => date('Y-m-d h:i:s A'),
 						'Status' => 0,
 						'UserID' => $this->session->userdata('UserID'),
+						'PriceTotal' => $qty * $p_details['Price_PerItem'],
 					);
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 				}
@@ -1500,7 +1660,7 @@ class Admin extends MY_Controller {
 							$dataTransaction = array(
 								'TransactionID' => $t['TransactionID'],
 								'Status' => '1',
-								'Date_Approval' => date('Y-m-d-H-i-s'),
+								'Date_Approval' => date('Y-m-d h:i:s A'),
 							);
 							// RELEASE
 							$NewStock = $p['InStock'] - $t['Amount'];
@@ -1617,15 +1777,15 @@ class Admin extends MY_Controller {
 	// VENDOR / CLIENT
 	public function getVendorDetails()
 	{
-		$vendorID = $this->input->get('vendor_id');
-		$getVendorByID = $this->Model_Selects->GetVendorByID($vendorID)->row_array();
-		print json_encode($getVendorByID);
+		$vendorNo = $this->input->get('vendor_no');
+		$getVendorByNo = $this->Model_Selects->GetVendorByNo($vendorNo)->row_array();
+		print json_encode($getVendorByNo);
 	}
 	public function getClientDetails()
 	{
-		$clientID = $this->input->get('client_id');
-		$getClientByID = $this->Model_Selects->GetClientByID($clientID)->row_array();
-		print json_encode($getClientByID);
+		$clientNo = $this->input->get('client_no');
+		$getClientByNo = $this->Model_Selects->GetClientByNo($clientNo)->row_array();
+		print json_encode($getClientByNo);
 	}
 	public function get_productDetails()
 	{
@@ -1915,7 +2075,7 @@ class Admin extends MY_Controller {
 						if ($insertNewTransaction == TRUE) {
 
 							$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
-							redirect($_SERVER['HTTP_REFERER']);
+							
 						}
 						else
 						{
@@ -1924,21 +2084,21 @@ class Admin extends MY_Controller {
 					}
 					else
 					{
-						echo "ERROR1";
+						redirect($_SERVER['HTTP_REFERER']);
 					}
 				}
 				else
 				{
-					echo 'ERROR2';
+					redirect($_SERVER['HTTP_REFERER']);
 				}
 			}
 			else
 			{
-				echo 'ERROR3';
+				redirect($_SERVER['HTTP_REFERER']);
 			}
 
 		}
-		
+		redirect($_SERVER['HTTP_REFERER']);
 
 	}
 	public function FORM_addAccount()
@@ -2005,8 +2165,8 @@ class Admin extends MY_Controller {
 				$data = array(
 					'JournalID' => $journalID,
 					'AccountID' => $accountID,
-					'Debit' => $debit,
-					'Credit' => $credit,
+					'Debit' => (int)$debit,
+					'Credit' => (int)$credit,
 				);
 				$insertJournalTransaction = $this->Model_Inserts->InsertJournalTransaction($data);
 			}
@@ -2165,17 +2325,37 @@ class Admin extends MY_Controller {
 			// UPDATE STATUS SET TO 2 = ARCHIVED
 			$MoveProd_toarchive = $this->Model_Updates->MoveProd_toarchive($Code);
 			if ($MoveProd_toarchive == true) {
+				// SUCCESS
+				$prompt_txt =
+				'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Product moved to archive.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 
 			}
 			else
 			{
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect($_SERVER['HTTP_REFERER']);
 
 			}
 		}
 		else
 		{
+			$prompt_txt =
+			'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Error!</strong> Product doesn\'t exist.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect($_SERVER['HTTP_REFERER']);
 
 		}
@@ -2215,6 +2395,14 @@ class Admin extends MY_Controller {
 		$UniqueID = $this->getToken($length);
 
 		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Complete all required data.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 		else
@@ -2225,6 +2413,14 @@ class Admin extends MY_Controller {
 			);
 			$CheckBrand_Char = $this->Model_Selects->CheckBrand_Char($data);
 			if ($CheckBrand_Char->num_rows() > 0) {
+
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Brand exist please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			else
@@ -2269,10 +2465,25 @@ class Admin extends MY_Controller {
 						$Insert_BrandVariants = $this->Model_Inserts->Insert_BrandVariants($data);
 					}
 					
+					$prompt_txt =
+					'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> New brand added.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					redirect($_SERVER['HTTP_REFERER']);
 				}
 				else
 				{
+
+					$prompt_txt =
+					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Error!</strong> Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					redirect($_SERVER['HTTP_REFERER']);
 				}
 			}
@@ -2294,6 +2505,14 @@ class Admin extends MY_Controller {
 		$prod_type_abbr = $this->input->post('prod_type_abbr');
 
 		if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
+
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Complete all required data.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 		else
@@ -2317,22 +2536,53 @@ class Admin extends MY_Controller {
 					);
 					$Update_BrandProperty = $this->Model_Updates->Update_BrandProperty($UniqueID,$data);
 					if ($Update_BrandProperty == true) {
+
+						$prompt_txt =
+						'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Success!</strong> Brand updated.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
 						redirect($_SERVER['HTTP_REFERER']);
 
 					}
 					else
 					{
+
+						$prompt_txt =
+						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Property not updated.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 						redirect($_SERVER['HTTP_REFERER']);
 
 					}
 				}
 				else
 				{
+
+					$prompt_txt =
+					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Error!</strong> Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					redirect($_SERVER['HTTP_REFERER']);
 				}
 			}
 			else
 			{
+
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Brand doesn\'t exist.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 		}
@@ -2381,15 +2631,38 @@ class Admin extends MY_Controller {
 		if ($CheckBrand_id->num_rows() > 0) {
 			$RemoveVariantBrand = $this->Model_Deletes->RemoveVariantBrand($id);
 			if ($RemoveVariantBrand == true) {
+
+				$prompt_txt =
+				'<div class="alert alert-succes position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Variant removed.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			else
 			{
+
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 			}
 		}
 		else
 		{
+			$prompt_txt =
+			'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Error!</strong> Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 		}
 	}
@@ -2400,15 +2673,33 @@ class Admin extends MY_Controller {
 		if ($CheckSizeID->num_rows() > 0) {
 			$remove_size_id = $this->Model_Deletes->remove_size_id($id);
 			if ($remove_size_id == true) {
+				$prompt_txt =
+				'<div class="alert alert-succes position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Size removed.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect($_SERVER['HTTP_REFERER']);
 			}
 			else
 			{
+				$prompt_txt =
+				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Error!</strong> Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 			}
 		}
 		else
 		{
+			$prompt_txt =
+			'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Error!</strong> Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect($_SERVER['HTTP_REFERER']); //ERROR PROMPT
 		}
 	}
@@ -2545,5 +2836,103 @@ class Admin extends MY_Controller {
 		{
 			redirect($_SERVER['HTTP_REFERER']);
 		}
+	}
+	public function Del_brand()
+	{
+		$UniqueID = $this->input->get('uid');
+		$ChecBrand_Cat = $this->Model_Selects->ChecBrand_Cat($UniqueID);
+		$ChecBrand_Prop = $this->Model_Selects->ChecBrand_Prop($UniqueID);
+		$ChecBrand_Size = $this->Model_Selects->ChecBrand_Size($UniqueID);
+
+		if ($ChecBrand_Cat->num_rows() > 0) {
+			$this->Model_Deletes->remove_brands($UniqueID);
+			if ($ChecBrand_Prop->num_rows() > 0) {
+				$this->Model_Deletes->remove_brandsprop($UniqueID);
+			}
+			if ($ChecBrand_Size->num_rows() > 0) {
+				$this->Model_Deletes->remove_brandssize($UniqueID);
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
+	public function UpdatePricesss()
+	{
+		$ID = $this->input->post('unit_id');
+		$Price_PerItem = $this->input->post('unit_price');
+		$Cost_PerItem = $this->input->post('unit_cost');
+
+		if (empty($ID) || empty($Price_PerItem) || empty($Cost_PerItem)) {
+			// NULL VALUE
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			// VALUE EXIST CHECK ID IF EXIST IN DATABASE
+			$CheckProduct_BY_ID = $this->Model_Selects->CheckProduct_BY_ID($ID);
+			if ($CheckProduct_BY_ID->num_rows() > 0) {
+				// UPDATE PRICES
+				$data = array(
+					'Price_PerItem' => $Price_PerItem, 
+					'Cost_PerItem' => $Cost_PerItem, 
+				);
+				$UpdatePriceProduct = $this->Model_Updates->UpdatePriceProduct($ID,$data);
+				if ($UpdatePriceProduct == true) {
+					// PROMPT SUCCESS
+					$prompt = 'success';
+
+					$this->session->set_flashdata('prompt_toast', $prompt);
+
+					redirect($_SERVER['HTTP_REFERER']);
+				}
+				else
+				{
+					// PROMPT ERROR
+					redirect($_SERVER['HTTP_REFERER']);
+
+				}
+			}
+			else
+			{
+				// ID DOESNT EXIST
+				redirect($_SERVER['HTTP_REFERER']);
+
+			}
+		}
+	}
+	public function removeFCartrelease()
+	{
+		$cart_id = $this->input->get('c_id');
+		if (empty($cart_id)) {
+			// PROMPT URL QUERY STRING EMPTY
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		// CHECK CART ID
+		$CheckCart_ByID = $this->Model_Selects->CheckCart_ByID($cart_id);
+		if ($CheckCart_ByID->num_rows() > 0) {
+			$RemoveCart_rel = $this->Model_Deletes->RemoveCart_rel($cart_id);
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			// PROMPT CART ID NOT FOUND
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
+	public function Email_Settings()
+	{
+		$config = Array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'devt5599@gmail.com',
+			'smtp_pass' => 'team_dev2021_test',
+			'mailtype'  => 'html', 
+			'charset'   => 'iso-8859-1'
+		);
+		$this->load->library('email', $config);
 	}
 }

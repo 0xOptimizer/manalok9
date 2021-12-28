@@ -86,9 +86,9 @@ date_default_timezone_set('Asia/Manila');
 											<?php echo $row['Brand_Type']; ?>
 										</td>
 										<td class="d-flex flex-wrap justify-content-center">
-											<a class="btn-viewbrand" style="margin-left: 6px; margin-right: 6px;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-eye"></i> </a>
-											<a class="btn-updatebrand" style="margin-left: 6px; margin-right: 6px;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-pencil-square"></i> </a>
-											<a class="btn-removebrand" style="margin-left: 6px; margin-right: 6px;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-trash"></i> </a>
+											<a class="btn-viewbrand" style="margin-left: 6px; margin-right: 6px; color: #2E87EC;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-eye"></i> </a>
+											<a class="btn-updatebrand" style="margin-left: 6px; margin-right: 6px; color: #44BE9A;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-pencil-square"></i> </a>
+											<a class="btn-removebrand" style="margin-left: 6px; margin-right: 6px; color: #E14A22;" href="<?=base_url()?>Del_brand?uid=<?php echo $row['UniqueID']; ?>" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-trash"></i> </a>
 										</td>
 									</tr>
 								<?php } ?>
@@ -100,6 +100,10 @@ date_default_timezone_set('Asia/Manila');
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
+
 <?php $this->load->view('admin/modals/add_brandcat.php'); ?>
 <?php $this->load->view('admin/modals/view_brandcat.php'); ?>
 <?php $this->load->view('admin/modals/update_brandcat.php'); ?>
@@ -280,6 +284,8 @@ $(document).ready(function() {
 
 							$('.variants_sectionsss').append('<tr class="row_varid" data-value="'+ data['Brand_Variants'][i].id +'"><td>'+ data['Brand_Variants'][i].Vcpd +'</td> <td>'+ data['Brand_Variants'][i].Vcpd_Abbr +'</td><td><a href="<?=base_url()?>remove_addVariants?id='+data['Brand_Variants'][i].id+'"><i class="bi bi-trash"></i></td></tr>');
 						}
+						$('#add_vcpd').val("")
+						$('#add_vcpdabr').val("")
 
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
@@ -322,7 +328,7 @@ $(document).ready(function() {
 
 	$('#modaladddis').click(function() {
 		$('#add_Brandvars').modal('toggle');
-		$('#view_brandcat').modal('toggle');
+		// $('.btn-viewbrand').trigger('click');
 		
 	});
 	//--------------- ADD SIZES ---------------//
@@ -358,8 +364,10 @@ $(document).ready(function() {
 	});
 
 	$('#modaldis_addsize').click(function() {
-		$('#view_brandcat').modal('toggle');
+		
 		$('#add_brandsize').modal('toggle');
+		// $('.btn-viewbrand').trigger('click');
+
 	});
 
 	$('#add_sizeSubmit').click(function() {
@@ -374,6 +382,8 @@ $(document).ready(function() {
 			success: function (response) {
 				alert(response);
 				Get_BrandSizes(uid);
+				$('#Add_prd_size').val("")
+				$('#add_prd_sizeabbr').val("")
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log(textStatus, errorThrown);
@@ -383,10 +393,21 @@ $(document).ready(function() {
 	
 
 	//--------------- REMOVE ---------------//
-	$( ".btn-removebrand" ).click(function() {
-		var uid = $(this).attr('data-value');
-		alert(uid);
-	});
+	// $( ".btn-removebrand" ).click(function() {
+	// 	var uid = $(this).attr('data-value');
+	// 	$.ajax({
+	// 		url: '<?=base_url()?>Delete_brand',
+	// 		type: 'post',
+	// 		data: { uid : uid } ,
+	// 		success: function (response) {
+	// 			alert(response);
+	// 			Get_BrandSizes(uid);
+	// 		},
+	// 		error: function(jqXHR, textStatus, errorThrown) {
+	// 			console.log(textStatus, errorThrown);
+	// 		}
+	// 	});
+	// });
 	
 
 
