@@ -10,7 +10,7 @@
 						<input type="hidden" id="transactionsCount" name="transactions-count" value="0">
 						<div class="form-group col-12 col-md-8">
 							<label class="input-label">DESCRIPTION</label>
-							<textarea rows="2" class="form-control standard-input-pad" name="description" placeholder="Payment of rent / Purchase of supplies"></textarea>
+							<textarea rows="2" class="form-control standard-input-pad" name="description" placeholder="Payment of rent / Purchase of supplies" required></textarea>
 						</div>
 						<div class="form-group col-12 col-md-4">
 							<label class="input-label">DATE</label>

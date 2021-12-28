@@ -435,6 +435,12 @@ class Admin extends MY_Controller {
 				if ( ! $this->image_lib->resize())
 				{
 			        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
+					$prompt_txt =
+					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> '. $this->image_lib->display_errors() . $tconfig['source_image'] .'
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
 				}
 				$this->image_lib->clear();
 			}
@@ -480,6 +486,12 @@ class Admin extends MY_Controller {
 		else
 		{
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/users');
 		}
 	}
@@ -590,6 +602,12 @@ class Admin extends MY_Controller {
 				if ( ! $this->image_lib->resize())
 				{
 			        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
+					$prompt_txt =
+					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> '. $this->image_lib->display_errors() . $tconfig['source_image'] .'
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
 				}
 				$this->image_lib->clear();
 			}
@@ -653,6 +671,12 @@ class Admin extends MY_Controller {
 		else
 		{
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/users');
 		}
 	}
@@ -716,6 +740,12 @@ class Admin extends MY_Controller {
 				if ( ! $this->image_lib->resize())
 				{
 			        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
+					$prompt_txt =
+					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> '. $this->image_lib->display_errors() . $tconfig['source_image'] .'
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
 				}
 				$this->image_lib->clear();
 			}
@@ -757,6 +787,12 @@ class Admin extends MY_Controller {
 		else
 		{
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('login');
 		}
 	}
@@ -790,7 +826,13 @@ class Admin extends MY_Controller {
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/vendors');
 		}
 	}
@@ -821,7 +863,38 @@ class Admin extends MY_Controller {
 		else
 		{
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/vendors');
+		}
+	}
+	public function FORM_deleteVendor()
+	{	
+		$vendorNo = $this->input->post('vendor-no');
+
+		$getVendorByNo = $this->Model_Selects->GetVendorByNo($vendorNo);
+
+		if ($getVendorByNo->num_rows() > 0) {
+			if ($this->Model_Deletes->Delete_vendor($getVendorByNo->row_array()['ID'])) {
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('deleted vendor record.', 'deleted a vendor record [ID: ' . $vendorID . '].', base_url('admin/vendors'));
+				redirect('admin/vendors');
+			}
+			else
+			{
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/vendors');
+			}
 		}
 	}
 	public function FORM_addNewClient()
@@ -860,7 +933,13 @@ class Admin extends MY_Controller {
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/clients');
 		}
 	}
@@ -897,7 +976,38 @@ class Admin extends MY_Controller {
 		else
 		{
 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/clients');
+		}
+	}
+	public function FORM_deleteClient()
+	{	
+		$clientNo = $this->input->post('client-no');
+
+		$getClientByNo = $this->Model_Selects->GetClientByNo($clientNo);
+
+		if ($getClientByNo->num_rows() > 0) {
+			if ($this->Model_Deletes->Delete_client($getClientByNo->row_array()['ID'])) {
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('deleted client record.', 'deleted a client record [ID: ' . $clientID . '].', base_url('admin/clients'));
+				redirect('admin/clients');
+			}
+			else
+			{
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/clients');
+			}
 		}
 	}
 	
@@ -950,7 +1060,13 @@ class Admin extends MY_Controller {
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/products');
 		}
 	}
@@ -1076,7 +1192,7 @@ class Admin extends MY_Controller {
 			}
 			else
 			{
-				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 
 				$prompt_txt =
 				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
@@ -1340,6 +1456,10 @@ class Admin extends MY_Controller {
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 				}
 				$this->session->set_flashdata('highlight-id', $orderID);
+
+				// ACCOUNTING JOURNAL ADD
+				$this->addAccountingJournal('added a new journal for purchase order');
+
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('created a new purchase order.', 'added purchase order ' . $orderNo . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/purchase_orders'));
 				redirect('admin/purchase_orders');
@@ -1571,23 +1691,23 @@ class Admin extends MY_Controller {
 						'Manpower' => 0,
 					); break;
 			}
-			$dcOutright = $this->input->post('discount-outright');
-			$dcVolume = $this->input->post('discount-volume');
-			$dcPBD = $this->input->post('discount-pbd');
-			$dcManpower = $this->input->post('discount-manpower');
+			$dcOutright = 0;
+			$dcVolume = 0;
+			$dcPBD = 0;
+			$dcManpower = 0;
 
-			$totalDiscount = 0; // compute total discount
-			if ($dcOutright == 'on') {
-				$totalDiscount += $discounts['Outright'];
+			// $totalDiscount = 0; // compute total discount
+			if ($this->input->post('discount-outright') == 'on') {
+				$dcOutright = $discounts['Outright'];
 			}
-			if ($dcVolume == 'on') {
-				$totalDiscount += $discounts['Volume'];
+			if ($this->input->post('discount-volume') == 'on') {
+				$dcVolume = $discounts['Volume'];
 			}
-			if ($dcPBD == 'on') {
-				$totalDiscount += $discounts['PBD'];
+			if ($this->input->post('discount-pbd') == 'on') {
+				$dcPBD = $discounts['PBD'];
 			}
-			if ($dcManpower == 'on') {
-				$totalDiscount += $discounts['Manpower'];
+			if ($this->input->post('discount-manpower') == 'on') {
+				$dcManpower = $discounts['Manpower'];
 			}
 
 			// INSERT SALES ORDER
@@ -1597,7 +1717,10 @@ class Admin extends MY_Controller {
 				'DateCreation' => date('Y-m-d h:i:s A'),
 				'BillToClientNo' => $billToNo,
 				'ShipToClientNo' => $shipToNo,
-				'Discount' => $totalDiscount,
+				'discountOutright' => $dcOutright,
+				'discountVolume' => $dcVolume,
+				'discountPBD' => $dcPBD,
+				'discountManpower' => $dcManpower,
 				'Status' => '1',
 			);
 			$insertNewSalesOrder = $this->Model_Inserts->InsertSalesOrder($data);
@@ -1625,6 +1748,10 @@ class Admin extends MY_Controller {
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 				}
 				$this->session->set_flashdata('highlight-id', $orderID);
+
+				// ACCOUNTING JOURNAL ADD
+				$this->addAccountingJournal('added a new journal for sales order.');
+
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('created a new sales order.', 'added sales order ' . $orderNo . ' [SalesOrderID: ' . $orderID . '].', base_url('admin/sales_orders'));
 				redirect('admin/sales_orders');
@@ -2113,7 +2240,7 @@ class Admin extends MY_Controller {
 			'Type' => $type,
 			'Description' => $description,
 		);
-		$getAccountByName = $this->Model_Selects->getAccountByName($name);
+		$getAccountByName = $this->Model_Selects->GetAccountByName($name);
 		if ($getAccountByName->num_rows() < 1) {
 			$insertAccount = $this->Model_Inserts->InsertAccount($data);
 			if ($insertAccount == TRUE) {
@@ -2125,61 +2252,164 @@ class Admin extends MY_Controller {
 			}
 			else
 			{
-				$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect('admin/accounts');
 			}
 		} else {
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Account with the same name already exists. ['. $name .']');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Account with the same name already exists. ['. $name .']
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+			redirect('admin/accounts');
+		}
+	}
+	public function FORM_updateAccount()
+	{
+		$id = $this->input->post('upd-id');
+		$name = $this->input->post('upd-name');
+		$type = $this->input->post('upd-type');
+		$description = $this->input->post('upd-description');
+
+		// Update
+		$data = array(
+			'Name' => $name,
+			'Type' => $type,
+			'Description' => $description,
+		);
+		$getAccountByName = $this->Model_Selects->GetAccountByName($name);
+		$getAccountByID = $this->Model_Selects->GetAccountByID($id);
+		$accountDetails = $getAccountByID->row_array();
+		if (($getAccountByName->num_rows() < 1 || $accountDetails['Name'] == $name) && $getAccountByID->num_rows() > 0) {
+			$UpdateAccount = $this->Model_Updates->UpdateAccount($data, $accountDetails['ID']);
+			if ($UpdateAccount == TRUE) {
+				$this->session->set_flashdata('highlight-id', $id);
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('updated account details.', 'updated account details' . ($name ? ' ' . $name : '') . ' [ID: ' . $id . '].', base_url('admin/accounts'));
+				redirect('admin/accounts');
+			}
+			else
+			{
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/accounts');
+			}
+		} else {
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Account with the same name already exists. ['. $name .']');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Account with the same name already exists. ['. $name .']
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/accounts');
 		}
 	}
 
-	public function FORM_addJournal()
-	{	
+	public function addAccountingJournal($logbookEntry='') {
 		$description = $this->input->post('description');
 		$date = $this->input->post('date');
 
 		$transactionCount = $this->input->post('transactions-count');
 
-		// Insert
-		$data = array(
-			'Description' => $description,
-			'Date' => $date
-		);
-		$insertJournal = $this->Model_Inserts->InsertJournal($data);
-		if ($insertJournal == TRUE) {
-			$journalID = $this->db->insert_id();
+		$totalDebit = 0;
+		$totalCredit = 0;
+		$transactions = array();
+		for ($i = 0; $i < $transactionCount; $i++) {
+			$accountID = trim($this->input->post('accountIDInput_' . $i));
+			$debit = trim($this->input->post('debitInput_' . $i));
+			$credit = trim($this->input->post('creditInput_' . $i));
 
-			// create new journal transactions
-			for ($i = 0; $i < $transactionCount; $i++) {
-				$accountID = trim($this->input->post('accountIDInput_' . $i));
-				$debit = trim($this->input->post('debitInput_' . $i));
-				$credit = trim($this->input->post('creditInput_' . $i));
+			if ($debit > 0) {
+				$credit = 0;
+			} elseif ($credit > 0) {
+				$debit = 0;
+			}
+			$totalDebit += $debit;
+			$totalCredit += $credit;
 
-				if ($debit > 0) {
-					$credit = 0;
-				} elseif ($credit > 0) {
-					$debit = 0;
+			$data = array(
+				'AccountID' => $accountID,
+				'Debit' => (int)$debit,
+				'Credit' => (int)$credit
+			);
+			array_push($transactions, $data);
+		}
+
+		if ($totalCredit == $totalDebit && $totalDebit > 0 && $totalCredit > 0) {
+			// Insert
+			$data = array(
+				'Description' => $description,
+				'Date' => $date,
+				'Total' => $totalDebit
+			);
+			$insertJournal = $this->Model_Inserts->InsertJournal($data);
+			if ($insertJournal == TRUE) {
+				$journalID = $this->db->insert_id();
+
+				// create new journal transactions
+				foreach ($transactions as $row) {
+					$row['JournalID'] = $journalID;
+					$insertJournalTransaction = $this->Model_Inserts->InsertJournalTransaction($row);
 				}
 
-				$data = array(
-					'JournalID' => $journalID,
-					'AccountID' => $accountID,
-					'Debit' => (int)$debit,
-					'Credit' => (int)$credit,
-				);
-				$insertJournalTransaction = $this->Model_Inserts->InsertJournalTransaction($data);
+				$this->session->set_flashdata('highlight-id', $journalID);
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('created a new journal.', $logbookEntry . ' [ID: ' . $journalID . '].', base_url('admin/journals'));
+			} else {
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading journal data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 			}
-
-			$this->session->set_flashdata('highlight-id', $journalID);
-			// LOGBOOK
-			$this->Model_Logbook->LogbookEntry('created a new journal.', 'added a new journal [ID: ' . $journalID . '].', base_url('admin/journals'));
-			redirect('admin/journals');
 		}
-		else
-		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
-			redirect('admin/journals');
+	}
+	public function FORM_addJournal()
+	{
+		$this->addAccountingJournal('added a new journal');
+		redirect('admin/journals');
+	}
+	public function FORM_deleteJournal()
+	{	
+		$journalID = $this->input->post('journal-id');
+
+		$getJournalByID = $this->Model_Selects->GetJournalByID($journalID);
+		$GetTransactionsByJournalID = $this->Model_Selects->GetTransactionsByJournalID($journalID)->result_array();
+
+		if ($getJournalByID->num_rows() > 0) {
+			if ($this->Model_Deletes->Delete_journal($journalID)) {
+				foreach ($GetTransactionsByJournalID as $row) {
+					$this->Model_Deletes->Delete_journal_transaction($row['ID']);
+				}
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('deleted journal.', 'deleted a journal [ID: ' . $journalID . '].', base_url('admin/journals'));
+				redirect('admin/journals');
+			}
+			else
+			{
+				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/journals');
+			}
 		}
 	}
 	public function FORM_addPOBill()
@@ -2201,13 +2431,22 @@ class Admin extends MY_Controller {
 		if ($insertBill == TRUE) {
 			$billID = $this->db->insert_id();
 
+			// ACCOUNTING JOURNAL ADD
+			$this->addAccountingJournal('added a new journal for PO Bill');
+
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
 			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 		}
 	}
@@ -2230,13 +2469,22 @@ class Admin extends MY_Controller {
 		if ($insertInvoice == TRUE) {
 			$invoiceID = $this->db->insert_id();
 
+			// ACCOUNTING JOURNAL ADD
+			$this->addAccountingJournal('added a new journal for SO Invoice');
+
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '].', base_url('admin/invoices'));
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 		}
 	}
@@ -2273,7 +2521,13 @@ class Admin extends MY_Controller {
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 		}
 	}
@@ -2292,7 +2546,13 @@ class Admin extends MY_Controller {
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 		}
 	}
@@ -2311,7 +2571,13 @@ class Admin extends MY_Controller {
 		}
 		else
 		{
-			$this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 		}
 	}
