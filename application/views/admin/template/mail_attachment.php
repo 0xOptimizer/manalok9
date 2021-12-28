@@ -13,7 +13,7 @@
 	
 </div>
 <div class="content">
-	<img src="https://cdn.shopify.com/s/files/1/0268/0940/1392/files/as_270x.png?v=1614090191">
+	<?php echo $message; ?>
 </div>
 <div class="content">
 	

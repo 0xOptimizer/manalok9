@@ -2922,4 +2922,15 @@ class Admin extends MY_Controller {
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 	}
+	public function page_mail()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Mail';
+
+		$data['GetAll_Mail'] = $this->Model_Selects->GetAll_Mail();
+
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/page_mail', $data);
+	}
 }

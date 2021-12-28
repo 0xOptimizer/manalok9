@@ -208,4 +208,6 @@ $route['UpdatePricesss'] = 'Admin/UpdatePricesss';
 $route['removeFCartrelease'] = 'Admin/removeFCartrelease';
 
 // MAILS
+$route['admin/page_mail'] = 'Admin/page_mail';
 $route['SampleMail'] = 'Mail_Controller/SampleMail';
+$route['send_email_to'] = 'Mail_Controller/send_email_to';
