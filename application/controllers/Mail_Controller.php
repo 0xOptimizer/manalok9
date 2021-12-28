@@ -82,7 +82,7 @@ class Mail_Controller extends CI_Controller {
 				'smtp_host' => 'ssl://smtp.gmail.com',
 				'smtp_port' => 587,
 				'smtp_user' => 'devt5599@gmail.com',
-				'smtp_pass' => 'Test_Dev_email2021', // NEED PASSWORD ---------------------------------------
+				'smtp_pass' => '', // NEED PASSWORD ---------------------------------------
 				'mailtype' => 'html',
 				'charset' => 'iso-8859-1',
 				'wordwrap' => TRUE
