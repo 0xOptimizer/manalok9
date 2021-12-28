@@ -207,3 +207,5 @@ $route['UpdatePricesss'] = 'Admin/UpdatePricesss';
 // REMOVE FROM CART RELEASE
 $route['removeFCartrelease'] = 'Admin/removeFCartrelease';
 
+// MAILS
+$route['SampleMail'] = 'Mail_Controller/SampleMail';
