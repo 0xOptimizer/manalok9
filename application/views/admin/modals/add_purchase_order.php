@@ -149,9 +149,7 @@
 								<div class="col-sm-12 table-responsive">
 									<table id="productsTable" class="standard-table table">
 										<thead style="font-size: 12px;">
-											<th class="text-center">ID</th>
 											<th class="text-center">CODE</th>
-											<th class="text-center">CATEGORY</th>
 											<th class="text-center">STOCK</th>
 											<th class="text-center">UNIT COST</th>
 										</thead>
@@ -160,14 +158,8 @@
 											if ($getAllProducts->num_rows() > 0):
 												foreach ($getAllProducts->result_array() as $row): ?>
 													<tr class="add-product-row" data-id="<?=$row['ID']?>">
-														<td class="text-center">
-															<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-														</td>
 														<td class="text-center pCode">
 															<?=$row['Code']?>
-														</td>
-														<td class="text-center">
-															<?=$row['Product_Category']?>
 														</td>
 														<td class="text-center">
 															<?=$row['InStock']?>
@@ -181,6 +173,45 @@
 										</tbody>
 									</table>
 								</div>
+							</div>
+						</div>
+					</div>
+					<hr class="my-4">
+					<label class="input-label">ACCOUNTING</label>
+					<div class="row">
+						<input type="hidden" id="transactionsCount" name="transactions-count" value="0">
+						<div class="form-group col-12 col-md-8">
+							<label class="input-label">DESCRIPTION</label>
+							<textarea rows="2" class="form-control standard-input-pad" name="description" placeholder="Description" required>Purchases</textarea>
+						</div>
+						<div class="form-group col-12 col-md-4">
+							<label class="input-label">DATE</label>
+							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-12">
+							<div class="table-responsive">
+								<table id="newTransactionsTable" class="standard-table table">
+									<thead style="font-size: 12px;">
+										<th>ACCOUNT</th>
+										<th>DEBIT</th>
+										<th>CREDIT</th>
+										<th></th>
+									</thead>
+									<tbody>
+										<tr class="font-weight-bold add-account-row">
+											<td><i class="bi bi-plus"></i> New Account</td>
+											<td colspan="3"></td>
+										</tr>
+										<tr style="border-color: #a7852d;">
+											<td style="color: #a7852d;">Total</td>
+											<td class="debitTotal">0</td>
+											<td class="creditTotal">0</td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>

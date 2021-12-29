@@ -14,6 +14,8 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 
 $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 
+$getAccounts = $this->Model_Selects->GetAccountSelection();
+
 ?>
 <style>
 	.rotate-text {
@@ -42,6 +44,95 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 			</a>
 			<a href="<?=base_url() . 'admin/sales_orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO SALES ORDERS</a>
 		</header>
+
+		<div class="row d-none">
+			<div class="col-sm-12 table-responsive">
+				<table id="purchaseOrder" class="standard-table table">
+					<tbody>
+						<tr>
+							<td class="text-center" colspan="3" rowspan="3">
+								<img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>" width="250" height="70">
+							</td>
+							<td colspan="3">
+								<b>Sales Order Form</b>
+							</td>
+						</tr>
+						<tr>
+							<td>Customer PO#:</td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td>Order Date:</td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td colspan="3">Bill To:</td>
+							<td colspan="3">Ship To:</td>
+						</tr>
+						<tr>
+							<td colspan="3"></td>
+							<td colspan="3"></td>
+						</tr>
+						<tr>
+							<td colspan="3"></td>
+							<td colspan="3"></td>
+						</tr>
+						<tr>
+							<td colspan="3"></td>
+							<td colspan="3"></td>
+						</tr>
+						<tr>
+							<td colspan="3"></td>
+							<td colspan="3"></td>
+						</tr>
+						<tr>
+							<td colspan="3">contact</td>
+							<td colspan="3">contact</td>
+						</tr>
+						<tr>
+							<td>QTY</td>
+							<td colspan="2">ITEM DESCRIPTION</td>
+							<td>UNIT PRICE</td>
+							<td colspan="2">TOTAL</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td colspan="2"></td>
+							<td></td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td colspan="2" rowspan="2">Category of Account:</td>
+							<td class="text-end" colspan="2">Sub-total <b>PHP </b></td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td colspan="2">Outright Discount (15%/12%/10%)</td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td colspan="2" rowspan="3">NONE</td>
+							<td colspan="2">Volume Discount (10%)</td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td colspan="2">PBD Discount (5%/3%)</td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td colspan="2">Manpower Discount (5%)</td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td>PREPARED BY</td>
+							<td colspan="2"></td>
+							<td><b>TOTAL</b></td>
+							<td colspan="2"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 
 		<div class="page-heading">
 			<div class="page-title">
@@ -162,33 +253,59 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 												</b>
 											</span>
 										</div>
-										<div class="row">
+										<div class="row mt-3">
 											<span class="head-text">
 												DISCOUNT
 											</span>
 										</div>
 										<div class="row">
-											<span style="font-size: 1.5em; color: #ebebeb;">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												OUTRIGHT:
 												<b>
-													<?=($salesOrder['Discount'] > 0 ? $salesOrder['Discount'] : '0')?>%
+													<?=$salesOrder['discountOutright']?>%
 												</b>
 											</span>
 										</div>
 										<div class="row">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												VOLUME:
+												<b>
+													<?=$salesOrder['discountVolume']?>%
+												</b>
+											</span>
+										</div>
+										<div class="row">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												PBD:
+												<b>
+													<?=$salesOrder['discountPBD']?>%
+												</b>
+											</span>
+										</div>
+										<div class="row">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												MANPOWER:
+												<b>
+													<?=$salesOrder['discountManpower']?>%
+												</b>
+											</span>
+										</div>
+										<div class="row mt-3">
 											<span class="head-text">
-												TOTAL PRICE <?=($salesOrder['Discount'] > 0 ? ' / DISCOUNTED' : '')?>
+												TOTAL PRICE / DISCOUNTED
 											</span>
 										</div>
 										<div class="row">
 											<span style="font-size: 1.5em; color: #ebebeb;">
 												<b>
 													<?php
+													$totalDiscount = $salesOrder['discountOutright'] + $salesOrder['discountVolume'] + $salesOrder['discountPBD'] + $salesOrder['discountManpower'];
 													$transactionsPriceTotal = 0;
 													foreach ($orderTransactions->result_array() as $transaction) {
 														$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
 													}
 													echo number_format($transactionsPriceTotal, 2) .' / ';
-													echo number_format($transactionsPriceTotal - ($transactionsPriceTotal * ($salesOrder['Discount'] * 0.01)), 2);
+													echo number_format($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01)), 2);
 													?>
 												</b>
 											</span>
@@ -309,7 +426,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 									</tr>
 									<tr style="border-color: #a7852d;">
 										<td class="font-weight-bold text-center" colspan="3">REMAINING PAYMENT (DISCOUNTED)</td>
-										<td class="font-weight-bold text-center"><?=number_format(($transactionsPriceTotal - ($transactionsPriceTotal * ($salesOrder['Discount'] * 0.01))) - $total_invoice_amount, 2);?></td>
+										<td class="font-weight-bold text-center"><?=number_format(($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01))) - $total_invoice_amount, 2);?></td>
 										<td colspan="3"></td>
 									</tr>
 								</tbody>
@@ -322,80 +439,7 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 	</div>
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation'] == 1): ?>
-<div class="modal fade" id="SalesInvoicing" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<form id="formAddSOInvoice" action="<?php echo base_url() . 'FORM_addSOInvoice';?>" method="POST">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> SO Invoicing</h4>
-				</div>
-				<div class="modal-body">
-					<?php
-					$c_details = $this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array();
-					?>
-					<input type="hidden" name="sales-order-no" value="<?=$salesOrder['OrderNo']?>" required>
-					<div class="row">
-						<div class="col-12">
-							<div class="mx-auto">
-								<div class="card">
-									<div class="text-center p-2">
-										<div class="row">
-											<div class="col-12 col-md-6">
-												<div class="row">
-													<span class="head-text">
-														CLIENT NAME
-													</span>
-												</div>
-												<div class="row">
-													<span style="font-size: 1.5em; color: #ebebeb;">
-														<b>
-															<?=$c_details['Name']?>
-														</b>
-													</span>
-												</div>
-											</div>
-											<div class="col-12 col-md-6">
-												<div class="row">
-													<span class="head-text">
-														CLIENT #
-													</span>
-												</div>
-												<div class="row">
-													<span style="font-size: 1.5em; color: #ebebeb;">
-														<b>
-															<?=$c_details['ClientNo']?>
-														</b>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label">AMOUNT</label>
-							<input type="number" class="form-control" name="amount" placeholder="0.00" step="0.000001" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label" name="mode-payment">MODE OF PAYMENT</label>
-							<input type="text" class="form-control" name="mode-payment" placeholder="Cash" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label">DATE</label>
-							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
-						</div>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Invoice</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
+<?php $this->load->view('admin/modals/add_invoice', array('salesOrder'=>$salesOrder)); ?>
 <?php endif; ?>
 <?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery'] == 1): ?>
 <div class="modal fade" id="DeliveryScheduling" tabindex="-1" role="dialog" aria-hidden="true">
@@ -420,6 +464,9 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 	</div>
 </div>
 <?php endif; ?>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -490,6 +537,134 @@ $(document).ready(function() {
 	$(document).on('click', '.removeInvoice', function() {
 		if (!confirm('Remove Invoice?')) {
 			event.preventDefault();
+		}
+	});
+
+	$(document).on('submit', '#formAddSOInvoice', function(t) {
+		// ACCOUNTING CHECKS
+		let totalDebit = parseFloat($('.debitTotal').html());
+		let totalCredit = parseFloat($('.creditTotal').html());
+		if (totalDebit != totalCredit) {
+			alert('Debit and Credit must be equal.');
+			t.preventDefault();
+		} else if (totalDebit <= 0 || totalCredit <= 0) {
+			alert('Total must be more than 0.');
+			t.preventDefault();
+		}
+	});
+
+	// ACCOUNTING ADD
+	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
+	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
+
+	function updTransactionCount() {
+		// update journal transaction count
+		$('#transactionsCount').val($('.account_row').length);
+		// update journal transaction input names
+		$.each($('.account_row'), function(i, val) {
+			$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i);
+			$(this).find('.inpDebit').attr('name', 'debitInput_' + i);
+			$(this).find('.inpCredit').attr('name', 'creditInput_' + i);
+		});
+		// total
+		let debitTotal = 0;
+		$.each($('.inpDebit'), function(i, val) {
+			debitTotal += parseFloat($(this).val());
+		});
+		$('.debitTotal').html(debitTotal.toFixed(2));
+		let creditTotal = 0;
+		$.each($('.inpCredit'), function(i, val) {
+			creditTotal += parseFloat($(this).val());
+		});
+		$('.creditTotal').html(creditTotal.toFixed(2));
+	}
+	$(document).on('click', '.add-account-row', function() {
+		var this_row = 'ar_' + $('.account_row').length;
+		$('.add-account-row').before($('<tr>')
+			.attr({
+				class: 'account_row highlighted ' + this_row,
+			}).data('id', $('.account_row').length)
+			.append($('<td>').attr({ // column-1
+				class: ''
+			}).append($('<select>').attr({
+				class: 'select_accounts inpAccountID w-100'
+			}).append($('<optgroup>').attr({
+				class: 'type_0',
+				label: 'REVENUES'
+			})).append($('<optgroup>').attr({
+				class: 'type_1',
+				label: 'ASSETS'
+			})).append($('<optgroup>').attr({
+				class: 'type_2',
+				label: 'LIABILITIES'
+			})).append($('<optgroup>').attr({
+				class: 'type_3',
+				label: 'EXPENSES'
+			})).append($('<optgroup>').attr({
+				class: 'type_4',
+				label: 'EQUITIES'
+			}))))
+			.append($('<td>').attr({ // column-2
+				class: ''
+			}).append($('<input>').attr({
+				class: 'inpDebit  w-100',
+				type: 'number',
+				min: '0',
+				value: 0
+			})))
+			.append($('<td>').attr({ // column-3
+				class: ''
+			}).append($('<input>').attr({
+				class: 'inpCredit  w-100',
+				type: 'number',
+				min: '0',
+				value: 0
+			})))
+			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
+				type: 'button',
+				class: 'btn remove-account-row'
+			}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+		);
+
+		for (var i = accounts_list.length - 1; i >= 0; i--) {
+			$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
+				value: accounts_list[i]['ID']
+			}).text(accounts_list[i]['Name']));
+		}
+
+		setTimeout(function() {
+			$('.' + this_row).removeClass('highlighted');
+		}, 2000);
+		$('.' + this_row).fadeIn('2000');
+
+		updTransactionCount();
+	});
+
+	// add two two transaction accounts
+	$('.add-account-row').click();
+	$('.add-account-row').click();
+
+	$(document).on('click', '.remove-account-row', function() {
+		$(this).parents('tr').remove();
+
+		updTransactionCount();
+	});
+	$(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
+		updTransactionCount();
+	});
+	// disable other debit/credit on change
+	$(document).on('focus keyup change', '.inpDebit', function() {
+		if ($(this).val() > 0) {
+			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
+		} else {
+			$(this).parents('td').siblings('td').children('.inpCredit').removeAttr('disabled');
+		}
+	});
+	$(document).on('focus keyup change', '.inpCredit', function() {
+		if ($(this).val() > 0) {
+			$(this).parents('td').siblings('td').children('.inpDebit').attr('disabled', '');
+		} else {
+			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
 		}
 	});
 });

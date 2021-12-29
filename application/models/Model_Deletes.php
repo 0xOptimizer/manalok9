@@ -77,4 +77,29 @@ class Model_Deletes extends CI_Model {
 		return $result;
 	}
 
+	public function Delete_journal($ID)
+	{
+		$this->db->where('ID', $ID);
+		$result = $this->db->delete('journals');
+		return $result;
+	}
+	public function Delete_journal_transaction($ID)
+	{
+		$this->db->where('ID', $ID);
+		$result = $this->db->delete('journal_transactions');
+		return $result;
+	}
+	public function Delete_client($ID)
+	{
+		$this->db->where('ID', $ID);
+		$result = $this->db->delete('clients');
+		return $result;
+	}
+	public function Delete_vendor($ID)
+	{
+		$this->db->where('ID', $ID);
+		$result = $this->db->delete('vendors');
+		return $result;
+	}
+
 }

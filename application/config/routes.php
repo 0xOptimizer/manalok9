@@ -102,8 +102,10 @@ $route['FORM_selfAddNewUser'] = 'Admin/FORM_selfAddNewUser';
 
 $route['FORM_addNewVendor'] = 'Admin/FORM_addNewVendor';
 $route['FORM_updateVendor'] = 'Admin/FORM_updateVendor';
+$route['FORM_deleteVendor'] = 'Admin/FORM_deleteVendor';
 $route['FORM_addNewClient'] = 'Admin/FORM_addNewClient';
 $route['FORM_updateClient'] = 'Admin/FORM_updateClient';
+$route['FORM_deleteClient'] = 'Admin/FORM_deleteClient';
 
 $route['FORM_addPurchaseOrder'] = 'Admin/FORM_addPurchaseOrder';
 $route['FORM_approvePurchaseOrder'] = 'Admin/FORM_approvePurchaseOrder';
@@ -120,7 +122,9 @@ $route['admin/SubmitNewItemcode'] = 'Admin/SubmitNewItemcode';
 $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 
 $route['FORM_addAccount'] = 'Admin/FORM_addAccount';
+$route['FORM_updateAccount'] = 'Admin/FORM_updateAccount';
 $route['FORM_addJournal'] = 'Admin/FORM_addJournal';
+$route['FORM_deleteJournal'] = 'Admin/FORM_deleteJournal';
 
 
 $route['FORM_addPOBill'] = 'Admin/FORM_addPOBill';
