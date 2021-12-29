@@ -164,13 +164,23 @@
 				</li> -->
 
 				<li class="sidebar-title">YOUR CORNER</li>
-	
+				
+				<?php if ($this->session->userdata('UserRestrictions')['trash_bin_view'] == 1): ?>
+					<li class="sidebar-item sidebar-employee-mail">
+						<a href="<?=base_url()?>admin/page_mail" class='sidebar-link'>
+							<i class="bi bi-envelope"></i>
+							<span>Mail</span>
+						</a>
+					</li>
+				<?php endif; ?>
+
 				<li class="sidebar-item sidebar-employee-attendance">
 					<a href="<?=base_url().'user'?>" class='sidebar-link'>
 						<i class="bi bi-person-badge-fill"></i>
 						<span>My Activities</span>
 					</a>
 				</li>
+				
 				<?php if ($this->session->userdata('UserRestrictions')['trash_bin_view'] == 1): ?>
 					<li class="sidebar-item sidebar-employee-trash">
 						<a href="<?=base_url()?>admin/trash_bin" class='sidebar-link'>

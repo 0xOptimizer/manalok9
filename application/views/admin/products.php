@@ -144,7 +144,7 @@ if ($this->session->flashdata('highlight-id')) {
 										<td>
 											<?=$row['Released']?>
 										</td>
-										<td class="text-center">
+										<td class="text-center"  width="150">
 											<span style="margin-right: 5px;">
 												<a href="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>">
 													<i class="bi bi-eye" style="color: #408AF7;"></i>

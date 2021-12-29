@@ -741,4 +741,10 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('cart_release');
 		return $result;
 	}
+	public function GetAll_Mail()
+	{
+		$this->db->select('*');
+		$result = $this->db->get('tb_mailsent');
+		return $result;
+	}
 }
