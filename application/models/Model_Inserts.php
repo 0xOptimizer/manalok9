@@ -164,5 +164,10 @@ class Model_Inserts extends CI_Model {
 			return false;
 		}
 	}
+	public function EmailInsert($data)
+	{
+		$result = $this->db->insert('tb_mailsent', $data);
+		return $result;
+	}
 	
 }

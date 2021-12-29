@@ -119,7 +119,7 @@ class AJAX extends CI_Controller {
 				$smtp->Port       = 587;
 				$smtp->Host       = 'smtp.gmail.com';
 				$smtp->Username   = 'devt5599@gmail.com';
-				$smtp->Password   = '';
+				$smtp->Password   = ''; // NEED PASSWORD ---------------------------------------
 				// ~ email content
 				$smtp->IsHTML(true);
 				$smtp->AddAddress($email, 'recipient-name');
