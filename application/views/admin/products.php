@@ -87,10 +87,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<!-- <button type="button" class="newproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW PRODUCT</button> -->
 						<button type="button" class="addproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD PRODUCT</button>
 						|
-						<!-- <button type="button" class="newtransaction-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cart-plus"></i> NEW TRANSACTION</button> -->
+						<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
@@ -185,6 +184,8 @@ if ($this->session->flashdata('highlight-id')) {
 <!-- Update modal -->
 <?php $this->load->view('admin/modals/update_product.php'); ?>
 
+<?php $this->load->view('admin/modals/generate_report')?>
+
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -193,6 +194,8 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
 
 
 
@@ -215,9 +218,60 @@ $(document).ready(function() {
 	
 	var table = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
-		"bLengthChange": false,
-    	"order": [[ 3, "desc" ]],
-	});
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+		buttons: [
+            {
+	            extend: 'print',
+	            exportOptions: {
+	                columns: [ 1, 2, 3, 4, 5, 6 ]
+	            },
+	            customize: function ( doc ) {
+	            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
+					$(doc.document.body).find('h1').css('font-size', '24px');
+					$(doc.document.body).find('h1').css('text-align', 'center'); 
+				}
+	        },
+	        {
+	            extend: 'copyHtml5',
+	            exportOptions: {
+	                columns: [ 1, 2, 3, 4, 5, 6 ]
+	            }
+	        },
+	        {
+	            extend: 'excelHtml5',
+	            exportOptions: {
+	                columns: [ 1, 2, 3, 4, 5, 6 ]
+	            }
+	        },
+	        {
+	            extend: 'csvHtml5',
+	            exportOptions: {
+	                columns: [ 1, 2, 3, 4, 5, 6 ]
+	            }
+	        },
+	        {
+	            extend: 'pdfHtml5',
+	            exportOptions: {
+	                columns: [ 1, 2, 3, 4, 5, 6 ]
+	            }
+	        }
+    ]});
+    $('body').on('click', '#generateReport-Print', function () {
+        table.button('0').trigger();
+    });
+    $('body').on('click', '#generateReport-Copy', function () {
+        table.button('1').trigger();
+    });
+    $('body').on('click', '#generateReport-Excel', function () {
+        table.button('2').trigger();
+    });
+    $('body').on('click', '#generateReport-CSV', function () {
+        table.button('3').trigger();
+    });
+    $('body').on('click', '#generateReport-PDF', function () {
+        table.button('4').trigger();
+    });
 	$('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
 	});

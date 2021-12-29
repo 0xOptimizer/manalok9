@@ -107,64 +107,6 @@ if ($this->session->flashdata('highlight-id')) {
 									</tr>
 							<?php endforeach;
 							endif; ?>
-							<!-- <tr class="tr_invoice_modal">
-								<td>
-									<span class="db-identifier" style="font-style: italic; font-size: 12px;">1</span>
-								</td>
-								<td class="soNo">
-									SO-000001
-								</td>
-								<td class="oDate">
-									2021-10-20
-								</td>
-								<td class="vName">
-									John Doe
-								</td>
-								<td class="aDue">
-									22,000.00
-								</td>
-								<td class="pDate">
-									2021-11-15
-								</td>
-								<td class="partialFull">
-									FULL
-								</td>
-								<td class="balance">
-									18,000.00
-								</td>
-								<td class="modePayment">
-									CASH
-								</td>
-							</tr>
-							<tr class="tr_invoice_modal">
-								<td>
-									<span class="db-identifier" style="font-style: italic; font-size: 12px;">2</span>
-								</td>
-								<td class="soNo">
-									SO-000002
-								</td>
-								<td class="oDate">
-									2021-10-21
-								</td>
-								<td class="vName">
-									Jane Doe
-								</td>
-								<td class="aDue">
-									15,000.00
-								</td>
-								<td class="pDate">
-									2021-11-25
-								</td>
-								<td class="partialFull">
-									PARTIAL
-								</td>
-								<td class="balance">
-									2,000.00
-								</td>
-								<td class="modePayment">
-									CARD
-								</td>
-							</tr> -->
 						</tbody>
 					</table>
 				</div>
@@ -172,47 +114,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<!-- <div class="modal fade" id="SalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> <span class="m_orderno"></span></h4>
-			</div>
-			<div class="modal-body">
-				<div class="row text-center d-flex flex-wrap justify-content-center">
-					<div class="col-12 col-md-6">
-						<h6>ORDER DATE</h6>
-						<label class="m_orderdate"></label>
-					</div>
-					<div class="col-12 col-md-6">
-						<h6>VENDOR NAME</h6>
-						<label class="m_vendorname"></label>
-					</div>
-					<div class="col-12 col-md-6">
-						<h6>AMOUNT DUE</h6>
-						<label class="m_amountdue"></label>
-					</div>
-					<div class="col-12 col-md-6">
-						<h6>PAYMENT DATE</h6>
-						<label class="m_paymentdate"></label>
-					</div>
-					<div class="col-12 col-md-6">
-						<h6>PARTIAL / FULL</h6>
-						<label class="m_partialfull"></label>
-					</div>
-					<div class="col-12 col-md-6">
-						<h6>BALANCE</h6>
-						<label class="m_balance"></label>
-					</div>
-					<div class="col-12 col-md-6">
-						<h6>MODE OF PAYMENT</h6>
-						<label class="m_modepayment"></label>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div> -->
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

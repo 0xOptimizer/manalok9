@@ -14,6 +14,8 @@ $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orde
 
 $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 
+$getAccounts = $this->Model_Selects->GetAccountSelection();
+
 ?>
 <style>
 	.rotate-text {
@@ -42,6 +44,95 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 			</a>
 			<a href="<?=base_url() . 'admin/purchase_orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO PURCHASE ORDERS</a>
 		</header>
+
+		<div class="row d-none">
+			<div class="col-sm-12 table-responsive">
+				<table id="purchaseOrder" class="standard-table table">
+					<tbody>
+						<tr>
+							<td class="text-center" colspan="3">
+								<img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>" width="250" height="70">
+							</td>
+							<td colspan="3">
+								Purchase Order
+							</td>
+						</tr>
+						<tr>
+							<td>Order From:</td>
+							<td>Deliver To:</td>
+							<td>Purchase No.:</td>
+							<td colspan="3"></td>
+						</tr>
+						<tr>
+							<td rowspan="2"></td>
+							<td rowspan="2"></td>
+							<td>Date:</td>
+							<td colspan="3"></td>
+						</tr>
+						<tr>
+							<td>Page:</td>
+							<td colspan="3"></td>
+						</tr>
+						<tr>
+							<td>ATTN:</td>
+							<td colspan="5"></td>
+						</tr>
+						<tr>
+							<td colspan="2">SHIP VIA</td>
+							<td>DELIVERY DATE</td>
+							<td>SUPPLIER INV. NO.</td>
+							<td colspan="2">TERMS</td>
+						</tr>
+						<tr>
+							<td colspan="2"></td>
+							<td></td>
+							<td></td>
+							<td colspan="2"></td>
+						</tr>
+						<tr>
+							<td>QTY</td>
+							<td>ITEM NO.</td>
+							<td>DESCRIPTION</td>
+							<td>UNIT PRICE</td>
+							<td>UNIT</td>
+							<td>AMOUNT</td>
+						</tr>
+						<tr>
+							<td rowspan="5">MEMO:</td>
+							<td rowspan="5" colspan="2"></td>
+							<td colspan="2">TOTAL AMOUNT</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td colspan="2">FREIGHT</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td colspan="2">SALES TAX</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td colspan="2">LESS DEPOSIT</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td colspan="2">BALANCE DUE</td>
+							<td></td>
+						</tr>
+						<tr>
+							<td colspan="2">PREPARED BY</td>
+							<td colspan="2">ORDERED BY</td>
+							<td colspan="2">APPROVED BY</td>
+						</tr>
+						<tr>
+							<td colspan="2"></td>
+							<td colspan="2"></td>
+							<td colspan="2"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
 
 		<div class="page-heading">
 			<div class="page-title">
@@ -255,81 +346,11 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 	</div>
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
-<div class="modal fade" id="PurchaseBilling" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<form id="formAddPOBill" action="<?php echo base_url() . 'FORM_addPOBill';?>" method="POST">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> PO Bills</h4>
-				</div>
-				<div class="modal-body">
-					<?php
-					$v_details = $this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array();
-					?>
-					<input type="hidden" name="purchase-order-no" value="<?=$purchaseOrder['OrderNo']?>" required>
-					<div class="row">
-						<div class="col-12">
-							<div class="mx-auto">
-								<div class="card">
-									<div class="text-center p-2">
-										<div class="row">
-											<div class="col-12 col-md-6">
-												<div class="row">
-													<span class="head-text">
-														VENDOR NAME
-													</span>
-												</div>
-												<div class="row">
-													<span style="font-size: 1.5em; color: #ebebeb;">
-														<b>
-															<?=$v_details['Name']?>
-														</b>
-													</span>
-												</div>
-											</div>
-											<div class="col-12 col-md-6">
-												<div class="row">
-													<span class="head-text">
-														VENDOR #
-													</span>
-												</div>
-												<div class="row">
-													<span style="font-size: 1.5em; color: #ebebeb;">
-														<b>
-															<?=$v_details['VendorNo']?>
-														</b>
-													</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label">AMOUNT</label>
-							<input type="number" class="form-control" name="amount" placeholder="0.00" step="0.000001" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label" name="mode-payment">MODE OF PAYMENT</label>
-							<input type="text" class="form-control" name="mode-payment" placeholder="Cash" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label">DATE</label>
-							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
-						</div>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Bill</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
+<?php $this->load->view('admin/modals/add_bill', array('purchaseOrder'=>$purchaseOrder)); ?>
 <?php endif; ?>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -387,6 +408,134 @@ $(document).ready(function() {
 	$(document).on('click', '.removeBill', function() {
 		if (!confirm('Remove Bill?')) {
 			event.preventDefault();
+		}
+	});
+
+	$(document).on('submit', '#formAddPOBill', function(t) {
+		// ACCOUNTING CHECKS
+		let totalDebit = parseFloat($('.debitTotal').html());
+		let totalCredit = parseFloat($('.creditTotal').html());
+		if (totalDebit != totalCredit) {
+			alert('Debit and Credit must be equal.');
+			t.preventDefault();
+		} else if (totalDebit <= 0 || totalCredit <= 0) {
+			alert('Total must be more than 0.');
+			t.preventDefault();
+		}
+	});
+
+	// ACCOUNTING ADD
+	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
+	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
+
+	function updTransactionCount() {
+		// update journal transaction count
+		$('#transactionsCount').val($('.account_row').length);
+		// update journal transaction input names
+		$.each($('.account_row'), function(i, val) {
+			$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i);
+			$(this).find('.inpDebit').attr('name', 'debitInput_' + i);
+			$(this).find('.inpCredit').attr('name', 'creditInput_' + i);
+		});
+		// total
+		let debitTotal = 0;
+		$.each($('.inpDebit'), function(i, val) {
+			debitTotal += parseFloat($(this).val());
+		});
+		$('.debitTotal').html(debitTotal.toFixed(2));
+		let creditTotal = 0;
+		$.each($('.inpCredit'), function(i, val) {
+			creditTotal += parseFloat($(this).val());
+		});
+		$('.creditTotal').html(creditTotal.toFixed(2));
+	}
+	$(document).on('click', '.add-account-row', function() {
+		var this_row = 'ar_' + $('.account_row').length;
+		$('.add-account-row').before($('<tr>')
+			.attr({
+				class: 'account_row highlighted ' + this_row,
+			}).data('id', $('.account_row').length)
+			.append($('<td>').attr({ // column-1
+				class: ''
+			}).append($('<select>').attr({
+				class: 'select_accounts inpAccountID w-100'
+			}).append($('<optgroup>').attr({
+				class: 'type_0',
+				label: 'REVENUES'
+			})).append($('<optgroup>').attr({
+				class: 'type_1',
+				label: 'ASSETS'
+			})).append($('<optgroup>').attr({
+				class: 'type_2',
+				label: 'LIABILITIES'
+			})).append($('<optgroup>').attr({
+				class: 'type_3',
+				label: 'EXPENSES'
+			})).append($('<optgroup>').attr({
+				class: 'type_4',
+				label: 'EQUITIES'
+			}))))
+			.append($('<td>').attr({ // column-2
+				class: ''
+			}).append($('<input>').attr({
+				class: 'inpDebit  w-100',
+				type: 'number',
+				min: '0',
+				value: 0
+			})))
+			.append($('<td>').attr({ // column-3
+				class: ''
+			}).append($('<input>').attr({
+				class: 'inpCredit  w-100',
+				type: 'number',
+				min: '0',
+				value: 0
+			})))
+			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
+				type: 'button',
+				class: 'btn remove-account-row'
+			}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+		);
+
+		for (var i = accounts_list.length - 1; i >= 0; i--) {
+			$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
+				value: accounts_list[i]['ID']
+			}).text(accounts_list[i]['Name']));
+		}
+
+		setTimeout(function() {
+			$('.' + this_row).removeClass('highlighted');
+		}, 2000);
+		$('.' + this_row).fadeIn('2000');
+
+		updTransactionCount();
+	});
+
+	// add two two transaction accounts
+	$('.add-account-row').click();
+	$('.add-account-row').click();
+
+	$(document).on('click', '.remove-account-row', function() {
+		$(this).parents('tr').remove();
+
+		updTransactionCount();
+	});
+	$(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
+		updTransactionCount();
+	});
+	// disable other debit/credit on change
+	$(document).on('focus keyup change', '.inpDebit', function() {
+		if ($(this).val() > 0) {
+			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
+		} else {
+			$(this).parents('td').siblings('td').children('.inpCredit').removeAttr('disabled');
+		}
+	});
+	$(document).on('focus keyup change', '.inpCredit', function() {
+		if ($(this).val() > 0) {
+			$(this).parents('td').siblings('td').children('.inpDebit').attr('disabled', '');
+		} else {
+			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
 		}
 	});
 });

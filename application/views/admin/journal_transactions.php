@@ -4,8 +4,24 @@ $globalHeader;
 date_default_timezone_set('Asia/Manila');
 
 // Fetch vendors
-$getJournals = $this->Model_Selects->GetJournals();
+if ($this->input->get('a_sort') != NULL && is_numeric($this->input->get('a_sort'))) {
+	$getJournals = $this->Model_Selects->GetJournalsSortByAccountType($this->input->get('a_sort'));
+} else {
+	$getJournals = $this->Model_Selects->GetJournals();
+}
 $getAccounts = $this->Model_Selects->GetAccountSelection();
+
+$account_types = array('REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY');
+$accounts = array(
+	0 => array(),
+	1 => array(),
+	2 => array(),
+	3 => array(),
+	4 => array()
+);
+foreach ($getAccounts->result_array() as $acc) {
+	array_push($accounts[$acc['Type']], $acc);
+}
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -40,10 +56,30 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php endif; ?>
 						</h3>
 					</div>
-					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+					<div class="col-sm-12 col-md-7 pt-4 pb-2">
 						<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
 						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW TRANSACTION</button>
 						<?php endif; ?>
+					</div>
+					<div class="col-sm-12 col-md-3 pt-4 pb-2" style="margin-top: -15px;">
+						<div class="form-group">
+							<form id="journalTypeSortForm" method="GET">
+								<input class="sortAccID" type="hidden" name="a_sort" value="0">
+							</form>
+							<select id="journalTypeSort" class="form-control w-100">
+								<option value="" selected>NONE</option>
+								<?php foreach ($accounts as $type => $accs): ?>
+									<optgroup label="<?=$account_types[$type]?>">
+										<?php foreach ($accs as $row): ?>
+											<option value="<?=$row['ID']?>"
+												<?php if ($this->input->get('a_sort')==$row['ID']) echo 'selected';?>>
+												<?=$row['Name']?>
+											</option>
+										<?php endforeach; ?>
+									</optgroup>
+								<?php endforeach; ?>
+							</select>
+						</div>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -61,6 +97,7 @@ if ($this->session->flashdata('highlight-id')) {
 						<thead style="font-size: 12px;">
 							<th>DATE</th>
 							<th>DESCRIPTION</th>
+							<th>TOTAL</th>
 							<th></th>
 						</thead>
 						<tbody>
@@ -70,10 +107,12 @@ if ($this->session->flashdata('highlight-id')) {
 									<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
 										<td><?=$row['Date']?></td>
 										<td><?=$row['Description']?></td>
+										<td><?=number_format($row['Total'], 2)?></td>
 										<td>
+											<i class="bi bi-eye btn-view-journal" style="color: #408AF7;"></i>
 											<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
-											<i class="bi bi-trash text-danger"></i>
-										<?php endif; ?>
+												<i class="bi bi-trash text-danger btn-delete-journal"></i>
+											<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -85,10 +124,18 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 <?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_journal_transaction'); ?>
 <?php endif; ?>
 <?php $this->load->view('admin/modals/journal_modal.php'); ?>
+<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
+	<form id="formDeleteJournal" action="<?php echo base_url() . 'FORM_deleteJournal';?>" method="POST" enctype="multipart/form-data">
+		<input id="journalIDDelete" type="hidden" name="journal-id">
+	</form>
+<?php endif; ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -216,7 +263,7 @@ $(document).ready(function() {
 	$(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
 		updTransactionCount();
 	});
-
+	// disable other debit/credit on change
 	$(document).on('focus keyup change', '.inpDebit', function() {
 		if ($(this).val() > 0) {
 			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
@@ -283,9 +330,38 @@ $(document).ready(function() {
 			}
 		});	
 	}
-	$('.tr_class_modal').on('click', function() {
+
+	$('#formAddJournal').on('submit', function(e) {
+		let totalDebit = parseFloat($('.debitTotal').html());
+		let totalCredit = parseFloat($('.creditTotal').html());
+		if (totalDebit != totalCredit) {
+			alert('Debit and Credit must be equal.');
+			e.preventDefault();
+		} else if (totalDebit <= 0 || totalCredit <= 0) {
+			alert('Total must be more than 0.');
+			e.preventDefault();
+		}
+	});
+
+	$('#journalTypeSort').on('change', function() {
+		if ($.isNumeric($('.sortAccID').val())) {
+			$('.sortAccID').val($(this).find('option:selected').val());
+			$('#journalTypeSortForm').submit();
+		}
+	});
+
+	$(document).on('click', '.btn-view-journal', function() {
 		$('#JournalModal').modal('toggle');
-		getJournalDetails($(this).data('id'));
+		getJournalDetails($(this).parents('tr').data('id'));
+	});
+	$(document).on('click', '.btn-delete-journal', function() {
+		let journal_id = $(this).parents('tr').data('id');
+		if (!confirm('Delete Journal #'+ journal_id +'? (This action cannot be undone)')) {
+			event.preventDefault();
+		} else {
+			$('#journalIDDelete').val(journal_id);
+			$('#formDeleteJournal').submit();
+		}
 	});
 });
 </script>

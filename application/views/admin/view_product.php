@@ -199,6 +199,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 <!-- New transactions modal -->
 <?php $this->load->view('admin/modals/add_newTransaction.php'); ?>
 

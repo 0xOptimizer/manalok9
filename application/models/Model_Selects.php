@@ -404,6 +404,14 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('journals');  
 		return $result;
 	}
+	public function GetJournalsSortByAccountType($account_id)
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('EXISTS(SELECT AccountID FROM journal_transactions WHERE journals.ID = journal_transactions.JournalID AND journal_transactions.AccountID = '. $account_id .')');
+		$result = $this->db->get('journals');  
+		return $result;
+	}
 	public function GetJournalByID($id)
 	{
 		$this->db->select('*');
