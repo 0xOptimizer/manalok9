@@ -94,11 +94,12 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['ProductServiceKind']?>
 										</td>
 										<td>
+											<i class="bi bi-eye btn-view-vendor" style="color: #408AF7;"></i>
 											<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
-											<i class="bi bi-pencil btn-update-vendor"></i>
+											<i class="bi bi-pencil btn-update-vendor" style="color: #229F4B;"></i>
 											<?php endif; ?>
 											<?php if ($this->session->userdata('UserRestrictions')['vendors_delete'] == 1): ?>
-											<i class="bi bi-trash text-danger"></i>
+											<i class="bi bi-trash text-danger btn-delete-vendor"></i>
 											<?php endif; ?>
 										</td>
 									</tr>
@@ -111,6 +112,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 <!-- New vendor modal -->
 <?php if ($this->session->userdata('UserRestrictions')['vendors_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_vendor.php'); ?>
@@ -118,6 +122,11 @@ if ($this->session->flashdata('highlight-id')) {
 <?php $this->load->view('admin/modals/vendor_modal.php'); ?>
 <?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
 <?php $this->load->view('admin/modals/update_vendor.php'); ?>
+<?php endif; ?>
+<?php if ($this->session->userdata('UserRestrictions')['vendors_delete'] == 1): ?>
+	<form id="formDeleteVendor" action="<?php echo base_url() . 'FORM_deleteVendor';?>" method="POST" enctype="multipart/form-data">
+		<input id="vendorNoDelete" type="hidden" name="vendor-no">
+	</form>
 <?php endif; ?>
 
 <?php $this->load->view('admin/modals/generate_report')?>
@@ -230,15 +239,22 @@ $(document).ready(function() {
 			}
 		});
 	}
-	$('.tr_class_modal').on('click', function() {
+	$(document).on('click', '.btn-view-vendor', function() {
 		$('#VendorModal').modal('toggle');
-		getVendorDetails($(this).data('no'));
-	}).on('click', 'i', function(e) {
-		e.stopPropagation();
+		getVendorDetails($(this).parents('tr').data('no'));
 	});
-	$('.btn-update-vendor').on('click', function() {
+	$(document).on('click', '.btn-update-vendor', function() {
 		$('#UpdateVendorModal').modal('toggle');
 		getVendorDetails($(this).parents('tr').data('no'));
+	});
+	$(document).on('click', '.btn-delete-vendor', function() {
+		let vendor_no = $(this).parents('tr').data('no');
+		if (!confirm('Delete Vendor #'+ vendor_no +'? (This action cannot be undone)')) {
+			event.preventDefault();
+		} else {
+			$('#vendorNoDelete').val(vendor_no);
+			$('#formDeleteVendor').submit();
+		}
 	});
 });
 </script>

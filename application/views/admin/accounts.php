@@ -64,18 +64,24 @@ if ($this->session->flashdata('highlight-id')) {
 							<th>NAME</th>
 							<th>TYPE</th>
 							<th>DESCRIPTION</th>
+							<th></th>
 						</thead>
 						<tbody>
 							<?php
 							if ($getAccounts->num_rows() > 0):
 								foreach ($getAccounts->result_array() as $row): ?>
-									<tr>
+									<tr data-id="<?=$row['ID']?>" data-name="<?=$row['Name']?>" data-type="<?=$row['Type']?>" data-description="<?=$row['Description']?>">
 										<td>
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
 										<td><?=$row['Name']?></td>
 										<td><?=$account_types[$row['Type']]?></td>
 										<td><?=$row['Description']?></td>
+										<td>
+											<?php if ($this->session->userdata('UserRestrictions')['accounts_edit'] == 1): ?>
+												<i class="bi bi-pencil btn-update-account" style="color: #229F4B;"></i>
+											<?php endif; ?>
+										</td>
 									</tr>
 							<?php endforeach;
 							endif; ?>
@@ -86,8 +92,14 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 <?php if ($this->session->userdata('UserRestrictions')['accounts_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_account'); ?>
+<?php endif; ?>
+<?php if ($this->session->userdata('UserRestrictions')['accounts_edit'] == 1): ?>
+<?php $this->load->view('admin/modals/update_account'); ?>
 <?php endif; ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -117,6 +129,15 @@ $(document).ready(function() {
 
 	$('.newaccount-btn').on('click', function() {
 		$('#AddAccountModal').modal('toggle');
+	});
+	$(document).on('click', '.btn-update-account', function() {
+		$('#UpdateAccountModal').modal('toggle');
+		let acc_row = $(this).parents('tr');
+		$('.mi_id').val(acc_row.data('id'));
+		$('.m_id').text(acc_row.data('id'));
+		$('.m_name').val(acc_row.data('name'));
+		$('.m_type option[value=' + acc_row.data('type') + ']').prop('selected', true);
+		$('.m_description').val(acc_row.data('description'));
 	});
 });
 </script>

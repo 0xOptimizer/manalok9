@@ -100,11 +100,12 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['TerritoryManager']?>
 										</td>
 										<td>
+											<i class="bi bi-eye btn-view-client" style="color: #408AF7;"></i>
 											<?php if ($this->session->userdata('UserRestrictions')['clients_edit'] == 1): ?>
-											<i class="bi bi-pencil btn-update-client"></i>
+											<i class="bi bi-pencil btn-update-client" style="color: #229F4B;"></i>
 											<?php endif; ?>
 											<?php if ($this->session->userdata('UserRestrictions')['clients_delete'] == 1): ?>
-											<i class="bi bi-trash text-danger"></i>
+											<i class="bi bi-trash text-danger btn-delete-client"></i>
 											<?php endif; ?>
 										</td>
 									</tr>
@@ -117,6 +118,9 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 <?php if ($this->session->userdata('UserRestrictions')['clients_add'] == 1): ?>
 <!-- New client modal -->
 <?php $this->load->view('admin/modals/add_client.php'); ?>
@@ -124,6 +128,11 @@ if ($this->session->flashdata('highlight-id')) {
 <?php $this->load->view('admin/modals/client_modal.php'); ?>
 <?php if ($this->session->userdata('UserRestrictions')['clients_edit'] == 1): ?>
 <?php $this->load->view('admin/modals/update_client.php'); ?>
+<?php endif; ?>
+<?php if ($this->session->userdata('UserRestrictions')['clients_delete'] == 1): ?>
+	<form id="formDeleteClient" action="<?php echo base_url() . 'FORM_deleteClient';?>" method="POST" enctype="multipart/form-data">
+		<input id="clientNoDelete" type="hidden" name="client-no">
+	</form>
 <?php endif; ?>
 
 <script src="<?=base_url()?>assets/clients/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -191,15 +200,22 @@ $(document).ready(function() {
 			}
 		});
 	}
-	$('.tr_class_modal').on('click', function() {
+	$(document).on('click', '.btn-view-client', function() {
 		$('#ClientModal').modal('toggle');
-		getClientDetails($(this).data('no'));
-	}).on('click', 'i', function(e) {
-		e.stopPropagation();
+		getClientDetails($(this).parents('tr').data('no'));
 	});
-	$('.btn-update-client').on('click', function() {
+	$(document).on('click', '.btn-update-client', function() {
 		$('#UpdateClientModal').modal('toggle');
 		getClientDetails($(this).parents('tr').data('no'));
+	});
+	$(document).on('click', '.btn-delete-client', function() {
+		let client_no = $(this).parents('tr').data('no');
+		if (!confirm('Delete Client #'+ client_no +'? (This action cannot be undone)')) {
+			event.preventDefault();
+		} else {
+			$('#clientNoDelete').val(client_no);
+			$('#formDeleteClient').submit();
+		}
 	});
 });
 </script>

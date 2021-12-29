@@ -149,6 +149,12 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->delete('invoices');
 		return $result;
 	}
+	public function UpdateAccount($data, $accountID)
+	{
+		$this->db->where('ID', $accountID);
+		$result = $this->db->update('accounts', $data);
+		return $result;
+	}
 	public function remove_itemCode($uniqueID)
 	{
 		$this->db->where('uniqueID', $uniqueID);

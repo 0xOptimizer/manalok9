@@ -176,6 +176,9 @@ $globalHeader;
 		</div>
 	</div>
 </div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
+</div>
 <?php if ($this->session->userdata('UserRestrictions')['users_add'] == 1): ?>
 <!-- New user prompt -->
 <?php $this->load->view('admin/modals/users_registration.php'); ?>

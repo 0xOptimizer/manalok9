@@ -4,6 +4,7 @@ $globalHeader;
 date_default_timezone_set('Asia/Manila');
 // Fetch Purchase Orders
 $getAllPurchaseOrders = $this->Model_Selects->GetAllPurchaseOrders();
+$getAccounts = $this->Model_Selects->GetAccountSelection();
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -148,6 +149,9 @@ if ($this->session->flashdata('highlight-id')) {
 			</section>
 		</div>
 	</div>
+</div>
+<div class="prompts">
+	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add'] == 1): ?>
 <?php $this->load->view('admin/modals/add_purchase_order'); ?>
@@ -456,6 +460,131 @@ $(document).ready(function() {
 		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
 			alert('PURCHASED ITEMS LIST IS EMPTY');
 			t.preventDefault();
+		}
+		// ACCOUNTING CHECKS
+		let totalDebit = parseFloat($('.debitTotal').html());
+		let totalCredit = parseFloat($('.creditTotal').html());
+		if (totalDebit != totalCredit) {
+			alert('Debit and Credit must be equal.');
+			t.preventDefault();
+		} else if (totalDebit <= 0 || totalCredit <= 0) {
+			alert('Total must be more than 0.');
+			t.preventDefault();
+		}
+	});
+
+	// ACCOUNTING ADD
+	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
+	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
+
+	function updTransactionCount() {
+		// update journal transaction count
+		$('#transactionsCount').val($('.account_row').length);
+		// update journal transaction input names
+		$.each($('.account_row'), function(i, val) {
+			$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i);
+			$(this).find('.inpDebit').attr('name', 'debitInput_' + i);
+			$(this).find('.inpCredit').attr('name', 'creditInput_' + i);
+		});
+		// total
+		let debitTotal = 0;
+		$.each($('.inpDebit'), function(i, val) {
+			debitTotal += parseFloat($(this).val());
+		});
+		$('.debitTotal').html(debitTotal.toFixed(2));
+		let creditTotal = 0;
+		$.each($('.inpCredit'), function(i, val) {
+			creditTotal += parseFloat($(this).val());
+		});
+		$('.creditTotal').html(creditTotal.toFixed(2));
+	}
+	$(document).on('click', '.add-account-row', function() {
+		var this_row = 'ar_' + $('.account_row').length;
+		$('.add-account-row').before($('<tr>')
+			.attr({
+				class: 'account_row highlighted ' + this_row,
+			}).data('id', $('.account_row').length)
+			.append($('<td>').attr({ // column-1
+				class: ''
+			}).append($('<select>').attr({
+				class: 'select_accounts inpAccountID w-100'
+			}).append($('<optgroup>').attr({
+				class: 'type_0',
+				label: 'REVENUES'
+			})).append($('<optgroup>').attr({
+				class: 'type_1',
+				label: 'ASSETS'
+			})).append($('<optgroup>').attr({
+				class: 'type_2',
+				label: 'LIABILITIES'
+			})).append($('<optgroup>').attr({
+				class: 'type_3',
+				label: 'EXPENSES'
+			})).append($('<optgroup>').attr({
+				class: 'type_4',
+				label: 'EQUITIES'
+			}))))
+			.append($('<td>').attr({ // column-2
+				class: ''
+			}).append($('<input>').attr({
+				class: 'inpDebit  w-100',
+				type: 'number',
+				min: '0',
+				value: 0
+			})))
+			.append($('<td>').attr({ // column-3
+				class: ''
+			}).append($('<input>').attr({
+				class: 'inpCredit  w-100',
+				type: 'number',
+				min: '0',
+				value: 0
+			})))
+			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
+				type: 'button',
+				class: 'btn remove-account-row'
+			}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+		);
+
+		for (var i = accounts_list.length - 1; i >= 0; i--) {
+			$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
+				value: accounts_list[i]['ID']
+			}).text(accounts_list[i]['Name']));
+		}
+
+		setTimeout(function() {
+			$('.' + this_row).removeClass('highlighted');
+		}, 2000);
+		$('.' + this_row).fadeIn('2000');
+
+		updTransactionCount();
+	});
+
+	// add two two transaction accounts
+	$('.add-account-row').click();
+	$('.add-account-row').click();
+
+	$(document).on('click', '.remove-account-row', function() {
+		$(this).parents('tr').remove();
+
+		updTransactionCount();
+	});
+	$(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
+		updTransactionCount();
+	});
+	// disable other debit/credit on change
+	$(document).on('focus keyup change', '.inpDebit', function() {
+		if ($(this).val() > 0) {
+			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
+		} else {
+			$(this).parents('td').siblings('td').children('.inpCredit').removeAttr('disabled');
+		}
+	});
+	$(document).on('focus keyup change', '.inpCredit', function() {
+		if ($(this).val() > 0) {
+			$(this).parents('td').siblings('td').children('.inpDebit').attr('disabled', '');
+		} else {
+			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
 		}
 	});
 });
