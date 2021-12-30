@@ -57,7 +57,7 @@ if ($this->session->flashdata('highlight-id')) {
 		<div class="page-heading">
 			<div class="page-title">
 				<div class="row">
-					<div class="col-12 col-md-6">
+					<div class="col-12">
 						<h3>Sales Orders
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-receipt"></i> <?=$getAllSalesOrders->num_rows();?> TOTAL
