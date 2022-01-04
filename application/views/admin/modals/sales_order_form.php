@@ -26,8 +26,8 @@
 									<td colspan="2"><?=$salesOrder['DateCreation']?></td>
 								</tr>
 								<tr>
-									<td colspan="3" class="fw-bold">Bill To:</td>
-									<td colspan="3" class="fw-bold">Ship To:</td>
+									<td colspan="3" class="fw-bold">BILL TO:</td>
+									<td colspan="3" class="fw-bold">SHIP TO:</td>
 								</tr>
 								<tr>
 									<td colspan="3"><?=$clientBTDetails['Name']?></td>
@@ -80,14 +80,14 @@
 											<td class="text-center">
 												<?=number_format($row['PriceUnit'], 2)?>
 											</td>
-											<td class="text-center">
+											<td class="text-center" colspan="2">
 												<?=number_format($amount, 2)?>
 											</td>
 										</tr>
 								<?php endforeach;
 								endif; ?>
 								<tr>
-									<td colspan="2" rowspan="2" class="fw-bold text-center">Category of Account:</td>
+									<td colspan="2" rowspan="2" class="fw-bold text-center">CATEGORY OF ACCOUNT:</td>
 									<td class="text-end fw-bold" colspan="2">Sub-total <b>PHP </b></td>
 									<td colspan="2" class="text-center"><?=number_format($amountTotal, 2)?></td>
 								</tr>
@@ -133,7 +133,7 @@
 								</tr>
 								<tr>
 									<td class="fw-bold">PREPARED BY</td>
-									<td colspan="2"><input type="text" class="inputManual mt-3"></td>
+									<td colspan="2"><input id="prepared_by" type="text" class="inputManual mt-3"></td>
 									<td class="text-end"><b>TOTAL</b></td>
 									<td colspan="2" class="text-center">
 										<?=number_format($amountTotal - ($discountOutright + $discountVolume + $discountPBD + $discountManpower), 2)?>
@@ -145,8 +145,11 @@
 				</div>
 			</div>
 			<div class="feedback-form modal-footer">
-				<button type="submit" id="generateform" class="btn btn-success">
-					<i class="bi bi-check2"></i> Generate Form
+				<button id="generate_excel" class="btn btn-success">
+					<i class="bi bi-file-earmark-excel-fill"></i> EXCEL
+				</button>
+				<button id="generate_form" class="btn btn-primary">
+					<i class="bi bi-file-earmark-word-fill"></i> PRINT
 				</button>
 			</div>
 		</div>

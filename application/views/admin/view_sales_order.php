@@ -400,6 +400,12 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 	'clientSTDetails' => $clientSTDetails
 )); ?>
 
+<form id="formExportTable" action="<?php echo base_url() . 'admin/xlsSalesOrder';?>" method="POST">
+	<input type="hidden" name="order_no" value="<?=$orderNo?>">
+	<input type="hidden" name="filename" value="sales_order_<?=$orderNo?>">
+	<input id="xls_preparedby" type="hidden" name="prepared_by">
+</form>
+
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -604,7 +610,7 @@ $(document).ready(function() {
 	$('.generateform-btn').on('click', function() {
 		$('#SalesOrderFormModal').modal('toggle');
 	});
-	$('#generateform').click(function() {
+	$('#generate_form').click(function() {
 		$('.inputManual').hide();
 		$.each($('.inputManual'), function(key, obj) {
 			$(this).parent().append(
@@ -617,6 +623,10 @@ $(document).ready(function() {
 		$('#salesOrderForm').appendTo('#SalesOrderFormModal .modal-body');
 		$('.inputManual').show();
 		$('.inputManual').siblings('span').remove();
+	});
+	$('#generate_excel').click(function() {
+		$('#xls_preparedby').val($('#prepared_by').val());
+		$('#formExportTable').submit();
 	});
 });
 </script>

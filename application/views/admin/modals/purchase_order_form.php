@@ -10,55 +10,55 @@
 						<table class="standard-table table table-bordered">
 							<tbody>
 								<tr>
-									<td class="text-center" colspan="2">
+									<td class="text-center" colspan="3">
 										<img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>" width="250" height="70">
 									</td>
-									<td colspan="4">
+									<td colspan="3">
 										<b>Purchase Order</b>
 									</td>
 								</tr>
 								<tr>
-									<td class="fw-bold">Order From:</td>
+									<td class="fw-bold" colspan="2">Order From:</td>
 									<td class="fw-bold">Deliver To:</td>
 									<td class="fw-bold">Purchase No.:</td>
-									<td colspan="3"><?=$purchaseOrder['OrderNo']?></td>
+									<td colspan="2"><?=$purchaseOrder['OrderNo']?></td>
 								</tr>
 								<tr>
-									<td><?=$vendorDetails['VendorNo']?></td>
-									<td rowspan="5"><textarea class="inputManual"></textarea></td>
+									<td colspan="2"><?=$vendorDetails['VendorNo']?></td>
+									<td rowspan="5"><textarea id="deliverto" class="inputManual"></textarea></td>
 									<td class="fw-bold">Date:</td>
-									<td colspan="3"><?=$purchaseOrder['DateCreation']?></td>
+									<td colspan="2"><?=$purchaseOrder['DateCreation']?></td>
 								</tr>
 								<tr>
-									<td><?=$vendorDetails['Name']?></td>
+									<td colspan="2"><?=$vendorDetails['Name']?></td>
 									<td class="fw-bold">Page:</td>
-									<td colspan="3"><input class="inputManual" type="text"></td>
+									<td colspan="2"><input id="page" class="inputManual" type="text"></td>
 								</tr>
 								<tr>
-									<td><?=$vendorDetails['TIN']?></td>
+									<td colspan="2"><?=$vendorDetails['TIN']?></td>
 									<td colspan="4" rowspan="3"></td>
 								</tr>
 								<tr>
-									<td><?=$vendorDetails['Address']?></td>
+									<td colspan="2"><?=$vendorDetails['Address']?></td>
 								</tr>
 								<tr>
-									<td><?=$vendorDetails['ContactNum']?></td>
+									<td colspan="2"><?=$vendorDetails['ContactNum']?></td>
 								</tr>
 								<tr>
 									<td class="fw-bold">ATTN:</td>
-									<td colspan="5"><input class="inputManual" type="text"></td>
+									<td colspan="5"><input id="attn" class="inputManual" type="text"></td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">SHIP VIA</td>
 									<td class="fw-bold">DELIVERY DATE</td>
-									<td class="fw-bold">SUPPLIER INV. NO.</td>
-									<td colspan="2" class="fw-bold">TERMS</td>
+									<td colspan="2" class="fw-bold">SUPPLIER INV. NO.</td>
+									<td class="fw-bold">TERMS</td>
 								</tr>
 								<tr>
 									<td colspan="2"><?=$purchaseOrder['ShipVia']?></td>
 									<td><?=$purchaseOrder['DateDelivery']?></td>
-									<td><input class="inputManual" type="text"></td>
-									<td colspan="2"><input class="inputManual" type="text"></td>
+									<td colspan="2"><input id="supplierinvoiceno" class="inputManual" type="text"></td>
+									<td><input id="terms" class="inputManual" type="text"></td>
 								</tr>
 								<tr>
 									<td class="text-center fw-bold">QTY</td>
@@ -107,26 +107,26 @@
 								<tr>
 									<td rowspan="5" class="fw-bold">MEMO:</td>
 									<td rowspan="5" colspan="2">
-										<textarea class="inputManual"></textarea>
+										<textarea id="memo" class="inputManual"></textarea>
 									</td>
 									<td colspan="2" class="fw-bold">TOTAL AMOUNT</td>
 									<td class="text-center"><?=number_format($amountTotal, 2)?></td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">FREIGHT</td>
-									<td><input class="inputManual" type="number"></td>
+									<td><input id="freight" class="inputManual" type="number"></td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">SALES TAX</td>
-									<td><input class="inputManual" type="number"></td>
+									<td><input id="salestax" class="inputManual" type="number"></td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">LESS DEPOSIT</td>
-									<td><input class="inputManual" type="number"></td>
+									<td><input id="lessdeposit" class="inputManual" type="number"></td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">BALANCE DUE</td>
-									<td><input class="inputManual" type="number"></td>
+									<td><input id="balancedue" class="inputManual" type="number"></td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">PREPARED BY</td>
@@ -134,9 +134,9 @@
 									<td colspan="2" class="fw-bold">APPROVED BY</td>
 								</tr>
 								<tr>
-									<td colspan="2"><input type="text" class="inputManual mt-3"></td>
-									<td colspan="2"><input type="text" class="inputManual mt-3"></td>
-									<td colspan="2"><input type="text" class="inputManual mt-3"></td>
+									<td colspan="2"><input id="preparedby" type="text" class="inputManual mt-3"></td>
+									<td colspan="2"><input id="orderedby" type="text" class="inputManual mt-3"></td>
+									<td colspan="2"><input id="approvedby" type="text" class="inputManual mt-3"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -144,8 +144,11 @@
 				</div>
 			</div>
 			<div class="feedback-form modal-footer">
-				<button type="submit" id="generateform" class="btn btn-success">
-					<i class="bi bi-check2"></i> Generate Form
+				<button id="generate_excel" class="btn btn-success">
+					<i class="bi bi-file-earmark-excel-fill"></i> EXCEL
+				</button>
+				<button id="generate_form" class="btn btn-primary">
+					<i class="bi bi-file-earmark-word-fill"></i> PRINT
 				</button>
 			</div>
 		</div>

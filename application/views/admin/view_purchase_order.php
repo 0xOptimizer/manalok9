@@ -283,6 +283,24 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 	'vendorDetails' => $vendorDetails
 )); ?>
 
+<form id="formExportTable" action="<?php echo base_url() . 'admin/xlsPurchaseOrder';?>" method="POST">
+	<input type="hidden" name="order_no" value="<?=$orderNo?>">
+	<input type="hidden" name="filename" value="purchase_order_<?=$orderNo?>">
+	<input id="xls_deliverto" type="hidden" name="deliverto">
+	<input id="xls_page" type="hidden" name="page">
+	<input id="xls_attn" type="hidden" name="attn">
+	<input id="xls_supplierinvoiceno" type="hidden" name="supplierinvoiceno">
+	<input id="xls_terms" type="hidden" name="terms">
+	<input id="xls_memo" type="hidden" name="memo">
+	<input id="xls_freight" type="hidden" name="freight">
+	<input id="xls_salestax" type="hidden" name="salestax">
+	<input id="xls_lessdeposit" type="hidden" name="lessdeposit">
+	<input id="xls_balancedue" type="hidden" name="balancedue">
+	<input id="xls_preparedby" type="hidden" name="preparedby">
+	<input id="xls_orderedby" type="hidden" name="orderedby">
+	<input id="xls_approvedby" type="hidden" name="approvedby">
+</form>
+
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -474,7 +492,7 @@ $(document).ready(function() {
 	$('.generateform-btn').on('click', function() {
 		$('#PurchaseOrderFormModal').modal('toggle');
 	});
-	$('#generateform').click(function() {
+	$('#generate_form').click(function() {
 		$('.inputManual').hide();
 		$.each($('.inputManual'), function(key, obj) {
 			$(this).parent().append(
@@ -487,6 +505,22 @@ $(document).ready(function() {
 		$('#purchaseOrderForm').appendTo('#PurchaseOrderFormModal .modal-body');
 		$('.inputManual').show();
 		$('.inputManual').siblings('span').remove();
+	});
+	$('#generate_excel').click(function() {
+		$('#xls_deliverto').val($('#deliverto').val());
+		$('#xls_page').val($('#page').val());
+		$('#xls_attn').val($('#attn').val());
+		$('#xls_supplierinvoiceno').val($('#supplierinvoiceno').val());
+		$('#xls_terms').val($('#terms').val());
+		$('#xls_memo').val($('#memo').val());
+		$('#xls_freight').val($('#freight').val());
+		$('#xls_salestax').val($('#salestax').val());
+		$('#xls_lessdeposit').val($('#lessdeposit').val());
+		$('#xls_balancedue').val($('#balancedue').val());
+		$('#xls_preparedby').val($('#preparedby').val());
+		$('#xls_orderedby').val($('#orderedby').val());
+		$('#xls_approvedby').val($('#approvedby').val());
+		$('#formExportTable').submit();
 	});
 });
 </script>
