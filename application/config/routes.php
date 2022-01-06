@@ -220,3 +220,9 @@ $route['send_email_to'] = 'Mail_Controller/send_email_to';
 
 $route['admin/xlsSalesOrder'] = 'Exporting/xlsSalesOrder';
 $route['admin/xlsPurchaseOrder'] = 'Exporting/xlsPurchaseOrder';
+
+// RESTOCKING version 2
+$route['admin/product_restockingv2'] = 'Admin_Extend/product_restockingv2';
+$route['admin/Get_Product_data'] = 'Admin_Extend/Get_Product_data';
+$route['admin/Add_stockto_cart'] = 'Admin_Extend/Add_stockto_cart';
+

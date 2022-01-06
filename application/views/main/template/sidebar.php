@@ -12,7 +12,7 @@
 		</div>
 		<div class="sidebar-menu">
 			<ul class="menu">
-				<li class="sidebar-title">ORWELL</li>
+				<li class="sidebar-title">INVENTORY</li>
 
 				<li class="sidebar-item sidebar-admin-dashboard">
 					<a href="<?=base_url().'admin'?>" class='sidebar-link'>
@@ -38,15 +38,24 @@
 					</li>
 				<?php endif; ?>
 				
-				<?php if ($this->session->userdata('UserRestrictions')['restocking_view'] == 1): ?>
+				<!-- <?php if ($this->session->userdata('UserRestrictions')['restocking_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-restock_product">
 						<a href="<?=base_url()?>admin/product_restocking" class='sidebar-link'>
 							<i class="bi bi-card-list"></i>
 							<span>Restock </span>
 						</a>
 					</li>
+				<?php endif; ?> -->
+
+				<?php if ($this->session->userdata('UserRestrictions')['restocking_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-restock_productv2">
+						<a href="<?=base_url()?>admin/product_restockingv2" class='sidebar-link'>
+							<i class="bi bi-card-list"></i>
+							<span>Restocking </span>
+						</a>
+					</li>
 				<?php endif; ?>
-				
+
 				<?php if ($this->session->userdata('UserRestrictions')['inventory_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-inventory">
 						<a href="<?=base_url().'admin/inventory'?>" class='sidebar-link'>
@@ -152,7 +161,7 @@
 					<li class="sidebar-item sidebar-admin-settings-bcat">
 						<a href="<?=base_url().'admin/view_settings_bcat'?>" class='sidebar-link'>
 							<i class="bi bi-list-ol"></i>
-							<span>Brand Category</span>
+							<span>Branding</span>
 						</a>
 					</li>
 				<?php endif; ?>

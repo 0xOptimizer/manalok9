@@ -169,5 +169,16 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('tb_mailsent', $data);
 		return $result;
 	}
+	public function Insert_toCartRestocking($data)
+	{
+		$result = $this->db->insert('cart_restocking', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	
 }
