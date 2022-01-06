@@ -747,4 +747,33 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('tb_mailsent');
 		return $result;
 	}
+	public function get_allstocks()
+	{
+		$this->db->select('*');
+		$this->db->where('Stocks >', 0);
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+	public function Checkprd_uid($uid)
+	{
+		$this->db->select('*');
+		$this->db->where('Status', 1);
+		$this->db->where('U_ID', $uid);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function Checkthis_prd_uid($uid)
+	{
+		$this->db->select('*');
+		$this->db->where('U_ID ', $uid);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function Checkthis_prd_sku($product_sku)
+	{
+		$this->db->select('*');
+		$this->db->where('Code ', $product_sku);
+		$result = $this->db->get('products');
+		return $result;
+	}
 }

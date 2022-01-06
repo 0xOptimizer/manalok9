@@ -469,10 +469,14 @@ class Admin extends MY_Controller {
 			
 			// INSERT USER RESTRICTIONS
 			foreach ($userRestrictions as $key => $val) {
+			    $allowed = 0;
+			    if ($val == 'on') {
+			        $allowed = 1;
+			    }
 				$data = array(
 					'UserID' => $userID,
 					'Action' => $key,
-					'Allowed' => $val,
+					'Allowed' => $allowed,
 				);
 				$this->Model_Inserts->InsertUserRestrictions($data);
 			}
@@ -636,17 +640,25 @@ class Admin extends MY_Controller {
 			if ($allUserRestrictions->num_rows() != sizeof($userRestrictions)) { // if incorrect amount of restrictions, delete current and add new
 				$this->Model_Deletes->Delete_user_restriction($userID);
 				foreach ($userRestrictions as $key => $val) {
+				    $allowed = 0;
+				    if ($val == 'on') {
+				        $allowed = 1;
+				    }
 					$data = array(
 						'UserID' => $userID,
 						'Action' => $key,
-						'Allowed' => $val,
+						'Allowed' => $allowed,
 					);
 					$this->Model_Inserts->InsertUserRestrictions($data);
 				}
 			} else {
 				foreach ($userRestrictions as $key => $val) {
+				    $allowed = 0;
+				    if ($val == 'on') {
+				        $allowed = 1;
+				    }
 					$data = array(
-						'Allowed' => $val,
+						'Allowed' => $allowed,
 					);
 					$this->Model_Updates->UpdateUserRestriction($userID, $key, $data);
 				}
@@ -768,6 +780,59 @@ class Admin extends MY_Controller {
 		$insertNewEmployee = $this->Model_Inserts->InsertNewUser($data);
 		if ($insertNewEmployee == TRUE) {
 			$this->session->set_flashdata('isApplicantAdded', 'true');
+
+			// INSERT USER RESTRICTIONS
+			$userRestrictions = array(
+				'products_view',
+				'products_add',
+				'products_edit',
+				'products_delete',
+				'releasing_view',
+				'restocking_view',
+				'inventory_view',
+				'users_view',
+				'users_add',
+				'users_edit',
+				'vendors_view',
+				'vendors_add',
+				'vendors_edit',
+				'vendors_delete',
+				'purchase_orders_view',
+				'purchase_orders_add',
+				'purchase_orders_approve',
+				'purchase_orders_bill_creation',
+				'bills_view',
+				'clients_view',
+				'clients_add',
+				'clients_edit',
+				'clients_delete',
+				'sales_orders_view',
+				'sales_orders_add',
+				'sales_orders_mark_for_invoicing',
+				'sales_orders_schedule_delivery',
+				'sales_orders_mark_as_delivered',
+				'sales_orders_mark_as_received',
+				'sales_orders_fulfill',
+				'sales_orders_invoice_creation',
+				'invoice_view',
+				'brand_category_view',
+				'trash_bin_view',
+				'accounts_view',
+				'accounts_add',
+				'accounts_edit',
+				'journal_transactions_view',
+				'journal_transactions_add',
+				'journal_transactions_delete'
+			);
+			foreach ($userRestrictions as $key) {
+				$data = array(
+					'UserID' => $userID,
+					'Action' => $key,
+					'Allowed' => 0,
+				);
+				$this->Model_Inserts->InsertUserRestrictions($data);
+			}
+
 			if ($loginEmail != NULL && $loginPassword != NULL) {
 				$loginData = array(
 					'UserID' => $userID,
@@ -1428,7 +1493,7 @@ class Admin extends MY_Controller {
 				'DateCreation' => date('Y-m-d h:i:s A'),
 				'VendorNo' => $purchaseFromNo,
 				'ShipVia' => $shipVia,
-				'DateDelivery' => $deliveryDate,
+				'DateDelivery' => date('Y-m-d', strtotime($deliveryDate)),
 				'Status' => '1',
 			);
 			$insertNewPurchaseOrder = $this->Model_Inserts->InsertPurchaseOrder($data);
@@ -3198,5 +3263,9 @@ class Admin extends MY_Controller {
 
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$this->load->view('admin/page_mail', $data);
+	}
+	public function product_restockingv2($value='')
+	{
+		// code...
 	}
 }

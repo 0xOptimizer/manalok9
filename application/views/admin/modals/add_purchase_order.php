@@ -64,7 +64,7 @@
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">DELIVERY DATE</label>
-									<input type="date" class="form-control" name="dateDelivery" value="<?=date("Y-m-d");?>" required>
+									<input type="date" class="form-control" name="deliveryDate" value="<?=date("Y-m-d");?>" required>
 								</div>
 							</div>
 						</div>

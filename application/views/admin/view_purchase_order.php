@@ -12,6 +12,8 @@ $getPurchaseOrderByOrderNo = $this->Model_Selects->GetPurchaseOrderByNo($orderNo
 $purchaseOrder = $getPurchaseOrderByOrderNo->row_array();
 $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orderNo);
 
+$vendorDetails = $this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array();
+
 $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 
 $getAccounts = $this->Model_Selects->GetAccountSelection();
@@ -32,6 +34,23 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 		padding-left: 20px;
 		color: #FFFFFF;
 	}
+	.modal-backdrop {
+		opacity: 0 !important;
+	}
+	@media print {
+		#app {
+			display: none;
+		}
+		#purchaseOrderForm {
+			display: block;
+		}
+		#purchaseOrderForm td {
+			color: black !important;
+		}
+		#purchaseOrderForm td span {
+			max-width: 100%;
+		}
+	}
 </style>
 </head>
 <body>
@@ -44,95 +63,6 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 			</a>
 			<a href="<?=base_url() . 'admin/purchase_orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO PURCHASE ORDERS</a>
 		</header>
-
-		<div class="row d-none">
-			<div class="col-sm-12 table-responsive">
-				<table id="purchaseOrder" class="standard-table table">
-					<tbody>
-						<tr>
-							<td class="text-center" colspan="3">
-								<img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>" width="250" height="70">
-							</td>
-							<td colspan="3">
-								Purchase Order
-							</td>
-						</tr>
-						<tr>
-							<td>Order From:</td>
-							<td>Deliver To:</td>
-							<td>Purchase No.:</td>
-							<td colspan="3"></td>
-						</tr>
-						<tr>
-							<td rowspan="2"></td>
-							<td rowspan="2"></td>
-							<td>Date:</td>
-							<td colspan="3"></td>
-						</tr>
-						<tr>
-							<td>Page:</td>
-							<td colspan="3"></td>
-						</tr>
-						<tr>
-							<td>ATTN:</td>
-							<td colspan="5"></td>
-						</tr>
-						<tr>
-							<td colspan="2">SHIP VIA</td>
-							<td>DELIVERY DATE</td>
-							<td>SUPPLIER INV. NO.</td>
-							<td colspan="2">TERMS</td>
-						</tr>
-						<tr>
-							<td colspan="2"></td>
-							<td></td>
-							<td></td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td>QTY</td>
-							<td>ITEM NO.</td>
-							<td>DESCRIPTION</td>
-							<td>UNIT PRICE</td>
-							<td>UNIT</td>
-							<td>AMOUNT</td>
-						</tr>
-						<tr>
-							<td rowspan="5">MEMO:</td>
-							<td rowspan="5" colspan="2"></td>
-							<td colspan="2">TOTAL AMOUNT</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td colspan="2">FREIGHT</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td colspan="2">SALES TAX</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td colspan="2">LESS DEPOSIT</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td colspan="2">BALANCE DUE</td>
-							<td></td>
-						</tr>
-						<tr>
-							<td colspan="2">PREPARED BY</td>
-							<td colspan="2">ORDERED BY</td>
-							<td colspan="2">APPROVED BY</td>
-						</tr>
-						<tr>
-							<td colspan="2"></td>
-							<td colspan="2"></td>
-							<td colspan="2"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
 
 		<div class="page-heading">
 			<div class="page-title">
@@ -148,6 +78,9 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 							<?php endif; ?>
 						</h3>
 					</div>
+					<div class="col-12">
+						<button type="button" class="generateform-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE PO FORM</button>
+					</div>
 				</div>
 			</div>
 			<section class="section">
@@ -157,9 +90,8 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 							<div class="col-sm-12 table-responsive">
 								<table id="transactionsTable" class="standard-table table">
 									<thead style="font-size: 12px;">
-										<th class="text-center">ID</th>
-										<th class="text-center">PRODUCT CODE</th>
 										<th class="text-center">TRANSACTION ID</th>
+										<th class="text-center">PRODUCT CODE</th>
 										<th class="text-center">AMOUNT</th>
 										<th class="text-center">PRICE</th>
 										<th class="text-center">TOTAL</th>
@@ -170,13 +102,10 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 											foreach ($getTransactionsByOrderNo->result_array() as $row): ?>
 												<tr>
 													<td class="text-center">
-														<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+														<?=$row['TransactionID']?>
 													</td>
 													<td class="text-center">
 														<?=$row['Code']?>
-													</td>
-													<td class="text-center">
-														<?=$row['TransactionID']?>
 													</td>
 													<td class="text-center">
 														<?=$row['Amount']?>
@@ -185,7 +114,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 														<?=number_format($row['PriceUnit'], 2)?>
 													</td>
 													<td class="text-center">
-														<?=number_format($row['Amount'].$row['PriceUnit'], 2)?>
+														<?=number_format($row['Amount'] * $row['PriceUnit'], 2)?>
 													</td>
 												</tr>
 										<?php endforeach;
@@ -205,12 +134,9 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 								<h6>DATE CREATION</h6>
 								<label><?=$purchaseOrder['DateCreation']?></label>
 							</div>
-							<?php 
-							$v_details = $this->Model_Selects->GetVendorByNo($purchaseOrder['VendorNo'])->row_array();
-							?>
 							<div class="col-12 mb-3">
 								<h6>PURCHASED FROM</h6>
-								<label><?=$v_details['Name']?> (
+								<label><?=$vendorDetails['Name']?> (
 									<a href="<?=base_url() . 'admin/vendors#'. $purchaseOrder["VendorNo"]?>">
 										<i class="bi bi-eye"></i> <?=$purchaseOrder['VendorNo']?>
 									</a>
@@ -305,7 +231,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 											<?=$row['BillNo']?>
 										</td>
 										<td class="text-center">
-											<?=$v_details['Name']?>
+											<?=$vendorDetails['Name']?>
 										</td>
 										<td class="text-center">
 											<?=number_format($row['Amount'], 2)?>
@@ -346,11 +272,34 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 	</div>
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
-<?php $this->load->view('admin/modals/add_bill', array('purchaseOrder'=>$purchaseOrder)); ?>
+<?php $this->load->view('admin/modals/add_bill', array('purchaseOrder' => $purchaseOrder)); ?>
 <?php endif; ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
+
+<?php $this->load->view('admin/modals/purchase_order_form.php', array(
+	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
+	'vendorDetails' => $vendorDetails
+)); ?>
+
+<form id="formExportTable" action="<?php echo base_url() . 'admin/xlsPurchaseOrder';?>" method="POST">
+	<input type="hidden" name="order_no" value="<?=$orderNo?>">
+	<input type="hidden" name="filename" value="purchase_order_<?=$orderNo?>">
+	<input id="xls_deliverto" type="hidden" name="deliverto">
+	<input id="xls_page" type="hidden" name="page">
+	<input id="xls_attn" type="hidden" name="attn">
+	<input id="xls_supplierinvoiceno" type="hidden" name="supplierinvoiceno">
+	<input id="xls_terms" type="hidden" name="terms">
+	<input id="xls_memo" type="hidden" name="memo">
+	<input id="xls_freight" type="hidden" name="freight">
+	<input id="xls_salestax" type="hidden" name="salestax">
+	<input id="xls_lessdeposit" type="hidden" name="lessdeposit">
+	<input id="xls_balancedue" type="hidden" name="balancedue">
+	<input id="xls_preparedby" type="hidden" name="preparedby">
+	<input id="xls_orderedby" type="hidden" name="orderedby">
+	<input id="xls_approvedby" type="hidden" name="approvedby">
+</form>
 
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -365,11 +314,11 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 <script>
 $('.sidebar-admin-purchase-orders').addClass('active');
 $(document).ready(function() {
-	var tableTransactions = $('#transactionsTable').DataTable( {
-		sDom: 'lrtip',
-		'bLengthChange': false,
-		'order': [[ 0, 'desc' ]],
-	});
+	// var tableTransactions = $('#transactionsTable').DataTable( {
+	// 	sDom: 'lrtip',
+	// 	'bLengthChange': false,
+	// 	'order': [[ 0, 'desc' ]],
+	// });
 	// var tableBills = $('#billsTable').DataTable( {
 	// 	sDom: 'lrtip',
 	// 	'bLengthChange': false,
@@ -537,6 +486,41 @@ $(document).ready(function() {
 		} else {
 			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
 		}
+	});
+
+
+	$('.generateform-btn').on('click', function() {
+		$('#PurchaseOrderFormModal').modal('toggle');
+	});
+	$('#generate_form').click(function() {
+		$('.inputManual').hide();
+		$.each($('.inputManual'), function(key, obj) {
+			$(this).parent().append(
+				$('<span>').html($(this).val())
+			);
+		});
+		$('#purchaseOrderForm').appendTo('body');
+		$('#PurchaseOrderFormModal').modal('toggle');
+		window.print();
+		$('#purchaseOrderForm').appendTo('#PurchaseOrderFormModal .modal-body');
+		$('.inputManual').show();
+		$('.inputManual').siblings('span').remove();
+	});
+	$('#generate_excel').click(function() {
+		$('#xls_deliverto').val($('#deliverto').val());
+		$('#xls_page').val($('#page').val());
+		$('#xls_attn').val($('#attn').val());
+		$('#xls_supplierinvoiceno').val($('#supplierinvoiceno').val());
+		$('#xls_terms').val($('#terms').val());
+		$('#xls_memo').val($('#memo').val());
+		$('#xls_freight').val($('#freight').val());
+		$('#xls_salestax').val($('#salestax').val());
+		$('#xls_lessdeposit').val($('#lessdeposit').val());
+		$('#xls_balancedue').val($('#balancedue').val());
+		$('#xls_preparedby').val($('#preparedby').val());
+		$('#xls_orderedby').val($('#orderedby').val());
+		$('#xls_approvedby').val($('#approvedby').val());
+		$('#formExportTable').submit();
 	});
 });
 </script>

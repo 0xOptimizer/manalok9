@@ -12,6 +12,9 @@ $getSalesOrderByOrderNo = $this->Model_Selects->GetSalesOrderByNo($orderNo);
 $salesOrder = $getSalesOrderByOrderNo->row_array();
 $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orderNo);
 
+$clientBTDetails = $this->Model_Selects->GetClientByNo($salesOrder['BillToClientNo'])->row_array();
+$clientSTDetails = $this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array();
+
 $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 
 $getAccounts = $this->Model_Selects->GetAccountSelection();
@@ -32,6 +35,23 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 		padding-left: 20px;
 		color: #FFFFFF;
 	}
+	.modal-backdrop {
+		opacity: 0 !important;
+	}
+	@media print {
+		#app {
+			display: none;
+		}
+		#salesOrderForm {
+			display: block;
+		}
+		#salesOrderForm td {
+			color: black !important;
+		}
+		#salesOrderForm td span {
+			max-width: 100%;
+		}
+	}
 </style>
 </head>
 <body>
@@ -44,95 +64,6 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 			</a>
 			<a href="<?=base_url() . 'admin/sales_orders'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO SALES ORDERS</a>
 		</header>
-
-		<div class="row d-none">
-			<div class="col-sm-12 table-responsive">
-				<table id="purchaseOrder" class="standard-table table">
-					<tbody>
-						<tr>
-							<td class="text-center" colspan="3" rowspan="3">
-								<img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>" width="250" height="70">
-							</td>
-							<td colspan="3">
-								<b>Sales Order Form</b>
-							</td>
-						</tr>
-						<tr>
-							<td>Customer PO#:</td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td>Order Date:</td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td colspan="3">Bill To:</td>
-							<td colspan="3">Ship To:</td>
-						</tr>
-						<tr>
-							<td colspan="3"></td>
-							<td colspan="3"></td>
-						</tr>
-						<tr>
-							<td colspan="3"></td>
-							<td colspan="3"></td>
-						</tr>
-						<tr>
-							<td colspan="3"></td>
-							<td colspan="3"></td>
-						</tr>
-						<tr>
-							<td colspan="3"></td>
-							<td colspan="3"></td>
-						</tr>
-						<tr>
-							<td colspan="3">contact</td>
-							<td colspan="3">contact</td>
-						</tr>
-						<tr>
-							<td>QTY</td>
-							<td colspan="2">ITEM DESCRIPTION</td>
-							<td>UNIT PRICE</td>
-							<td colspan="2">TOTAL</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td colspan="2"></td>
-							<td></td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td colspan="2" rowspan="2">Category of Account:</td>
-							<td class="text-end" colspan="2">Sub-total <b>PHP </b></td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td colspan="2">Outright Discount (15%/12%/10%)</td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td colspan="2" rowspan="3">NONE</td>
-							<td colspan="2">Volume Discount (10%)</td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td colspan="2">PBD Discount (5%/3%)</td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td colspan="2">Manpower Discount (5%)</td>
-							<td colspan="2"></td>
-						</tr>
-						<tr>
-							<td>PREPARED BY</td>
-							<td colspan="2"></td>
-							<td><b>TOTAL</b></td>
-							<td colspan="2"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
 
 		<div class="page-heading">
 			<div class="page-title">
@@ -154,6 +85,9 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 							<?php endif; ?>
 						</h3>
 					</div>
+					<div class="col-12">
+						<button type="button" class="generateform-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE SO FORM</button>
+					</div>
 				</div>
 			</div>
 			<section class="section">
@@ -163,9 +97,8 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 							<div class="col-sm-12 table-responsive">
 								<table id="transactionsTable" class="standard-table table">
 									<thead style="font-size: 12px;">
-										<th class="text-center">ID</th>
-										<th class="text-center">PRODUCT CODE</th>
 										<th class="text-center">TRANSACTION ID</th>
+										<th class="text-center">PRODUCT CODE</th>
 										<th class="text-center">AMOUNT</th>
 										<th class="text-center">PRICE</th>
 										<th class="text-center">TOTAL</th>
@@ -175,9 +108,6 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 										if ($getTransactionsByOrderNo->num_rows() > 0):
 											foreach ($getTransactionsByOrderNo->result_array() as $row): ?>
 												<tr>
-													<td class="text-center">
-														<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-													</td>
 													<td class="text-center">
 														<?=$row['Code']?>
 													</td>
@@ -191,7 +121,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 														<?=number_format($row['PriceUnit'], 2)?>
 													</td>
 													<td class="text-center">
-														<?=number_format($row['Amount'].$row['PriceUnit'], 2)?>
+														<?=number_format($row['Amount'] * $row['PriceUnit'], 2)?>
 													</td>
 												</tr>
 										<?php endforeach;
@@ -211,23 +141,19 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 								<h6>DATE</h6>
 								<label><?=$salesOrder['Date']?></label>
 							</div>
-							<?php
-							$c_details = $this->Model_Selects->GetClientByNo($salesOrder['BillToClientNo'])->row_array();
-							?>
 							<div class="col-12">
 								<h6>BILL TO</h6>
-								<label><?=$c_details['Name']?> (
-									<a href="<?=base_url() . 'admin/clients#'. $c_details["ClientNo"]?>">
-										<i class="bi bi-eye"></i> <?=$c_details['ClientNo']?>
+								<label><?=$clientBTDetails['Name']?> (
+									<a href="<?=base_url() . 'admin/clients#'. $clientBTDetails["ClientNo"]?>">
+										<i class="bi bi-eye"></i> <?=$clientBTDetails['ClientNo']?>
 									</a>
 								)</label>
 							</div>
 							<div class="col-12 mb-3">
-								<?php $st_details = $this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array(); ?>
 								<h6>SHIP TO</h6>
-								<label><?=$st_details['Name']?> (
-									<a href="<?=base_url() . 'admin/clients#'. $st_details["ClientNo"]?>">
-										<i class="bi bi-eye"></i> <?=$st_details['ClientNo']?>
+								<label><?=$clientSTDetails['Name']?> (
+									<a href="<?=base_url() . 'admin/clients#'. $clientSTDetails["ClientNo"]?>">
+										<i class="bi bi-eye"></i> <?=$clientSTDetails['ClientNo']?>
 									</a>
 								)</label>
 							</div>
@@ -397,7 +323,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 												<?=$row['OrderNo']?>
 											</td>
 											<td class="text-center">
-												<?=$c_details['Name']?>
+												<?=$clientBTDetails['Name']?>
 											</td>
 											<td class="text-center">
 												<?=number_format($row['Amount'], 2)?>
@@ -439,7 +365,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 	</div>
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation'] == 1): ?>
-<?php $this->load->view('admin/modals/add_invoice', array('salesOrder'=>$salesOrder)); ?>
+<?php $this->load->view('admin/modals/add_invoice', array('salesOrder' => $salesOrder)); ?>
 <?php endif; ?>
 <?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery'] == 1): ?>
 <div class="modal fade" id="DeliveryScheduling" tabindex="-1" role="dialog" aria-hidden="true">
@@ -468,6 +394,18 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
+<?php $this->load->view('admin/modals/sales_order_form.php', array(
+	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
+	'clientBTDetails' => $clientBTDetails,
+	'clientSTDetails' => $clientSTDetails
+)); ?>
+
+<form id="formExportTable" action="<?php echo base_url() . 'admin/xlsSalesOrder';?>" method="POST">
+	<input type="hidden" name="order_no" value="<?=$orderNo?>">
+	<input type="hidden" name="filename" value="sales_order_<?=$orderNo?>">
+	<input id="xls_preparedby" type="hidden" name="prepared_by">
+</form>
+
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -481,11 +419,11 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 <script>
 $('.sidebar-admin-sales-orders').addClass('active');
 $(document).ready(function() {
-	var tableTransactions = $('#transactionsTable').DataTable( {
-		sDom: 'lrtip',
-		'bLengthChange': false,
-		'order': [[ 0, 'desc' ]],
-	});
+	// var tableTransactions = $('#transactionsTable').DataTable( {
+	// 	sDom: 'lrtip',
+	// 	'bLengthChange': false,
+	// 	'order': [[ 0, 'desc' ]],
+	// });
 
 	$('.salesinvoicing-btn').on('click', function() {
 		$('#SalesInvoicing').modal('toggle');
@@ -666,6 +604,29 @@ $(document).ready(function() {
 		} else {
 			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
 		}
+	});
+
+
+	$('.generateform-btn').on('click', function() {
+		$('#SalesOrderFormModal').modal('toggle');
+	});
+	$('#generate_form').click(function() {
+		$('.inputManual').hide();
+		$.each($('.inputManual'), function(key, obj) {
+			$(this).parent().append(
+				$('<span>').html($(this).val())
+			);
+		});
+		$('#salesOrderForm').appendTo('body');
+		$('#SalesOrderFormModal').modal('toggle');
+		window.print();
+		$('#salesOrderForm').appendTo('#SalesOrderFormModal .modal-body');
+		$('.inputManual').show();
+		$('.inputManual').siblings('span').remove();
+	});
+	$('#generate_excel').click(function() {
+		$('#xls_preparedby').val($('#prepared_by').val());
+		$('#formExportTable').submit();
 	});
 });
 </script>

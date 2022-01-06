@@ -147,7 +147,7 @@ date_default_timezone_set('Asia/Manila');
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script> -->
 <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
-<script src="https://serratus.github.io/quaggaJS/examples/js/quagga.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.js"></script>
 
 <script>
 $(document).ready(function() {
@@ -164,31 +164,20 @@ $(document).ready(function() {
 		startScanner();
 		function startScanner() {
 			Quagga.init({
-				inputStream: {
-					name: "Live",
-					type: "LiveStream",
-					target: document.querySelector('#scanner_area'),
-					constraints: {
-						width: 1080,
-						height: 1920,
-						facingMode: "environment"
-					},
+				inputStream : {
+					name : "Live",
+					type : "LiveStream",
+					target: document.querySelector('#scanner_area')
 				},
-				locator: {
-                patchSize: "large",
-                halfSample: true
-            },
-				decoder: {
-					readers: [
-					"code_128_reader"
-					],
-				},
-
-			}, function (err) {
+				decoder : {
+					readers : ["code_128_reader"]
+				}
+			}, function(err) {
 				if (err) {
 					console.log(err);
-					return;
+					return
 				}
+				console.log("Initialization finished. Ready to start");
 				Quagga.start();
 			});
 
