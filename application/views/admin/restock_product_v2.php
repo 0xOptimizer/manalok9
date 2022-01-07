@@ -54,7 +54,7 @@ date_default_timezone_set('Asia/Manila');
 							|
 							<a href="#" class="scnrestock-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cloud-download"></i> GENERATE REPORT</a>
 							|
-							<a href="#" class="scnrestock-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-cart"></i> CART</a>
+							<a href="#" class="scnrestock-btn btn btn-sm-secondary" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#restocking_cart_modal"><i class="bi bi-cart"></i> CART</a>
 						</div>
 					</div>
 				</div>
@@ -123,6 +123,7 @@ date_default_timezone_set('Asia/Manila');
 	</div>
 	<?php $this->load->view('admin/modals/restocking/add_stock_restocking.php'); ?>
 	<?php $this->load->view('admin/modals/restocking/add_stock_scan_barcode.php'); ?>
+	<?php $this->load->view('admin/modals/restocking/cart_modal_restocking.php'); ?>
 	<?php $this->load->view('main/globals/scripts.php'); ?>
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

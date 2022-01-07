@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Restock using SKU</h5>
+        <h5 class="modal-title" id="exampleModalLabel"><i class="bi bi-plus-square" style="font-size: 20px; margin-right: 5px;"></i> Restock using SKU</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -69,8 +69,8 @@
       </div>
       <div class="modal-footer">
         
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button id="btn_addstocks_manual" type="button" class="btn btn-primary">Add Stock</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Close</button>
+        <button id="btn_addstocks_manual" type="button" class="btn btn-primary"><i class="bi bi-plus"></i> Add Stock</button>
       </div>
     </div>
   </div>

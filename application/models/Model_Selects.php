@@ -765,15 +765,30 @@ class Model_Selects extends CI_Model {
 	public function Checkthis_prd_uid($uid)
 	{
 		$this->db->select('*');
-		$this->db->where('U_ID ', $uid);
+		$this->db->where('U_ID', $uid);
 		$result = $this->db->get('products');
 		return $result;
 	}
 	public function Checkthis_prd_sku($product_sku)
 	{
 		$this->db->select('*');
-		$this->db->where('Code ', $product_sku);
+		$this->db->where('Code', $product_sku);
 		$result = $this->db->get('products');
+		return $result;
+	}
+	public function Get_Cart_dataaa($user_id,$status)
+	{
+		$this->db->select('*');
+		$this->db->where('user_id', $user_id);
+		$this->db->where('status', $status);
+		$result = $this->db->get('cart_restocking');
+		return $result;
+	}
+	public function CheckCartItem_ID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('id', $id);
+		$result = $this->db->get('cart_restocking');
 		return $result;
 	}
 }

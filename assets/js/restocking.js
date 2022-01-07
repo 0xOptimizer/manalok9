@@ -201,7 +201,8 @@ $(document).ready(function () {
 					break;
 					case 'success':
 					$('.ajx_res_prompt').html('<p class="text-success align-middle"><i class="bi bi-check-circle-fill"></i> Stock added to cart.</p>');
-					clear_form_input();
+					clear_form_input_manual();
+					$('.sku_prompt').html('');
 					break;
 					case 'error':
 					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Error adding stock, Please try again.</p>');
@@ -213,4 +214,60 @@ $(document).ready(function () {
 		});
 	});
 	/* CART MODAL */
+	function Get_Cart_Details() {
+		$('#fill_data_cart').html('');
+		$.ajax({
+			url: "get_cart_fill_table",
+			type: "get",
+			dataType: "html",
+			success: function(result) {
+				$('#fill_data_cart').html(result);
+			}
+		});
+	}
+	$('#restocking_cart_modal').on('shown.bs.modal' , function() {
+		Get_Cart_Details();
+	});
+	$('#restocking_cart_modal').on('hidden.bs.modal' , function() {
+		$('#fill_data_cart').html('');
+	});
+	$(document).on('click','.btn-cartitem-delete' , function () {
+		var cart_id = $(this).attr('data-value');
+
+		$.ajax({
+			url: "Delete_cart_itemrestock",
+			type: "POST",
+			data : { cart_id : cart_id },
+			success: function(result) {
+
+				switch (result)
+				{
+					case 'deleted':
+					$('.ajx_res_prompt').html('<p class="text-success align-middle"><i class="bi bi-check-circle-fill"></i> Cart item deleted</p>');
+					Get_Cart_Details();
+					break;
+
+					case 'error_deleting':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Error deleting item.</p>');
+					break;
+
+					case 'not_found':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Item doesn\'t exist.</p>');
+					break;
+
+					case 'error':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Something\'s wrong, Please try again.</p>');
+					break;
+
+					default:
+					Get_Cart_Details();
+				}
+
+				setTimeout(function() { 
+					$('.ajx_res_prompt').html('');
+				}, 2000);
+
+			}
+		});
+	});
 });
