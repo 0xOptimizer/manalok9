@@ -139,7 +139,8 @@ class Admin_Extend extends CI_Controller {
 			'expiration' => $expiration,
 			'description' => $description,
 			'user_id' => $user_id,
-			'date_added' => $date_added
+			'date_added' => $date_added,
+			'status' => 1,
 		);
 		$Insert_toCartRestocking = $this->Model_Inserts->Insert_toCartRestocking($data);
 		if ($Insert_toCartRestocking == true) {
@@ -155,6 +156,136 @@ class Admin_Extend extends CI_Controller {
 			/* STOCK INSERTED ERROR PROMPT ERROR */
 			$data['promptsss'] = array('status' => 'error', );
 			echo json_encode($data);
+			exit();
+		}
+	}
+	public function Get_uid_prd()
+	{
+		/* VARIABLES */
+		$product_sku = $this->input->post('pre_sku');
+
+		/* CHECK SKU IF EXIST FALSE PROMPT ERROR*/
+		$Checkthis_prd_sku = $this->Model_Selects->Checkthis_prd_sku($product_sku);
+		if ($Checkthis_prd_sku->num_rows() > 0) {
+
+			$cps_result = $Checkthis_prd_sku->row_array();
+			$uid = $cps_result['U_ID'];
+			$data['product'] = array('uid' => $uid);
+
+			$data['status'] = array('code' => 'sku_found', );
+			echo json_encode($data);
+			exit();
+		}
+		else
+		{
+			$data['status'] = array('code' => 'sku_not_found', );
+			echo json_encode($data);
+			exit();
+		}
+	}
+	public function get_cart_fill_table()
+	{
+		/* VARIABLES */
+		$user_id = $this->session->userdata('UserID');
+		$status = 1;
+
+		/* GET DATA IN CART RESTOCKING */
+		$Get_Cart_dataaa = $this->Model_Selects->Get_Cart_dataaa($user_id,$status);
+		if ($Get_Cart_dataaa->num_rows() > 0) {
+			foreach ($Get_Cart_dataaa->result_array() as $row) {
+				$response = '
+				<div class="row py-3">
+            <div class="col-12 col-sm-12">
+              <div class="cart_header d-flex flex-wrap justify-content-between">
+                <h6 class="cart_header">
+                  <span class="text-primary">SKU</span> : '.$row['product_sku'].'
+                </h6>
+                <a type="button" class="btn-cartitem-delete text-danger" data-value="'.$row['id'].'"><i class="bi bi-trash"></i></a>
+              </div>
+              <div class="cart_body">
+                <div class="content-row d-flex flex-wrap justify-content-between">
+                  <div class="content">
+                    <label>
+                      <span class="text-primary">Quantity :</span> '.$row['quantity'].'
+                    </label>
+                  </div>
+                  <div class="content">
+                    <label>
+                      <span class="text-primary">Retail Price :</span> '.$row['retail_price'].' php
+                    </label>
+                  </div>
+                  <div class="content">
+                    <label>
+                      <span class="text-primary">Original Price :</span> '.$row['original_price'].' php
+                    </label>
+                  </div>
+                  <div class="content">
+                    <label>
+                      <span class="text-primary">Expiration Date :</span> '.$row['expiration'].'
+                    </label>
+                  </div>
+                </div>
+                <div class="content-row d-flex flex-wrap justify-content-between">
+                  <div class="content">
+                    <label>
+                      <span class="text-primary">Manufacturer :</span> '.$row['manufacturer'].'
+                    </label>
+                  </div>
+                </div>
+                <div class="content-row d-flex flex-wrap justify-content-between">
+                  <div class="content">
+                    <label>
+                      <span class="text-primary">Description :</span> '.$row['description'].'
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+				';
+				echo $response;
+			}
+			
+			exit();
+		}
+		else
+		{
+			$response = 
+			'<div class="row"><div class="col-12 col-sm-12 p-2 text-center"> Cart is empty.</div></div>';
+			echo $response;
+			exit();
+		}
+	}
+	public function Delete_cart_itemrestock()
+	{
+		/* VARIABLES */
+		$id = $this->input->post('cart_id');
+		if (!empty($id)) {
+
+			/* CHECK ID IF EXIST */
+			$CheckCartItem_ID = $this->Model_Selects->CheckCartItem_ID($id);
+			if ($CheckCartItem_ID->num_rows() > 0) {
+				/* DELETE CART ITEM BY ID */
+				$Delete_cartRestock_item = $this->Model_Deletes->Delete_cartRestock_item($id);
+				if ($Delete_cartRestock_item == true) {
+					echo 'deleted';
+					exit();
+				}
+				else
+				{
+					echo 'error_deleting';
+				exit();
+				}
+			}
+			else
+			{
+				echo 'not_found';
+				exit();
+			}
+		}
+		else
+		{
+			echo 'error';
 			exit();
 		}
 	}

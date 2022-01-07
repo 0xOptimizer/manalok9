@@ -101,5 +101,16 @@ class Model_Deletes extends CI_Model {
 		$result = $this->db->delete('vendors');
 		return $result;
 	}
-
+	public function Delete_cartRestock_item($id)
+	{
+		$this->db->where('id', $id);
+		$this->db->delete('cart_restocking');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
