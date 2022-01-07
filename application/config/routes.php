@@ -225,4 +225,6 @@ $route['admin/xlsPurchaseOrder'] = 'Exporting/xlsPurchaseOrder';
 $route['admin/product_restockingv2'] = 'Admin_Extend/product_restockingv2';
 $route['admin/Get_Product_data'] = 'Admin_Extend/Get_Product_data';
 $route['admin/Add_stockto_cart'] = 'Admin_Extend/Add_stockto_cart';
+$route['admin/Get_uid_prd'] = 'Admin_Extend/Get_uid_prd';
+
 

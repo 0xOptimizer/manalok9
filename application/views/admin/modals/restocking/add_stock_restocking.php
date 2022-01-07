@@ -12,12 +12,13 @@
         <div class="col-12 col-sm-12 pt-3">
           <div class="form-row d-flex flex-wrap">
             <div class="form-group col-12 col-sm-12 col-md-7 px-3 py-1">
+              <input id="m_uids" class="form-control standard-input-pad" type="hidden" name="">
               <input id="m_pre_sku" class="form-control standard-input-pad" type="text" name="">
               <div class="d-flex justify-content-between">
                 <label class="input-label">
                   SKU
                 </label>
-                <span class="sku_prompt"><label class="input-label text-success"><i class="bi bi-check-circle-fill"></i> Product found.</label></span>
+                <span class="sku_prompt"></span>
               </div>
             </div>
           </div>

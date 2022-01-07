@@ -158,4 +158,28 @@ class Admin_Extend extends CI_Controller {
 			exit();
 		}
 	}
+	public function Get_uid_prd()
+	{
+		/* VARIABLES */
+		$product_sku = $this->input->post('pre_sku');
+
+		/* CHECK SKU IF EXIST FALSE PROMPT ERROR*/
+		$Checkthis_prd_sku = $this->Model_Selects->Checkthis_prd_sku($product_sku);
+		if ($Checkthis_prd_sku->num_rows() > 0) {
+
+			$cps_result = $Checkthis_prd_sku->row_array();
+			$uid = $cps_result['U_ID'];
+			$data['product'] = array('uid' => $uid);
+
+			$data['status'] = array('code' => 'sku_found', );
+			echo json_encode($data);
+			exit();
+		}
+		else
+		{
+			$data['status'] = array('code' => 'sku_not_found', );
+			echo json_encode($data);
+			exit();
+		}
+	}
 }
