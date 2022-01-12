@@ -316,17 +316,37 @@ class Admin extends MY_Controller {
 			redirect(base_url());
 		}
 	}
-	public function accounting_test()
+	public function trial_balance()
 	{
-		if ($this->session->userdata('Privilege') > 1) {
-			$data = [];
-			$data = array_merge($data, $this->globalData);
-			$header['pageTitle'] = 'accounting_test';
-			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-			$this->load->view('admin/accounting_test', $data);
-		} else {
-			redirect(base_url());
-		}
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'trial_balance';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/trial_balance', $data);
+	}
+	public function income_statement()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'income_statement';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/income_statement', $data);
+	}
+	public function balance_sheet()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'balance_sheet';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/balance_sheet', $data);
+	}
+	public function cash_flow()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'cash_flow';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$this->load->view('admin/cash_flow', $data);
 	}
 	
 

@@ -419,6 +419,17 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('journals');  
 		return $result;
 	}
+	public function GetJournalsRange($from,$to)
+	{
+		$from = date('Y-m-d', strtotime($from));
+		$to = date('Y-m-d', strtotime($to));
+		
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('Date >= "' . $from . '" AND Date <= "' . $to . '"');
+		$result = $this->db->get('journals');  
+		return $result;
+	}
 	public function GetTransactions()
 	{
 		$this->db->select('*');
@@ -440,6 +451,29 @@ class Model_Selects extends CI_Model {
 		$this->db->where('JournalID', $id);
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('journal_transactions');  
+		return $result;
+	}
+	public function GetTransactionsRange($from,$to)
+	{
+		$from = date('Y-m-d', strtotime($from));
+		$to = date('Y-m-d', strtotime($to));
+
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('EXISTS(SELECT ID FROM journals WHERE journals.ID = journal_transactions.JournalID AND journals.Date >= "' . $from . '" AND journals.Date <= "' . $to . '")');
+		$result = $this->db->get('journal_transactions');
+		return $result;
+	}
+	public function GetTransactionsRangeByAccountID($from,$to,$account_id)
+	{
+		$from = date('Y-m-d', strtotime($from));
+		$to = date('Y-m-d', strtotime($to));
+
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('AccountID', $account_id);
+		$this->db->where('EXISTS(SELECT ID FROM journals WHERE journals.ID = journal_transactions.JournalID AND journals.Date >= "' . $from . '" AND journals.Date <= "' . $to . '")');
+		$result = $this->db->get('journal_transactions');
 		return $result;
 	}
 

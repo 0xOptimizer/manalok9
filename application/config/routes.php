@@ -79,7 +79,10 @@ $route['admin/invoices'] = 'Admin/invoices';
 $route['admin/accounts'] = 'Admin/accounts';
 $route['admin/journals'] = 'Admin/journals';
 
-$route['admin/accounting_test'] = 'Admin/accounting_test';
+$route['admin/trial_balance'] = 'Admin/trial_balance';
+$route['admin/income_statement'] = 'Admin/income_statement';
+$route['admin/balance_sheet'] = 'Admin/balance_sheet';
+$route['admin/cash_flow'] = 'Admin/cash_flow';
 
 
 // Users
@@ -166,6 +169,7 @@ $route['getVendorDetails'] = 'Admin/getVendorDetails';
 $route['getClientDetails'] = 'Admin/getClientDetails';
 
 $route['getJournalDetails'] = 'Admin/getJournalDetails';
+$route['admin/getAccountTransactionsRange'] = 'AJAX/getAccountTransactionsRange';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 $route['admin/searchClientName'] = 'AJAX/searchClientName';
