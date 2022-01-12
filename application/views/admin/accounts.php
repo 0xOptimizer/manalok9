@@ -44,6 +44,11 @@ if ($this->session->flashdata('highlight-id')) {
 					<?php if ($this->session->userdata('UserRestrictions')['accounts_add'] == 1): ?>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
 						<button type="button" class="newaccount-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW ACCOUNT</button>
+						|
+						<a href="<?=base_url() . 'admin/trial_balance';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> TRIAL BALANCE</a>
+						<a href="<?=base_url() . 'admin/income_statement';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> INCOME STATEMENT</a>
+						<a href="<?=base_url() . 'admin/balance_sheet';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> BALANCE SHEET</a>
+						<a href="<?=base_url() . 'admin/cash_flow';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> CASH FLOW</a>
 					</div>
 					<?php endif; ?>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">

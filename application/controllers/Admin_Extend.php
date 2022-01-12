@@ -195,53 +195,53 @@ class Admin_Extend extends CI_Controller {
 			foreach ($Get_Cart_dataaa->result_array() as $row) {
 				$response = '
 				<div class="row py-3">
-            <div class="col-12 col-sm-12">
-              <div class="cart_header d-flex flex-wrap justify-content-between">
-                <h6 class="cart_header">
-                  <span class="text-primary">SKU</span> : '.$row['product_sku'].'
-                </h6>
-                <a type="button" class="btn-cartitem-delete text-danger" data-value="'.$row['id'].'"><i class="bi bi-trash"></i></a>
-              </div>
-              <div class="cart_body">
-                <div class="content-row d-flex flex-wrap justify-content-between">
-                  <div class="content">
-                    <label>
-                      <span class="text-primary">Quantity :</span> '.$row['quantity'].'
-                    </label>
-                  </div>
-                  <div class="content">
-                    <label>
-                      <span class="text-primary">Retail Price :</span> '.$row['retail_price'].' php
-                    </label>
-                  </div>
-                  <div class="content">
-                    <label>
-                      <span class="text-primary">Original Price :</span> '.$row['original_price'].' php
-                    </label>
-                  </div>
-                  <div class="content">
-                    <label>
-                      <span class="text-primary">Expiration Date :</span> '.$row['expiration'].'
-                    </label>
-                  </div>
-                </div>
-                <div class="content-row d-flex flex-wrap justify-content-between">
-                  <div class="content">
-                    <label>
-                      <span class="text-primary">Manufacturer :</span> '.$row['manufacturer'].'
-                    </label>
-                  </div>
-                </div>
-                <div class="content-row d-flex flex-wrap justify-content-between">
-                  <div class="content">
-                    <label>
-                      <span class="text-primary">Description :</span> '.$row['description'].'
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+				<div class="col-12 col-sm-12">
+				<div class="cart_header d-flex flex-wrap justify-content-between">
+				<h6 class="cart_header">
+				<span class="text-primary">SKU</span> : '.$row['product_sku'].'
+				</h6>
+				<a type="button" class="btn-cartitem-delete text-danger" data-value="'.$row['id'].'"><i class="bi bi-trash"></i></a>
+				</div>
+				<div class="cart_body">
+				<div class="content-row d-flex flex-wrap justify-content-between">
+				<div class="content">
+				<label>
+				<span class="text-primary">Quantity :</span> '.$row['quantity'].'
+				</label>
+				</div>
+				<div class="content">
+				<label>
+				<span class="text-primary">Retail Price :</span> '.$row['retail_price'].' php
+				</label>
+				</div>
+				<div class="content">
+				<label>
+				<span class="text-primary">Original Price :</span> '.$row['original_price'].' php
+				</label>
+				</div>
+				<div class="content">
+				<label>
+				<span class="text-primary">Expiration Date :</span> '.$row['expiration'].'
+				</label>
+				</div>
+				</div>
+				<div class="content-row d-flex flex-wrap justify-content-between">
+				<div class="content">
+				<label>
+				<span class="text-primary">Manufacturer :</span> '.$row['manufacturer'].'
+				</label>
+				</div>
+				</div>
+				<div class="content-row d-flex flex-wrap justify-content-between">
+				<div class="content">
+				<label>
+				<span class="text-primary">Description :</span> '.$row['description'].'
+				</label>
+				</div>
+				</div>
+				</div>
+				</div>
+				</div>
 				';
 				echo $response;
 			}
@@ -274,7 +274,7 @@ class Admin_Extend extends CI_Controller {
 				else
 				{
 					echo 'error_deleting';
-				exit();
+					exit();
 				}
 			}
 			else
@@ -287,6 +287,172 @@ class Admin_Extend extends CI_Controller {
 		{
 			echo 'error';
 			exit();
+		}
+	}
+	public function restockin_from_cart()
+	{
+		/* CHECK IF USER ID EXIST IN SESSION */
+		if (isset($_SESSION['UserID'])) {
+
+			/* VARIABLES */
+			$user_id = $this->session->userdata('UserID');
+			$status = 1;
+
+			/* GET CART DATA BY USER ID */
+			$Get_Cart_dataaa = $this->Model_Selects->Get_Cart_dataaa($user_id,$status);
+			if ($Get_Cart_dataaa->num_rows() > 0) {
+
+				foreach ($Get_Cart_dataaa->result_array() as $row) {
+
+					$U_ID = $row['uid'];
+					$Code = $row['product_sku'];
+					$prd_rowdata = $this->Model_Selects->prd_rowdata($U_ID,$Code);
+					if ($prd_rowdata->num_rows() > 0) {
+
+						/* INSERT TO PRODUCT STOCKS */
+						$total_price = $row['quantity'] * $row['original_price'];
+
+						$data = array(
+							'UID' => $row['uid'],
+							'Product_SKU' => $row['product_sku'],
+							'Stocks' => $row['quantity'],
+							'Current_Stocks' => $row['quantity'],
+							'Released_Stocks' => 0,
+							'Retail_Price' => $row['retail_price'],
+							'Price_PerItem' => $row['original_price'],
+							'Total_Price' => $total_price,
+							'Manufactured_By' => $row['manufacturer'],
+							'Description' => $row['description'],
+							'Expiration_Date' => $row['expiration'],
+							'Date_Added' => $row['date_added'],
+							'UserID' => $row['user_id'],
+						);
+						$Insert_toStock_tb = $this->Model_Inserts->Insert_toStock_tb($data);
+						if ($Insert_toStock_tb == true) {
+
+							/* UPDATE PRODUCT STOCKS */
+							$prd = $prd_rowdata->row_array();
+
+							$U_ID = $row['uid'];
+							$Code = $row['product_sku'];
+							$data = array(
+								'InStock' => $prd['InStock'] + $row['quantity'],
+							);
+							$prd_update_stocks = $this->Model_Updates->prd_update_stocks($U_ID,$Code,$data);
+							if ($prd_update_stocks != true) {
+								$prompt_txt =
+								'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+								<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+								</div>';
+								$this->session->set_flashdata('prompt_status',$prompt_txt);
+								redirect($_SERVER['HTTP_REFERER']);
+							}
+
+							/* UPDATE CART ITEM SET TO ADDED TO STOCK 2 */
+							$Cart_ID = $row['id'];
+							$status = 2;
+							$cart_update_status = $this->Model_Updates->cart_update_status($Cart_ID,$status);
+							if ($cart_update_status != true) {
+								$prompt_txt =
+								'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+								<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+								</div>';
+								$this->session->set_flashdata('prompt_status',$prompt_txt);
+								redirect($_SERVER['HTTP_REFERER']);
+							}
+
+							/* CREATE TRANSACTION */
+							$code = $row['product_sku'];
+							$type = 0;
+							$amount = $row['quantity'];
+							$date = $row['date_added'];
+
+							$transactionID = '';
+							$transactionID .= strtoupper($code);
+							$transactionID .= '-';
+							$transactionID .= strtoupper(uniqid());
+
+							$data = array(
+								'Code' => $code,
+								'TransactionID' => $transactionID,
+								'Type' => $type,
+								'Amount' => $amount,
+								'Date' => $date,
+								'DateAdded' => date('Y-m-d h:i:s A'),
+								'Status' => 1,
+								'UserID' => $user_id,
+
+								'PriceUnit' => $row['original_price'],
+								'PriceTotal' => $total_price,
+							);
+							$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+							if ($insertNewTransaction == TRUE) {
+
+								/* LOG TRANSACTIONS */
+								$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
+
+								$prompt_txt =
+								'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+								<strong>Success!</strong> Product has been restocked.
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+								</div>';
+								$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+							}
+							else
+							{
+								$prompt_txt =
+								'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+								<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+								</div>';
+								$this->session->set_flashdata('prompt_status',$prompt_txt);
+								redirect($_SERVER['HTTP_REFERER']);
+							}
+						}
+						else
+						{
+							$prompt_txt =
+							'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
+							redirect($_SERVER['HTTP_REFERER']);
+						}
+					}
+					else
+					{
+						$prompt_txt =
+						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+						redirect($_SERVER['HTTP_REFERER']);
+					}
+				}
+
+
+				redirect($_SERVER['HTTP_REFERER']);
+
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Cart is empty!</strong> Add stock before restocking.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect($_SERVER['HTTP_REFERER']);
+			}
+		}
+		else
+		{
+			redirect('');
 		}
 	}
 }

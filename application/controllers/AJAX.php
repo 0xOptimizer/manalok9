@@ -193,6 +193,17 @@ class AJAX extends CI_Controller {
 			echo json_encode($vendorDetails);
 		}
 	}
+	public function getAccountTransactionsRange()
+	{
+		$account_id = $this->input->get('account_id');
+		$date_from = $this->input->get('date_from');
+		$date_to = $this->input->get('date_to');
+		if (strlen($account_id) > 0) {
+			$accountTransactionDetails = $this->Model_Selects->GetTransactionsRangeByAccountID($date_from, $date_to,  $account_id)->result_array();
+
+			echo json_encode($accountTransactionDetails);
+		}
+	}
 	public function Add_idtoCart()
 	{
 
