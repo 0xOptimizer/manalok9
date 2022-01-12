@@ -248,5 +248,29 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
-	
+	public function prd_update_stocks($U_ID,$Code,$data)
+	{
+		$this->db->where('U_ID', $U_ID);
+		$this->db->where('Code', $Code);
+	   $this->db->update('products',$data);
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function cart_update_status($Cart_ID,$status)
+	{
+		$this->db->where('id', $Cart_ID);
+	   $this->db->update('cart_restocking',array('status' => $status, ));
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

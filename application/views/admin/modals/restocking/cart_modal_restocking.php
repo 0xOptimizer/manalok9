@@ -16,7 +16,7 @@
       <div class="modal-footer">
 
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Close</button>
-        <button id="btn_submit_restock" type="button" class="btn btn-primary"><i class="bi bi-plus"></i> Restock</button>
+        <a class="btn btn-primary" href="<?=base_url()?>admin/restockin_from_cart"><i class="bi bi-plus"></i> Restock</a>
       </div>
     </div>
   </div>

@@ -232,6 +232,7 @@ $route['admin/Add_stockto_cart'] = 'Admin_Extend/Add_stockto_cart';
 $route['admin/Get_uid_prd'] = 'Admin_Extend/Get_uid_prd';
 $route['admin/get_cart_fill_table'] = 'Admin_Extend/get_cart_fill_table';
 $route['admin/Delete_cart_itemrestock'] = 'Admin_Extend/Delete_cart_itemrestock';
+$route['admin/restockin_from_cart'] = 'Admin_Extend/restockin_from_cart';
 
 
 

@@ -825,4 +825,12 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('cart_restocking');
 		return $result;
 	}
+	public function prd_rowdata($U_ID,$Code)
+	{
+		$this->db->select('*');
+		$this->db->where('U_ID', $U_ID);
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
 }
