@@ -378,8 +378,6 @@ $(document).ready(function() {
 
 				}
 				
-				console.log(data);
-				
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -440,6 +438,9 @@ $(document).ready(function() {
   	});
   	$("#unit_cost_uid").inputFilter(function(value) {
   		return /^-?\d*$/.test(value);
+  	});
+  	$('.sel_checkss').on('change',function () {
+  		$('.product_codegen').val('');
   	});
 });
 </script>

@@ -833,4 +833,14 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function Get_Stock_indb($UID,$Product_SKU)
+	{
+		$this->db->select('*');
+		$this->db->where('UID', $UID);
+		$this->db->where('Product_SKU', $Product_SKU);
+		$this->db->limit(1);
+		$this->db->order_by('Expiration_Date','ASC');
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
 }

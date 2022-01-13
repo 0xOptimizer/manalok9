@@ -21,6 +21,9 @@ date_default_timezone_set('Asia/Manila');
 		padding-left: 20px;
 		color: #FFFFFF;
 	}
+	.btn { 
+		margin-top: 4px;
+	}
 </style>
 </head>
 <body>
@@ -140,7 +143,6 @@ date_default_timezone_set('Asia/Manila');
 
 			$('#list_release').DataTable();
 
-			var ididddd = 'hallo';
 		});
 	</script>
 	<script type="text/javascript">

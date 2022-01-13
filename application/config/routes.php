@@ -234,6 +234,12 @@ $route['admin/get_cart_fill_table'] = 'Admin_Extend/get_cart_fill_table';
 $route['admin/Delete_cart_itemrestock'] = 'Admin_Extend/Delete_cart_itemrestock';
 $route['admin/restockin_from_cart'] = 'Admin_Extend/restockin_from_cart';
 
+// RELEASING version 2
+$route['admin/product_releasingv2'] = 'Admin_Extend/product_releasingv2';
+$route['admin/Get_Stock_details'] = 'Admin_Extend/Get_Stock_details';
+
+
+
 
 
 

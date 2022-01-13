@@ -1231,6 +1231,11 @@ class Admin extends MY_Controller {
 		{
 			// BARCODE GENEREATOR
 			$colorblk = [0, 0, 0];
+
+			/* CHECK DIR IF EXIST */
+			if (!is_dir('assets/barcode_images/')) {
+				mkdir('assets/barcode_images/', 0777, TRUE);
+			}
 			$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
 			file_put_contents('assets/barcode_images/'.$U_ID.'-pbarcode.png', $generator->getBarcode($U_ID, $generator::TYPE_CODE_128, 4, 70, $colorblk));
 

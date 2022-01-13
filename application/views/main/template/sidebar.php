@@ -29,23 +29,17 @@
 					</li>
 				<?php endif; ?>
 				
+
+
 				<?php if ($this->session->userdata('UserRestrictions')['releasing_view'] == 1): ?>
-					<li class="sidebar-item sidebar-admin-release_product">
-						<a href="<?=base_url()?>admin/product_releasing" class='sidebar-link'>
+					<li class="sidebar-item sidebar-admin-releasing_productv2">
+						<a href="<?=base_url()?>admin/product_releasingv2" class='sidebar-link'>
 							<i class="bi bi-card-checklist"></i>
-							<span>Release </span>
+							<span>Releasing </span>
 						</a>
 					</li>
 				<?php endif; ?>
 				
-				<!-- <?php if ($this->session->userdata('UserRestrictions')['restocking_view'] == 1): ?>
-					<li class="sidebar-item sidebar-admin-restock_product">
-						<a href="<?=base_url()?>admin/product_restocking" class='sidebar-link'>
-							<i class="bi bi-card-list"></i>
-							<span>Restock </span>
-						</a>
-					</li>
-				<?php endif; ?> -->
 
 				<?php if ($this->session->userdata('UserRestrictions')['restocking_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-restock_productv2">

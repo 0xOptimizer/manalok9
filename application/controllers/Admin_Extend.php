@@ -63,6 +63,15 @@ class Admin_Extend extends CI_Controller {
 		$data['get_allstocks'] = $this->Model_Selects->get_allstocks();
 		$this->load->view('admin/restock_product_v2', $data);
 	}
+	public function product_releasingv2()
+	{
+		$data = [];
+		$data = array_merge($data, $this->globalData);
+		$header['pageTitle'] = 'Release Transactions';
+		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+		$data['get_allstocks'] = $this->Model_Selects->get_allstocks();
+		$this->load->view('admin/release_product_v2', $data);
+	}
 
 	/**************
 	ACTIONS
@@ -453,6 +462,48 @@ class Admin_Extend extends CI_Controller {
 		else
 		{
 			redirect('');
+		}
+	}
+	public function Get_Stock_details()
+	{
+		$UID = $this->input->post('uid');
+		$Product_SKU = $this->input->post('prd_sku');
+		if (empty($UID) || empty($Product_SKU)) {
+			$data['prompt'] = array('status' => 'empty_var', );
+			echo json_encode($data);
+			exit();
+		}
+		else
+		{
+			$Get_Stock_indb = $this->Model_Selects->Get_Stock_indb($UID,$Product_SKU);
+			if ($Get_Stock_indb->num_rows() > 0) {
+				/* GET STOCK DETAILS */
+				$gts = $Get_Stock_indb->row_array();
+				$data['product_stocks'] = array(
+					'id' => $gts['ID'],
+					'uids' => $gts['UID'],
+					'prd_sku' => $gts['Product_SKU'],
+					'stocks' => $gts['Stocks'],
+					'c_stocks' => $gts['Current_Stocks'],
+					'r_stocks' => $gts['Released_Stocks'],
+					'r_price' => $gts['Retail_Price'],
+					'org_price' => $gts['Price_PerItem'],
+					'total_price' => $gts['Total_Price'],
+					'manufacturer' => $gts['Manufactured_By'],
+					'description' => $gts['Description'],
+					'exp_date' => $gts['Expiration_Date'],
+					'date_added' => $gts['Date_Added'],
+				);
+				$data['prompt'] = array('status' => 'stock_found', );
+				echo json_encode($data);
+				exit();
+			}
+			else
+			{
+				$data['prompt'] = array('status' => 'stock_notfound', );
+				echo json_encode($data);
+				exit();
+			}
 		}
 	}
 }
