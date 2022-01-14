@@ -3289,8 +3289,4 @@ class Admin extends MY_Controller {
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$this->load->view('admin/page_mail', $data);
 	}
-	public function product_restockingv2($value='')
-	{
-		// code...
-	}
 }

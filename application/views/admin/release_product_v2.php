@@ -61,8 +61,8 @@ date_default_timezone_set('Asia/Manila');
 							</a>
 							|
 							<a href="#" class="scnrestock-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cloud-download"></i> GENERATE REPORT</a>
-							|
-							<a href="#" class="btn btn-sm-secondary" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target=""><i class="bi bi-cart"></i> CART</a>
+							<!-- | -->
+							<!-- <a href="#" class="btn btn-sm-secondary" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target=""><i class="bi bi-cart"></i> CART</a> -->
 						</div>
 					</div>
 				</div>
@@ -137,6 +137,10 @@ date_default_timezone_set('Asia/Manila');
 								<dt class="col-12 col-sm-12 col-md-2"> Description </dt>
 								<dd class="col-12 col-sm-12 col-md-10"> <span id="descrpts">-----------</span> </dd>
 							</dl>
+							<dl class="row">
+								<dt class="col-12 col-sm-12 col-md-2"></dt>
+								<dd class="col-12 col-sm-12 col-md-10"><button id="btn_release_stock" class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#release_inp_quantity" data-id="" data-uid="" data-sku="" data-quantity=""><i class="bi bi-check"></i> Release</button></dd>
+							</dl>
 						</div>
 					</div>
 				</section>
@@ -149,6 +153,8 @@ date_default_timezone_set('Asia/Manila');
 	</div>
 
 	<?php $this->load->view('admin/modals/releasing/modal_scan_releasing.php'); ?>
+	<?php $this->load->view('admin/modals/releasing/modal_manual_releasing.php'); ?>
+	<?php $this->load->view('admin/modals/releasing/modal_release_quantity.php'); ?>
 
 	<?php $this->load->view('main/globals/scripts.php'); ?>
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

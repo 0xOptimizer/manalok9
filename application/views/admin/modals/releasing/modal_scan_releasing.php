@@ -30,7 +30,7 @@
       <div class="modal-footer">
 
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x"></i> Close</button>
-        <button id="" type="button" class="btn btn-primary"><i class="bi bi-plus"></i> Add to cart</button>
+        <!-- <button id="" type="button" class="btn btn-primary"><i class="bi bi-plus"></i> Add to cart</button> -->
       </div>
     </div>
   </div>

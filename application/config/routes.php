@@ -237,9 +237,7 @@ $route['admin/restockin_from_cart'] = 'Admin_Extend/restockin_from_cart';
 // RELEASING version 2
 $route['admin/product_releasingv2'] = 'Admin_Extend/product_releasingv2';
 $route['admin/Get_Stock_details'] = 'Admin_Extend/Get_Stock_details';
-
-
-
-
-
+$route['admin/Getprd_stocks'] = 'Admin_Extend/Getprd_stocks';
+$route['admin/submit_get_prdstocks'] = 'Admin_Extend/submit_get_prdstocks';
+$route['admin/submit_releasestockss'] = 'Admin_Extend/submit_releasestockss';
 

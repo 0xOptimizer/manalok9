@@ -838,6 +838,18 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('UID', $UID);
 		$this->db->where('Product_SKU', $Product_SKU);
+		$this->db->where('Stocks >', 0);
+		$this->db->limit(1);
+		$this->db->order_by('Expiration_Date','ASC');
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+	public function Check_thisstock($uid,$product_sku)
+	{
+		$this->db->select('*');
+		$this->db->where('UID', $uid);
+		$this->db->where('Product_SKU', $product_sku);
+		$this->db->where('Stocks >', 0);
 		$this->db->limit(1);
 		$this->db->order_by('Expiration_Date','ASC');
 		$result = $this->db->get('product_stocks');

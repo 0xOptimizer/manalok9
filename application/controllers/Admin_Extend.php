@@ -506,4 +506,103 @@ class Admin_Extend extends CI_Controller {
 			}
 		}
 	}
+	public function Getprd_stocks()
+	{
+		/* VARIABLES */
+		$product_sku = $this->input->post('prd_sku');
+
+		/* CHECK SKU IN PRODUCT TABLE */
+		$Checkthis_prd_sku = $this->Model_Selects->Checkthis_prd_sku($product_sku);
+		if ($Checkthis_prd_sku->num_rows() > 0) {
+
+			/* CHECK UID AND SKU IN STOCKS */
+			$prd = $Checkthis_prd_sku->row_array();
+			$uid = $prd['U_ID'];
+
+			$Check_thisstock = $this->Model_Selects->Check_thisstock($uid,$product_sku);
+			if ($Check_thisstock->num_rows() > 0) {
+				$data['prompt'] = array('status' => 'product_found_with_stock', );
+				echo json_encode($data);
+				exit();
+			}
+			else
+			{
+				$data['prompt'] = array('status' => 'product_found_no_stock', );
+				echo json_encode($data);
+				exit();
+			}
+		}
+		else
+		{
+			$data['prompt'] = array('status' => 'product_notfound', );
+			echo json_encode($data);
+			exit();
+		}
+	}
+	public function submit_get_prdstocks()
+	{
+		/* VARIABLES */
+		$product_sku = $this->input->post('prd_sku');
+
+		if (empty($product_sku)) {
+			$data['prompt'] = array('status' => 'sku_input_null', );
+			echo json_encode($data);
+			exit();
+		}
+
+		/* CHECK SKU IN PRODUCT TABLE */
+		$Checkthis_prd_sku = $this->Model_Selects->Checkthis_prd_sku($product_sku);
+		if ($Checkthis_prd_sku->num_rows() > 0) {
+
+			/* CHECK UID AND SKU IN STOCKS */
+			$prd = $Checkthis_prd_sku->row_array();
+			$uid = $prd['U_ID'];
+
+			$Check_thisstock = $this->Model_Selects->Check_thisstock($uid,$product_sku);
+			if ($Check_thisstock->num_rows() > 0) {
+
+				/* GET STOCK DETAILS */
+				$gts = $Check_thisstock->row_array();
+				$data['product_stocks'] = array(
+					'id' => $gts['ID'],
+					'uids' => $gts['UID'],
+					'prd_sku' => $gts['Product_SKU'],
+					'stocks' => $gts['Stocks'],
+					'c_stocks' => $gts['Current_Stocks'],
+					'r_stocks' => $gts['Released_Stocks'],
+					'r_price' => $gts['Retail_Price'],
+					'org_price' => $gts['Price_PerItem'],
+					'total_price' => $gts['Total_Price'],
+					'manufacturer' => $gts['Manufactured_By'],
+					'description' => $gts['Description'],
+					'exp_date' => $gts['Expiration_Date'],
+					'date_added' => $gts['Date_Added'],
+				);
+				$data['prompt'] = array('status' => 'stock_found', );
+				echo json_encode($data);
+				exit();
+			}
+			else
+			{
+				$data['prompt'] = array('status' => 'product_found_no_stock', );
+				echo json_encode($data);
+				exit();
+			}
+		}
+		else
+		{
+			$data['prompt'] = array('status' => 'product_notfound', );
+			echo json_encode($data);
+			exit();
+		}
+	}
+	public function submit_releasestockss()
+	{
+		$prompt_txt =
+						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+	}
 }
