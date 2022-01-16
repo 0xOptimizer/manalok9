@@ -273,4 +273,32 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+	public function UpdateProduct_stock($id,$data)
+	{
+		$this->db->where('ID', $id);
+	   $this->db->update('product_stocks',$data);
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function UpdateTotalStocks($ID,$New_stock,$New_Released)
+	{
+		$data = array(
+			'InStock' => $New_stock,
+			'Released' => $New_Released,
+		);
+		$this->db->where('ID', $ID);
+	   $this->db->update('products',$data);
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

@@ -598,11 +598,211 @@ class Admin_Extend extends CI_Controller {
 	}
 	public function submit_releasestockss()
 	{
-		$prompt_txt =
+		if (!isset($_SESSION['UserID'])) {
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> You need to login. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+		}
+		/* VARIABLES */
+		$id = $this->input->post('id');
+		$UID = $this->input->post('uid');
+		$Product_SKU = $this->input->post('sku');
+		$Quantity = $this->input->post('quantity');
+
+		if (empty($id) || empty($UID) || empty($Product_SKU) || empty($Quantity)) {
+
+			/* EMPTY DATA POST */
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Submitted quantity is empty. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+		}
+
+		if (!is_numeric($Quantity)) {
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Quantity should always be a number. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+			
+		}
+		/* CHECK STOCK ID */
+		$Check_prd_stockid = $this->Model_Selects->Check_prd_stockid($id);
+		if ($Check_prd_stockid->num_rows() > 0) {
+
+			/* ID EXIST */
+			$prd = $Check_prd_stockid->row_array();
+
+			/* VARIABLES */
+			$tb_uid = $prd['UID'];
+			$tb_SKU = $prd['Product_SKU'];
+			$tb_c_stocks = $prd['Current_Stocks'];
+			$tb_r_stocks = $prd['Released_Stocks'];
+			$tb_r_price = $prd['Retail_Price'];
+
+
+			/* COMPARE UID AND PRODUCT SKU */
+			if ($UID == $tb_uid AND $Product_SKU == $tb_SKU) {
+				if ($Quantity > $tb_c_stocks ) {
+					$prompt_txt =
+					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> Product stock is less than quantity. Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+					
+				}
+				else
+				{
+					/* UPDATE CURRENT STOCK SUBTRACT QUANTITY FOR RELEASING */
+					/* UPDATE RELEASE ADD QUANTITY FOR RELEASING */
+					$n_cstocks = $tb_c_stocks - $Quantity;
+					$n_rstocks = $tb_r_stocks + $Quantity;
+					$data = array(
+						'Current_Stocks' => $n_cstocks,
+						'Released_Stocks' => $n_rstocks,
+					);
+					$UpdateProduct_stock = $this->Model_Updates->UpdateProduct_stock($id,$data);
+					if ($UpdateProduct_stock == true) {
+						/* INSERT RELEASE DATA TO TABLE PRODUCT RELEASED */
+						$nt_price = $tb_r_price * $Quantity;
+						$data = array(
+							'stockid' => $id,
+							'uid' => $UID,
+							'prd_sku' => $Product_SKU,
+							'quantity' => $Quantity,
+							'retail_price' => $tb_r_price,
+							'total_price' => $nt_price,
+							'userid' => $_SESSION['UserID'],
+							'date_added' => date('Y/m/d H:i:s'),
+							'status' => 'released',
+						);
+						$Insert_Releasedata = $this->Model_Inserts->Insert_Releasedata($data);
+						if ($Insert_Releasedata == true) {
+							/* UPDATE STOCKS AND RELEASED IN PRODUCT TABLE */
+							$U_ID = $tb_uid;
+							$Code = $tb_SKU;
+							$prd_rowdata = $this->Model_Selects->prd_rowdata($U_ID,$Code);
+
+							$prd_tb = $prd_rowdata->row_array();
+							$ID = $prd_tb['ID'];
+							$New_stock = $prd_tb['InStock'] - $Quantity;
+							$New_Released = $prd_tb['Released'] + $Quantity;
+
+							$UpdateTotalStocks = $this->Model_Updates->UpdateTotalStocks($ID,$New_stock,$New_Released);
+							if ($UpdateTotalStocks == true) {
+								/* CREATE TRANSACTION RELEASING */
+
+								$code = $tb_SKU;
+
+								$type = 1;
+
+								$transactionID = '';
+								$transactionID .= strtoupper($code);
+								$transactionID .= '-';
+								$transactionID .= strtoupper(uniqid());
+
+								$data = array(
+									'Code' => $code,
+									'TransactionID' => $transactionID,
+									'Type' => $type,
+									'Amount' => $Quantity,
+									'Date' => date('Y/m/d H:i:s'),
+									'DateAdded' => date('Y-m-d h:i:s A'),
+									'Status' => 1,
+									'UserID' => $_SESSION['UserID'],
+
+									'PriceUnit' => $tb_r_price,
+									'PriceTotal' => $nt_price,
+								);
+								$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+								if ($insertNewTransaction == TRUE) {
+
+									/* LOG TRANSACTIONS */
+									$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $Quantity . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
+
+									$prompt_txt =
+									'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+									<strong>Success!</strong> Product has been released.
+									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+									</div>';
+									$this->session->set_flashdata('prompt_status',$prompt_txt);
+									
+								}
+								else
+								{
+									$prompt_txt =
+									'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+									<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+									</div>';
+									$this->session->set_flashdata('prompt_status',$prompt_txt);
+									
+								}
+							}
+							else
+							{
+								$prompt_txt =
+								'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+								<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+								</div>';
+								$this->session->set_flashdata('prompt_status',$prompt_txt);
+								
+							}
+							
+						}
+						else
+						{
+							$prompt_txt =
+							'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
+							
+						}
+					}
+					else
+					{
+						$prompt_txt =
 						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
-						<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
+						<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
 						$this->session->set_flashdata('prompt_status',$prompt_txt);
+						
+					}
+				}
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				
+			}
+		}
+		else
+		{
+
+			/* ID NOT EXIST */
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+			
+		}
 	}
 }

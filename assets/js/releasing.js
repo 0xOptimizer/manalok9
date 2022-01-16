@@ -245,7 +245,7 @@ $(document).ready(function () {
 		var id = $(this).data('id');
 		var uid = $(this).data('uid');
 		var sku = $(this).data('sku');
-		var quantity = $(this).data('quantity');
+		var quantity = $('#inp_quantity').val();
 
 		$.ajax({
 			url: "submit_releasestockss",
