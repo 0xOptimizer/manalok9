@@ -241,3 +241,6 @@ $route['admin/Getprd_stocks'] = 'Admin_Extend/Getprd_stocks';
 $route['admin/submit_get_prdstocks'] = 'Admin_Extend/submit_get_prdstocks';
 $route['admin/submit_releasestockss'] = 'Admin_Extend/submit_releasestockss';
 
+$route['admin/Get_Stock_UsingID'] = 'Admin_Extend/Get_Stock_UsingID';
+$route['admin/Delete_Stock_row'] = 'Admin_Extend/Delete_Stock_row';
+

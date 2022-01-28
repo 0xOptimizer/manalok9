@@ -113,4 +113,16 @@ class Model_Deletes extends CI_Model {
 			return false;
 		}
 	}
+	public function Delete_Stock($id)
+	{
+		$this->db->where('ID', $id);
+		$this->db->delete('product_stocks');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

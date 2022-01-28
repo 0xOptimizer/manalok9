@@ -805,4 +805,83 @@ class Admin_Extend extends CI_Controller {
 			
 		}
 	}
+	public function Get_Stock_UsingID()
+	{
+		$id = $this->input->post('stock_id');
+		$Check_prd_stockid = $this->Model_Selects->Check_prd_stockid($id);
+		if ($Check_prd_stockid->num_rows() > 0) {
+
+			$data['stock_details'] = $Check_prd_stockid->row_array();
+			$data['prompt'] = array(
+				'status' => 'found',
+			);
+			echo json_encode($data);
+			exit();
+		}
+		else
+		{
+			$data['prompt'] = array(
+				'status' => 'not_found',
+			);
+			echo json_encode($data);
+			exit();
+		}
+	}
+	public function Delete_Stock_row()
+	{
+		/* VARIABLES */
+		$id = $this->input->post('stock_id');
+
+		/* STOCK TABLE */
+		$Check_prd_stockid = $this->Model_Selects->Check_prd_stockid($id);
+		$cps = $Check_prd_stockid->row_array();
+
+		/* VARIABLES */
+		$U_ID = $cps['UID'];
+		$Code = $cps['Product_SKU'];
+		$Current_Stockss = $cps['Current_Stocks'];
+
+		/* PRODUCT TABLE */
+		$prd_rowdata = $this->Model_Selects->prd_rowdata($U_ID,$Code);
+		$prd_rd = $prd_rowdata->row_array();
+
+		if ($prd_rowdata->num_rows() < 1) {
+			echo "product_not_found";
+			exit();
+		}
+
+		if ($prd_rd['InStock'] < $Current_Stockss) {
+			echo "product_total_stock_low";
+			exit();
+		}
+		if ($Check_prd_stockid->num_rows() > 0) {
+			/* DELETE STOCK ROW */
+
+			$Delete_Stock = $this->Model_Deletes->Delete_Stock($id);
+			if ($Delete_Stock == true) {
+
+				/* SUBTRACT STOCK TO PRODUCT TOTAL STOCK */
+				$newInstock = $prd_rd['InStock'] - $Current_Stockss;
+				$data = array(
+					'U_ID' => $U_ID,
+					'Code' => $Code,
+					'InStock' => $newInstock,
+				);
+				$Update_Stock_In_Product = $this->Model_Updates->Update_Stock_In_Product($data);
+
+				echo "success";
+				exit();
+			}
+			else
+			{
+				echo "not_deleted";
+				exit();
+			}
+		}
+		else
+		{
+			echo "stock_null";
+			exit();
+		}
+	}
 }

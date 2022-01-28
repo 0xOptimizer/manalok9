@@ -266,8 +266,74 @@ $(document).ready(function () {
 				setTimeout(function() { 
 					$('.ajx_res_prompt').html('');
 				}, 2000);
-
 			}
 		});
+	});
+	/*  TABLE FUNCTIONS */
+	// function Get_Stock_Details(stock_id) {
+	// 	url: "Get_Stock_UsingID",
+	// 	type: "post",
+	// 	data: { stock_id : stock_id },
+	// 	success: function(result) {
+
+	// 		// var data = $.parseJSON(result);
+	// 		// if (data.status == 'success') {
+	// 		// 	$('.ajx_res_prompt').html('<label class="input-label text-success"><i class="bi bi-check-circle-fill"></i> Stock deleted.</label>');
+	// 		// }
+	// 		// else
+	// 		// {
+	// 		// 	$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Something\'s wrong! Please try again.</label>');
+	// 		// }
+	// 	}
+	// }
+	$('.modal_view').on('click',function () {
+		alert($(this).data('id'));
+	});
+	$('.modal_update').on('click',function () {
+		alert($(this).data('id'));
+	});
+	$('.modal_delete').on('click',function function_name() {
+		if ($(this).data('id') > 0) {
+			var stock_id = $(this).data('id');
+
+			$('#Modal_DeleteStock').modal('show');
+			$('#btn_deleteStock').data('id',stock_id);
+		}
+	});
+	$('#btn_deleteStock').on('click',function () {
+		if ($(this).data('id') > 0) {
+			var stock_id = $(this).data('id');
+			$.ajax({
+				url: "Delete_Stock_row",
+				type: "post",
+				data: { stock_id : stock_id },
+				success: function(result) {
+
+					if (result == 'success') {
+						$('.ajx_res_prompt').html('<label class="input-label text-success"><i class="bi bi-check-circle-fill"></i> Stock deleted.</label>');
+						setTimeout(function() { 
+							$('.ajx_res_prompt').html('');
+							window.location = 'product_restockingv2';
+						}, 2000);
+					}
+					else if (result == 'product_not_found') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Missing product in database.</label>');
+					}
+					else if (result == 'product_total_stock_low') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Product total stock is lower than stock to be deleted.</label>');
+					}
+					else if (result == 'not_deleted') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Error deleting stock! Please try again.</label>');
+					}
+					else if (result == 'stock_null') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Can\'t find stock.</label>');
+					}
+					else
+					{
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Something\'s wrong! Please try again.</label>');
+					}
+				}
+			});
+		}
 	});
 });

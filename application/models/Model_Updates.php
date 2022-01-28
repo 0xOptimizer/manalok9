@@ -301,4 +301,14 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+	public function Update_Stock_In_Product($data)
+	{
+		extract($data);
+		$data = array(
+			'InStock' => $InStock,
+		);
+		$this->db->where('U_ID', $U_ID);
+		$this->db->where('Code', $Code);
+	   $this->db->update('products',$data);
+	}
 }

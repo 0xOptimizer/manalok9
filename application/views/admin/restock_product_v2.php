@@ -89,6 +89,12 @@ date_default_timezone_set('Asia/Manila');
 								<th>
 									PRICE PER ITEM
 								</th>
+								<th>
+									EXPIRATION
+								</th>
+								<th>
+									ACTION
+								</th>
 							</thead>
 							<tbody>
 								<?php foreach ($get_allstocks->result_array() as $row): ?>
@@ -97,19 +103,33 @@ date_default_timezone_set('Asia/Manila');
 											<?php echo (!empty($row['Product_SKU'])) ? $row['Product_SKU'] : 'N/A'; ?>
 										</td>
 										<td>
-											<?php echo (!empty($row['Stocks'])) ? $row['Stocks'] : 'N/A'; ?>
+											<?php echo (!empty($row['Stocks'])) ? $row['Stocks'] : '0'; ?>
 										</td>
 										<td>
-											<?php echo (!empty($row['Current_Stocks'])) ? $row['Current_Stocks'] : 'N/A'; ?>
+											<?php echo (!empty($row['Current_Stocks'])) ? $row['Current_Stocks'] : '0'; ?>
 										</td>
 										<td>
-											<?php echo (!empty($row['Released_Stocks'])) ? $row['Released_Stocks'] : 'N/A'; ?>
+											<?php echo (!empty($row['Released_Stocks'])) ? $row['Released_Stocks'] : '0'; ?>
 										</td>
 										<td>
-											<?php echo (!empty($row['Retail_Price'])) ? $row['Retail_Price'] : 'N/A'; ?>
+											<?php echo (!empty($row['Retail_Price'])) ? $row['Retail_Price'] : '---'; ?>
 										</td>
 										<td>
-											<?php echo (!empty($row['Price_PerItem'])) ? $row['Price_PerItem'] : 'N/A'; ?>
+											<?php echo (!empty($row['Price_PerItem'])) ? $row['Price_PerItem'] : '---'; ?>
+										</td>
+										<td>
+											<?php echo (!empty($row['Expiration_Date'])) ? $row['Expiration_Date'] : '---'; ?>
+										</td>
+										<td>
+											<a class="modal_view mx-2 text-primary" href="#" data-id="<?php echo $row['ID']; ?>">
+												<i class="bi bi-eye"></i>
+											</a>
+											<a class="modal_update mx-2 text-success" href="#" data-id="<?php echo $row['ID']; ?>">
+												<i class="bi bi-pencil-square"></i>
+											</a>
+											<a class="modal_delete mx-2 text-danger" href="#" data-id="<?php echo $row['ID']; ?>">
+												<i class="bi bi-trash"></i>
+											</a>
 										</td>
 									</tr>
 								<?php endforeach ?>
@@ -124,9 +144,13 @@ date_default_timezone_set('Asia/Manila');
 	<div class="notif_prompts">
 		<?php print $this->session->flashdata('prompt_status'); ?>
 	</div>
+
 	<?php $this->load->view('admin/modals/restocking/add_stock_restocking.php'); ?>
 	<?php $this->load->view('admin/modals/restocking/add_stock_scan_barcode.php'); ?>
 	<?php $this->load->view('admin/modals/restocking/cart_modal_restocking.php'); ?>
+	<?php $this->load->view('admin/modals/restocking/delete_stock_modal.php'); ?>
+
+
 	<?php $this->load->view('main/globals/scripts.php'); ?>
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
