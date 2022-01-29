@@ -270,24 +270,39 @@ $(document).ready(function () {
 		});
 	});
 	/*  TABLE FUNCTIONS */
-	// function Get_Stock_Details(stock_id) {
-	// 	url: "Get_Stock_UsingID",
-	// 	type: "post",
-	// 	data: { stock_id : stock_id },
-	// 	success: function(result) {
+	function Get_Stock_Details(stock_id) {
+		var stock_id = stock_id;
+		$.ajax({
+			url: "Get_Stock_UsingID",
+			type: "post",
+			data: { stock_id : stock_id },
+			success: function(result) {
+				var data = $.parseJSON(result);
+				if (data.prompt.status == 'found') {
+					$('#view_stock_modal').modal('show');
+					$('#uid_lbl').text(data.stock_details.UID);
+					$('#prd_sku_lbl').text(data.stock_details.Product_SKU);
+					$('#org_stock').text(data.stock_details.Stocks);
+					$('#rem_stock').text(data.stock_details.Current_Stocks);
+					$('#rel_stock').text(data.stock_details.Released_Stocks);
+					$('#ret_price').append(data.stock_details.Retail_Price);
+					$('#original_price').append(data.stock_details.Price_PerItem);
+					$('#manufact_lbl').text(data.stock_details.Manufactured_By);
+					$('#exp_lbl').text(data.stock_details.Expiration_Date);
+					$('#addat_lbl').text(data.stock_details.Date_Added);
+					$('#descript_lbl').text(data.stock_details.Description);
+					
 
-	// 		// var data = $.parseJSON(result);
-	// 		// if (data.status == 'success') {
-	// 		// 	$('.ajx_res_prompt').html('<label class="input-label text-success"><i class="bi bi-check-circle-fill"></i> Stock deleted.</label>');
-	// 		// }
-	// 		// else
-	// 		// {
-	// 		// 	$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Something\'s wrong! Please try again.</label>');
-	// 		// }
-	// 	}
-	// }
+
+
+					
+				}
+			}
+		});
+	}
 	$('.modal_view').on('click',function () {
-		alert($(this).data('id'));
+		var stock_id = $(this).data('id');
+		Get_Stock_Details(stock_id);
 	});
 	$('.modal_update').on('click',function () {
 		alert($(this).data('id'));
