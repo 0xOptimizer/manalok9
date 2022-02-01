@@ -87,7 +87,7 @@ date_default_timezone_set('Asia/Manila');
 									RETAIL PRICE
 								</th>
 								<th>
-									PRICE PER ITEM
+									ORIG. PRICE
 								</th>
 								<th>
 									EXPIRATION
@@ -150,6 +150,7 @@ date_default_timezone_set('Asia/Manila');
 	<?php $this->load->view('admin/modals/restocking/cart_modal_restocking.php'); ?>
 	<?php $this->load->view('admin/modals/restocking/delete_stock_modal.php'); ?>
 	<?php $this->load->view('admin/modals/restocking/view_stock_modal.php'); ?>
+	<?php $this->load->view('admin/modals/restocking/update_stock_modal.php'); ?>
 
 
 	<?php $this->load->view('main/globals/scripts.php'); ?>

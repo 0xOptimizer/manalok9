@@ -884,4 +884,110 @@ class Admin_Extend extends CI_Controller {
 			exit();
 		}
 	}
+	public function Update_stockdetails()
+	{
+		/* POST REQUESTS */
+		$id = $this->input->post('up_id');
+		$uids = $this->input->post('up_uids');
+		$pre_sku = $this->input->post('up_pre_sku');
+		$radioUp = $this->input->post('up_radioUp');
+		$quantity = $this->input->post('up_quantity');
+		$r_price = $this->input->post('up_r_price');
+		$orig_price = $this->input->post('up_orig_price');
+		$manufacturer = $this->input->post('up_manufacturer');
+		$expire_date = $this->input->post('up_expire_date');
+		$prd_descript = $this->input->post('up_prd_descript');
+
+		/* CHECK IF INPUT IS EMPTY */
+		if (empty($id) || empty($uids) || empty($pre_sku) || empty($radioUp) || $quantity < 0 || empty($r_price) || empty($orig_price) || empty($manufacturer) || empty($expire_date) || empty($prd_descript)) {
+			$data['status'] = array('prompt' => 'null_values', );
+			echo json_encode($data);
+			exit();
+		}
+		else
+		{
+			/* CHECK PRODUCT AVAILABILITY */
+			$U_ID = $uids;
+			$Code = $pre_sku;
+			$CheckPrd_in_tb = $this->Model_Selects->CheckPrd_in_tb($U_ID,$Code);
+			if ($CheckPrd_in_tb->num_rows() < 1) {
+				$data['status'] = array('prompt' => 'product_notfound', );
+				echo json_encode($data);
+				exit();
+			}
+
+			/* CHECK STOCK IN TABLE  */
+			$CheckStock_ifExist = $this->Model_Selects->CheckStock_ifExist($id,$uids,$pre_sku);
+			if ($CheckStock_ifExist->num_rows() < 1) {
+				$data['status'] = array('prompt' => 'stock_notfound', );
+				echo json_encode($data);
+				exit();
+			}
+
+
+			/* SET VARIABLES */
+			$stock = $CheckStock_ifExist->row_array();
+			$Stocks = $stock['Stocks'];
+			$Current_Stockss = $stock['Current_Stocks'];
+
+			/* IF NO QUANTITY ADDED THEN SET VALUE TO DEFAULT */
+			if ($quantity == 0 || $quantity =="") {
+				$new_stock = $Stocks;
+				$new_current_stock = $Current_Stockss;
+			} else
+			{
+				if ($radioUp == 'add_stock') {
+					$new_stock = $Stocks + $quantity;
+					$new_current_stock = $Current_Stockss + $quantity;
+				}
+				elseif ($radioUp == 'deduct_stock') {
+					if ($Current_Stockss < $quantity) {
+						$data['status'] = array('prompt' => 'quantity_exceed_current', );
+						echo json_encode($data);
+						exit();
+					}
+					if ($Stocks < $quantity) {
+						$data['status'] = array('prompt' => 'deduct_error', );
+						echo json_encode($data);
+						exit();
+					}
+
+					$new_stock = $Stocks - $quantity;
+					$new_current_stock = $Current_Stockss - $quantity;
+
+				}
+			}
+
+			$data_where = array(
+				'ID' => $id,
+				'UID' => $uids,
+				'Product_SKU' => $pre_sku,
+			);
+			$data = array(
+				'Stocks' => $new_stock,
+				'Current_Stocks' => $new_current_stock,
+				'Retail_Price' => $r_price,
+				'Price_PerItem' => $orig_price,
+				'Total_Price' => $new_stock * $orig_price,
+				'Manufactured_By' => $manufacturer,
+				'Expiration_Date' => $expire_date,
+				'Description' => $prd_descript,
+			);
+			$Update_Stock_Details = $this->Model_Updates->Update_Stock_Details($data_where,$data);
+			if ($Update_Stock_Details == true) {
+
+
+				$data['status'] = array('prompt' => 'stock_updated', );
+				echo json_encode($data);
+				exit();
+			}
+			else
+			{
+				$data['status'] = array('prompt' => 'error_updating', );
+				echo json_encode($data);
+				exit();
+			}
+		}
+		
+	}
 }

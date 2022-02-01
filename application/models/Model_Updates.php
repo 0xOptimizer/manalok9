@@ -311,4 +311,18 @@ class Model_Updates extends CI_Model {
 		$this->db->where('Code', $Code);
 	   $this->db->update('products',$data);
 	}
+	public function Update_Stock_Details($data_where,$data)
+	{
+		extract($data_where);
+
+		$this->db->where('ID', $ID);
+	   $this->db->update('product_stocks',$data);
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

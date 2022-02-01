@@ -862,4 +862,21 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('product_stocks');
 		return $result;
 	}
+	public function CheckStock_ifExist($id,$uids,$pre_sku)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$this->db->where('UID', $uids);
+		$this->db->where('Product_SKU', $pre_sku);
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+	public function CheckPrd_in_tb($U_ID,$Code)
+	{
+		$this->db->select('*');
+		$this->db->where('U_ID', $U_ID);
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
 }
