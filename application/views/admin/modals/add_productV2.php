@@ -102,6 +102,7 @@
 					
 					<a href="#" id="generate_code">Generate SKU</a>
 					<button type="submit" class="btn btn-success"><i class="bi bi-check-square"></i> ADD NEW PRODUCT</button>
+					<button id="add_prd_close" type="button" class="btn btn-secondary"><i class="bi bi-check-square"></i> CLOSE</button>
 				</div>
 			</div>
 		</form>
