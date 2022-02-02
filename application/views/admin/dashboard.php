@@ -73,14 +73,14 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 										<div class="row ml-2">
 											<span style="font-size: 2em; color: #ebebeb;">
 												<b>
-													<?php if ($tps_m['InStock'] < 1) { echo '0'; } else { echo $tps_m['InStock']; } ?>
+													<?php if ($tps['InStock'] < 1) { echo '0'; } else { echo $tps['InStock']; } ?>
 												</b>
 											</span>
 											<i class="fas fa-user-friends fa-fw card-icon ml-auto mr-2"></i>
 										</div>
 										<div class="wercher-card-weekly-tracker-container">
 											<div class="wercher-card-weekly-tracker">
-												<i class="bi bi-caret-up text-success"></i><?php if ($tps_m['InStock'] < 1) { echo '0'; } else { echo $tps_m['InStock']; } ?> this month
+												<small>Total remaining stock</small>
 											</div>
 										</div>
 									</div>
@@ -91,20 +91,20 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 									<div class="card-body">
 										<div class="row ml-2">
 											<span class="head-text">
-												TOTAL RESTOCKED
+												RESTOCKED
 											</span>
 										</div>
 										<div class="row ml-2">
 											<span style="font-size: 2em; color: #ebebeb;">
 												<b>
-													11395
+													<?php if ($totalrestock['Amount'] < 1) { echo '0'; } else { echo $totalrestock['Amount']; } ?>
 												</b>
 											</span>
 											<i class="fas fa-user-friends fa-fw card-icon ml-auto mr-2"></i>
 										</div>
 										<div class="wercher-card-weekly-tracker-container">
 											<div class="wercher-card-weekly-tracker">
-												<i class="bi bi-caret-up"></i>900 this week
+												<small>Total stock added</small>
 											</div>
 										</div>
 									</div>
@@ -115,20 +115,21 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 									<div class="card-body">
 										<div class="row ml-2">
 											<span class="head-text">
-												TOTAL RELEASED
+												RELEASED
 											</span>
 										</div>
 										<div class="row ml-2">
 											<span style="font-size: 2em; color: #ebebeb;">
 												<b>
-													834
+													<?php if ($total_released['Amount'] < 1) { echo '0'; } else { echo $total_released['Amount']; } ?>
+													
 												</b>
 											</span>
 											<i class="fas fa-user-friends fa-fw card-icon ml-auto mr-2"></i>
 										</div>
 										<div class="wercher-card-weekly-tracker-container">
 											<div class="wercher-card-weekly-tracker">
-												<i class="bi bi-caret-up"></i>40 this week
+												<small>Total stock released</small>
 											</div>
 										</div>
 									</div>

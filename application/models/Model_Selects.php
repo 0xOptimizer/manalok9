@@ -879,4 +879,18 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function total_restock()
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('Type',0);
+		$result = $this->db->get('products_transactions');
+		return $result->row_array();
+	}
+	public function total_released()
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('Type',1);
+		$result = $this->db->get('products_transactions');
+		return $result->row_array();
+	}
 }

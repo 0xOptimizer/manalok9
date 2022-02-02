@@ -394,13 +394,16 @@ $(document).ready(function() {
 			data: { prd_id : prd_id } ,
 			success: function (result) {
 				var data = $.parseJSON(result);
-				console.log(data);
 				$('#txt_code').text(data['prd_details'].Code);
 				$('#txt_id').val(data['prd_details'].ID);
-				
+
 				$('#unit_price_uid').val(data['prd_details'].Price_PerItem);
 				$('#unit_cost_uid').val(data['prd_details'].Cost_PerItem);
 
+				$('#prd_n').val(data['prd_details'].Product_Name);
+				$('#prd_des').val(data['prd_details'].Description);
+				
+				
 				$('#update_prdModal').modal('toggle');
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
