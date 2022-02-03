@@ -266,7 +266,222 @@ $(document).ready(function () {
 				setTimeout(function() { 
 					$('.ajx_res_prompt').html('');
 				}, 2000);
+			}
+		});
+	});
+	/*  TABLE FUNCTIONS */
+	function Get_Stock_Details(stock_id) {
+		var stock_id = stock_id;
+		$.ajax({
+			url: "Get_Stock_UsingID",
+			type: "post",
+			data: { stock_id : stock_id },
+			success: function(result) {
+				var data = $.parseJSON(result);
+				if (data.prompt.status == 'found') {
+					$('#view_stock_modal').modal('show');
+					$('#uid_lbl').text(data.stock_details.UID);
+					$('#prd_sku_lbl').text(data.stock_details.Product_SKU);
+					$('#org_stock').text(data.stock_details.Stocks);
+					$('#rem_stock').text(data.stock_details.Current_Stocks);
+					$('#rel_stock').text(data.stock_details.Released_Stocks);
+					$('#ret_price').append(data.stock_details.Retail_Price);
+					$('#original_price').append(data.stock_details.Price_PerItem);
+					$('#manufact_lbl').text(data.stock_details.Manufactured_By);
+					$('#exp_lbl').text(data.stock_details.Expiration_Date);
+					$('#addat_lbl').text(data.stock_details.Date_Added);
+					$('#descript_lbl').text(data.stock_details.Description);
+				}
+			}
+		});
+	}
+	function Get_Stock_Details_for_update(stock_id) {
+		var stock_id = stock_id;
 
+
+		$.ajax({
+			url: "Get_Stock_UsingID",
+			type: "post",
+			data: { stock_id : stock_id },
+			success: function(result) {
+				var data = $.parseJSON(result);
+				if (data.prompt.status == 'found') {
+					$('#update_stock_modal').modal('show');
+					/* FILL UPDATE INPUTS */
+					$('#up_id').val(data.stock_details.ID);
+					$('#up_uids').val(data.stock_details.UID);
+					$('#up_pre_sku').val(data.stock_details.Product_SKU);
+					// $('#up_remaining').val(data.stock_details.Current_Stocks);
+					
+					$('#tp_stock').text(data.stock_details.Stocks);
+					$('#rsp_stock').text(data.stock_details.Current_Stocks);
+					$('#rp_stock').text(data.stock_details.Released_Stocks);
+
+					$('#up_r_price').val(data.stock_details.Retail_Price);
+					$('#up_orig_price').val(data.stock_details.Price_PerItem);
+					$('#up_manufacturer').val(data.stock_details.Manufactured_By);
+					$('#up_expire_date').val(data.stock_details.Expiration_Date.toString());
+					$('#up_prd_descript').val(data.stock_details.Description);
+					/* END FILL UPDATE INPUTS */
+				}
+			}
+		});
+	}
+	function Clear_Labels() {
+		$('#uid_lbl').text('');
+		$('#prd_sku_lbl').text('');
+		$('#org_stock').text('');
+		$('#rem_stock').text('');
+		$('#rel_stock').text('');
+		$('#ret_price').text('');
+		$('#original_price').text('');
+		$('#manufact_lbl').text('');
+		$('#exp_lbl').text('');
+		$('#addat_lbl').text('');
+		$('#descript_lbl').text('');
+	}
+	function Clear_Input() {
+		$('#up_uids').val('');
+		$('#up_pre_sku').val('');
+		$('#up_quant').val('');
+		$('#up_r_price').val('');
+		$('#up_orig_price').val('');
+		$('#up_manufacturer').val('');
+		$('#up_expire_date').val('');
+		$('#up_prd_descript').val('');
+	}
+	$('.modal_view').on('click',function () {
+		var stock_id = $(this).data('id');
+		Get_Stock_Details(stock_id);
+	});
+	$('.modal_view').on('hidden.bs.modal', function () {
+		Clear_Labels();
+	});
+	$('.modal_update').on('click',function () {
+		var stock_id = $(this).data('id');
+		Get_Stock_Details_for_update(stock_id)
+	});
+	$('.modal_update').on('hidden.bs.modal', function () {
+		Clear_Input();
+	});
+	$('.modal_delete').on('click',function function_name() {
+		if ($(this).data('id') > 0) {
+			var stock_id = $(this).data('id');
+
+			$('#Modal_DeleteStock').modal('show');
+			$('#btn_deleteStock').data('id',stock_id);
+		}
+	});
+	$('#btn_deleteStock').on('click',function () {
+		if ($(this).data('id') > 0) {
+			var stock_id = $(this).data('id');
+			$.ajax({
+				url: "Delete_Stock_row",
+				type: "post",
+				data: { stock_id : stock_id },
+				success: function(result) {
+
+					if (result == 'success') {
+						$('.ajx_res_prompt').html('<label class="input-label text-success"><i class="bi bi-check-circle-fill"></i> Stock deleted.</label>');
+						setTimeout(function() { 
+							$('.ajx_res_prompt').html('');
+							window.location = 'product_restockingv2';
+						}, 2000);
+					}
+					else if (result == 'product_not_found') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Missing product in database.</label>');
+					}
+					else if (result == 'product_total_stock_low') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Product total stock is lower than stock to be deleted.</label>');
+					}
+					else if (result == 'not_deleted') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Error deleting stock! Please try again.</label>');
+					}
+					else if (result == 'stock_null') {
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Can\'t find stock.</label>');
+					}
+					else
+					{
+						$('.ajx_res_prompt').html('<label class="input-label text-warning"><i class="bi bi-check-circle-fill"></i> Something\'s wrong! Please try again.</label>');
+					}
+				}
+			});
+		}
+	});
+	$('#btn_stockUpdate').on('click',function () {
+		var up_id  = $('#up_id').val();
+		var up_uids  = $('#up_uids').val();
+		var up_pre_sku  = $('#up_pre_sku').val();
+		var up_radioUp = $('input[name="radioUp"]:checked').val();
+		var up_quantity  = $('#up_quantity').val();
+		var up_r_price  = $('#up_r_price').val();
+		var up_orig_price  = $('#up_orig_price').val();
+		var up_manufacturer  = $('#up_manufacturer').val();
+		var up_expire_date  = $('#up_expire_date').val();
+		var up_prd_descript  = $('#up_prd_descript').val();
+		$.ajax({
+			url : 'Update_stockdetails',
+			type : 'post',
+			data : { up_id : up_id , up_uids : up_uids ,up_pre_sku : up_pre_sku , up_radioUp : up_radioUp , up_quantity : up_quantity , up_r_price : up_r_price , up_orig_price : up_orig_price , up_manufacturer : up_manufacturer , up_expire_date : up_expire_date , up_prd_descript : up_prd_descript },
+			success : function (result) {
+				var data = $.parseJSON(result);
+				switch (data.status.prompt)
+				{
+					case 'null_values':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> All fields is requred! Please try again.</p>');
+					setTimeout(function() { 
+						$('.ajx_res_prompt').html('');
+
+					}, 3000);
+					break;
+
+					case 'stock_notfound':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Can\'t find stock details. Please try again.</p>');
+					setTimeout(function() { 
+						$('.ajx_res_prompt').html('');
+
+					}, 3000);
+					break;
+
+					case 'product_notfound':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Can\'t find product details. Please try again.</p>');
+					setTimeout(function() { 
+						$('.ajx_res_prompt').html('');
+
+					}, 3000);
+					break;
+
+					case 'stock_updated':
+					$('.ajx_res_prompt').html('<p class="text-success align-middle"><i class="bi bi-check-circle-fill"></i> Stock updated! Page will automatically refresh.</p>');
+					setTimeout(function() { 
+						$('.ajx_res_prompt').html('');
+						window.location = 'product_restockingv2';
+					}, 3000);
+					break;
+
+					case 'error_updating':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Something\'s wrong, Please try again.</p>');
+					setTimeout(function() { 
+						$('.ajx_res_prompt').html('');
+					}, 3000);
+					break;
+
+					case 'deduct_error':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Deduction failed stock is low.</p>');
+					setTimeout(function() { 
+						$('.ajx_res_prompt').html('');
+					}, 3000);
+					break;
+					case 'quantity_exceed_current':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Quantity exceed remaining stocks.</p>');
+					setTimeout(function() { 
+						$('.ajx_res_prompt').html('');
+					}, 3000);
+					break;
+
+					default:
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Something\'s wrong, Please try again.</p>');
+				}
 			}
 		});
 	});

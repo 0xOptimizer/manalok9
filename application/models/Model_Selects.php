@@ -840,4 +840,64 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');
 		return $result;
 	}
+	public function Get_Stock_indb($UID,$Product_SKU)
+	{
+		$this->db->select('*');
+		$this->db->where('UID', $UID);
+		$this->db->where('Product_SKU', $Product_SKU);
+		$this->db->where('Current_Stocks >', 0);
+		$this->db->limit(1);
+		$this->db->order_by('Expiration_Date','ASC');
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+	public function Check_thisstock($uid,$product_sku)
+	{
+		$this->db->select('*');
+		$this->db->where('UID', $uid);
+		$this->db->where('Product_SKU', $product_sku);
+		$this->db->where('Current_Stocks >', 0);
+		$this->db->limit(1);
+		$this->db->order_by('Expiration_Date','ASC');
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+	public function Check_prd_stockid($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+	public function CheckStock_ifExist($id,$uids,$pre_sku)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$this->db->where('UID', $uids);
+		$this->db->where('Product_SKU', $pre_sku);
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+	public function CheckPrd_in_tb($U_ID,$Code)
+	{
+		$this->db->select('*');
+		$this->db->where('U_ID', $U_ID);
+		$this->db->where('Code', $Code);
+		$result = $this->db->get('products');
+		return $result;
+	}
+	public function total_restock()
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('Type',0);
+		$result = $this->db->get('products_transactions');
+		return $result->row_array();
+	}
+	public function total_released()
+	{
+		$this->db->select_sum('Amount');
+		$this->db->where('Type',1);
+		$result = $this->db->get('products_transactions');
+		return $result->row_array();
+	}
 }

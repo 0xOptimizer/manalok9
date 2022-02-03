@@ -90,6 +90,11 @@ class Admin extends MY_Controller {
 		$data['tps'] = $this->Model_Selects->total_product_stocks();
 		$data['tps_m'] = $this->Model_Selects->total_product_thismonth($c_year,$c_month);
 
+		// TOTAL PRODUCT STOCK THIS MONTH
+		$data['totalrestock'] = $this->Model_Selects->total_restock();
+		/* TOTAL RELEASED */
+		$data['total_released'] = $this->Model_Selects->total_released();
+		
 		$this->load->view('admin/dashboard', $data);
 	}
 	public function users()
@@ -489,10 +494,10 @@ class Admin extends MY_Controller {
 			
 			// INSERT USER RESTRICTIONS
 			foreach ($userRestrictions as $key => $val) {
-			    $allowed = 0;
-			    if ($val == 'on') {
-			        $allowed = 1;
-			    }
+				$allowed = 0;
+				if ($val == 'on') {
+					$allowed = 1;
+				}
 				$data = array(
 					'UserID' => $userID,
 					'Action' => $key,
@@ -660,10 +665,10 @@ class Admin extends MY_Controller {
 			if ($allUserRestrictions->num_rows() != sizeof($userRestrictions)) { // if incorrect amount of restrictions, delete current and add new
 				$this->Model_Deletes->Delete_user_restriction($userID);
 				foreach ($userRestrictions as $key => $val) {
-				    $allowed = 0;
-				    if ($val == 'on') {
-				        $allowed = 1;
-				    }
+					$allowed = 0;
+					if ($val == 'on') {
+						$allowed = 1;
+					}
 					$data = array(
 						'UserID' => $userID,
 						'Action' => $key,
@@ -673,10 +678,10 @@ class Admin extends MY_Controller {
 				}
 			} else {
 				foreach ($userRestrictions as $key => $val) {
-				    $allowed = 0;
-				    if ($val == 'on') {
-				        $allowed = 1;
-				    }
+					$allowed = 0;
+					if ($val == 'on') {
+						$allowed = 1;
+					}
 					$data = array(
 						'Allowed' => $allowed,
 					);
@@ -1231,6 +1236,11 @@ class Admin extends MY_Controller {
 		{
 			// BARCODE GENEREATOR
 			$colorblk = [0, 0, 0];
+
+			/* CHECK DIR IF EXIST */
+			if (!is_dir('assets/barcode_images/')) {
+				mkdir('assets/barcode_images/', 0777, TRUE);
+			}
 			$generator = new Picqer\Barcode\BarcodeGeneratorPNG();
 			file_put_contents('assets/barcode_images/'.$U_ID.'-pbarcode.png', $generator->getBarcode($U_ID, $generator::TYPE_CODE_128, 4, 70, $colorblk));
 
@@ -1748,33 +1758,33 @@ class Admin extends MY_Controller {
 			$discounts = array();
 			switch ($shipClientDetails['Category']) { // get account discounts
 				case '0':
-					$discounts = array(
-						'Outright' => 15,
-						'Volume' => 10,
-						'PBD' => 5,
-						'Manpower' => 5,
-					); break;
+				$discounts = array(
+					'Outright' => 15,
+					'Volume' => 10,
+					'PBD' => 5,
+					'Manpower' => 5,
+				); break;
 				case '1':
-					$discounts = array(
-						'Outright' => 12,
-						'Volume' => 10,
-						'PBD' => 5,
-						'Manpower' => 5,
-					); break;
+				$discounts = array(
+					'Outright' => 12,
+					'Volume' => 10,
+					'PBD' => 5,
+					'Manpower' => 5,
+				); break;
 				case '2':
-					$discounts = array(
-						'Outright' => 10,
-						'Volume' => 10,
-						'PBD' => 5,
-						'Manpower' => 0,
-					); break;
+				$discounts = array(
+					'Outright' => 10,
+					'Volume' => 10,
+					'PBD' => 5,
+					'Manpower' => 0,
+				); break;
 				case '3':
-					$discounts = array(
-						'Outright' => 10,
-						'Volume' => 10,
-						'PBD' => 5,
-						'Manpower' => 0,
-					); break;
+				$discounts = array(
+					'Outright' => 10,
+					'Volume' => 10,
+					'PBD' => 5,
+					'Manpower' => 0,
+				); break;
 			}
 			$dcOutright = 0;
 			$dcVolume = 0;
@@ -2061,17 +2071,17 @@ class Admin extends MY_Controller {
 	}
 	public function getToken($length)
 	{
-	    $token = "";
-	    $codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	    $codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
-	    $codeAlphabet.= "0123456789";
-	    $max = strlen($codeAlphabet);
+		$token = "";
+		$codeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		$codeAlphabet.= "abcdefghijklmnopqrstuvwxyz";
+		$codeAlphabet.= "0123456789";
+		$max = strlen($codeAlphabet);
 
-	    for ($i=0; $i < $length; $i++) {
-	        $token .= $codeAlphabet[$this->crypto_rand_secure(0, $max-1)];
-	    }
+		for ($i=0; $i < $length; $i++) {
+			$token .= $codeAlphabet[$this->crypto_rand_secure(0, $max-1)];
+		}
 
-	    return $token;
+		return $token;
 	}
 	### UNIQUE ID END
 	public function SubmitNewItemcode()
@@ -3215,9 +3225,17 @@ class Admin extends MY_Controller {
 		$ID = $this->input->post('unit_id');
 		$Price_PerItem = $this->input->post('unit_price');
 		$Cost_PerItem = $this->input->post('unit_cost');
+		$Product_Name = $this->input->post('Product_Name');
+		$Description = $this->input->post('description');
 
-		if (empty($ID) || empty($Price_PerItem) || empty($Cost_PerItem)) {
+		if (empty($ID) || empty($Price_PerItem) || empty($Cost_PerItem) || empty($Product_Name)) {
 			// NULL VALUE
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Success!</strong> Empty value detected. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect($_SERVER['HTTP_REFERER']);
 		}
 		else
@@ -3227,21 +3245,31 @@ class Admin extends MY_Controller {
 			if ($CheckProduct_BY_ID->num_rows() > 0) {
 				// UPDATE PRICES
 				$data = array(
+					'Product_Name' => $Product_Name,
 					'Price_PerItem' => $Price_PerItem, 
-					'Cost_PerItem' => $Cost_PerItem, 
+					'Cost_PerItem' => $Cost_PerItem,
+					'Description' => $Description, 
 				);
 				$UpdatePriceProduct = $this->Model_Updates->UpdatePriceProduct($ID,$data);
 				if ($UpdatePriceProduct == true) {
 					// PROMPT SUCCESS
-					$prompt = 'success';
-
-					$this->session->set_flashdata('prompt_toast', $prompt);
+					$prompt_txt =
+					'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Product updated.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
 
 					redirect($_SERVER['HTTP_REFERER']);
 				}
 				else
 				{
-					// PROMPT ERROR
+					$prompt_txt =
+					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Something\'s wrong while updating.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
 					redirect($_SERVER['HTTP_REFERER']);
 
 				}
@@ -3249,6 +3277,12 @@ class Admin extends MY_Controller {
 			else
 			{
 				// ID DOESNT EXIST
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> This product doesn\'t exist.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect($_SERVER['HTTP_REFERER']);
 
 			}
@@ -3283,9 +3317,5 @@ class Admin extends MY_Controller {
 
 		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 		$this->load->view('admin/page_mail', $data);
-	}
-	public function product_restockingv2($value='')
-	{
-		// code...
 	}
 }

@@ -41,13 +41,13 @@ if ($this->session->flashdata('highlight-id')) {
 	/* Chrome, Safari, Edge, Opera */
 	.num-noarrow::-webkit-outer-spin-button,
 	.num-noarrow::-webkit-inner-spin-button {
-	  -webkit-appearance: none;
-	  margin: 0;
+		-webkit-appearance: none;
+		margin: 0;
 	}
 
 	/* Firefox */
 	.num-noarrow {
-	  -moz-appearance: textfield;
+		-moz-appearance: textfield;
 	}
 	.modal-content-custom  {
 		-webkit-border-radius: 0px !important;
@@ -61,226 +61,232 @@ if ($this->session->flashdata('highlight-id')) {
 
 </head>
 <body>
-<div id="app">
-	<?php $this->load->view('main/template/sidebar') ?>
-	<div id="main">
-		<header class="mb-3">
-			<a href="#" class="burger-btn d-block d-xl-none">
-				<i class="bi bi-justify fs-3"></i>
-			</a>
-		</header>
+	<div id="app">
+		<?php $this->load->view('main/template/sidebar') ?>
+		<div id="main">
+			<header class="mb-3">
+				<a href="#" class="burger-btn d-block d-xl-none">
+					<i class="bi bi-justify fs-3"></i>
+				</a>
+			</header>
 
-		<div class="page-heading">
-			<div class="page-title">
-				<div class="row">
-					<div class="col-12 col-md-6">
-						<h3>Products
-							<span class="text-center success-banner-sm">
-								<i class="bi bi-bag-fill"></i> <?=$getAllProductsv2->num_rows();?> TOTAL
-							</span>
-							<?php if ($getAllProductsv2->num_rows() <= 0): ?>
-								<span class="info-banner-sm">
-									<i class="bi bi-exclamation-diamond-fill"></i> No products found.
+			<div class="page-heading">
+				<div class="page-title">
+					<div class="row">
+						<div class="col-12 col-md-6">
+							<h3>Products
+								<span class="text-center success-banner-sm">
+									<i class="bi bi-bag-fill"></i> <?=$getAllProductsv2->num_rows();?> TOTAL
 								</span>
-							<?php endif; ?>
-							<!-- <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW</button> -->
-						</h3>
-					</div>
-					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="addproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD PRODUCT</button>
-						|
-						<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
-						<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
-					</div>
-					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+								<?php if ($getAllProductsv2->num_rows() <= 0): ?>
+									<span class="info-banner-sm">
+										<i class="bi bi-exclamation-diamond-fill"></i> No products found.
+									</span>
+								<?php endif; ?>
+								<!-- <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW</button> -->
+							</h3>
+						</div>
+						<div class="col-sm-12 col-md-10 pt-4 pb-2">
+							<button type="button" class="addproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD PRODUCT</button>
+							|
+							<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
+							<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
+						</div>
+						<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+								</div>
+								<input type="text" id="tableSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
 							</div>
-							<input type="text" id="tableSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
 						</div>
 					</div>
 				</div>
-			</div>
 
-			<section class="section">
-				<div class="table-responsive">
-					<table id="productsTable" class="standard-table table">
-						<thead style="font-size: 12px;">
-							<th>BARCODE</th>
-							<th>CODE</th>
-							<th>NAME</th>
-							<th>CATEGORY</th>
-							<th>DESCRIPTION</th>
-							<th>IN STOCK</th>
-							<th>RELEASED</th>
-							<th></th>
-						</thead>
-						<tbody>
-							<?php
-							if ($getAllProductsv2->num_rows() > 0):
-								foreach ($getAllProductsv2->result_array() as $row): ?>
-									<tr>
-										<td width="100">
-											<div class="p-2 text-center" style="background-color: white;">
-												<img src="<?=base_url();?><?=$row['Barcode_Images']?>" width="95" alt="No image">
-											</div>
-										</td>
-										<td>
-											<?=$row['Code']?>
-										</td>
-										<td>
-											<?=$row['Product_Name']?>
-										</td>
-										<td>
-											<?=$row['Product_Category']?>
-										</td>
-										<td>
-											<?=$row['Description']?>
-										</td>
-										<td>
-											<?=$row['InStock']?>
-										</td>
-										<td>
-											<?=$row['Released']?>
-										</td>
-										<td class="text-center"  width="150">
-											<span style="margin-right: 5px;">
-												<a href="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>">
-													<i class="bi bi-eye" style="color: #408AF7;"></i>
-												</a>
-											</span>
-											<span style="margin-right: 5px;">
-												<a class="update_prd" href="#" data-value="<?=$row['ID']?>">
-													<i class="bi bi-pencil" style="color: #229F4B;"></i>
-												</a>
-											</span>
-											<span style="margin-right: 5px;">
-												<a class="delete_product" href="#" data-value="<?php echo $row['Code'] ;?>">
-													<i class="bi bi-trash" style="color: #CF3939;"></i>
-												</a>
-											</span>
-										</td>
-									</tr>
-							<?php endforeach;
-							endif; ?>
-						</tbody>
-					</table>
-				</div>
-			</section>
+				<section class="section">
+					<div class="table-responsive">
+						<table id="productsTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th>BARCODE</th>
+								<th>CODE</th>
+								<th>NAME</th>
+								<th>CATEGORY</th>
+								<th>DESCRIPTION</th>
+								<th>IN STOCK</th>
+								<th>RELEASED</th>
+								<th></th>
+							</thead>
+							<tbody>
+								<?php
+								if ($getAllProductsv2->num_rows() > 0):
+									foreach ($getAllProductsv2->result_array() as $row): ?>
+										<tr>
+											<td width="100">
+												<div class="p-2 text-center" style="background-color: white;">
+													<img src="<?=base_url();?><?=$row['Barcode_Images']?>" width="95" alt="No image">
+												</div>
+											</td>
+											<td>
+												<?=$row['Code']?>
+											</td>
+											<td>
+												<?=$row['Product_Name']?>
+											</td>
+											<td>
+												<?=$row['Product_Category']?>
+											</td>
+											<td>
+												<?php if (strlen($row['Description']) > 50) {
+													$str = substr($row['Description'], 0, 50) . '...';
+													echo $str;
+												} else {
+													echo $row['Description'];
+												}?>
+
+											</td>
+											<td>
+												<?=$row['InStock']?>
+											</td>
+											<td>
+												<?=$row['Released']?>
+											</td>
+											<td class="text-center"  width="150">
+												<span style="margin-right: 5px;">
+													<a href="<?=base_url() . 'admin/viewproduct?code=' . $row['Code'];?>">
+														<i class="bi bi-eye" style="color: #408AF7;"></i>
+													</a>
+												</span>
+												<span style="margin-right: 5px;">
+													<a class="update_prd" href="#" data-value="<?=$row['ID']?>">
+														<i class="bi bi-pencil" style="color: #229F4B;"></i>
+													</a>
+												</span>
+												<span style="margin-right: 5px;">
+													<a class="delete_product" href="#" data-value="<?php echo $row['Code'] ;?>">
+														<i class="bi bi-trash" style="color: #CF3939;"></i>
+													</a>
+												</span>
+											</td>
+										</tr>
+									<?php endforeach;
+								endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</section>
+			</div>
 		</div>
 	</div>
-</div>
-<div class="prompts">
-	<?php print $this->session->flashdata('prompt_status'); ?>
-</div>
+	<div class="prompts">
+		<?php print $this->session->flashdata('prompt_status'); ?>
+	</div>
 
-<!-- New product modal -->
-<?php $this->load->view('admin/modals/add_productV2.php'); ?>
-<!-- New transactions modal -->
-<?php $this->load->view('admin/modals/add_transaction.php'); ?>
-<!-- Prompts modal -->
-<?php $this->load->view('admin/modals/prompts/prompt_delete.php'); ?>
-<!-- Update modal -->
-<?php $this->load->view('admin/modals/update_product.php'); ?>
+	<!-- New product modal -->
+	<?php $this->load->view('admin/modals/add_productV2.php'); ?>
+	<!-- New transactions modal -->
+	<?php $this->load->view('admin/modals/add_transaction.php'); ?>
+	<!-- Prompts modal -->
+	<?php $this->load->view('admin/modals/prompts/prompt_delete.php'); ?>
+	<!-- Update modal -->
+	<?php $this->load->view('admin/modals/update_product.php'); ?>
 
-<?php $this->load->view('admin/modals/generate_report')?>
+	<?php $this->load->view('admin/modals/generate_report')?>
 
-<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
-<script src="<?=base_url()?>/assets/js/jquery.js"></script>
+	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
+	<script src="<?=base_url()?>/assets/js/main.js"></script>
+	<script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
-<script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
-<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
-<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
-<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
-
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
 
 
-<script>
-$('.sidebar-admin-products').addClass('active');
-$(document).ready(function() {
-	<?php if ($highlightID != 'N/A'): ?>
-		$('#productsTable').find("[data-code='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
-	<?php endif; ?>
-	$('.newproduct-btn').on('click', function() {
-		$('#newProductModal').modal('toggle');
-	});
-	$('.addproduct-btn').on('click', function() {
-		$('#add_productModal').modal('toggle');
-	});
-	
-	$('.newtransaction-btn').on('click', function() {
-		$('#newTransactionModal').modal('toggle');
-	});
-	
-	var table = $('#productsTable').DataTable( {
-		sDom: 'lrtip',
-		'bLengthChange': false,
-		'order': [[ 0, 'desc' ]],
-		buttons: [
-            {
-	            extend: 'print',
-	            exportOptions: {
-	                columns: [ 1, 2, 3, 4, 5, 6 ]
-	            },
-	            customize: function ( doc ) {
-	            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
-					$(doc.document.body).find('h1').css('font-size', '24px');
-					$(doc.document.body).find('h1').css('text-align', 'center'); 
+
+	<script>
+		$('.sidebar-admin-products').addClass('active');
+		$(document).ready(function() {
+			<?php if ($highlightID != 'N/A'): ?>
+				$('#productsTable').find("[data-code='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
+			<?php endif; ?>
+			$('.newproduct-btn').on('click', function() {
+				$('#newProductModal').modal('toggle');
+			});
+			$('.addproduct-btn').on('click', function() {
+				$('#add_productModal').modal('toggle');
+			});
+
+			$('.newtransaction-btn').on('click', function() {
+				$('#newTransactionModal').modal('toggle');
+			});
+
+			var table = $('#productsTable').DataTable( {
+				sDom: 'lrtip',
+				'bLengthChange': false,
+				'order': [[ 0, 'desc' ]],
+				buttons: [
+				{
+					extend: 'print',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6 ]
+					},
+					customize: function ( doc ) {
+						$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
+						$(doc.document.body).find('h1').css('font-size', '24px');
+						$(doc.document.body).find('h1').css('text-align', 'center'); 
+					}
+				},
+				{
+					extend: 'copyHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6 ]
+					}
+				},
+				{
+					extend: 'excelHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6 ]
+					}
+				},
+				{
+					extend: 'csvHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6 ]
+					}
+				},
+				{
+					extend: 'pdfHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6 ]
+					}
 				}
-	        },
-	        {
-	            extend: 'copyHtml5',
-	            exportOptions: {
-	                columns: [ 1, 2, 3, 4, 5, 6 ]
-	            }
-	        },
-	        {
-	            extend: 'excelHtml5',
-	            exportOptions: {
-	                columns: [ 1, 2, 3, 4, 5, 6 ]
-	            }
-	        },
-	        {
-	            extend: 'csvHtml5',
-	            exportOptions: {
-	                columns: [ 1, 2, 3, 4, 5, 6 ]
-	            }
-	        },
-	        {
-	            extend: 'pdfHtml5',
-	            exportOptions: {
-	                columns: [ 1, 2, 3, 4, 5, 6 ]
-	            }
-	        }
-    ]});
-    $('body').on('click', '#generateReport-Print', function () {
-        table.button('0').trigger();
-    });
-    $('body').on('click', '#generateReport-Copy', function () {
-        table.button('1').trigger();
-    });
-    $('body').on('click', '#generateReport-Excel', function () {
-        table.button('2').trigger();
-    });
-    $('body').on('click', '#generateReport-CSV', function () {
-        table.button('3').trigger();
-    });
-    $('body').on('click', '#generateReport-PDF', function () {
-        table.button('4').trigger();
-    });
-	$('#tableSearch').on('keyup change', function(){
-		table.search($(this).val()).draw();
-	});
-	$("textarea").each(function () {
-		this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
-	}).on("input", function () {
-		this.style.height = "auto";
-		this.style.height = (this.scrollHeight) + "px";
-	});
+				]});
+			$('body').on('click', '#generateReport-Print', function () {
+				table.button('0').trigger();
+			});
+			$('body').on('click', '#generateReport-Copy', function () {
+				table.button('1').trigger();
+			});
+			$('body').on('click', '#generateReport-Excel', function () {
+				table.button('2').trigger();
+			});
+			$('body').on('click', '#generateReport-CSV', function () {
+				table.button('3').trigger();
+			});
+			$('body').on('click', '#generateReport-PDF', function () {
+				table.button('4').trigger();
+			});
+			$('#tableSearch').on('keyup change', function(){
+				table.search($(this).val()).draw();
+			});
+			$("textarea").each(function () {
+				this.setAttribute("style", "height:" + (this.scrollHeight) + "px;overflow-y:hidden;");
+			}).on("input", function () {
+				this.style.height = "auto";
+				this.style.height = (this.scrollHeight) + "px";
+			});
 
 	// ADD NEW PRODUCT MODAL
 	$('#generate_code').on('click', function() {
@@ -378,8 +384,6 @@ $(document).ready(function() {
 
 				}
 				
-				console.log(data);
-				
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -396,13 +400,16 @@ $(document).ready(function() {
 			data: { prd_id : prd_id } ,
 			success: function (result) {
 				var data = $.parseJSON(result);
-				console.log(data);
 				$('#txt_code').text(data['prd_details'].Code);
 				$('#txt_id').val(data['prd_details'].ID);
-				
+
 				$('#unit_price_uid').val(data['prd_details'].Price_PerItem);
 				$('#unit_cost_uid').val(data['prd_details'].Cost_PerItem);
 
+				$('#prd_n').val(data['prd_details'].Product_Name);
+				$('#prd_des').val(data['prd_details'].Description);
+				
+				
 				$('#update_prdModal').modal('toggle');
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -436,11 +443,17 @@ $(document).ready(function() {
 		};
 	}(jQuery));
 	$("#unit_price_uid").inputFilter(function(value) {
-  		return /^-?\d*$/.test(value);
-  	});
-  	$("#unit_cost_uid").inputFilter(function(value) {
-  		return /^-?\d*$/.test(value);
-  	});
+		return /^-?\d*$/.test(value);
+	});
+	$("#unit_cost_uid").inputFilter(function(value) {
+		return /^-?\d*$/.test(value);
+	});
+	$('.sel_checkss').on('change',function () {
+		$('.product_codegen').val('');
+	});
+	$('#add_prd_close').on('click',function () {
+		$('#add_productModal').modal('toggle');
+	});
 });
 </script>
 

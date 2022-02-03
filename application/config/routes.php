@@ -235,6 +235,15 @@ $route['admin/get_cart_fill_table'] = 'Admin_Extend/get_cart_fill_table';
 $route['admin/Delete_cart_itemrestock'] = 'Admin_Extend/Delete_cart_itemrestock';
 $route['admin/restockin_from_cart'] = 'Admin_Extend/restockin_from_cart';
 
+// RELEASING version 2
+$route['admin/product_releasingv2'] = 'Admin_Extend/product_releasingv2';
+$route['admin/Get_Stock_details'] = 'Admin_Extend/Get_Stock_details';
+$route['admin/Getprd_stocks'] = 'Admin_Extend/Getprd_stocks';
+$route['admin/submit_get_prdstocks'] = 'Admin_Extend/submit_get_prdstocks';
+$route['admin/submit_releasestockss'] = 'Admin_Extend/submit_releasestockss';
 
+$route['admin/Get_Stock_UsingID'] = 'Admin_Extend/Get_Stock_UsingID';
+$route['admin/Delete_Stock_row'] = 'Admin_Extend/Delete_Stock_row';
+$route['admin/Update_stockdetails'] = 'Admin_Extend/Update_stockdetails';
 
 

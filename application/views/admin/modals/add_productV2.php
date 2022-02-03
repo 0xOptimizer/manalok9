@@ -12,7 +12,7 @@
 								BRAND
 							</h5>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="sel_brandname" class="form-control standard-input-pad select-first-gray" name="prd_brand2" required="">
+								<select id="sel_brandname" class="form-control standard-input-pad select-first-gray sel_checkss" name="prd_brand2" required="">
 									<option selected="" value=""></option>
 									<?php foreach ($Get_Brand_Data->result_array() as $row): ?>
 										<option value="<?php echo $row['Brand_Name']; ?>" data-value="<?php echo $row['UniqueID']; ?>"><?php echo $row['Brand_Name']; ?></option>
@@ -21,13 +21,13 @@
 								<label class="input-label" for="">BRAND</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="sel_brandchar" class="form-control standard-input-pad select-first-gray set_char sel_brandchar" name="prd_char" required="">
+								<select id="sel_brandchar" class="form-control standard-input-pad select-first-gray set_char sel_brandchar sel_checkss" name="prd_char" required="">
 									
 								</select>
 								<label class="input-label" for="">CHAR</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="sel_brandtype" class="form-control standard-input-pad select-first-gray" name="prd_chartype" required="">
+								<select id="sel_brandtype" class="form-control standard-input-pad select-first-gray sel_checkss" name="prd_chartype" required="">
 									
 								</select>
 								<label class="input-label" for="">TYPE</label>
@@ -38,31 +38,31 @@
 								Properties
 							</h5>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="sel_brandnameabbr" class="form-control standard-input-pad select-first-gray set_brand1" name="prd_brand1" required="">
+								<select id="sel_brandnameabbr" class="form-control standard-input-pad select-first-gray set_brand1 sel_checkss" name="prd_brand1" required="">
 									
 								</select>
 								<label class="input-label" for="">BRAND (ABBR)</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="sel_brandline" class="form-control standard-input-pad select-first-gray set_line" name="prd_line" required="">
+								<select id="sel_brandline" class="form-control standard-input-pad select-first-gray set_line sel_checkss" name="prd_line" required="">
 									
 								</select>
 								<label class="input-label" for="">LINE</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="sel_brandtypess" class="form-control standard-input-pad select-first-gray set_type" name="prd_type" required="">
+								<select id="sel_brandtypess" class="form-control standard-input-pad select-first-gray set_type sel_checkss" name="prd_type" required="">
 									
 								</select>
 								<label class="input-label" for="">TYPE</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-8">
-								<select id="sel_brandvariants" class="form-control standard-input-pad select-first-gray set_variant" name="prd_variant" required="">
+								<select id="sel_brandvariants" class="form-control standard-input-pad select-first-gray set_variant sel_checkss" name="prd_variant" required="">
 									
 								</select>
 								<label class="input-label" for="">VARIANT / COLOR / PRINT / DESCRIPTION</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-4">
-								<select id="sel_brandsizes" class="form-control standard-input-pad select-first-gray set_size" name="prd_size" required="">
+								<select id="sel_brandsizes" class="form-control standard-input-pad select-first-gray set_size sel_checkss" name="prd_size" required="">
 									
 								</select>
 								<label class="input-label" for="">SIZE</label>
@@ -78,20 +78,20 @@
 
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-6">
-								<input class="form-control standard-input-pad" type="text" name="product_name" autocomplete="off" placeholder="">
+								<input class="form-control standard-input-pad " type="text" name="product_name" autocomplete="off" placeholder="">
 								<label class="input-label">ITEM NAME</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-6">
-								<input class="form-control standard-input-pad num-noarrow" type="number" name="unit_cost" autocomplete="off" placeholder="PHP 100">
+								<input class="form-control standard-input-pad num-noarrow " type="number" name="unit_cost" autocomplete="off" placeholder="PHP 100">
 								<label class="input-label">UNIT COST</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-6">
-								<input class="form-control standard-input-pad num-noarrow" type="number" name="unit_price" autocomplete="off" placeholder="PHP 150">
+								<input class="form-control standard-input-pad num-noarrow " type="number" name="unit_price" autocomplete="off" placeholder="PHP 150">
 								<label class="input-label">UNIT PRICE</label>
 							</div>
 
 							<div class="form-group col-12 col-sm-12 col-md-12 m-1">
-								<textarea rows="10" class="form-control standard-input-pad" name="product_description"></textarea>
+								<textarea rows="10" class="form-control standard-input-pad " name="product_description"></textarea>
 								<label class="input-label">DESCRIPTION</label>
 							</div>
 							
@@ -102,6 +102,7 @@
 					
 					<a href="#" id="generate_code">Generate SKU</a>
 					<button type="submit" class="btn btn-success"><i class="bi bi-check-square"></i> ADD NEW PRODUCT</button>
+					<button id="add_prd_close" type="button" class="btn btn-secondary"><i class="bi bi-check-square"></i> CLOSE</button>
 				</div>
 			</div>
 		</form>
