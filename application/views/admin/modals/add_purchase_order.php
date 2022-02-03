@@ -1,4 +1,4 @@
-<div class="modal fade" id="AddPurchaseOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="AddPurchaseOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-prevscroll="0">
 	<div class="modal-dialog modal-xl" role="document">
 		<form id="formAddPurchaseOrder" action="<?php echo base_url() . 'FORM_addPurchaseOrder';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
@@ -70,110 +70,34 @@
 						</div>
 						<hr>
 						<!-- Bottom Part -->
-						<div class="col-sm-12 col-md-8">
-							<div class="row">
-								<div class="col-sm-12 table-responsive">
-									<label class="input-label">PURCHASE ITEMS</label>
-									<table class="table" id="purchaseOrderProducts">
-										<thead>
-											<tr>
-												<th class="text-center">QTY</th>
-												<th class="text-center">CODE</th>
-												<th class="text-center">UNIT PRICE</th>
-												<th class="text-center">TOTAL</th>
-												<th class="text-center"></th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr class="noProduct">
-												<td class="text-center" colspan="5">
-													<label class="input-label">
-														[ EMPTY ]
-													</label>
-												</td>
-											</tr>
-											<tr class="productsTotal" style="border-color: #a7852d;">
-												<td></td>
-												<td></td>
-												<td class="font-weight-bold text-center" style="color: #a7852d;">TOTAL AMOUNT</td>
-												<td class="subTotal text-center">0.00</td>
-												<td></td>
-											</tr>
-											<!-- <tr style="border-color: #a7852d;">
-												<td class="text-center" rowspan="4" colspan="2">
-													<span class="footerHead">
-														MEMO:
-													</span><br>
-													<span class="text-center">
-														NONE
-													</span>
-												</td>
-												<td class="footerHead">Freight</td>
-												<td class="text-center">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td class="footerHead">Sales Tax</td>
-												<td class="text-center">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td class="footerHead">Less Deposit</td>
-												<td class="text-center">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td class="footerHead">Balance Due</td>
-												<td class="text-center">0.00</td>
-												<td></td>
-											</tr> -->
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-12 col-md-4">
-							<div class="row">
-								<?php $getAllProducts = $this->Model_Selects->GetAllProducts(); ?>
-								<div class="col-sm-0 col-md-6">
-									<label class="input-label">PRODUCTS</label>
-								</div>
-								<div class="col-sm-12 col-md-6 pt-4 pb-2" style="margin-top: -15px;">
-									<div class="input-group">
-										<div class="input-group-prepend">
-											<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
-										</div>
-										<input type="text" id="tableProductsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
-									</div>
-								</div>
-								<div class="col-sm-12 table-responsive">
-									<table id="productsTable" class="standard-table table">
-										<thead style="font-size: 12px;">
-											<th class="text-center">CODE</th>
-											<th class="text-center">STOCK</th>
-											<th class="text-center">UNIT COST</th>
-										</thead>
-										<tbody>
-											<?php
-											if ($getAllProducts->num_rows() > 0):
-												foreach ($getAllProducts->result_array() as $row): ?>
-													<tr class="add-product-row" data-id="<?=$row['ID']?>">
-														<td class="text-center pCode">
-															<?=$row['Code']?>
-														</td>
-														<td class="text-center">
-															<?=$row['InStock']?>
-														</td>
-														<td class="text-center pPrice" data-price="<?=$row['Cost_PerItem']?>">
-															<?=number_format($row['Cost_PerItem'], 2)?>
-														</td>
-													</tr>
-											<?php endforeach;
-											endif; ?>
-										</tbody>
-									</table>
-								</div>
-							</div>
+						<div class="col-sm-12 table-responsive">
+							<label class="input-label">PURCHASE ITEMS</label>
+							<table class="table table-hover" id="purchaseOrderProducts">
+								<thead>
+									<tr>
+										<th class="text-center">SKU</th>
+										<th class="text-center">QTY</th>
+										<th class="text-center">COST</th>
+										<th class="text-center">PRICE</th>
+										<th class="text-center">TOTAL COST</th>
+										<th class="text-center">EXPIRATION</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="newProduct">
+										<td class="font-weight-bold add-product-row" colspan="7" style="cursor: pointer;">
+											<i class="bi bi-plus"></i> New Product
+										</td>
+									</tr>
+									<tr style="border-color: #a7852d;">
+										<td class="font-weight-bold text-center" style="color: #a7852d;">TOTAL AMOUNT</td>
+										<td colspan="3"></td>
+										<td class="productsTotal text-center">0.00</td>
+										<td colspan="3"></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 					<hr class="my-4">

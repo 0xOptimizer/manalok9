@@ -72,6 +72,20 @@ class AJAX extends CI_Controller {
 			echo json_encode($userRestrictions);
 		}
 	}
+	public function getProductStocks()
+	{
+		$sku = $this->input->get('sku');
+		if (strlen($sku) > 0) {
+			$productStocks = $this->Model_Selects->GetProductStocks($sku)->result_array();
+
+			// foreach ($productStocks as $key => $row) {
+
+			// 	$productStocks[$key] = $row;
+			// }
+
+			echo json_encode($productStocks);
+		}
+	}
 	public function validateEmailRegistration()
 	{
 		$email = $this->input->post('email');

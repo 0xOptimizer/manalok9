@@ -163,6 +163,96 @@ if ($this->session->flashdata('highlight-id')) {
 <?php $this->load->view('admin/modals/add_sales_order'); ?>
 <?php endif; ?>
 
+<div class="modal fade" id="SelectProductSKUModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box-seam"></i> PRODUCTS</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<?php $getAllProducts = $this->Model_Selects->GetAllProducts(); ?>
+					<div class="col-sm-12" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableProductsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
+					<div class="col-sm-12 table-responsive">
+						<table id="selectproductsTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">SKU</th>
+								<th class="text-center">NAME</th>
+								<th class="text-center">DESCRIPTION</th>
+								<th class="text-center">STOCK</th>
+							</thead>
+							<tbody>
+								<?php
+								if ($getAllProducts->num_rows() > 0):
+									foreach ($getAllProducts->result_array() as $row): ?>
+										<tr class="select-product-row" data-sku="<?=$row['Code']?>" data-bs-dismiss="modal">
+											<td class="text-center">
+												<?=$row['Code']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Product_Name']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Description']?>
+											</td>
+											<td class="text-center">
+												<?=$row['InStock']?>
+											</td>
+										</tr>
+								<?php endforeach;
+								endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="SelectProductStockModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box"></i> STOCKS</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<input id="rowProductSelection" type="hidden">
+					<div class="col-sm-12" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableStocksSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
+					<div class="col-sm-12 table-responsive">
+						<table id="selectstocksTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">ID</th>
+								<th class="text-center">SKU</th>
+								<th class="text-center">STOCK</th>
+								<th class="text-center">PRICE</th>
+								<th class="text-center">DATE ADDED</th>
+								<th class="text-center">EXPIRATION DATE</th>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <?php $this->load->view('admin/modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -185,8 +275,29 @@ $(document).ready(function() {
 
 	$('.newsalesorder-btn').on('click', function() {
 		$('#AddSalesOrderModal').modal('toggle');
-	});
-	
+	});$('#AddSalesOrderModal').modal('toggle');
+	function showAlert(type, message) {
+		if ($('.alertNotification').length > 0) {
+			$('.alertNotification').remove();
+		}
+		$('body').append($('<div>')
+			.attr({
+				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				role: 'alert',
+				'data-bs-dismiss': 'alert'
+			}).css({ 'z-index': 9999, cursor: 'pointer' })
+			.append($('<strong>').html(type[0].toUpperCase() + type.slice(1) + '! '))
+			.append($('<span>').html(message))
+			.append($('<button>')
+				.attr({
+					type: 'button', 
+					class: 'btn-close',
+					'data-bs-dismiss': 'alert',
+					'aria-label': 'Close'
+				}))
+		);
+	}
+
 	var table = $('#salesTable').DataTable( {
 		sDom: 'lrtip',
 		'bLengthChange': false,
@@ -246,7 +357,7 @@ $(document).ready(function() {
 	$('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
 	});
-	var tableProducts = $('#productsTable').DataTable( {
+	var tableProducts = $('#selectproductsTable').DataTable( {
 		sDom: 'lrtip',
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
@@ -254,28 +365,64 @@ $(document).ready(function() {
 	$('#tableProductsSearch').on('keyup change', function(){
 		tableProducts.search($(this).val()).draw();
 	});
+	var tableStocks = $('#selectstocksTable').DataTable( {
+		sDom: 'lrtip',
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+		'createdRow': function(row, data, dataIndex) {
+			$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('stockID', data[1] + '_' + data[0]);
+		},
+		'columnDefs': [ {
+				'targets': 0,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockSKU text-center');
+				}
+			}, {
+				'targets': 1,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockSKU text-center');
+				}
+			}, {
+				'targets': 2,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockCurrentStocks text-center');
+				}
+			}, {
+				'targets': 3,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockPrice text-center').html(parseFloat(cellData).toFixed(2)).data('retailPrice', cellData);
+				}
+			}, {
+				'targets': 4,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockDateAdded text-center');
+				}
+			}, {
+				'targets': 5,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockExpirationDate text-center');
+				}
+			}
+		]
+	});
+	$('#tableStocksSearch').on('keyup change', function(){
+		tableStocks.search($(this).val()).draw();
+	});
 
 	function updProductCount() {
 		// update order transaction count
 		$('#ProductsCount').val($('.orderProduct').length);
 		// update order transsaction input names
 		$.each($('.orderProduct'), function(i, val) {
-			$(this).find('.inpCode').attr('name', 'productCodeInput_' + i);
-			$(this).find('.inpPrice').attr('name', 'productPriceInput_' + i);
+			$(this).find('.inpSKU').attr('name', 'productSKUInput_' + i);
 			$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
 		});
 		// total
 		let subTotal = 0;
-		$.each($('.productTotal'), function(i, val) {
+		$.each($('.productTotalPrice'), function(i, val) {
 			subTotal += parseFloat($(this).data('product-total'));
 		});
 		$('.productsTotal .subTotal').html(subTotal.toFixed(2));
-		// empty transaction
-		if ($('.orderProduct').length > 0) {
-			$('.noProduct').hide();
-		} else {
-			$('.noProduct').show();
-		}
 
 		var totalDiscount = 0;
 		if ($('.cbDiscountOutright').is(':checked')) {
@@ -306,66 +453,242 @@ $(document).ready(function() {
 		} else {
 			$('.dcManpowerAmt').html('0.00');
 		}
-
+		$('.totalDiscount').html(totalDiscount.toFixed(2));
 		$('.total').html((subTotal - totalDiscount).toFixed(2));
 	}
+	// $(document).on('click', '.add-product-row', function() {
+	// 	let opClassName = 'op' + $(this).data('id');
+	// 	if ($('.' + opClassName).length < 1) {
+	// 		$('.productsTotal').before($('<tr>')
+	// 			.attr({
+	// 				class: 'orderProduct highlighted ' + opClassName
+	// 			})
+	// 			.append($('<td>').attr({ // qty
+	// 				class: 'productQty text-center'
+	// 			}).append($('<input>').attr({ // qty input
+	// 				class: 'inpQty ' + opClassName + '_qty',
+	// 				type: 'number',
+	// 				value: 0,
+	// 				min: '0',
+	// 				max: parseInt($(this).children('.pStock').html())
+	// 			})))
+	// 			.append($('<td>').attr({ // code
+	// 				class: 'text-center'
+	// 			}).html($(this).children('.pCode').html())
+	// 			.append($('<input>').attr({ // create hidden input for product id
+	// 				class: 'inpCode',
+	// 				type: 'hidden',
+	// 				value: $(this).children('.pCode').html()
+	// 			})))
+	// 			.append($('<td>').attr({ // unit price
+	// 				class: 'productPrice text-center'
+	// 			}).html($(this).children('.pPrice').html()).append($('<input>').attr({ // create hidden input for unit price
+	// 				class: 'inpPrice',
+	// 				type: 'hidden',
+	// 				value: parseFloat($(this).children('.pPrice').data('price'))
+	// 			})))
+	// 			.append($('<td>').attr({ // total
+	// 				class: 'productTotal text-center'
+	// 			}).html('0.00').data('product-total', 0))
+	// 			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
+	// 				type: 'button',
+	// 				class: 'btn remove-product-btn'
+	// 			}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+	// 		);
+	// 		updProductCount();
+	// 		setTimeout(function() {
+	// 			$('.' + opClassName).removeClass('highlighted');
+	// 		}, 2000);
+	// 		$('.' + opClassName).fadeIn('2000');
+	// 	}
+	// });
+	// $(document).on('click', '.remove-product-btn', function() {
+	// 	$(this).parents('tr').remove();
+	// 	updProductCount();
+	// });
+	// $(document).on('focus keyup change', '.productQty input', function() {
+	// 	let td = $(this).parent('.productQty');
+	// 	if ($(this).val().length > 0) {
+	// 		let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('.inpPrice').val());
+	// 		td.siblings('.productTotal').html(productTotal.toFixed(2)).data('product-total', productTotal);
+	// 	} else {
+	// 		td.siblings('.productTotal').html(0).data('product-total', 0);
+	// 	}
+	// 	updProductCount();
+	// });
 	$(document).on('click', '.add-product-row', function() {
-		let opClassName = 'op' + $(this).data('id');
-		if ($('.' + opClassName).length < 1) {
-			$('.productsTotal').before($('<tr>')
+		let opClassName = 'op' + $('.orderProduct').length;
+		// if ($('#' + opClassName).length < 1) {
+			$('.newProduct').before($('<tr>')
 				.attr({
+					// id: opClassName,
 					class: 'orderProduct highlighted ' + opClassName
-				})
-				.append($('<td>').attr({ // qty
-					class: 'productQty text-center'
-				}).append($('<input>').attr({ // qty input
-					class: 'inpQty ' + opClassName + '_qty',
-					type: 'number',
-					value: 0,
-					min: '0',
-					max: parseInt($(this).children('.pStock').html())
-				})))
-				.append($('<td>').attr({ // code
+				}).data('uClass', opClassName)
+				.append($('<td>').attr({
 					class: 'text-center'
-				}).html($(this).children('.pCode').html())
-				.append($('<input>').attr({ // create hidden input for product id
-					class: 'inpCode',
-					type: 'hidden',
-					value: $(this).children('.pCode').html()
-				})))
-				.append($('<td>').attr({ // unit price
+				})
+					.append($('<input>').attr({ // create hidden input for product id
+						class: 'inpSKU',
+						type: 'hidden'
+					}))
+					.append($('<button>').attr({
+						type: 'button',
+						class: 'btn btn-info select-product-btn'
+					})
+						.append($('<i>').attr({ class: 'bi bi-plus' }).html('SELECT PRODUCT'))))
+				.append($('<td>').attr({
+					class: 'text-center'
+				})
+					.append($('<span>').attr({
+						class: 'productAdded text-center'
+					}).html('N/A')))
+				.append($('<td>').attr({
+					class: 'productQty text-center'
+				})
+					.append($('<input>').attr({
+						class: 'inpQty',
+						type: 'number',
+						value: 0,
+						min: '0',
+						max: '0',
+						style: 'width: 5rem;',
+						required: ''
+					})))
+				.append($('<td>').attr({
 					class: 'productPrice text-center'
-				}).html($(this).children('.pPrice').html()).append($('<input>').attr({ // create hidden input for unit price
-					class: 'inpPrice',
-					type: 'hidden',
-					value: parseFloat($(this).children('.pPrice').data('price'))
-				})))
-				.append($('<td>').attr({ // total
-					class: 'productTotal text-center'
-				}).html('0.00').data('product-total', 0))
-				.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
-					type: 'button',
-					class: 'btn remove-product-btn'
-				}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+				})
+					.append($('<span>').attr({
+						class: 'text-center'
+					}).html('0.00').data('price', 0)))
+				.append($('<td>').attr({
+					class: 'productTotalPrice text-center'
+				}).data('product-total', 0)
+					.append($('<span>').attr({
+						class: 'text-center'
+					}).html('0.00')))
+				.append($('<td>').attr({ class: 'text-center' })
+					.append($('<button>').attr({
+						type: 'button',
+						class: 'btn remove-product-btn'
+					})
+						.append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
 			);
-			updProductCount();
-			setTimeout(function() {
-				$('.' + opClassName).removeClass('highlighted');
-			}, 2000);
-			$('.' + opClassName).fadeIn('2000');
+		// }
+		updProductCount();
+		setTimeout(function() {
+			$('.' + opClassName).removeClass('highlighted');
+		}, 2000);
+	});
+
+	$(document).on('click', '.select-product-btn', function() {
+		$('#AddSalesOrderModal').data('prevscroll', $('#AddSalesOrderModal').scrollTop());
+		$('#AddSalesOrderModal').data('openModal', 'products');
+		$('#AddSalesOrderModal').modal('toggle');
+
+		$('#rowProductSelection').val($(this).parents('tr').data('uClass'));
+	});
+	$(document).on('hidden.bs.modal', '#AddSalesOrderModal', function (event) {
+		if ($('#AddSalesOrderModal').data('openModal') == 'products') {
+			$('#AddSalesOrderModal').data('openModal', '');
+			$('#SelectProductSKUModal').modal('toggle');
 		}
 	});
-	$(document).on('click', '.remove-product-btn', function() {
-		$(this).parents('tr').remove();
-		updProductCount();
+
+	$(document).on('click', '.select-product-row', function() {
+		// get product stocks
+		$.get('getProductStocks', { dataType: 'json', sku: $(this).data('sku') })
+		.done(function(data) {
+			let productStocks = $.parseJSON(data);
+			$.each(productStocks, function(index, val) {
+				// $('#selectstocksTable tbody').append($('<tr>')
+				// 	.attr({
+				// 		class: 'productStocks select-stock-row'
+				// 	}).data('sku', val.Product_SKU)
+				// 	.append($('<td>').attr({
+				// 		class: 'stockSKU text-center'
+				// 	}).html(val.Product_SKU))
+				// 	.append($('<td>').attr({
+				// 		class: 'stockCurrentStocks text-center'
+				// 	}).html(val.Current_Stocks))
+				// 	.append($('<td>').attr({
+				// 		class: 'stockPrice text-center'
+				// 	}).html(parseFloat(val.Retail_Price).toFixed(2)).data('retailPrice', val.Retail_Price))
+				// 	.append($('<td>').attr({
+				// 		class: 'stockDateAdded text-center'
+				// 	}).html(val.Date_Added))
+				// 	.append($('<td>').attr({
+				// 		class: 'stockExpirationDate text-center'
+				// 	}).html(val.Expiration_Date))
+				// );
+				tableStocks.row.add([
+					val.ID,
+					val.Product_SKU,
+					val.Current_Stocks,
+					val.Retail_Price,
+					val.Date_Added,
+					val.Expiration_Date
+				]);
+			});
+			tableStocks.draw();
+		});
+
+		$('#AddSalesOrderModal').data('openModal', 'stocks');
+		$('#SelectProductSKUModal').modal('toggle');
 	});
-	$(document).on('focus keyup change', '.productQty input', function() {
+	$(document).on('hidden.bs.modal', '#SelectProductSKUModal', function (event) {
+		if ($('#AddSalesOrderModal').data('openModal') == 'stocks') {
+			$('#AddSalesOrderModal').data('openModal', '');
+			$('#SelectProductStockModal').modal('toggle');
+		} else {
+			$('#AddSalesOrderModal').modal('toggle');
+			setTimeout(function() {
+				$('#AddSalesOrderModal').animate({
+					scrollTop: $('#AddSalesOrderModal').data('prevscroll')
+				}, 50);
+			}, 50);
+		}
+	});
+
+	$(document).on('click', '.select-stock-row', function() {
+		if ($('#' + $(this).data('stockID')).length < 1) {
+			let productClass = '.' + $('#rowProductSelection').val();
+			$(productClass).attr('id', $(this).data('stockID'));
+			$(productClass + ' .select-product-btn').html($(this).data('sku'));
+			$(productClass + ' .inpSKU').val($(this).data('sku'));
+			$(productClass + ' .productAdded').html($(this).children('.stockDateAdded').html());
+			$(productClass + ' .productPrice').children('span').html($(this).children('.stockPrice').html()).data('price', $(this).children('.stockPrice').data('retailPrice'));
+
+			$(productClass + ' .inpQty').attr('max', $(this).children('.stockCurrentStocks').html());
+
+			$('#SelectProductStockModal').modal('toggle');
+
+			tableStocks.clear();
+			updProductCount();
+		} else {
+			showAlert('warning', 'Product is already added!');
+		}
+	});
+	$(document).on('hidden.bs.modal', '#SelectProductStockModal', function (event) {
+		$('#AddSalesOrderModal').modal('toggle');
+		setTimeout(function() {
+			$('#AddSalesOrderModal').animate({
+				scrollTop: $('#AddSalesOrderModal').data('prevscroll')
+			}, 50);
+		}, 50);
+	});
+	$(document).on('focus keyup change', '.productQty .inpQty', function() {
+		if (parseInt($(this).val()) > parseInt($(this).attr('max'))) {
+			$(this).val($(this).attr('max'));
+		} else if (parseInt($(this).val()) < parseInt($(this).attr('min'))) {
+			$(this).val($(this).attr('min'));
+		}
+
 		let td = $(this).parent('.productQty');
 		if ($(this).val().length > 0) {
-			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('.inpPrice').val());
-			td.siblings('.productTotal').html(productTotal.toFixed(2)).data('product-total', productTotal);
+			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('span').data('price'));
+			td.siblings('.productTotalPrice').data('product-total', productTotal).children('span').html(productTotal.toFixed(2));
 		} else {
-			td.siblings('.productTotal').html(0).data('product-total', 0);
+			td.siblings('.productTotalPrice').data('product-total', 0).children('span').html('0.00');
 		}
 		updProductCount();
 	});

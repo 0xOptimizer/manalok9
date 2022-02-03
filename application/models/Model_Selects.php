@@ -130,6 +130,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('user_restrictions'); 
 		return $result;
 	}
+	public function GetProductStocks($product_sku)
+	{
+		$this->db->select('*');
+		$this->db->where('Product_SKU', $product_sku);
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
 	public function GetDashboardLogs()
 	{
 		$this->db->select('*');

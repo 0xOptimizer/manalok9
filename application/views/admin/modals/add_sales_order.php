@@ -1,4 +1,4 @@
-<div class="modal fade" id="AddSalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="AddSalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-prevscroll="0">
 	<div class="modal-dialog modal-xl" role="document">
 		<form id="formAddSalesOrder" action="<?php echo base_url() . 'FORM_addSalesOrder';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
@@ -133,149 +133,101 @@
 						</div>
 						<hr>
 						<!-- Bottom Part -->
-						<div class="col-sm-12 col-md-8">
-							<div class="row">
-								<div class="col-sm-12 table-responsive">
-									<label class="input-label">SALES ITEMS</label>
-									<table class="table" id="salesOrderProducts">
-										<thead>
-											<tr>
-												<th class="text-center">QTY</th>
-												<th class="text-center">CODE</th>
-												<th class="text-center">UNIT PRICE</th>
-												<th class="text-center">TOTAL</th>
-												<th class="text-center"></th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr class="noProduct">
-												<td class="text-center" colspan="5">
-													<label class="input-label">
-														[ EMPTY ]
-													</label>
-												</td>
-											</tr>
-											<tr class="productsTotal" style="border-color: #a7852d;">
-												<td></td>
-												<td></td>
-												<td class="font-weight-bold text-center" style="color: #a7852d;">SUBTOTAL</td>
-												<td class="subTotal text-center">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td class="text-center" rowspan="4" colspan="2">
-													<span class="footerHead">
-														CATEGORY OF ACCOUNT:
-													</span><br>
-													<span class="dcCategory text-center">
-														CONFIRMED DISTRIBUTOR
-													</span>
-												</td>
-												<td class="footerHead text-center">
-													Less: Outright Discount
-													( <span class="dcOutright text-light">15</span>% )
-	<div class="checkbox">
-		<label>
-			<input class="cbDiscount cbDiscountOutright" type="checkbox" name="discount-outright">
-		</label>
-	</div>
-												</td>
-												<td class="text-center dcOutrightAmt">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td class="footerHead text-center">
-													Volume Discount
-													( <span class="dcVolume text-light">10</span>% )
-	<div class="checkbox">
-		<label>
-			<input class="cbDiscount cbDiscountVolume" type="checkbox" name="discount-volume">
-		</label>
-	</div>
-												</td>
-												<td class="text-center dcVolumeAmt">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td class="footerHead text-center">
-													PBD Discount
-													( <span class="dcPBD text-light">5</span>% )
-	<div class="checkbox">
-		<label>
-			<input class="cbDiscount cbDiscountPBD" type="checkbox" name="discount-pbd">
-		</label>
-	</div>
-												</td>
-												<td class="text-center dcPBDAmt">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td class="footerHead text-center">
-													Manpower Discount
-													( <span class="dcManpower text-light">5</span>% )
-	<div class="checkbox">
-		<label>
-			<input class="cbDiscount cbDiscountManpower" type="checkbox" name="discount-manpower">
-		</label>
-	</div>
-												</td>
-												<td class="text-center dcManpowerAmt">0.00</td>
-												<td></td>
-											</tr>
-											<tr style="border-color: #a7852d;">
-												<td></td>
-												<td></td>
-												<td class="font-weight-bold text-center" style="color: #a7852d;">TOTAL</td>
-												<td class="total text-center">0.00</td>
-												<td></td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
-						<div class="col-sm-12 col-md-4">
-							<div class="row">
-								<?php $getAllProducts = $this->Model_Selects->GetStockedProducts(); ?>
-								<div class="col-sm-0 col-md-6">
-									<label class="input-label">PRODUCTS</label>
-								</div>
-								<div class="col-sm-12 col-md-6 pt-4 pb-2" style="margin-top: -15px;">
-									<div class="input-group">
-										<div class="input-group-prepend">
-											<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
-										</div>
-										<input type="text" id="tableProductsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
-									</div>
-								</div>
-								<div class="col-sm-12 table-responsive">
-									<table id="productsTable" class="standard-table table">
-										<thead style="font-size: 12px;">
-											<th class="text-center">CODE</th>
-											<th class="text-center">STOCK</th>
-											<th class="text-center">UNIT PRICE</th>
-										</thead>
-										<tbody>
-											<?php
-											if ($getAllProducts->num_rows() > 0):
-												foreach ($getAllProducts->result_array() as $row): ?>
-													<tr class="add-product-row" data-id="<?=$row['ID']?>">
-														<td class="text-center pCode">
-															<?=$row['Code']?>
-														</td>
-														<td class="text-center pStock">
-															<?=$row['InStock']?>
-														</td>
-														<td class="text-center pPrice" data-price="<?=$row['Price_PerItem']?>">
-															<?=number_format($row['Price_PerItem'], 2)?>
-														</td>
-													</tr>
-											<?php endforeach;
-											endif; ?>
-										</tbody>
-									</table>
-								</div>
-							</div>
+						<div class="col-sm-12 table-responsive">
+							<label class="input-label">SALES ITEMS</label>
+							<table class="table" id="salesOrderProducts">
+								<thead>
+									<tr>
+										<th class="text-center">SKU</th>
+										<th class="text-center">DATE ADDED</th>
+										<th class="text-center">QTY</th>
+										<th class="text-center">UNIT PRICE</th>
+										<th class="text-center">TOTAL</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="newProduct">
+										<td class="font-weight-bold add-product-row" colspan="7" style="cursor: pointer;">
+											<i class="bi bi-plus"></i> New Product
+										</td>
+									</tr>
+									<tr class="productsTotal" style="border-color: #a7852d;">
+										<td></td>
+										<td></td>
+										<td class="font-weight-bold text-center" colspan="2" style="color: #a7852d;">SUBTOTAL</td>
+										<td class="subTotal text-center">0.00</td>
+										<td></td>
+									</tr>
+									<tr style="border-color: #a7852d;">
+										<td class="text-center" rowspan="4" colspan="2">
+											<span class="footerHead">
+												CATEGORY OF ACCOUNT:
+											</span><br>
+											<span class="dcCategory text-center">
+												CONFIRMED DISTRIBUTOR
+											</span>
+										</td>
+										<td class="footerHead text-center" colspan="2">
+											Less: Outright Discount
+											( <span class="dcOutright text-light">15</span>% )
+											<div class="checkbox">
+												<label>
+													<input class="cbDiscount cbDiscountOutright" type="checkbox" name="discount-outright">
+												</label>
+											</div>
+										</td>
+										<td class="text-center dcOutrightAmt">0.00</td>
+										<td></td>
+									</tr>
+									<tr style="border-color: #a7852d;">
+										<td class="footerHead text-center" colspan="2">
+											Volume Discount
+											( <span class="dcVolume text-light">10</span>% )
+											<div class="checkbox">
+												<label>
+													<input class="cbDiscount cbDiscountVolume" type="checkbox" name="discount-volume">
+												</label>
+											</div>
+										</td>
+										<td class="text-center dcVolumeAmt">0.00</td>
+										<td></td>
+									</tr>
+									<tr style="border-color: #a7852d;">
+										<td class="footerHead text-center" colspan="2">
+											PBD Discount
+											( <span class="dcPBD text-light">5</span>% )
+											<div class="checkbox">
+												<label>
+													<input class="cbDiscount cbDiscountPBD" type="checkbox" name="discount-pbd">
+												</label>
+											</div>
+										</td>
+										<td class="text-center dcPBDAmt">0.00</td>
+										<td></td>
+									</tr>
+									<tr style="border-color: #a7852d;">
+										<td class="footerHead text-center" colspan="2">
+											Manpower Discount
+											( <span class="dcManpower text-light">5</span>% )
+											<div class="checkbox">
+												<label>
+													<input class="cbDiscount cbDiscountManpower" type="checkbox" name="discount-manpower">
+												</label>
+											</div>
+										</td>
+										<td class="text-center dcManpowerAmt">0.00</td>
+										<td></td>
+									</tr>
+									<tr style="border-color: #a7852d;">
+										<td class="font-weight-bold text-center" style="color: #a7852d;">TOTAL DISCOUNT</td>
+										<td class="totalDiscount text-center"></td>
+										<td class="font-weight-bold text-center" colspan="2" style="color: #a7852d;">TOTAL</td>
+										<td class="total text-center">0.00</td>
+										<td></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 					<hr class="my-4">
