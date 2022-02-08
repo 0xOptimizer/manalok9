@@ -275,7 +275,7 @@ $(document).ready(function() {
 
 	$('.newsalesorder-btn').on('click', function() {
 		$('#AddSalesOrderModal').modal('toggle');
-	});$('#AddSalesOrderModal').modal('toggle');
+	});
 	function showAlert(type, message) {
 		if ($('.alertNotification').length > 0) {
 			$('.alertNotification').remove();
@@ -370,12 +370,12 @@ $(document).ready(function() {
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
 		'createdRow': function(row, data, dataIndex) {
-			$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('stockID', data[1] + '_' + data[0]);
+			$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('productstockID', data[1] + '_' + data[0]);
 		},
 		'columnDefs': [ {
 				'targets': 0,
 				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('stockSKU text-center');
+					$(td).addClass('stockID text-center');
 				}
 			}, {
 				'targets': 1,
@@ -410,13 +410,19 @@ $(document).ready(function() {
 	});
 
 	function updProductCount() {
-		// update order transaction count
-		$('#ProductsCount').val($('.orderProduct').length);
 		// update order transsaction input names
+		let totalProductsCount = 0;
 		$.each($('.orderProduct'), function(i, val) {
-			$(this).find('.inpSKU').attr('name', 'productSKUInput_' + i);
-			$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
+			if (typeof $(this).attr('id') !== typeof undefined && $(this).attr('id') !== false) {
+				$(this).find('.inpSKU').attr('name', 'productSKUInput_' + i);
+				$(this).find('.inpStockID').attr('name', 'productStockIDInput_' + i);
+				$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
+
+				totalProductsCount++;
+			}
 		});
+		// update order transaction count
+		$('#ProductsCount').val(totalProductsCount);
 		// total
 		let subTotal = 0;
 		$.each($('.productTotalPrice'), function(i, val) {
@@ -455,6 +461,7 @@ $(document).ready(function() {
 		}
 		$('.totalDiscount').html(totalDiscount.toFixed(2));
 		$('.total').html((subTotal - totalDiscount).toFixed(2));
+		console.log(subTotal - totalDiscount);
 	}
 	// $(document).on('click', '.add-product-row', function() {
 	// 	let opClassName = 'op' + $(this).data('id');
@@ -502,10 +509,6 @@ $(document).ready(function() {
 	// 		$('.' + opClassName).fadeIn('2000');
 	// 	}
 	// });
-	// $(document).on('click', '.remove-product-btn', function() {
-	// 	$(this).parents('tr').remove();
-	// 	updProductCount();
-	// });
 	// $(document).on('focus keyup change', '.productQty input', function() {
 	// 	let td = $(this).parent('.productQty');
 	// 	if ($(this).val().length > 0) {
@@ -529,6 +532,10 @@ $(document).ready(function() {
 				})
 					.append($('<input>').attr({ // create hidden input for product id
 						class: 'inpSKU',
+						type: 'hidden'
+					}))
+					.append($('<input>').attr({ // create hidden input for stock id
+						class: 'inpStockID',
 						type: 'hidden'
 					}))
 					.append($('<button>').attr({
@@ -650,18 +657,18 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.select-stock-row', function() {
-		if ($('#' + $(this).data('stockID')).length < 1) {
+		if ($('#' + $(this).data('productstockID')).length < 1) {
 			let productClass = '.' + $('#rowProductSelection').val();
-			$(productClass).attr('id', $(this).data('stockID'));
+			$(productClass).attr('id', $(this).data('productstockID'));
 			$(productClass + ' .select-product-btn').html($(this).data('sku'));
 			$(productClass + ' .inpSKU').val($(this).data('sku'));
+			$(productClass + ' .inpStockID').val($(this).children('.stockID').html());
 			$(productClass + ' .productAdded').html($(this).children('.stockDateAdded').html());
 			$(productClass + ' .productPrice').children('span').html($(this).children('.stockPrice').html()).data('price', $(this).children('.stockPrice').data('retailPrice'));
 
 			$(productClass + ' .inpQty').attr('max', $(this).children('.stockCurrentStocks').html());
 
 			$('#SelectProductStockModal').modal('toggle');
-
 			tableStocks.clear();
 			updProductCount();
 		} else {
@@ -690,6 +697,10 @@ $(document).ready(function() {
 		} else {
 			td.siblings('.productTotalPrice').data('product-total', 0).children('span').html('0.00');
 		}
+		updProductCount();
+	});
+	$(document).on('click', '.remove-product-btn', function() {
+		$(this).parents('tr').remove();
 		updProductCount();
 	});
 
@@ -1136,20 +1147,18 @@ $(document).ready(function() {
 				class: 'type_4',
 				label: 'EQUITIES'
 			}))))
-			.append($('<td>').attr({ // column-2
-				class: ''
-			}).append($('<input>').attr({
+			.append($('<td>').append($('<input>').attr({
 				class: 'inpDebit  w-100',
 				type: 'number',
 				min: '0',
+				step: '0.0001',
 				value: 0
 			})))
-			.append($('<td>').attr({ // column-3
-				class: ''
-			}).append($('<input>').attr({
+			.append($('<td>').append($('<input>').attr({
 				class: 'inpCredit  w-100',
 				type: 'number',
 				min: '0',
+				step: '0.0001',
 				value: 0
 			})))
 			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({

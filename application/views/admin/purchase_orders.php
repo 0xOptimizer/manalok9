@@ -426,6 +426,7 @@ $(document).ready(function() {
 					type: 'number',
 					value: 0,
 					min: '0',
+					step: '0.0001',
 					style: 'width: 7rem;',
 					required: ''
 				})))
@@ -437,6 +438,7 @@ $(document).ready(function() {
 					type: 'number',
 					value: 0,
 					min: '0',
+					step: '0.0001',
 					style: 'width: 7rem;',
 					required: ''
 				})))
@@ -452,8 +454,7 @@ $(document).ready(function() {
 				.append($('<input>').attr({
 					class: 'inpExpiration',
 					type: 'date',
-					style: 'width: 9rem;',
-					required: ''
+					style: 'width: 9rem;'
 				})))
 			.append($('<td>').attr({ class: 'text-center' })
 				.append($('<button>').attr({
@@ -706,6 +707,7 @@ $(document).ready(function() {
 				class: 'inpDebit  w-100',
 				type: 'number',
 				min: '0',
+				step: '0.0001',
 				value: 0
 			})))
 			.append($('<td>').attr({ // column-3
@@ -714,6 +716,7 @@ $(document).ready(function() {
 				class: 'inpCredit  w-100',
 				type: 'number',
 				min: '0',
+				step: '0.0001',
 				value: 0
 			})))
 			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
