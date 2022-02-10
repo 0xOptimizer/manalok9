@@ -134,6 +134,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('Product_SKU', $product_sku);
+		$this->db->where('Status', '1');
 		$result = $this->db->get('product_stocks');
 		return $result;
 	}
@@ -792,6 +793,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('Stocks >', 0);
+		$this->db->where('Status', 1);
 		$result = $this->db->get('product_stocks');
 		return $result;
 	}

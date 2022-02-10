@@ -41,6 +41,12 @@ if ($this->session->flashdata('highlight-id')) {
 		color: #a7852d;
 		font-size: 0.9rem;
 	}
+	.add_table td:hover {
+		background-color: rgba(100, 100, 100, 0.1);
+	}
+	.footerDiscount, .footerDiscount * {
+		cursor: pointer;
+	}
 </style>
 
 </head>
@@ -171,7 +177,7 @@ if ($this->session->flashdata('highlight-id')) {
 			</div>
 			<div class="modal-body">
 				<div class="row">
-					<?php $getAllProducts = $this->Model_Selects->GetAllProducts(); ?>
+					<?php $getAllProducts = $this->Model_Selects->GetStockedProducts(); ?>
 					<div class="col-sm-12" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
@@ -414,6 +420,7 @@ $(document).ready(function() {
 		let totalProductsCount = 0;
 		$.each($('.orderProduct'), function(i, val) {
 			if (typeof $(this).attr('id') !== typeof undefined && $(this).attr('id') !== false) {
+				$(this).find('.inpFreebie').attr('name', 'productFreebieInput_' + i);
 				$(this).find('.inpSKU').attr('name', 'productSKUInput_' + i);
 				$(this).find('.inpStockID').attr('name', 'productStockIDInput_' + i);
 				$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
@@ -425,10 +432,18 @@ $(document).ready(function() {
 		$('#ProductsCount').val(totalProductsCount);
 		// total
 		let subTotal = 0;
+		let totalFreebies = 0;
 		$.each($('.productTotalPrice'), function(i, val) {
-			subTotal += parseFloat($(this).data('product-total'));
+			let productTotal = parseFloat($(this).data('product-total'));
+
+			if ($(this).parents('.orderProduct').data('freebie')) {
+				totalFreebies += productTotal;
+			} else {
+				subTotal += productTotal;
+			}
 		});
 		$('.productsTotal .subTotal').html(subTotal.toFixed(2));
+		$('.productsTotal .totalFreebies').html(totalFreebies.toFixed(2));
 
 		var totalDiscount = 0;
 		if ($('.cbDiscountOutright').is(':checked')) {
@@ -461,126 +476,77 @@ $(document).ready(function() {
 		}
 		$('.totalDiscount').html(totalDiscount.toFixed(2));
 		$('.total').html((subTotal - totalDiscount).toFixed(2));
-		console.log(subTotal - totalDiscount);
 	}
-	// $(document).on('click', '.add-product-row', function() {
-	// 	let opClassName = 'op' + $(this).data('id');
-	// 	if ($('.' + opClassName).length < 1) {
-	// 		$('.productsTotal').before($('<tr>')
-	// 			.attr({
-	// 				class: 'orderProduct highlighted ' + opClassName
-	// 			})
-	// 			.append($('<td>').attr({ // qty
-	// 				class: 'productQty text-center'
-	// 			}).append($('<input>').attr({ // qty input
-	// 				class: 'inpQty ' + opClassName + '_qty',
-	// 				type: 'number',
-	// 				value: 0,
-	// 				min: '0',
-	// 				max: parseInt($(this).children('.pStock').html())
-	// 			})))
-	// 			.append($('<td>').attr({ // code
-	// 				class: 'text-center'
-	// 			}).html($(this).children('.pCode').html())
-	// 			.append($('<input>').attr({ // create hidden input for product id
-	// 				class: 'inpCode',
-	// 				type: 'hidden',
-	// 				value: $(this).children('.pCode').html()
-	// 			})))
-	// 			.append($('<td>').attr({ // unit price
-	// 				class: 'productPrice text-center'
-	// 			}).html($(this).children('.pPrice').html()).append($('<input>').attr({ // create hidden input for unit price
-	// 				class: 'inpPrice',
-	// 				type: 'hidden',
-	// 				value: parseFloat($(this).children('.pPrice').data('price'))
-	// 			})))
-	// 			.append($('<td>').attr({ // total
-	// 				class: 'productTotal text-center'
-	// 			}).html('0.00').data('product-total', 0))
-	// 			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
-	// 				type: 'button',
-	// 				class: 'btn remove-product-btn'
-	// 			}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
-	// 		);
-	// 		updProductCount();
-	// 		setTimeout(function() {
-	// 			$('.' + opClassName).removeClass('highlighted');
-	// 		}, 2000);
-	// 		$('.' + opClassName).fadeIn('2000');
-	// 	}
-	// });
-	// $(document).on('focus keyup change', '.productQty input', function() {
-	// 	let td = $(this).parent('.productQty');
-	// 	if ($(this).val().length > 0) {
-	// 		let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('.inpPrice').val());
-	// 		td.siblings('.productTotal').html(productTotal.toFixed(2)).data('product-total', productTotal);
-	// 	} else {
-	// 		td.siblings('.productTotal').html(0).data('product-total', 0);
-	// 	}
-	// 	updProductCount();
-	// });
 	$(document).on('click', '.add-product-row', function() {
 		let opClassName = 'op' + $('.orderProduct').length;
-		// if ($('#' + opClassName).length < 1) {
-			$('.newProduct').before($('<tr>')
-				.attr({
-					// id: opClassName,
-					class: 'orderProduct highlighted ' + opClassName
-				}).data('uClass', opClassName)
-				.append($('<td>').attr({
-					class: 'text-center'
-				})
-					.append($('<input>').attr({ // create hidden input for product id
-						class: 'inpSKU',
-						type: 'hidden'
-					}))
-					.append($('<input>').attr({ // create hidden input for stock id
-						class: 'inpStockID',
-						type: 'hidden'
-					}))
-					.append($('<button>').attr({
-						type: 'button',
-						class: 'btn btn-info select-product-btn'
-					})
-						.append($('<i>').attr({ class: 'bi bi-plus' }).html('SELECT PRODUCT'))))
-				.append($('<td>').attr({
-					class: 'text-center'
-				})
-					.append($('<span>').attr({
-						class: 'productAdded text-center'
-					}).html('N/A')))
-				.append($('<td>').attr({
-					class: 'productQty text-center'
+
+		$('.newProduct').before($('<tr>')
+			.attr({
+				class: 'orderProduct highlighted ' + opClassName
+			}).data('uClass', opClassName)
+			.append($('<td>').attr({
+				class: 'text-center'
+			})
+				.append($('<div>').attr({
+					class: 'form-check form-switch form-check-inline text-center'
 				})
 					.append($('<input>').attr({
-						class: 'inpQty',
-						type: 'number',
-						value: 0,
-						min: '0',
-						max: '0',
-						style: 'width: 5rem;',
-						required: ''
-					})))
-				.append($('<td>').attr({
-					class: 'productPrice text-center'
+						class: 'inpFreebie form-check-input',
+						type: 'checkbox'
+					}))))
+			.append($('<td>').attr({
+				class: 'text-center'
+			})
+				.append($('<input>').attr({ // create hidden input for product id
+					class: 'inpSKU',
+					type: 'hidden'
+				}))
+				.append($('<input>').attr({ // create hidden input for stock id
+					class: 'inpStockID',
+					type: 'hidden'
+				}))
+				.append($('<button>').attr({
+					type: 'button',
+					class: 'btn btn-info select-product-btn'
 				})
-					.append($('<span>').attr({
-						class: 'text-center'
-					}).html('0.00').data('price', 0)))
-				.append($('<td>').attr({
-					class: 'productTotalPrice text-center'
-				}).data('product-total', 0)
-					.append($('<span>').attr({
-						class: 'text-center'
-					}).html('0.00')))
-				.append($('<td>').attr({ class: 'text-center' })
-					.append($('<button>').attr({
-						type: 'button',
-						class: 'btn remove-product-btn'
-					})
-						.append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
-			);
-		// }
+					.append($('<i>').attr({ class: 'bi bi-plus' }).html('SELECT PRODUCT'))))
+			.append($('<td>').attr({
+				class: 'text-center'
+			})
+				.append($('<span>').attr({
+					class: 'productAdded text-center'
+				}).html('N/A')))
+			.append($('<td>').attr({
+				class: 'productQty text-center'
+			})
+				.append($('<input>').attr({
+					class: 'inpQty',
+					type: 'number',
+					value: 0,
+					min: '0',
+					max: '0',
+					style: 'width: 5rem;',
+					required: ''
+				})))
+			.append($('<td>').attr({
+				class: 'productPrice text-center'
+			})
+				.append($('<span>').attr({
+					class: 'text-center'
+				}).html('0.00').data('price', 0)))
+			.append($('<td>').attr({
+				class: 'productTotalPrice text-center'
+			}).data('product-total', 0)
+				.append($('<span>').attr({
+					class: 'text-center'
+				}).html('0.00')))
+			.append($('<td>').attr({ class: 'text-center' })
+				.append($('<button>').attr({
+					type: 'button',
+					class: 'btn remove-product-btn'
+				})
+					.append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+		);
 		updProductCount();
 		setTimeout(function() {
 			$('.' + opClassName).removeClass('highlighted');
@@ -607,26 +573,6 @@ $(document).ready(function() {
 		.done(function(data) {
 			let productStocks = $.parseJSON(data);
 			$.each(productStocks, function(index, val) {
-				// $('#selectstocksTable tbody').append($('<tr>')
-				// 	.attr({
-				// 		class: 'productStocks select-stock-row'
-				// 	}).data('sku', val.Product_SKU)
-				// 	.append($('<td>').attr({
-				// 		class: 'stockSKU text-center'
-				// 	}).html(val.Product_SKU))
-				// 	.append($('<td>').attr({
-				// 		class: 'stockCurrentStocks text-center'
-				// 	}).html(val.Current_Stocks))
-				// 	.append($('<td>').attr({
-				// 		class: 'stockPrice text-center'
-				// 	}).html(parseFloat(val.Retail_Price).toFixed(2)).data('retailPrice', val.Retail_Price))
-				// 	.append($('<td>').attr({
-				// 		class: 'stockDateAdded text-center'
-				// 	}).html(val.Date_Added))
-				// 	.append($('<td>').attr({
-				// 		class: 'stockExpirationDate text-center'
-				// 	}).html(val.Expiration_Date))
-				// );
 				tableStocks.row.add([
 					val.ID,
 					val.Product_SKU,
@@ -703,6 +649,15 @@ $(document).ready(function() {
 		$(this).parents('tr').remove();
 		updProductCount();
 	});
+	$(document).on('change', '.inpFreebie', function(e) {
+		if ($(this).prop('checked')) {
+			$(this).parents('.orderProduct').data('freebie', true);
+		} else {
+			$(this).parents('.orderProduct').data('freebie', false);
+		}
+		updProductCount();
+	});
+
 
 
 	// NAME SEARCH - BILL TO
@@ -1006,27 +961,58 @@ $(document).ready(function() {
 		hideShipNameDropdown();
 	});
 	$(document).on('submit', '#formAddSalesOrder', function(t) { // check inputs before submitting
+		let qty = 0;
+		// check product added inputs
+		$.each($('.orderProduct'), function(i, val) {
+			if (typeof $(this).attr('id') !== typeof undefined && $(this).attr('id') !== false) {
+				qty = $(this).find('.inpQty').val();
+
+				if (qty <= 0) {
+					return false;
+				}
+			}
+		});
+
 		if ($('#BillToNo').val().length < 1) {
-			alert('NO BILLING CLIENT SELECTED');
+			showAlert('warning', 'No billing client selected!');
 			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000); // scroll to top
 			t.preventDefault();
 		} else if ($('#ShipToNo').val().length < 1) {
-			alert('NO SHIPPING CLIENT SELECTED');
+			showAlert('warning', 'No shipping client selected!');
 			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000);
 			t.preventDefault();
 		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
-			alert('SALES ITEMS LIST IS EMPTY');
+			showAlert('warning', 'Sales items list is empty!');
+			t.preventDefault();
+		} else if (qty <= 0) {
+			showAlert('warning', 'Product/s dont have valid qty!');
+			t.preventDefault();
+		} else if (parseFloat($('.total').html()) <= 0) {
+			showAlert('warning', 'Ordered Products Total must be more than 0!');
 			t.preventDefault();
 		}
+
 		// ACCOUNTING CHECKS
-		let totalDebit = parseFloat($('.debitTotal').html());
-		let totalCredit = parseFloat($('.creditTotal').html());
-		if (totalDebit != totalCredit) {
-			alert('Debit and Credit must be equal.');
+		let totalDebit_1 = parseFloat($('.entry_1').find('.debitTotal').html());
+		let totalCredit_1 = parseFloat($('.entry_1').find('.creditTotal').html());
+		if (totalDebit_1 != totalCredit_1) {
+			showAlert('warning', 'Entry #1 Debit and Credit must be equal.');
 			t.preventDefault();
-		} else if (totalDebit <= 0 || totalCredit <= 0) {
-			alert('Total must be more than 0.');
+		} else if (totalDebit_1 <= 0 || totalCredit_1 <= 0) {
+			showAlert('warning', 'Entry #1 total must be more than 0.');
 			t.preventDefault();
+		}
+		// check second entry
+		if ($('#second_entry').val() == 'true') {
+			let totalDebit_2 = parseFloat($('.entry_2').find('.debitTotal').html());
+			let totalCredit_2 = parseFloat($('.entry_2').find('.creditTotal').html());
+			if (totalDebit_2 != totalCredit_2) {
+				showAlert('warning', 'Entry #2 Debit and Credit must be equal.');
+				t.preventDefault();
+			} else if (totalDebit_2 <= 0 || totalCredit_2 <= 0) {
+				showAlert('warning', 'Entry #2 total must be more than 0.');
+				t.preventDefault();
+			}
 		}
 	});
 	$(document).on('click', '.shipToBillingClient', function(t) { // when pressed shipping to new client
@@ -1095,38 +1081,48 @@ $(document).ready(function() {
 	$(document).on('change', '.cbDiscount', function(e) {
 		updProductCount();
 	});
+	$(document).on('click', '.footerDiscount', function(e) {
+		let discount = $(this).find('.cbDiscount');
+		if (discount.prop('checked') == true) {
+			discount.prop('checked', false);
+		} else {
+			discount.prop('checked', true);
+		}
+		updProductCount();
+	});
 	
 	// ACCOUNTING ADD
 	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
 	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
 
-	function updTransactionCount() {
+	function updTransactionCount(entry_no) {
 		// update journal transaction count
-		$('#transactionsCount').val($('.account_row').length);
+		$('.entry_' + entry_no + ' .transactionsCount').val($('.account_row').length);
 		// update journal transaction input names
-		$.each($('.account_row'), function(i, val) {
-			$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i);
-			$(this).find('.inpDebit').attr('name', 'debitInput_' + i);
-			$(this).find('.inpCredit').attr('name', 'creditInput_' + i);
+		$.each($('.entry_' + entry_no + ' .account_row'), function(i, val) {
+			$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i + '_' + entry_no);
+			$(this).find('.inpDebit').attr('name', 'debitInput_' + i + '_' + entry_no);
+			$(this).find('.inpCredit').attr('name', 'creditInput_' + i + '_' + entry_no);
 		});
 		// total
 		let debitTotal = 0;
-		$.each($('.inpDebit'), function(i, val) {
+		$.each($('.entry_' + entry_no + ' .inpDebit'), function(i, val) {
 			debitTotal += parseFloat($(this).val());
 		});
-		$('.debitTotal').html(debitTotal.toFixed(2));
+		$('.entry_' + entry_no + ' .debitTotal').html(debitTotal.toFixed(2));
 		let creditTotal = 0;
-		$.each($('.inpCredit'), function(i, val) {
+		$.each($('.entry_' + entry_no + ' .inpCredit'), function(i, val) {
 			creditTotal += parseFloat($(this).val());
 		});
-		$('.creditTotal').html(creditTotal.toFixed(2));
+		$('.entry_' + entry_no + ' .creditTotal').html(creditTotal.toFixed(2));
 	}
 	$(document).on('click', '.add-account-row', function() {
-		var this_row = 'ar_' + $('.account_row').length;
-		$('.add-account-row').before($('<tr>')
+		let entry_no = $(this).parents('.entry_creation').data('entry_no');
+		var this_row = 'ar_' + $('.entry_' + entry_no + ' .account_row').length;
+		$(this).before($('<tr>')
 			.attr({
 				class: 'account_row highlighted ' + this_row,
-			}).data('id', $('.account_row').length)
+			}).data('id', $('.entry_' + entry_no + ' .account_row').length)
 			.append($('<td>').attr({ // column-1
 				class: ''
 			}).append($('<select>').attr({
@@ -1178,7 +1174,7 @@ $(document).ready(function() {
 		}, 2000);
 		$('.' + this_row).fadeIn('2000');
 
-		updTransactionCount();
+		updTransactionCount(entry_no);
 	});
 
 	// add two two transaction accounts
@@ -1186,26 +1182,59 @@ $(document).ready(function() {
 	$('.add-account-row').click();
 
 	$(document).on('click', '.remove-account-row', function() {
+		let entry_no = $(this).parents('.entry_creation').data('entry_no');
 		$(this).parents('tr').remove();
 
-		updTransactionCount();
+		updTransactionCount(entry_no);
 	});
 	$(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
-		updTransactionCount();
+		let entry_no = $(this).parents('.entry_creation').data('entry_no');
+		updTransactionCount(entry_no);
 	});
 	// disable other debit/credit on change
 	$(document).on('focus keyup change', '.inpDebit', function() {
 		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
+			$(this).parents('tr').find('.inpCredit').val(0);
+			$(this).parents('tr').find('.inpCredit').attr('disabled', '');
 		} else {
-			$(this).parents('td').siblings('td').children('.inpCredit').removeAttr('disabled');
+			$(this).parents('tr').find('.inpCredit').removeAttr('disabled');
 		}
 	});
 	$(document).on('focus keyup change', '.inpCredit', function() {
 		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpDebit').attr('disabled', '');
+			$(this).parents('tr').find('.inpDebit').val(0);
+			$(this).parents('tr').find('.inpDebit').attr('disabled', '');
 		} else {
-			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
+			$(this).parents('tr').find('.inpDebit').removeAttr('disabled');
+		}
+	});
+
+
+	$(document).on('click', '.journalSecondEntry', function() {
+		if ($(this).children('i').hasClass('bi-plus')) {
+			$(this).children('i').removeClass('bi-plus');
+			$(this).children('i').addClass('bi-dash');
+			$(this).children('span').html(' REMOVE SECOND ENTRY');
+
+			$(this).removeClass('btn-primary');
+			$(this).addClass('btn-danger');
+
+			$('.entry_2').show();
+			$('.entry_2_details').show();
+
+			$('#second_entry').val('true');
+		} else {
+			$(this).children('i').addClass('bi-plus');
+			$(this).children('i').removeClass('bi-dash');
+			$(this).children('span').html(' ADD SECOND ENTRY');
+
+			$(this).addClass('btn-primary');
+			$(this).removeClass('btn-danger');
+
+			$('.entry_2').hide();
+			$('.entry_2_details').hide();
+
+			$('#second_entry').val('false');
 		}
 	});
 });

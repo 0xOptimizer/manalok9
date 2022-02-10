@@ -95,9 +95,10 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="table-responsive">
 					<table id="transactionsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th>DATE</th>
-							<th>DESCRIPTION</th>
-							<th>TOTAL</th>
+							<th class="text-center">ID</th>
+							<th class="text-center">DATE</th>
+							<th class="text-center">DESCRIPTION</th>
+							<th class="text-center">TOTAL</th>
 							<th></th>
 						</thead>
 						<tbody>
@@ -105,6 +106,9 @@ if ($this->session->flashdata('highlight-id')) {
 							if ($getJournals->num_rows() > 0):
 								foreach ($getJournals->result_array() as $row): ?>
 									<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
+										<td class="text-center">
+											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+										</td>
 										<td><?=$row['Date']?></td>
 										<td><?=$row['Description']?></td>
 										<td><?=number_format($row['Total'], 2)?></td>

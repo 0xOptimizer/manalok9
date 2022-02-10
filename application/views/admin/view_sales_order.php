@@ -109,10 +109,10 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 											foreach ($getTransactionsByOrderNo->result_array() as $row): ?>
 												<tr>
 													<td class="text-center">
-														<?=$row['Code']?>
+														<?=$row['TransactionID']?>
 													</td>
 													<td class="text-center">
-														<?=$row['TransactionID']?>
+														<?=$row['Code']?>
 													</td>
 													<td class="text-center">
 														<?=$row['Amount']?>

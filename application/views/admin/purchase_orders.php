@@ -50,6 +50,9 @@ if ($this->session->flashdata('highlight-id')) {
 		grid-column: 1;
 		grid-row: 1;
 	}
+	.add_table td:hover {
+		background-color: rgba(100, 100, 100, 0.1);
+	}
 </style>
 
 </head>
@@ -241,6 +244,27 @@ $(document).ready(function() {
 	$('.newpurchaseorder-btn').on('click', function() {
 		$('#AddPurchaseOrderModal').modal('toggle');
 	});
+	function showAlert(type, message) {
+		if ($('.alertNotification').length > 0) {
+			$('.alertNotification').remove();
+		}
+		$('body').append($('<div>')
+			.attr({
+				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				role: 'alert',
+				'data-bs-dismiss': 'alert'
+			}).css({ 'z-index': 9999, cursor: 'pointer' })
+			.append($('<strong>').html(type[0].toUpperCase() + type.slice(1) + '! '))
+			.append($('<span>').html(message))
+			.append($('<button>')
+				.attr({
+					type: 'button', 
+					class: 'btn-close',
+					'data-bs-dismiss': 'alert',
+					'aria-label': 'Close'
+				}))
+		);
+	}
 	
 	var table = $('#purchaseTable').DataTable( {
 		sDom: 'lrtip',
@@ -311,17 +335,22 @@ $(document).ready(function() {
 	});
 
 	function updProductCount() {
-		// update order transaction count
-		$('#ProductsCount').val($('.orderProduct').length);
+		let totalProductsCount = 0;
 		// update order transsaction input names
 		$.each($('.orderProduct'), function(i, val) {
 			$(this).attr('id', 'op' + i);
-			$(this).find('.inpSKU').attr('name', 'productCodeInput_' + i);
-			$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
-			$(this).find('.inpCost').attr('name', 'productCostInput_' + i);
-			$(this).find('.inpPrice').attr('name', 'productPriceInput_' + i);
-			$(this).find('.inpExpiration').attr('name', 'productExpirationInput_' + i);
+			if ($(this).find('.inpSKU').val().length > 0) {
+				$(this).find('.inpSKU').attr('name', 'productCodeInput_' + totalProductsCount);
+				$(this).find('.inpQty').attr('name', 'productQtyInput_' + totalProductsCount);
+				$(this).find('.inpCost').attr('name', 'productCostInput_' + totalProductsCount);
+				$(this).find('.inpPrice').attr('name', 'productPriceInput_' + totalProductsCount);
+				$(this).find('.inpExpiration').attr('name', 'productExpirationInput_' + totalProductsCount);
+
+				totalProductsCount++;
+			}
 		});
+		// update order transaction count
+		$('#ProductsCount').val(totalProductsCount);
 		// total
 		let subTotal = 0;
 		$.each($('.productTotalCost'), function(i, val) {
@@ -630,22 +659,41 @@ $(document).ready(function() {
 		hideNameDropdown();
 	});
 	$(document).on('submit', '#formAddPurchaseOrder', function(t) {
+		let qty = 0;
+		let cost = 0;
+		let price = 0;
+		// check product added inputs
+		$.each($('.orderProduct'), function(i, val) {
+			if (typeof $(this).find('.inpSKU').attr('name') !== typeof undefined && $(this).find('.inpSKU').attr('name') !== false) {
+				qty = $(this).find('.inpQty').val();
+				cost = $(this).find('.inpCost').val();
+				price = $(this).find('.inpPrice').val();
+
+				if (qty <= 0 || cost <= 0 || price <= 0) {
+					return false;
+				}
+			}
+		});
+
 		if ($('#PurchaseFromNo').val().length < 1) {
-			alert('NO VENDOR SELECTED');
+			showAlert('warning', 'No vendor selected!');
 			$('#AddPurchaseOrderModal').animate({ scrollTop: 0 }, 1000);
 			t.preventDefault();
 		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
-			alert('PURCHASED ITEMS LIST IS EMPTY');
+			showAlert('warning', 'Product list is empty!');
+			t.preventDefault();
+		} else if (qty <= 0 || cost <= 0 || price <= 0) {
+			showAlert('warning', 'Product/s dont have valid qty/cost/price!');
 			t.preventDefault();
 		}
 		// ACCOUNTING CHECKS
 		let totalDebit = parseFloat($('.debitTotal').html());
 		let totalCredit = parseFloat($('.creditTotal').html());
 		if (totalDebit != totalCredit) {
-			alert('Debit and Credit must be equal.');
+			showAlert('warning', 'Debit and Credit must be equal.');
 			t.preventDefault();
 		} else if (totalDebit <= 0 || totalCredit <= 0) {
-			alert('Total must be more than 0.');
+			showAlert('warning', 'Accounting total must be more than 0.');
 			t.preventDefault();
 		}
 	});

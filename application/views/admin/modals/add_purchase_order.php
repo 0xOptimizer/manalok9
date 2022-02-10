@@ -6,7 +6,7 @@
 					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt" style="font-size: 24px;"></i> New Purchase Order</h4>
 				</div>
 				<div class="modal-body">
-					<input type="hidden" name="productCount" id="ProductsCount" required>
+					<input type="hidden" name="productCount" id="ProductsCount" value="0" required>
 					<input type="hidden" name="purchaseFromNo" id="PurchaseFromNo" required>
 					<div class="row">
 						<div class="col-sm-12">
@@ -70,7 +70,7 @@
 						</div>
 						<hr>
 						<!-- Bottom Part -->
-						<div class="col-sm-12 table-responsive">
+						<div class="col-sm-12 table-responsive add_table">
 							<label class="input-label">PURCHASE ITEMS</label>
 							<table class="table table-hover" id="purchaseOrderProducts">
 								<thead>

@@ -1545,52 +1545,55 @@ class Admin extends MY_Controller {
 					$transactionID .= '-';
 					$transactionID .= strtoupper(uniqid());
 
-					$data = array(
-						'UID' => $p_details['U_ID'],
-						'Product_SKU' => $p_details['Code'],
-						'Stocks' => $qty,
-						'Current_Stocks' => $qty,
-						'Released_Stocks' => 0,
-						'Retail_Price' => $price,
-						'Price_PerItem' => $cost,
-						'Total_Price' => $cost * $qty,
-						// 'Manufactured_By' => $p_details['manufacturer'],
-						// 'Description' => $p_details['description'],
-						'Expiration_Date' => $expiration,
-						'Date_Added' => date('Y-m-d H:i:s A'),
-						'UserID' => $userID,
-					);
-					$Insert_toStock_tb = $this->Model_Inserts->Insert_toStock_tb($data);
-					if ($Insert_toStock_tb == true) {
-						$stockID = $this->db->insert_id();
+					if ($qty > 0) {
 						$data = array(
-							// 'Code' => $code,
-							// 'TransactionID' => strtoupper($code) . '-' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
-							// 'OrderNo' => $orderNo,
-							// 'Type' => '1',
-							// 'Amount' => $qty,
-							// 'PriceUnit' => $p_details['Price_PerItem'],
-							// 'Date' => $date,
-							// 'DateAdded' => date('Y-m-d h:i:s A'),
-							// 'Status' => 0,
-							// 'UserID' => $this->session->userdata('UserID'),
-							// 'PriceTotal' => $qty * $p_details['Price_PerItem'],
-
-							'Code' => $code,
-							'TransactionID' => $transactionID,
-							'OrderNo' => $orderNo,
-							'stockID' => $stockID,
-							'Type' => '0',
-							'Amount' => $qty,
-							'Date' => $date,
-							'DateAdded' => date('Y-m-d h:i:s A'),
-							'Status' => 0,
+							'UID' => $p_details['U_ID'],
+							'Product_SKU' => $p_details['Code'],
+							'Stocks' => $qty,
+							'Current_Stocks' => $qty,
+							'Released_Stocks' => 0,
+							'Retail_Price' => $price,
+							'Price_PerItem' => $cost,
+							'Total_Price' => $cost * $qty,
+							// 'Manufactured_By' => $p_details['manufacturer'],
+							// 'Description' => $p_details['description'],
+							'Expiration_Date' => $expiration,
+							'Date_Added' => date('Y-m-d H:i:s A'),
 							'UserID' => $userID,
-
-							'PriceUnit' => $cost,
-							'PriceTotal' => $cost * $qty,
+							'Status' => '0',
 						);
-						$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+						$Insert_toStock_tb = $this->Model_Inserts->Insert_toStock_tb($data);
+						if ($Insert_toStock_tb == true) {
+							$stockID = $this->db->insert_id();
+							$data = array(
+								// 'Code' => $code,
+								// 'TransactionID' => strtoupper($code) . '-' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
+								// 'OrderNo' => $orderNo,
+								// 'Type' => '1',
+								// 'Amount' => $qty,
+								// 'PriceUnit' => $p_details['Price_PerItem'],
+								// 'Date' => $date,
+								// 'DateAdded' => date('Y-m-d h:i:s A'),
+								// 'Status' => 0,
+								// 'UserID' => $this->session->userdata('UserID'),
+								// 'PriceTotal' => $qty * $p_details['Price_PerItem'],
+
+								'Code' => $code,
+								'TransactionID' => $transactionID,
+								'OrderNo' => $orderNo,
+								'stockID' => $stockID,
+								'Type' => '0',
+								'Amount' => $qty,
+								'Date' => $date,
+								'DateAdded' => date('Y-m-d h:i:s A'),
+								'Status' => 0,
+								'UserID' => $userID,
+
+								'PriceUnit' => $cost,
+								'PriceTotal' => $cost * $qty,
+							);
+							$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+						}
 					}
 				}
 				// for ($i = 0; $i < $productCount; $i++) {
@@ -1660,6 +1663,14 @@ class Admin extends MY_Controller {
 						);
 						$this->Model_Updates->ApproveTransaction($dataTransaction);
 						$this->Model_Updates->UpdateStock_product($dataProduct);
+
+						// update product_stocks entry
+						$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+
+						$data = array(
+							'Status' => '1',
+						);
+						$UpdateProduct_stock = $this->Model_Updates->UpdateProduct_stock($t['stockID'],$data);
 					}
 				}
 				// update order status
@@ -1890,6 +1901,8 @@ class Admin extends MY_Controller {
 				$orderID = $this->db->insert_id();
 				// create new release transactions
 				for ($i = 0; $i < $productCount; $i++) {
+					$freebie = (($this->input->post('productFreebieInput_' . $i) == 'on') ? '1' : '0');
+					
 					$code = trim($this->input->post('productSKUInput_' . $i));
 					$stockID = trim($this->input->post('productStockIDInput_' . $i));
 					$qty = trim($this->input->post('productQtyInput_' . $i));
@@ -1927,6 +1940,7 @@ class Admin extends MY_Controller {
 
 						'PriceUnit' => $s_details['Retail_Price'],
 						'PriceTotal' => $s_details['Retail_Price'] * $qty,
+						'Freebie' => $freebie,
 					);
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 					if ($insertNewTransaction == true) {
@@ -1941,6 +1955,7 @@ class Admin extends MY_Controller {
 							'userid' => $userID,
 							'date_added' => date('Y/m/d H:i:s'),
 							'status' => 'released',
+							'Freebie' => $freebie,
 						);
 						$Insert_Releasedata = $this->Model_Inserts->Insert_Releasedata($data);
 					}
@@ -1948,7 +1963,10 @@ class Admin extends MY_Controller {
 				$this->session->set_flashdata('highlight-id', $orderID);
 
 				// ACCOUNTING JOURNAL ADD
-				$this->addAccountingJournal('added a new journal for sales order.');
+				$this->addAccountingJournal('added a new journal for sales order.', '1');
+				// if ($this->input->post('second_entry') == 'true') {
+				// 	$this->addAccountingJournal('added a second journal for sales order.', '2');
+				// }
 
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('created a new sales order.', 'added sales order ' . $orderNo . ' [SalesOrderID: ' . $orderID . '].', base_url('admin/sales_orders'));
@@ -2008,10 +2026,14 @@ class Admin extends MY_Controller {
 								'Current_Stocks' => $n_cstocks,
 								'Released_Stocks' => $n_rstocks,
 							);
-							$UpdateProduct_stock = $this->Model_Updates->UpdateProduct_stock($id,$data);
+							$UpdateProduct_stock = $this->Model_Updates->UpdateProduct_stock($t['stockID'],$data);
 						} else {
-							echo 'approval aborted, not enough stock for ' . $t['TransactionID'];
-							exit();
+							$prompt_txt =
+							'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Warning!</strong> Approval aborted, not enough stock for ' . $t['TransactionID'] . '!
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
 						}
 					}
 				}
@@ -2527,19 +2549,23 @@ class Admin extends MY_Controller {
 		}
 	}
 
-	public function addAccountingJournal($logbookEntry='') {
-		$description = $this->input->post('description');
-		$date = $this->input->post('date');
+	public function addAccountingJournal($logbookEntry='', $entry_no='') {
+		if ($entry_no != '') {
+			$entry_no = '_' . $entry_no;
+		}
 
-		$transactionCount = $this->input->post('transactions-count');
+		$description = $this->input->post('description' . $entry_no);
+		$date = $this->input->post('date' . $entry_no);
+
+		$transactionCount = $this->input->post('transactions-count' . $entry_no);
 
 		$totalDebit = 0;
 		$totalCredit = 0;
 		$transactions = array();
 		for ($i = 0; $i < $transactionCount; $i++) {
-			$accountID = trim($this->input->post('accountIDInput_' . $i));
-			$debit = trim($this->input->post('debitInput_' . $i));
-			$credit = trim($this->input->post('creditInput_' . $i));
+			$accountID = trim($this->input->post('accountIDInput_' . $i . $entry_no));
+			$debit = trim($this->input->post('debitInput_' . $i . $entry_no));
+			$credit = trim($this->input->post('creditInput_' . $i . $entry_no));
 
 			if ($debit > 0) {
 				$credit = 0;
