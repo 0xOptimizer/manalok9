@@ -222,6 +222,14 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
+	public function GetSalesOrdersByBillClientNoFulfilled($clientNo)
+	{
+		$this->db->select('*');
+		$this->db->where('BillToClientNo', $clientNo);
+		$this->db->where('Status', '5');
+		$result = $this->db->get('sales_orders');  
+		return $result;
+	}
 	public function GetInvoices()
 	{
 		$this->db->select('*');
@@ -424,6 +432,13 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('ID', $id);
+		$result = $this->db->get('journals');  
+		return $result;
+	}
+	public function GetJournalByOrderNo($no)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $no);
 		$result = $this->db->get('journals');  
 		return $result;
 	}

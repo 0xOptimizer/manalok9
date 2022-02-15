@@ -264,6 +264,20 @@ class Admin extends MY_Controller {
 			redirect(base_url());
 		}
 	}
+
+	public function returns()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Returns';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/returns', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+
 	public function view_settings_itemcode()
 	{
 		$data = [];
@@ -889,7 +903,7 @@ class Admin extends MY_Controller {
 	public function FORM_addNewVendor()
 	{	
 		// Fetch data
-		$vendorNo = 'V-' . str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT);
+		$vendorNo = 'V' . str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT);
 		$name = $this->input->post('add-name');
 		$tin = $this->input->post('add-tin');
 		$address = $this->input->post('add-address');
@@ -990,7 +1004,7 @@ class Admin extends MY_Controller {
 	public function FORM_addNewClient()
 	{	
 		// Fetch data
-		$clientNo = 'C-' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
+		$clientNo = 'C' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
 		$name = $this->input->post('add-name');
 		$tin = $this->input->post('add-tin');
 		$address = $this->input->post('add-address');
@@ -1491,7 +1505,7 @@ class Admin extends MY_Controller {
 		if (isset($_SESSION['UserID'])) {
 			$userID = $_SESSION['UserID'];
 
-			$orderNo = 'PO-' . str_pad($this->db->count_all('purchase_orders') + 1, 6, '0', STR_PAD_LEFT);
+			$orderNo = 'PO' . str_pad($this->db->count_all('purchase_orders') + 1, 6, '0', STR_PAD_LEFT);
 			$date = $this->input->post('date');
 			$purchaseFromNo = $this->input->post('purchaseFromNo');
 			$productCount = $this->input->post('productCount');
@@ -1499,7 +1513,7 @@ class Admin extends MY_Controller {
 			$deliveryDate = $this->input->post('deliveryDate');
 
 			if ($purchaseFromNo == 'newVendor') {
-				$purchaseFromNo = 'V-' . str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT);
+				$purchaseFromNo = 'V' . str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT);
 				$name = $this->input->post('vendor-name');
 				$tin = $this->input->post('vendor-tin');
 				$address = $this->input->post('vendor-address');
@@ -1521,8 +1535,8 @@ class Admin extends MY_Controller {
 			// INSERT PURCHASE ORDER
 			$data = array(
 				'OrderNo' => $orderNo,
-				'Date' => $date,
-				'DateCreation' => date('Y-m-d h:i:s A'),
+				'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+				'DateCreation' => date('Y-m-d H:i:s'),
 				'VendorNo' => $purchaseFromNo,
 				'ShipVia' => $shipVia,
 				'DateDelivery' => date('Y-m-d', strtotime($deliveryDate)),
@@ -1567,7 +1581,7 @@ class Admin extends MY_Controller {
 							$stockID = $this->db->insert_id();
 							$data = array(
 								// 'Code' => $code,
-								// 'TransactionID' => strtoupper($code) . '-' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
+								// 'TransactionID' => strtoupper($code) . '' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
 								// 'OrderNo' => $orderNo,
 								// 'Type' => '1',
 								// 'Amount' => $qty,
@@ -1603,7 +1617,7 @@ class Admin extends MY_Controller {
 
 				// 	$data = array(
 				// 		'Code' => $code,
-				// 		'TransactionID' => strtoupper($code) . '-' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
+				// 		'TransactionID' => strtoupper($code) . '' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
 				// 		'OrderNo' => $orderNo,
 				// 		'Type' => '0',
 				// 		'Amount' => $qty,
@@ -1770,14 +1784,15 @@ class Admin extends MY_Controller {
 		if (isset($_SESSION['UserID'])) {
 			$userID = $_SESSION['UserID'];
 
-			$orderNo = 'SO-' . str_pad($this->db->count_all('sales_orders') + 1, 6, '0', STR_PAD_LEFT);
+			$orderNo = 'SO' . str_pad($this->db->count_all('sales_orders') + 1, 6, '0', STR_PAD_LEFT);
 			$date = $this->input->post('date');
+			$time = $this->input->post('time');
 			$billToNo = $this->input->post('billToNo');
 			$shipToNo = $this->input->post('shipToNo');
 			$productCount = $this->input->post('productCount');
 
 			if ($billToNo == 'newBillClient') {
-				$billToNo = 'C-' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
+				$billToNo = 'C' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
 				$billName = $this->input->post('bill-name');
 				$billTin = $this->input->post('bill-tin');
 				$billAddress = $this->input->post('bill-address');
@@ -1806,7 +1821,7 @@ class Admin extends MY_Controller {
 				}
 			}
 			if ($shipToNo == 'newShipClient') {
-				$shipToNo = 'C-' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
+				$shipToNo = 'C' . str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT);
 				$shipName = $this->input->post('ship-name');
 				$shipTin = $this->input->post('ship-tin');
 				$shipAddress = $this->input->post('ship-address');
@@ -1886,8 +1901,8 @@ class Admin extends MY_Controller {
 			// INSERT SALES ORDER
 			$data = array(
 				'OrderNo' => $orderNo,
-				'Date' => $date,
-				'DateCreation' => date('Y-m-d h:i:s A'),
+				'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+				'DateCreation' => date('Y-m-d H:i:s'),
 				'BillToClientNo' => $billToNo,
 				'ShipToClientNo' => $shipToNo,
 				'discountOutright' => $dcOutright,
@@ -1916,7 +1931,7 @@ class Admin extends MY_Controller {
 
 					$data = array(
 						// 'Code' => $code,
-						// 'TransactionID' => strtoupper($code) . '-' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
+						// 'TransactionID' => strtoupper($code) . '' . str_pad($this->db->count_all('products_transactions') + 1, 6, '0', STR_PAD_LEFT),
 						// 'OrderNo' => $orderNo,
 						// 'Type' => '1',
 						// 'Amount' => $qty,
@@ -1947,6 +1962,7 @@ class Admin extends MY_Controller {
 						/* INSERT RELEASE DATA TO TABLE PRODUCT RELEASED */
 						$data = array(
 							'stockid' => $stockID,
+							'transactionid' => $transactionID,
 							'uid' => $p_details['U_ID'],
 							'prd_sku' => $p_details['Code'],
 							'quantity' => $qty,
@@ -1963,7 +1979,7 @@ class Admin extends MY_Controller {
 				$this->session->set_flashdata('highlight-id', $orderID);
 
 				// ACCOUNTING JOURNAL ADD
-				$this->addAccountingJournal('added a new journal for sales order.', '1');
+				// $this->addAccountingJournal('added a new journal for sales order.', '1');
 				// if ($this->input->post('second_entry') == 'true') {
 				// 	$this->addAccountingJournal('added a second journal for sales order.', '2');
 				// }
@@ -2043,10 +2059,10 @@ class Admin extends MY_Controller {
 				}
 				// update order status
 				$data = array(
-					'OrderNo' => $orderNo,
 					'Status' => '2',
+					'MarkDateInvoicing' => date('Y-m-d H:i:s'),
 				);
-				$this->Model_Updates->UpdateSalesOrder($data);
+				$this->Model_Updates->UpdateSalesOrderByOrderNo($orderNo, $data);
 
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('approved sales order.', 'approved sales order ' . $orderDetails['OrderNo'] . ' [SalesOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
@@ -2069,14 +2085,13 @@ class Admin extends MY_Controller {
 						'TransactionID' => $t['TransactionID'],
 					);
 					$this->Model_Updates->RejectOrderTransaction($dataTransaction);
-					$this->Model_Deletes->Delete_Release($t['stockID']);
+					$this->Model_Deletes->Delete_Release($t['TransactionID']);
 				}
 				// update order status
 				$data = array(
-					'OrderNo' => $orderNo,
 					'Status' => '0',
 				);
-				$this->Model_Updates->UpdateSalesOrder($data);
+				$this->Model_Updates->UpdateSalesOrderByOrderNo($orderNo, $data);
 
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('rejected sales order.', 'rejected sales order ' . $orderDetails['OrderNo'] . ' [SalesOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
@@ -2118,10 +2133,9 @@ class Admin extends MY_Controller {
 					$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($CheckIFApproved['OrderNo']);
 					if ($orderTransactions->num_rows() < 1) {
 						$data = array(
-							'OrderNo' => $CheckIFApproved['OrderNo'],
 							'Status' => '0',
 						);
-						$this->Model_Updates->UpdateSalesOrder($data);
+						$this->Model_Updates->UpdateSalesOrderByOrderNo($CheckIFApproved['OrderNo'], $data);
 					}
 					// LOGBOOK
 					$orderDetails = $this->Model_Selects->GetSalesOrderByNo($CheckIFApproved['OrderNo'])->row_array();
@@ -2549,23 +2563,21 @@ class Admin extends MY_Controller {
 		}
 	}
 
-	public function addAccountingJournal($logbookEntry='', $entry_no='') {
-		if ($entry_no != '') {
-			$entry_no = '_' . $entry_no;
-		}
+	public function addAccountingJournal($logbookEntry='') {
 
-		$description = $this->input->post('description' . $entry_no);
-		$date = $this->input->post('date' . $entry_no);
+		$description = $this->input->post('description');
+		$date = $this->input->post('date');
+		$order_no = $this->input->post('order_no');
 
-		$transactionCount = $this->input->post('transactions-count' . $entry_no);
+		$transactionCount = $this->input->post('transactions-count');
 
 		$totalDebit = 0;
 		$totalCredit = 0;
 		$transactions = array();
 		for ($i = 0; $i < $transactionCount; $i++) {
-			$accountID = trim($this->input->post('accountIDInput_' . $i . $entry_no));
-			$debit = trim($this->input->post('debitInput_' . $i . $entry_no));
-			$credit = trim($this->input->post('creditInput_' . $i . $entry_no));
+			$accountID = trim($this->input->post('accountIDInput_' . $i));
+			$debit = trim($this->input->post('debitInput_' . $i));
+			$credit = trim($this->input->post('creditInput_' . $i));
 
 			if ($debit > 0) {
 				$credit = 0;
@@ -2588,7 +2600,8 @@ class Admin extends MY_Controller {
 			$data = array(
 				'Description' => $description,
 				'Date' => $date,
-				'Total' => $totalDebit
+				'Total' => $totalDebit,
+				'OrderNo' => $order_no
 			);
 			$insertJournal = $this->Model_Inserts->InsertJournal($data);
 			if ($insertJournal == TRUE) {
@@ -2616,7 +2629,8 @@ class Admin extends MY_Controller {
 	public function FORM_addJournal()
 	{
 		$this->addAccountingJournal('added a new journal');
-		redirect('admin/journals');
+		// redirect('admin/journals');
+		redirect($_SERVER['HTTP_REFERER']);
 	}
 	public function FORM_deleteJournal()
 	{	
@@ -2632,7 +2646,6 @@ class Admin extends MY_Controller {
 				}
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('deleted journal.', 'deleted a journal [ID: ' . $journalID . '].', base_url('admin/journals'));
-				redirect('admin/journals');
 			}
 			else
 			{
@@ -2643,9 +2656,9 @@ class Admin extends MY_Controller {
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
-				redirect('admin/journals');
 			}
 		}
+		redirect($_SERVER['HTTP_REFERER']);
 	}
 	public function FORM_addPOBill()
 	{
@@ -2653,21 +2666,19 @@ class Admin extends MY_Controller {
 		$amount = $this->input->post('amount');
 		$modeOfPayment = $this->input->post('mode-payment');
 		$date = $this->input->post('date');
+		$time = $this->input->post('time');
 
 		// Insert
 		$data = array(
-			'BillNo' => "B-" . str_pad($this->db->count_all('bills') + 1, 6, '0', STR_PAD_LEFT),
+			'BillNo' => "B" . str_pad($this->db->count_all('bills') + 1, 6, '0', STR_PAD_LEFT),
 			'OrderNo' => $purchaseOrderNo,
 			'Amount' => $amount,
 			'ModeOfPayment' => $modeOfPayment,
-			'Date' => $date,
+			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
 		);
 		$insertBill = $this->Model_Inserts->InsertBill($data);
 		if ($insertBill == TRUE) {
 			$billID = $this->db->insert_id();
-
-			// ACCOUNTING JOURNAL ADD
-			$this->addAccountingJournal('added a new journal for PO Bill');
 
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
@@ -2691,21 +2702,19 @@ class Admin extends MY_Controller {
 		$amount = $this->input->post('amount');
 		$modeOfPayment = $this->input->post('mode-payment');
 		$date = $this->input->post('date');
+		$time = $this->input->post('time');
 
 		// Insert
 		$data = array(
-			'InvoiceNo' => "I-" . str_pad($this->db->count_all('invoices') + 1, 6, '0', STR_PAD_LEFT),
+			'InvoiceNo' => "I" . str_pad($this->db->count_all('invoices') + 1, 6, '0', STR_PAD_LEFT),
 			'OrderNo' => $salesOrderNo,
 			'Amount' => $amount,
 			'ModeOfPayment' => $modeOfPayment,
-			'Date' => $date,
+			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
 		);
 		$insertInvoice = $this->Model_Inserts->InsertInvoice($data);
 		if ($insertInvoice == TRUE) {
 			$invoiceID = $this->db->insert_id();
-
-			// ACCOUNTING JOURNAL ADD
-			$this->addAccountingJournal('added a new journal for SO Invoice');
 
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '].', base_url('admin/invoices'));
@@ -2747,6 +2756,7 @@ class Admin extends MY_Controller {
 		$data = array(
 			'DateDelivery' => $date,
 			'Status' => '3',
+			'MarkDateDelivery' => date('Y-m-d H:i:s'),
 		);
 		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
 		if ($UpdateSalesOrder == TRUE) {
@@ -2772,6 +2782,7 @@ class Admin extends MY_Controller {
 		// Update
 		$data = array(
 			'Status' => '4',
+			'MarkDateDelivered' => date('Y-m-d H:i:s'),
 		);
 		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
 		if ($UpdateSalesOrder == TRUE) {
@@ -2797,6 +2808,7 @@ class Admin extends MY_Controller {
 		// Update
 		$data = array(
 			'Status' => '5',
+			'MarkDateReceived' => date('Y-m-d H:i:s'),
 		);
 		$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
 		if ($UpdateSalesOrder == TRUE) {

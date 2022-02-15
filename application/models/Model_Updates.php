@@ -72,16 +72,6 @@ class Model_Updates extends CI_Model {
 		return $result;
 	}
 	// SALES ORDERS
-	public function UpdateSalesOrder($data)
-	{
-		extract($data);
-		$this->db->where('OrderNo', $OrderNo);
-		$this->db->set(array(
-			'Status' => $Status,
-		));
-		$result = $this->db->update('sales_orders');
-		return $result;
-	}
 	public function UpdateSalesOrderByOrderNo($orderNo, $data)
 	{
 		$this->db->where('OrderNo', $orderNo);

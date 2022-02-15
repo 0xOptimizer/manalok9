@@ -109,10 +109,10 @@ if ($this->session->flashdata('highlight-id')) {
 										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
-										<td><?=$row['Date']?></td>
-										<td><?=$row['Description']?></td>
-										<td><?=number_format($row['Total'], 2)?></td>
-										<td>
+										<td class="text-center"><?=$row['Date']?></td>
+										<td class="text-center"><?=$row['Description']?></td>
+										<td class="text-center"><?=number_format($row['Total'], 2)?></td>
+										<td class="text-center">
 											<i class="bi bi-eye btn-view-journal" style="color: #408AF7;"></i>
 											<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
 												<i class="bi bi-trash text-danger btn-delete-journal"></i>
@@ -156,6 +156,32 @@ $(document).ready(function() {
 	<?php if (!isset($highlightID) && $highlightID != 'N/A'): ?>
 		$('#transactionsTable').find("[data-id='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
 	<?php endif; ?>
+	if(window.location.hash && window.location.hash.substring(0, 2) == '#J') {
+		let journal_id = window.location.hash.substring(2);
+		$('#JournalModal').modal('toggle');
+		getJournalDetails(journal_id);
+	}
+	function showAlert(type, message) {
+		if ($('.alertNotification').length > 0) {
+			$('.alertNotification').remove();
+		}
+		$('body').append($('<div>')
+			.attr({
+				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				role: 'alert',
+				'data-bs-dismiss': 'alert'
+			}).css({ 'z-index': 9999, cursor: 'pointer' })
+			.append($('<strong>').html(type[0].toUpperCase() + type.slice(1) + '! '))
+			.append($('<span>').html(message))
+			.append($('<button>')
+				.attr({
+					type: 'button', 
+					class: 'btn-close',
+					'data-bs-dismiss': 'alert',
+					'aria-label': 'Close'
+				}))
+		);
+	}
 	
 	var table = $('#transactionsTable').DataTable( {
 		sDom: 'lrtip',
@@ -272,16 +298,18 @@ $(document).ready(function() {
 	// disable other debit/credit on change
 	$(document).on('focus keyup change', '.inpDebit', function() {
 		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
+			$(this).parents('tr').find('.inpCredit').val(0);
+			$(this).parents('tr').find('.inpCredit').attr('disabled', '');
 		} else {
-			$(this).parents('td').siblings('td').children('.inpCredit').removeAttr('disabled');
+			$(this).parents('tr').find('.inpCredit').removeAttr('disabled');
 		}
 	});
 	$(document).on('focus keyup change', '.inpCredit', function() {
 		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpDebit').attr('disabled', '');
+			$(this).parents('tr').find('.inpDebit').val(0);
+			$(this).parents('tr').find('.inpDebit').attr('disabled', '');
 		} else {
-			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
+			$(this).parents('tr').find('.inpDebit').removeAttr('disabled');
 		}
 	});
 
@@ -341,10 +369,10 @@ $(document).ready(function() {
 		let totalDebit = parseFloat($('.debitTotal').html());
 		let totalCredit = parseFloat($('.creditTotal').html());
 		if (totalDebit != totalCredit) {
-			alert('Debit and Credit must be equal.');
+			showAlert('warning', 'Debit and Credit must be equal.');
 			e.preventDefault();
 		} else if (totalDebit <= 0 || totalCredit <= 0) {
-			alert('Total must be more than 0.');
+			showAlert('warning', 'Total must be more than 0.');
 			e.preventDefault();
 		}
 	});

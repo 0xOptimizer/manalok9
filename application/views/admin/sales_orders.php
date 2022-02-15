@@ -47,6 +47,12 @@ if ($this->session->flashdata('highlight-id')) {
 	.footerDiscount, .footerDiscount * {
 		cursor: pointer;
 	}
+	.tdFreebie {
+		background-color: rgba(25, 135, 84, 0.3) !important;
+	}
+	.trAdded {
+		background-color: rgba(255, 193, 7, 0.3) !important;
+	}
 </style>
 
 </head>
@@ -129,7 +135,9 @@ if ($this->session->flashdata('highlight-id')) {
 											if ($orderTransactions->num_rows() > 0) {
 												$transactionsPriceTotal = 0;
 												foreach ($orderTransactions->result_array() as $transaction) {
-													$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+													if ($transaction['Freebie'] == 0) {
+														$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+													}
 												}
 												echo number_format($transactionsPriceTotal, 2);
 											} else {
@@ -278,10 +286,6 @@ $(document).ready(function() {
 	<?php if ($highlightID != 'N/A'): ?>
 		$('#salesTable').find("[data-id='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
 	<?php endif; ?>
-
-	$('.newsalesorder-btn').on('click', function() {
-		$('#AddSalesOrderModal').modal('toggle');
-	});
 	function showAlert(type, message) {
 		if ($('.alertNotification').length > 0) {
 			$('.alertNotification').remove();
@@ -303,6 +307,10 @@ $(document).ready(function() {
 				}))
 		);
 	}
+
+	$('.newsalesorder-btn').on('click', function() {
+		$('#AddSalesOrderModal').modal('toggle');
+	});
 
 	var table = $('#salesTable').DataTable( {
 		sDom: 'lrtip',
@@ -376,12 +384,17 @@ $(document).ready(function() {
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
 		'createdRow': function(row, data, dataIndex) {
-			$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('productstockID', data[1] + '_' + data[0]);
+			let productstockID = data[1] + '_' + data[0];
+			$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('productstockID', productstockID);
+
+			if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length > 0 ) {
+				$(row).addClass('trAdded');
+			}
 		},
 		'columnDefs': [ {
 				'targets': 0,
 				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('stockID text-center');
+					$(td).addClass('stockID text-center').html($('<span>').addClass('db-identifier').css({ 'font-style': 'italic', 'font-size': '12px' }).html(cellData));
 				}
 			}, {
 				'targets': 1,
@@ -419,7 +432,7 @@ $(document).ready(function() {
 		// update order transsaction input names
 		let totalProductsCount = 0;
 		$.each($('.orderProduct'), function(i, val) {
-			if (typeof $(this).attr('id') !== typeof undefined && $(this).attr('id') !== false) {
+			if (typeof $(this).attr('data-stockid') !== typeof undefined && $(this).attr('data-stockid') !== false) {
 				$(this).find('.inpFreebie').attr('name', 'productFreebieInput_' + i);
 				$(this).find('.inpSKU').attr('name', 'productSKUInput_' + i);
 				$(this).find('.inpStockID').attr('name', 'productStockIDInput_' + i);
@@ -444,6 +457,13 @@ $(document).ready(function() {
 		});
 		$('.productsTotal .subTotal').html(subTotal.toFixed(2));
 		$('.productsTotal .totalFreebies').html(totalFreebies.toFixed(2));
+
+		if (totalFreebies > 0) {
+			$('.productsTotal .totalFreebies').addClass('tdFreebie');
+		} else {
+			$('.productsTotal .totalFreebies').removeClass('tdFreebie');
+		}
+		
 
 		var totalDiscount = 0;
 		if ($('.cbDiscountOutright').is(':checked')) {
@@ -571,6 +591,7 @@ $(document).ready(function() {
 		// get product stocks
 		$.get('getProductStocks', { dataType: 'json', sku: $(this).data('sku') })
 		.done(function(data) {
+			tableStocks.clear();
 			let productStocks = $.parseJSON(data);
 			$.each(productStocks, function(index, val) {
 				tableStocks.row.add([
@@ -603,9 +624,10 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.select-stock-row', function() {
-		if ($('#' + $(this).data('productstockID')).length < 1) {
+		let productstockID = $(this).data('productstockID');
+		if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length < 1) {
 			let productClass = '.' + $('#rowProductSelection').val();
-			$(productClass).attr('id', $(this).data('productstockID'));
+			$(productClass).attr('data-stockid', productstockID);
 			$(productClass + ' .select-product-btn').html($(this).data('sku'));
 			$(productClass + ' .inpSKU').val($(this).data('sku'));
 			$(productClass + ' .inpStockID').val($(this).children('.stockID').html());
@@ -650,10 +672,13 @@ $(document).ready(function() {
 		updProductCount();
 	});
 	$(document).on('change', '.inpFreebie', function(e) {
+		let orderProduct = $(this).parents('.orderProduct');
 		if ($(this).prop('checked')) {
-			$(this).parents('.orderProduct').data('freebie', true);
+			orderProduct.data('freebie', true);
+			orderProduct.find('.productTotalPrice').addClass('tdFreebie');
 		} else {
-			$(this).parents('.orderProduct').data('freebie', false);
+			orderProduct.data('freebie', false);
+			orderProduct.find('.productTotalPrice').removeClass('tdFreebie');
 		}
 		updProductCount();
 	});
@@ -964,7 +989,7 @@ $(document).ready(function() {
 		let qty = 0;
 		// check product added inputs
 		$.each($('.orderProduct'), function(i, val) {
-			if (typeof $(this).attr('id') !== typeof undefined && $(this).attr('id') !== false) {
+			if (typeof $(this).attr('data-stockid') !== typeof undefined && $(this).attr('data-stockid') !== false) {
 				qty = $(this).find('.inpQty').val();
 
 				if (qty <= 0) {
@@ -990,29 +1015,6 @@ $(document).ready(function() {
 		} else if (parseFloat($('.total').html()) <= 0) {
 			showAlert('warning', 'Ordered Products Total must be more than 0!');
 			t.preventDefault();
-		}
-
-		// ACCOUNTING CHECKS
-		let totalDebit_1 = parseFloat($('.entry_1').find('.debitTotal').html());
-		let totalCredit_1 = parseFloat($('.entry_1').find('.creditTotal').html());
-		if (totalDebit_1 != totalCredit_1) {
-			showAlert('warning', 'Entry #1 Debit and Credit must be equal.');
-			t.preventDefault();
-		} else if (totalDebit_1 <= 0 || totalCredit_1 <= 0) {
-			showAlert('warning', 'Entry #1 total must be more than 0.');
-			t.preventDefault();
-		}
-		// check second entry
-		if ($('#second_entry').val() == 'true') {
-			let totalDebit_2 = parseFloat($('.entry_2').find('.debitTotal').html());
-			let totalCredit_2 = parseFloat($('.entry_2').find('.creditTotal').html());
-			if (totalDebit_2 != totalCredit_2) {
-				showAlert('warning', 'Entry #2 Debit and Credit must be equal.');
-				t.preventDefault();
-			} else if (totalDebit_2 <= 0 || totalCredit_2 <= 0) {
-				showAlert('warning', 'Entry #2 total must be more than 0.');
-				t.preventDefault();
-			}
 		}
 	});
 	$(document).on('click', '.shipToBillingClient', function(t) { // when pressed shipping to new client
@@ -1092,151 +1094,151 @@ $(document).ready(function() {
 	});
 	
 	// ACCOUNTING ADD
-	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
-	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
+	// var accounts_list = <?=json_encode($getAccounts->result_array())?>;
+	// var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
 
-	function updTransactionCount(entry_no) {
-		// update journal transaction count
-		$('.entry_' + entry_no + ' .transactionsCount').val($('.account_row').length);
-		// update journal transaction input names
-		$.each($('.entry_' + entry_no + ' .account_row'), function(i, val) {
-			$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i + '_' + entry_no);
-			$(this).find('.inpDebit').attr('name', 'debitInput_' + i + '_' + entry_no);
-			$(this).find('.inpCredit').attr('name', 'creditInput_' + i + '_' + entry_no);
-		});
-		// total
-		let debitTotal = 0;
-		$.each($('.entry_' + entry_no + ' .inpDebit'), function(i, val) {
-			debitTotal += parseFloat($(this).val());
-		});
-		$('.entry_' + entry_no + ' .debitTotal').html(debitTotal.toFixed(2));
-		let creditTotal = 0;
-		$.each($('.entry_' + entry_no + ' .inpCredit'), function(i, val) {
-			creditTotal += parseFloat($(this).val());
-		});
-		$('.entry_' + entry_no + ' .creditTotal').html(creditTotal.toFixed(2));
-	}
-	$(document).on('click', '.add-account-row', function() {
-		let entry_no = $(this).parents('.entry_creation').data('entry_no');
-		var this_row = 'ar_' + $('.entry_' + entry_no + ' .account_row').length;
-		$(this).before($('<tr>')
-			.attr({
-				class: 'account_row highlighted ' + this_row,
-			}).data('id', $('.entry_' + entry_no + ' .account_row').length)
-			.append($('<td>').attr({ // column-1
-				class: ''
-			}).append($('<select>').attr({
-				class: 'select_accounts inpAccountID w-100'
-			}).append($('<optgroup>').attr({
-				class: 'type_0',
-				label: 'REVENUES'
-			})).append($('<optgroup>').attr({
-				class: 'type_1',
-				label: 'ASSETS'
-			})).append($('<optgroup>').attr({
-				class: 'type_2',
-				label: 'LIABILITIES'
-			})).append($('<optgroup>').attr({
-				class: 'type_3',
-				label: 'EXPENSES'
-			})).append($('<optgroup>').attr({
-				class: 'type_4',
-				label: 'EQUITIES'
-			}))))
-			.append($('<td>').append($('<input>').attr({
-				class: 'inpDebit  w-100',
-				type: 'number',
-				min: '0',
-				step: '0.0001',
-				value: 0
-			})))
-			.append($('<td>').append($('<input>').attr({
-				class: 'inpCredit  w-100',
-				type: 'number',
-				min: '0',
-				step: '0.0001',
-				value: 0
-			})))
-			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
-				type: 'button',
-				class: 'btn remove-account-row'
-			}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
-		);
+	// function updTransactionCount(entry_no) {
+	// 	// update journal transaction count
+	// 	$('.entry_' + entry_no + ' .transactionsCount').val($('.account_row').length);
+	// 	// update journal transaction input names
+	// 	$.each($('.entry_' + entry_no + ' .account_row'), function(i, val) {
+	// 		$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i + '_' + entry_no);
+	// 		$(this).find('.inpDebit').attr('name', 'debitInput_' + i + '_' + entry_no);
+	// 		$(this).find('.inpCredit').attr('name', 'creditInput_' + i + '_' + entry_no);
+	// 	});
+	// 	// total
+	// 	let debitTotal = 0;
+	// 	$.each($('.entry_' + entry_no + ' .inpDebit'), function(i, val) {
+	// 		debitTotal += parseFloat($(this).val());
+	// 	});
+	// 	$('.entry_' + entry_no + ' .debitTotal').html(debitTotal.toFixed(2));
+	// 	let creditTotal = 0;
+	// 	$.each($('.entry_' + entry_no + ' .inpCredit'), function(i, val) {
+	// 		creditTotal += parseFloat($(this).val());
+	// 	});
+	// 	$('.entry_' + entry_no + ' .creditTotal').html(creditTotal.toFixed(2));
+	// }
+	// $(document).on('click', '.add-account-row', function() {
+	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
+	// 	var this_row = 'ar_' + $('.entry_' + entry_no + ' .account_row').length;
+	// 	$(this).before($('<tr>')
+	// 		.attr({
+	// 			class: 'account_row highlighted ' + this_row,
+	// 		}).data('id', $('.entry_' + entry_no + ' .account_row').length)
+	// 		.append($('<td>').attr({ // column-1
+	// 			class: ''
+	// 		}).append($('<select>').attr({
+	// 			class: 'select_accounts inpAccountID w-100'
+	// 		}).append($('<optgroup>').attr({
+	// 			class: 'type_0',
+	// 			label: 'REVENUES'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_1',
+	// 			label: 'ASSETS'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_2',
+	// 			label: 'LIABILITIES'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_3',
+	// 			label: 'EXPENSES'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_4',
+	// 			label: 'EQUITIES'
+	// 		}))))
+	// 		.append($('<td>').append($('<input>').attr({
+	// 			class: 'inpDebit  w-100',
+	// 			type: 'number',
+	// 			min: '0',
+	// 			step: '0.0001',
+	// 			value: 0
+	// 		})))
+	// 		.append($('<td>').append($('<input>').attr({
+	// 			class: 'inpCredit  w-100',
+	// 			type: 'number',
+	// 			min: '0',
+	// 			step: '0.0001',
+	// 			value: 0
+	// 		})))
+	// 		.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
+	// 			type: 'button',
+	// 			class: 'btn remove-account-row'
+	// 		}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+	// 	);
 
-		for (var i = accounts_list.length - 1; i >= 0; i--) {
-			$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
-				value: accounts_list[i]['ID']
-			}).text(accounts_list[i]['Name']));
-		}
+	// 	for (var i = accounts_list.length - 1; i >= 0; i--) {
+	// 		$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
+	// 			value: accounts_list[i]['ID']
+	// 		}).text(accounts_list[i]['Name']));
+	// 	}
 
-		setTimeout(function() {
-			$('.' + this_row).removeClass('highlighted');
-		}, 2000);
-		$('.' + this_row).fadeIn('2000');
+	// 	setTimeout(function() {
+	// 		$('.' + this_row).removeClass('highlighted');
+	// 	}, 2000);
+	// 	$('.' + this_row).fadeIn('2000');
 
-		updTransactionCount(entry_no);
-	});
+	// 	updTransactionCount(entry_no);
+	// });
 
-	// add two two transaction accounts
-	$('.add-account-row').click();
-	$('.add-account-row').click();
+	// // add two two transaction accounts
+	// $('.add-account-row').click();
+	// $('.add-account-row').click();
 
-	$(document).on('click', '.remove-account-row', function() {
-		let entry_no = $(this).parents('.entry_creation').data('entry_no');
-		$(this).parents('tr').remove();
+	// $(document).on('click', '.remove-account-row', function() {
+	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
+	// 	$(this).parents('tr').remove();
 
-		updTransactionCount(entry_no);
-	});
-	$(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
-		let entry_no = $(this).parents('.entry_creation').data('entry_no');
-		updTransactionCount(entry_no);
-	});
-	// disable other debit/credit on change
-	$(document).on('focus keyup change', '.inpDebit', function() {
-		if ($(this).val() > 0) {
-			$(this).parents('tr').find('.inpCredit').val(0);
-			$(this).parents('tr').find('.inpCredit').attr('disabled', '');
-		} else {
-			$(this).parents('tr').find('.inpCredit').removeAttr('disabled');
-		}
-	});
-	$(document).on('focus keyup change', '.inpCredit', function() {
-		if ($(this).val() > 0) {
-			$(this).parents('tr').find('.inpDebit').val(0);
-			$(this).parents('tr').find('.inpDebit').attr('disabled', '');
-		} else {
-			$(this).parents('tr').find('.inpDebit').removeAttr('disabled');
-		}
-	});
+	// 	updTransactionCount(entry_no);
+	// });
+	// $(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
+	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
+	// 	updTransactionCount(entry_no);
+	// });
+	// // disable other debit/credit on change
+	// $(document).on('focus keyup change', '.inpDebit', function() {
+	// 	if ($(this).val() > 0) {
+	// 		$(this).parents('tr').find('.inpCredit').val(0);
+	// 		$(this).parents('tr').find('.inpCredit').attr('disabled', '');
+	// 	} else {
+	// 		$(this).parents('tr').find('.inpCredit').removeAttr('disabled');
+	// 	}
+	// });
+	// $(document).on('focus keyup change', '.inpCredit', function() {
+	// 	if ($(this).val() > 0) {
+	// 		$(this).parents('tr').find('.inpDebit').val(0);
+	// 		$(this).parents('tr').find('.inpDebit').attr('disabled', '');
+	// 	} else {
+	// 		$(this).parents('tr').find('.inpDebit').removeAttr('disabled');
+	// 	}
+	// });
 
 
-	$(document).on('click', '.journalSecondEntry', function() {
-		if ($(this).children('i').hasClass('bi-plus')) {
-			$(this).children('i').removeClass('bi-plus');
-			$(this).children('i').addClass('bi-dash');
-			$(this).children('span').html(' REMOVE SECOND ENTRY');
+	// $(document).on('click', '.journalSecondEntry', function() {
+	// 	if ($(this).children('i').hasClass('bi-plus')) {
+	// 		$(this).children('i').removeClass('bi-plus');
+	// 		$(this).children('i').addClass('bi-dash');
+	// 		$(this).children('span').html(' REMOVE SECOND ENTRY');
 
-			$(this).removeClass('btn-primary');
-			$(this).addClass('btn-danger');
+	// 		$(this).removeClass('btn-primary');
+	// 		$(this).addClass('btn-danger');
 
-			$('.entry_2').show();
-			$('.entry_2_details').show();
+	// 		$('.entry_2').show();
+	// 		$('.entry_2_details').show();
 
-			$('#second_entry').val('true');
-		} else {
-			$(this).children('i').addClass('bi-plus');
-			$(this).children('i').removeClass('bi-dash');
-			$(this).children('span').html(' ADD SECOND ENTRY');
+	// 		$('#second_entry').val('true');
+	// 	} else {
+	// 		$(this).children('i').addClass('bi-plus');
+	// 		$(this).children('i').removeClass('bi-dash');
+	// 		$(this).children('span').html(' ADD SECOND ENTRY');
 
-			$(this).addClass('btn-primary');
-			$(this).removeClass('btn-danger');
+	// 		$(this).addClass('btn-primary');
+	// 		$(this).removeClass('btn-danger');
 
-			$('.entry_2').hide();
-			$('.entry_2_details').hide();
+	// 		$('.entry_2').hide();
+	// 		$('.entry_2_details').hide();
 
-			$('#second_entry').val('false');
-		}
-	});
+	// 		$('#second_entry').val('false');
+	// 	}
+	// });
 });
 </script>
 

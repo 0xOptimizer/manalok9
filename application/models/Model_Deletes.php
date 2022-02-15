@@ -125,9 +125,9 @@ class Model_Deletes extends CI_Model {
 			return false;
 		}
 	}
-	public function Delete_Release($id)
+	public function Delete_Release($transactionid)
 	{
-		$this->db->where('ID', $id);
+		$this->db->where('transactionid', $transactionid);
 		$this->db->delete('product_released');
 		if ($this->db->affected_rows() > 0) {
 			return true;

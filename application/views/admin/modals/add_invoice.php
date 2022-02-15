@@ -64,44 +64,9 @@
 							<label class="input-label">DATE</label>
 							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
 						</div>
-					</div>
-					<hr class="my-4">
-					<label class="input-label">ACCOUNTING</label>
-					<div class="row">
-						<input type="hidden" id="transactionsCount" name="transactions-count" value="0">
-						<div class="form-group col-12 col-md-8">
-							<label class="input-label">DESCRIPTION</label>
-							<textarea rows="2" class="form-control standard-input-pad" name="description" placeholder="Description" required>SO Payment</textarea>
-						</div>
-						<div class="form-group col-12 col-md-4">
-							<label class="input-label">DATE</label>
-							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-12">
-							<div class="table-responsive">
-								<table id="newTransactionsTable" class="standard-table table">
-									<thead style="font-size: 12px;">
-										<th>ACCOUNT</th>
-										<th>DEBIT</th>
-										<th>CREDIT</th>
-										<th></th>
-									</thead>
-									<tbody>
-										<tr class="font-weight-bold add-account-row">
-											<td><i class="bi bi-plus"></i> New Account</td>
-											<td colspan="3"></td>
-										</tr>
-										<tr style="border-color: #a7852d;">
-											<td style="color: #a7852d;">Total</td>
-											<td class="debitTotal">0</td>
-											<td class="creditTotal">0</td>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
+							<label class="input-label">TIME</label>
+							<input type="time" class="form-control" name="time" value="<?=date("H:i");?>" required>
 						</div>
 					</div>
 				</div>
