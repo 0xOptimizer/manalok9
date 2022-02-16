@@ -124,7 +124,7 @@ class Admin_Extend extends CI_Controller {
 		}
 
 		/* CHECK EMPTY VALUES OR NULL PROMPT ERROR */
-		if (empty($uid) || empty($product_sku) || empty($quantity) || empty($retail_price) || empty($original_price) || empty($manufacturer) || empty($expiration)) {
+		if (empty($uid) || empty($product_sku) || empty($quantity) || empty($retail_price) || empty($original_price) || empty($manufacturer)) {
 			$data['promptsss'] = array('status' => 'empty_fields', );
 			echo json_encode($data);
 			exit();
@@ -899,7 +899,7 @@ class Admin_Extend extends CI_Controller {
 		$prd_descript = $this->input->post('up_prd_descript');
 
 		/* CHECK IF INPUT IS EMPTY */
-		if (empty($id) || empty($uids) || empty($pre_sku) || empty($radioUp) || $quantity < 0 || empty($r_price) || empty($orig_price) || empty($manufacturer) || empty($expire_date) || empty($prd_descript)) {
+		if (empty($id) || empty($uids) || empty($pre_sku) || empty($radioUp) || $quantity < 0 || empty($r_price) || empty($orig_price) || empty($manufacturer) || empty($prd_descript)) {
 			$data['status'] = array('prompt' => 'null_values', );
 			echo json_encode($data);
 			exit();

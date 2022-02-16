@@ -49,13 +49,13 @@
               </label>
             </div>
             <div class="form-group col-12 col-sm-12 col-md-4 px-3 py-1">
-              <input id="r_price" class="form-control standard-input-pad" type="number" name="">
+              <input id="r_price" class="form-control standard-input-pad" type="number" name="" step="0.000001">
               <label class="input-label">
                 RETAIL PRICE
               </label>
             </div>
             <div class="form-group col-12 col-sm-12 col-md-4 px-3 py-1">
-              <input id="orig_price" class="form-control standard-input-pad" type="number" name="">
+              <input id="orig_price" class="form-control standard-input-pad" type="number" name="" step="0.000001">
               <label class="input-label">
                 ORIGINAL PRICE
               </label>

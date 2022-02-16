@@ -445,10 +445,10 @@ if ($this->session->flashdata('highlight-id')) {
 		};
 	}(jQuery));
 	$("#unit_price_uid").inputFilter(function(value) {
-		return /^-?\d*$/.test(value);
+		return /^-?\d*(\.\d{0,6})?$/.test(value);
 	});
 	$("#unit_cost_uid").inputFilter(function(value) {
-		return /^-?\d*$/.test(value);
+		return /^-?\d*(\.\d{0,6})?$/.test(value);
 	});
 	$('.sel_checkss').on('change',function () {
 		$('.product_codegen').val('');

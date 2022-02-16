@@ -82,11 +82,11 @@
 								<label class="input-label">ITEM NAME</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-6">
-								<input class="form-control standard-input-pad num-noarrow " type="number" name="unit_cost" autocomplete="off" placeholder="PHP 100">
+								<input class="form-control standard-input-pad num-noarrow " type="number" name="unit_cost" autocomplete="off" placeholder="PHP 100" step="0.000001">
 								<label class="input-label">UNIT COST</label>
 							</div>
 							<div class="form-group col-12 col-sm-12 col-md-6">
-								<input class="form-control standard-input-pad num-noarrow " type="number" name="unit_price" autocomplete="off" placeholder="PHP 150">
+								<input class="form-control standard-input-pad num-noarrow " type="number" name="unit_price" autocomplete="off" placeholder="PHP 150" step="0.000001">
 								<label class="input-label">UNIT PRICE</label>
 							</div>
 

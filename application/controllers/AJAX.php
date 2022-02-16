@@ -585,6 +585,7 @@ class AJAX extends CI_Controller {
 			$item_code = $prd_result['Code'];
 
 			$GetProduct_Prop = $this->Model_Selects->GetProduct_Prop($item_code);
+			$prd_result_prop = NULL;
 			if ($GetProduct_Prop->num_rows() > 0) {
 				$prd_result_prop = $GetProduct_Prop->row_array();
 			}
