@@ -150,10 +150,13 @@ if ($getTransactions->num_rows() > 0) {
 							</tr>
 							<tr>
 								<td>
-									Cost of Sales (BI=<?=""//$inventoryBeginning?> + P=<?=""//($purchases['debitTotal'] - $purchases['creditTotal'])?> - EI=<?=""//$inventoryEnd?>)
+									Cost of Sales 
+									<button type="button" class="costofsales-btn btn btn-sm-success" style="font-size: 12px;">
+										<i class="bi bi-eye-fill"></i> SHOW
+									</button>
 								</td>
 								<td>
-									<?=""//$costOfSales?>
+									0.00
 								</td>
 							</tr>
 							<tr class="total-row" style="border-width: 2px 0; border-style: solid; border-color: #a7852d;">
@@ -176,9 +179,6 @@ if ($getTransactions->num_rows() > 0) {
 							</tr>
 
 							<tr><td colspan="2">&nbsp;</td></tr>
-							<?php
-							// $netIncome = $grossProfit - $totalOE;
-							?>
 							<tr>
 								<td>NET PRE-OPERATING INCOME</td>
 								<td id="totalNetPreOperatingIncome">0.00</td>
@@ -264,6 +264,66 @@ if ($getTransactions->num_rows() > 0) {
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="CostOfSalesModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Cost Of Sales</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-row d-flex flex-wrap justify-content-center">
+					<div class="col-12 text-center">
+						<h6>BEGINNING INVENTORY</h6>
+					</div>
+					<div class="col-4 col-md-3">
+						<input class="form-control" type="date" name="dfr" value="<?=date('Y-m-d', strtotime($date_from))?>">
+					</div>
+					<div class="col-1 col-md-1 text-center">
+						TO
+					</div>
+					<div class="col-4 col-md-3">
+						<input class="form-control" type="date" name="dto" value="<?=date('Y-m-d', strtotime($date_to))?>">
+					</div>
+				</div>
+				<div class="form-row d-flex flex-wrap justify-content-center">
+					<div class="col-12 text-center">
+						<h6>ENDING INVENTORY</h6>
+					</div>
+					<div class="col-4 col-md-3">
+						<input class="form-control" type="date" name="dfr" value="<?=date('Y-m-d', strtotime($date_from))?>">
+					</div>
+					<div class="col-1 col-md-1 text-center">
+						TO
+					</div>
+					<div class="col-4 col-md-3">
+						<input class="form-control" type="date" name="dto" value="<?=date('Y-m-d', strtotime($date_to))?>">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-12 col-md-6 pt-4 pb-2" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableAccountsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
+					<div class="col-sm-12 table-responsive">
+						<table id="accountsTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">ID</th>
+								<th class="text-center">NAME</th>
+								<th class="text-center">TYPE</th>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -283,6 +343,9 @@ $(document).ready(function() {
     });
 	$('#tableAccountsSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
+	});
+	$('.costofsales-btn').on('click', function() {
+		$('#CostOfSalesModal').modal('toggle');
 	});
 	$('.add-operating_expense-row').on('click', function() {
 		$('#tableAccountsSearch').val('EXPENSES');

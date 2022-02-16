@@ -41,6 +41,18 @@ if ($this->session->flashdata('highlight-id')) {
 		color: #a7852d;
 		font-size: 0.9rem;
 	}
+	.add_table td:hover {
+		background-color: rgba(100, 100, 100, 0.1);
+	}
+	.footerDiscount, .footerDiscount * {
+		cursor: pointer;
+	}
+	.tdFreebie {
+		background-color: rgba(25, 135, 84, 0.3) !important;
+	}
+	.trAdded {
+		background-color: rgba(255, 193, 7, 0.3) !important;
+	}
 </style>
 
 </head>
@@ -123,7 +135,9 @@ if ($this->session->flashdata('highlight-id')) {
 											if ($orderTransactions->num_rows() > 0) {
 												$transactionsPriceTotal = 0;
 												foreach ($orderTransactions->result_array() as $transaction) {
-													$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+													if ($transaction['Freebie'] == 0) {
+														$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+													}
 												}
 												echo number_format($transactionsPriceTotal, 2);
 											} else {
@@ -163,6 +177,96 @@ if ($this->session->flashdata('highlight-id')) {
 <?php $this->load->view('admin/modals/add_sales_order'); ?>
 <?php endif; ?>
 
+<div class="modal fade" id="SelectProductSKUModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box-seam"></i> PRODUCTS</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<?php $getAllProducts = $this->Model_Selects->GetStockedProducts(); ?>
+					<div class="col-sm-12" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableProductsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
+					<div class="col-sm-12 table-responsive">
+						<table id="selectproductsTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">SKU</th>
+								<th class="text-center">NAME</th>
+								<th class="text-center">DESCRIPTION</th>
+								<th class="text-center">STOCK</th>
+							</thead>
+							<tbody>
+								<?php
+								if ($getAllProducts->num_rows() > 0):
+									foreach ($getAllProducts->result_array() as $row): ?>
+										<tr class="select-product-row" data-sku="<?=$row['Code']?>" data-bs-dismiss="modal">
+											<td class="text-center">
+												<?=$row['Code']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Product_Name']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Description']?>
+											</td>
+											<td class="text-center">
+												<?=$row['InStock']?>
+											</td>
+										</tr>
+								<?php endforeach;
+								endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="SelectProductStockModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box"></i> STOCKS</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<input id="rowProductSelection" type="hidden">
+					<div class="col-sm-12" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableStocksSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
+					<div class="col-sm-12 table-responsive">
+						<table id="selectstocksTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">ID</th>
+								<th class="text-center">SKU</th>
+								<th class="text-center">STOCK</th>
+								<th class="text-center">PRICE</th>
+								<th class="text-center">DATE ADDED</th>
+								<th class="text-center">EXPIRATION DATE</th>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <?php $this->load->view('admin/modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -182,11 +286,32 @@ $(document).ready(function() {
 	<?php if ($highlightID != 'N/A'): ?>
 		$('#salesTable').find("[data-id='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
 	<?php endif; ?>
+	function showAlert(type, message) {
+		if ($('.alertNotification').length > 0) {
+			$('.alertNotification').remove();
+		}
+		$('body').append($('<div>')
+			.attr({
+				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				role: 'alert',
+				'data-bs-dismiss': 'alert'
+			}).css({ 'z-index': 9999, cursor: 'pointer' })
+			.append($('<strong>').html(type[0].toUpperCase() + type.slice(1) + '! '))
+			.append($('<span>').html(message))
+			.append($('<button>')
+				.attr({
+					type: 'button', 
+					class: 'btn-close',
+					'data-bs-dismiss': 'alert',
+					'aria-label': 'Close'
+				}))
+		);
+	}
 
 	$('.newsalesorder-btn').on('click', function() {
 		$('#AddSalesOrderModal').modal('toggle');
 	});
-	
+
 	var table = $('#salesTable').DataTable( {
 		sDom: 'lrtip',
 		'bLengthChange': false,
@@ -246,7 +371,7 @@ $(document).ready(function() {
 	$('#tableSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
 	});
-	var tableProducts = $('#productsTable').DataTable( {
+	var tableProducts = $('#selectproductsTable').DataTable( {
 		sDom: 'lrtip',
 		'bLengthChange': false,
 		'order': [[ 0, 'desc' ]],
@@ -254,28 +379,91 @@ $(document).ready(function() {
 	$('#tableProductsSearch').on('keyup change', function(){
 		tableProducts.search($(this).val()).draw();
 	});
+	var tableStocks = $('#selectstocksTable').DataTable( {
+		sDom: 'lrtip',
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+		'createdRow': function(row, data, dataIndex) {
+			let productstockID = data[1] + '_' + data[0];
+			$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('productstockID', productstockID);
+
+			if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length > 0 ) {
+				$(row).addClass('trAdded');
+			}
+		},
+		'columnDefs': [ {
+				'targets': 0,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockID text-center').html($('<span>').addClass('db-identifier').css({ 'font-style': 'italic', 'font-size': '12px' }).html(cellData));
+				}
+			}, {
+				'targets': 1,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockSKU text-center');
+				}
+			}, {
+				'targets': 2,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockCurrentStocks text-center');
+				}
+			}, {
+				'targets': 3,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockPrice text-center').html(parseFloat(cellData).toFixed(2)).data('retailPrice', cellData);
+				}
+			}, {
+				'targets': 4,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockDateAdded text-center');
+				}
+			}, {
+				'targets': 5,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockExpirationDate text-center');
+				}
+			}
+		]
+	});
+	$('#tableStocksSearch').on('keyup change', function(){
+		tableStocks.search($(this).val()).draw();
+	});
 
 	function updProductCount() {
-		// update order transaction count
-		$('#ProductsCount').val($('.orderProduct').length);
 		// update order transsaction input names
+		let totalProductsCount = 0;
 		$.each($('.orderProduct'), function(i, val) {
-			$(this).find('.inpCode').attr('name', 'productCodeInput_' + i);
-			$(this).find('.inpPrice').attr('name', 'productPriceInput_' + i);
-			$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
+			if (typeof $(this).attr('data-stockid') !== typeof undefined && $(this).attr('data-stockid') !== false) {
+				$(this).find('.inpFreebie').attr('name', 'productFreebieInput_' + i);
+				$(this).find('.inpSKU').attr('name', 'productSKUInput_' + i);
+				$(this).find('.inpStockID').attr('name', 'productStockIDInput_' + i);
+				$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
+
+				totalProductsCount++;
+			}
 		});
+		// update order transaction count
+		$('#ProductsCount').val(totalProductsCount);
 		// total
 		let subTotal = 0;
-		$.each($('.productTotal'), function(i, val) {
-			subTotal += parseFloat($(this).data('product-total'));
+		let totalFreebies = 0;
+		$.each($('.productTotalPrice'), function(i, val) {
+			let productTotal = parseFloat($(this).data('product-total'));
+
+			if ($(this).parents('.orderProduct').data('freebie')) {
+				totalFreebies += productTotal;
+			} else {
+				subTotal += productTotal;
+			}
 		});
 		$('.productsTotal .subTotal').html(subTotal.toFixed(2));
-		// empty transaction
-		if ($('.orderProduct').length > 0) {
-			$('.noProduct').hide();
+		$('.productsTotal .totalFreebies').html(totalFreebies.toFixed(2));
+
+		if (totalFreebies > 0) {
+			$('.productsTotal .totalFreebies').addClass('tdFreebie');
 		} else {
-			$('.noProduct').show();
+			$('.productsTotal .totalFreebies').removeClass('tdFreebie');
 		}
+		
 
 		var totalDiscount = 0;
 		if ($('.cbDiscountOutright').is(':checked')) {
@@ -306,69 +494,195 @@ $(document).ready(function() {
 		} else {
 			$('.dcManpowerAmt').html('0.00');
 		}
-
+		$('.totalDiscount').html(totalDiscount.toFixed(2));
 		$('.total').html((subTotal - totalDiscount).toFixed(2));
 	}
 	$(document).on('click', '.add-product-row', function() {
-		let opClassName = 'op' + $(this).data('id');
-		if ($('.' + opClassName).length < 1) {
-			$('.productsTotal').before($('<tr>')
-				.attr({
-					class: 'orderProduct highlighted ' + opClassName
+		let opClassName = 'op' + $('.orderProduct').length;
+
+		$('.newProduct').before($('<tr>')
+			.attr({
+				class: 'orderProduct highlighted ' + opClassName
+			}).data('uClass', opClassName)
+			.append($('<td>').attr({
+				class: 'text-center'
+			})
+				.append($('<div>').attr({
+					class: 'form-check form-switch form-check-inline text-center'
 				})
-				.append($('<td>').attr({ // qty
-					class: 'productQty text-center'
-				}).append($('<input>').attr({ // qty input
-					class: 'inpQty ' + opClassName + '_qty',
+					.append($('<input>').attr({
+						class: 'inpFreebie form-check-input',
+						type: 'checkbox'
+					}))))
+			.append($('<td>').attr({
+				class: 'text-center'
+			})
+				.append($('<input>').attr({ // create hidden input for product id
+					class: 'inpSKU',
+					type: 'hidden'
+				}))
+				.append($('<input>').attr({ // create hidden input for stock id
+					class: 'inpStockID',
+					type: 'hidden'
+				}))
+				.append($('<button>').attr({
+					type: 'button',
+					class: 'btn btn-info select-product-btn'
+				})
+					.append($('<i>').attr({ class: 'bi bi-plus' }).html('SELECT PRODUCT'))))
+			.append($('<td>').attr({
+				class: 'text-center'
+			})
+				.append($('<span>').attr({
+					class: 'productAdded text-center'
+				}).html('N/A')))
+			.append($('<td>').attr({
+				class: 'productQty text-center'
+			})
+				.append($('<input>').attr({
+					class: 'inpQty',
 					type: 'number',
 					value: 0,
 					min: '0',
-					max: parseInt($(this).children('.pStock').html())
+					max: '0',
+					style: 'width: 5rem;',
+					required: ''
 				})))
-				.append($('<td>').attr({ // code
+			.append($('<td>').attr({
+				class: 'productPrice text-center'
+			})
+				.append($('<span>').attr({
 					class: 'text-center'
-				}).html($(this).children('.pCode').html())
-				.append($('<input>').attr({ // create hidden input for product id
-					class: 'inpCode',
-					type: 'hidden',
-					value: $(this).children('.pCode').html()
-				})))
-				.append($('<td>').attr({ // unit price
-					class: 'productPrice text-center'
-				}).html($(this).children('.pPrice').html()).append($('<input>').attr({ // create hidden input for unit price
-					class: 'inpPrice',
-					type: 'hidden',
-					value: parseFloat($(this).children('.pPrice').data('price'))
-				})))
-				.append($('<td>').attr({ // total
-					class: 'productTotal text-center'
-				}).html('0.00').data('product-total', 0))
-				.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
+				}).html('0.00').data('price', 0)))
+			.append($('<td>').attr({
+				class: 'productTotalPrice text-center'
+			}).data('product-total', 0)
+				.append($('<span>').attr({
+					class: 'text-center'
+				}).html('0.00')))
+			.append($('<td>').attr({ class: 'text-center' })
+				.append($('<button>').attr({
 					type: 'button',
 					class: 'btn remove-product-btn'
-				}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
-			);
-			updProductCount();
-			setTimeout(function() {
-				$('.' + opClassName).removeClass('highlighted');
-			}, 2000);
-			$('.' + opClassName).fadeIn('2000');
+				})
+					.append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+		);
+		updProductCount();
+		setTimeout(function() {
+			$('.' + opClassName).removeClass('highlighted');
+		}, 2000);
+	});
+
+	$(document).on('click', '.select-product-btn', function() {
+		$('#AddSalesOrderModal').data('prevscroll', $('#AddSalesOrderModal').scrollTop());
+		$('#AddSalesOrderModal').data('openModal', 'products');
+		$('#AddSalesOrderModal').modal('toggle');
+
+		$('#rowProductSelection').val($(this).parents('tr').data('uClass'));
+	});
+	$(document).on('hidden.bs.modal', '#AddSalesOrderModal', function (event) {
+		if ($('#AddSalesOrderModal').data('openModal') == 'products') {
+			$('#AddSalesOrderModal').data('openModal', '');
+			$('#SelectProductSKUModal').modal('toggle');
 		}
+	});
+
+	$(document).on('click', '.select-product-row', function() {
+		// get product stocks
+		$.get('getProductStocks', { dataType: 'json', sku: $(this).data('sku') })
+		.done(function(data) {
+			tableStocks.clear();
+			let productStocks = $.parseJSON(data);
+			$.each(productStocks, function(index, val) {
+				tableStocks.row.add([
+					val.ID,
+					val.Product_SKU,
+					val.Current_Stocks,
+					val.Retail_Price,
+					val.Date_Added,
+					val.Expiration_Date
+				]);
+			});
+			tableStocks.draw();
+		});
+
+		$('#AddSalesOrderModal').data('openModal', 'stocks');
+		$('#SelectProductSKUModal').modal('toggle');
+	});
+	$(document).on('hidden.bs.modal', '#SelectProductSKUModal', function (event) {
+		if ($('#AddSalesOrderModal').data('openModal') == 'stocks') {
+			$('#AddSalesOrderModal').data('openModal', '');
+			$('#SelectProductStockModal').modal('toggle');
+		} else {
+			$('#AddSalesOrderModal').modal('toggle');
+			setTimeout(function() {
+				$('#AddSalesOrderModal').animate({
+					scrollTop: $('#AddSalesOrderModal').data('prevscroll')
+				}, 50);
+			}, 50);
+		}
+	});
+
+	$(document).on('click', '.select-stock-row', function() {
+		let productstockID = $(this).data('productstockID');
+		if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length < 1) {
+			let productClass = '.' + $('#rowProductSelection').val();
+			$(productClass).attr('data-stockid', productstockID);
+			$(productClass + ' .select-product-btn').html($(this).data('sku'));
+			$(productClass + ' .inpSKU').val($(this).data('sku'));
+			$(productClass + ' .inpStockID').val($(this).children('.stockID').html());
+			$(productClass + ' .productAdded').html($(this).children('.stockDateAdded').html());
+			$(productClass + ' .productPrice').children('span').html($(this).children('.stockPrice').html()).data('price', $(this).children('.stockPrice').data('retailPrice'));
+
+			$(productClass + ' .inpQty').attr('max', $(this).children('.stockCurrentStocks').html());
+
+			$('#SelectProductStockModal').modal('toggle');
+			tableStocks.clear();
+			updProductCount();
+		} else {
+			showAlert('warning', 'Product is already added!');
+		}
+	});
+	$(document).on('hidden.bs.modal', '#SelectProductStockModal', function (event) {
+		$('#AddSalesOrderModal').modal('toggle');
+		setTimeout(function() {
+			$('#AddSalesOrderModal').animate({
+				scrollTop: $('#AddSalesOrderModal').data('prevscroll')
+			}, 50);
+		}, 50);
+	});
+	$(document).on('focus keyup change', '.productQty .inpQty', function() {
+		if (parseInt($(this).val()) > parseInt($(this).attr('max'))) {
+			$(this).val($(this).attr('max'));
+		} else if (parseInt($(this).val()) < parseInt($(this).attr('min'))) {
+			$(this).val($(this).attr('min'));
+		}
+
+		let td = $(this).parent('.productQty');
+		if ($(this).val().length > 0) {
+			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('span').data('price'));
+			td.siblings('.productTotalPrice').data('product-total', productTotal).children('span').html(productTotal.toFixed(2));
+		} else {
+			td.siblings('.productTotalPrice').data('product-total', 0).children('span').html('0.00');
+		}
+		updProductCount();
 	});
 	$(document).on('click', '.remove-product-btn', function() {
 		$(this).parents('tr').remove();
 		updProductCount();
 	});
-	$(document).on('focus keyup change', '.productQty input', function() {
-		let td = $(this).parent('.productQty');
-		if ($(this).val().length > 0) {
-			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('.inpPrice').val());
-			td.siblings('.productTotal').html(productTotal.toFixed(2)).data('product-total', productTotal);
+	$(document).on('change', '.inpFreebie', function(e) {
+		let orderProduct = $(this).parents('.orderProduct');
+		if ($(this).prop('checked')) {
+			orderProduct.data('freebie', true);
+			orderProduct.find('.productTotalPrice').addClass('tdFreebie');
 		} else {
-			td.siblings('.productTotal').html(0).data('product-total', 0);
+			orderProduct.data('freebie', false);
+			orderProduct.find('.productTotalPrice').removeClass('tdFreebie');
 		}
 		updProductCount();
 	});
+
 
 
 	// NAME SEARCH - BILL TO
@@ -672,26 +986,34 @@ $(document).ready(function() {
 		hideShipNameDropdown();
 	});
 	$(document).on('submit', '#formAddSalesOrder', function(t) { // check inputs before submitting
+		let qty = 0;
+		// check product added inputs
+		$.each($('.orderProduct'), function(i, val) {
+			if (typeof $(this).attr('data-stockid') !== typeof undefined && $(this).attr('data-stockid') !== false) {
+				qty = $(this).find('.inpQty').val();
+
+				if (qty <= 0) {
+					return false;
+				}
+			}
+		});
+
 		if ($('#BillToNo').val().length < 1) {
-			alert('NO BILLING CLIENT SELECTED');
+			showAlert('warning', 'No billing client selected!');
 			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000); // scroll to top
 			t.preventDefault();
 		} else if ($('#ShipToNo').val().length < 1) {
-			alert('NO SHIPPING CLIENT SELECTED');
+			showAlert('warning', 'No shipping client selected!');
 			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000);
 			t.preventDefault();
 		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
-			alert('SALES ITEMS LIST IS EMPTY');
+			showAlert('warning', 'Sales items list is empty!');
 			t.preventDefault();
-		}
-		// ACCOUNTING CHECKS
-		let totalDebit = parseFloat($('.debitTotal').html());
-		let totalCredit = parseFloat($('.creditTotal').html());
-		if (totalDebit != totalCredit) {
-			alert('Debit and Credit must be equal.');
+		} else if (qty <= 0) {
+			showAlert('warning', 'Product/s dont have valid qty!');
 			t.preventDefault();
-		} else if (totalDebit <= 0 || totalCredit <= 0) {
-			alert('Total must be more than 0.');
+		} else if (parseFloat($('.total').html()) <= 0) {
+			showAlert('warning', 'Ordered Products Total must be more than 0!');
 			t.preventDefault();
 		}
 	});
@@ -761,121 +1083,162 @@ $(document).ready(function() {
 	$(document).on('change', '.cbDiscount', function(e) {
 		updProductCount();
 	});
+	$(document).on('click', '.footerDiscount', function(e) {
+		let discount = $(this).find('.cbDiscount');
+		if (discount.prop('checked') == true) {
+			discount.prop('checked', false);
+		} else {
+			discount.prop('checked', true);
+		}
+		updProductCount();
+	});
 	
 	// ACCOUNTING ADD
-	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
-	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
+	// var accounts_list = <?=json_encode($getAccounts->result_array())?>;
+	// var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
 
-	function updTransactionCount() {
-		// update journal transaction count
-		$('#transactionsCount').val($('.account_row').length);
-		// update journal transaction input names
-		$.each($('.account_row'), function(i, val) {
-			$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i);
-			$(this).find('.inpDebit').attr('name', 'debitInput_' + i);
-			$(this).find('.inpCredit').attr('name', 'creditInput_' + i);
-		});
-		// total
-		let debitTotal = 0;
-		$.each($('.inpDebit'), function(i, val) {
-			debitTotal += parseFloat($(this).val());
-		});
-		$('.debitTotal').html(debitTotal.toFixed(2));
-		let creditTotal = 0;
-		$.each($('.inpCredit'), function(i, val) {
-			creditTotal += parseFloat($(this).val());
-		});
-		$('.creditTotal').html(creditTotal.toFixed(2));
-	}
-	$(document).on('click', '.add-account-row', function() {
-		var this_row = 'ar_' + $('.account_row').length;
-		$('.add-account-row').before($('<tr>')
-			.attr({
-				class: 'account_row highlighted ' + this_row,
-			}).data('id', $('.account_row').length)
-			.append($('<td>').attr({ // column-1
-				class: ''
-			}).append($('<select>').attr({
-				class: 'select_accounts inpAccountID w-100'
-			}).append($('<optgroup>').attr({
-				class: 'type_0',
-				label: 'REVENUES'
-			})).append($('<optgroup>').attr({
-				class: 'type_1',
-				label: 'ASSETS'
-			})).append($('<optgroup>').attr({
-				class: 'type_2',
-				label: 'LIABILITIES'
-			})).append($('<optgroup>').attr({
-				class: 'type_3',
-				label: 'EXPENSES'
-			})).append($('<optgroup>').attr({
-				class: 'type_4',
-				label: 'EQUITIES'
-			}))))
-			.append($('<td>').attr({ // column-2
-				class: ''
-			}).append($('<input>').attr({
-				class: 'inpDebit  w-100',
-				type: 'number',
-				min: '0',
-				value: 0
-			})))
-			.append($('<td>').attr({ // column-3
-				class: ''
-			}).append($('<input>').attr({
-				class: 'inpCredit  w-100',
-				type: 'number',
-				min: '0',
-				value: 0
-			})))
-			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
-				type: 'button',
-				class: 'btn remove-account-row'
-			}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
-		);
+	// function updTransactionCount(entry_no) {
+	// 	// update journal transaction count
+	// 	$('.entry_' + entry_no + ' .transactionsCount').val($('.account_row').length);
+	// 	// update journal transaction input names
+	// 	$.each($('.entry_' + entry_no + ' .account_row'), function(i, val) {
+	// 		$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i + '_' + entry_no);
+	// 		$(this).find('.inpDebit').attr('name', 'debitInput_' + i + '_' + entry_no);
+	// 		$(this).find('.inpCredit').attr('name', 'creditInput_' + i + '_' + entry_no);
+	// 	});
+	// 	// total
+	// 	let debitTotal = 0;
+	// 	$.each($('.entry_' + entry_no + ' .inpDebit'), function(i, val) {
+	// 		debitTotal += parseFloat($(this).val());
+	// 	});
+	// 	$('.entry_' + entry_no + ' .debitTotal').html(debitTotal.toFixed(2));
+	// 	let creditTotal = 0;
+	// 	$.each($('.entry_' + entry_no + ' .inpCredit'), function(i, val) {
+	// 		creditTotal += parseFloat($(this).val());
+	// 	});
+	// 	$('.entry_' + entry_no + ' .creditTotal').html(creditTotal.toFixed(2));
+	// }
+	// $(document).on('click', '.add-account-row', function() {
+	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
+	// 	var this_row = 'ar_' + $('.entry_' + entry_no + ' .account_row').length;
+	// 	$(this).before($('<tr>')
+	// 		.attr({
+	// 			class: 'account_row highlighted ' + this_row,
+	// 		}).data('id', $('.entry_' + entry_no + ' .account_row').length)
+	// 		.append($('<td>').attr({ // column-1
+	// 			class: ''
+	// 		}).append($('<select>').attr({
+	// 			class: 'select_accounts inpAccountID w-100'
+	// 		}).append($('<optgroup>').attr({
+	// 			class: 'type_0',
+	// 			label: 'REVENUES'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_1',
+	// 			label: 'ASSETS'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_2',
+	// 			label: 'LIABILITIES'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_3',
+	// 			label: 'EXPENSES'
+	// 		})).append($('<optgroup>').attr({
+	// 			class: 'type_4',
+	// 			label: 'EQUITIES'
+	// 		}))))
+	// 		.append($('<td>').append($('<input>').attr({
+	// 			class: 'inpDebit  w-100',
+	// 			type: 'number',
+	// 			min: '0',
+	// 			step: '0.0001',
+	// 			value: 0
+	// 		})))
+	// 		.append($('<td>').append($('<input>').attr({
+	// 			class: 'inpCredit  w-100',
+	// 			type: 'number',
+	// 			min: '0',
+	// 			step: '0.0001',
+	// 			value: 0
+	// 		})))
+	// 		.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
+	// 			type: 'button',
+	// 			class: 'btn remove-account-row'
+	// 		}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+	// 	);
 
-		for (var i = accounts_list.length - 1; i >= 0; i--) {
-			$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
-				value: accounts_list[i]['ID']
-			}).text(accounts_list[i]['Name']));
-		}
+	// 	for (var i = accounts_list.length - 1; i >= 0; i--) {
+	// 		$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
+	// 			value: accounts_list[i]['ID']
+	// 		}).text(accounts_list[i]['Name']));
+	// 	}
 
-		setTimeout(function() {
-			$('.' + this_row).removeClass('highlighted');
-		}, 2000);
-		$('.' + this_row).fadeIn('2000');
+	// 	setTimeout(function() {
+	// 		$('.' + this_row).removeClass('highlighted');
+	// 	}, 2000);
+	// 	$('.' + this_row).fadeIn('2000');
 
-		updTransactionCount();
-	});
+	// 	updTransactionCount(entry_no);
+	// });
 
-	// add two two transaction accounts
-	$('.add-account-row').click();
-	$('.add-account-row').click();
+	// // add two two transaction accounts
+	// $('.add-account-row').click();
+	// $('.add-account-row').click();
 
-	$(document).on('click', '.remove-account-row', function() {
-		$(this).parents('tr').remove();
+	// $(document).on('click', '.remove-account-row', function() {
+	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
+	// 	$(this).parents('tr').remove();
 
-		updTransactionCount();
-	});
-	$(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
-		updTransactionCount();
-	});
-	// disable other debit/credit on change
-	$(document).on('focus keyup change', '.inpDebit', function() {
-		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
-		} else {
-			$(this).parents('td').siblings('td').children('.inpCredit').removeAttr('disabled');
-		}
-	});
-	$(document).on('focus keyup change', '.inpCredit', function() {
-		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpDebit').attr('disabled', '');
-		} else {
-			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
-		}
-	});
+	// 	updTransactionCount(entry_no);
+	// });
+	// $(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
+	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
+	// 	updTransactionCount(entry_no);
+	// });
+	// // disable other debit/credit on change
+	// $(document).on('focus keyup change', '.inpDebit', function() {
+	// 	if ($(this).val() > 0) {
+	// 		$(this).parents('tr').find('.inpCredit').val(0);
+	// 		$(this).parents('tr').find('.inpCredit').attr('disabled', '');
+	// 	} else {
+	// 		$(this).parents('tr').find('.inpCredit').removeAttr('disabled');
+	// 	}
+	// });
+	// $(document).on('focus keyup change', '.inpCredit', function() {
+	// 	if ($(this).val() > 0) {
+	// 		$(this).parents('tr').find('.inpDebit').val(0);
+	// 		$(this).parents('tr').find('.inpDebit').attr('disabled', '');
+	// 	} else {
+	// 		$(this).parents('tr').find('.inpDebit').removeAttr('disabled');
+	// 	}
+	// });
+
+
+	// $(document).on('click', '.journalSecondEntry', function() {
+	// 	if ($(this).children('i').hasClass('bi-plus')) {
+	// 		$(this).children('i').removeClass('bi-plus');
+	// 		$(this).children('i').addClass('bi-dash');
+	// 		$(this).children('span').html(' REMOVE SECOND ENTRY');
+
+	// 		$(this).removeClass('btn-primary');
+	// 		$(this).addClass('btn-danger');
+
+	// 		$('.entry_2').show();
+	// 		$('.entry_2_details').show();
+
+	// 		$('#second_entry').val('true');
+	// 	} else {
+	// 		$(this).children('i').addClass('bi-plus');
+	// 		$(this).children('i').removeClass('bi-dash');
+	// 		$(this).children('span').html(' ADD SECOND ENTRY');
+
+	// 		$(this).addClass('btn-primary');
+	// 		$(this).removeClass('btn-danger');
+
+	// 		$('.entry_2').hide();
+	// 		$('.entry_2_details').hide();
+
+	// 		$('#second_entry').val('false');
+	// 	}
+	// });
 });
 </script>
 

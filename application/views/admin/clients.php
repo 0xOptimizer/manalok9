@@ -58,36 +58,35 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="table-responsive">
 					<table id="clientsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th>ID</th>
-							<th>CLIENT #</th>
-							<th>NAME</th>
-							<th>TIN</th>
-							<th>CONTACT #</th>
-							<th>CATEGORY</th>
-							<th>TERRITORY MANAGER</th>
+							<th class="text-center">ID</th>
+							<th class="text-center">CLIENT #</th>
+							<th class="text-center">NAME</th>
+							<th class="text-center">TIN</th>
+							<th class="text-center">CONTACT #</th>
+							<th class="text-center">CATEGORY</th>
+							<th class="text-center">TERRITORY MANAGER</th>
 							<th></th>
 						</thead>
 						<tbody>
-							<?php
-							if ($getClients->num_rows() > 0):
+							<?php if ($getClients->num_rows() > 0):
 								foreach ($getClients->result_array() as $row): ?>
 									<tr class="tr_class_modal" data-no="<?=$row['ClientNo']?>">
-										<td>
+										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['ClientNo']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['Name']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['TIN']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['ContactNum']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?php switch ($row['Category']) {
 												case '0': echo 'Confirmed Distributor'; break;
 												case '1': echo 'Distributor On Probation'; break;
@@ -96,10 +95,10 @@ if ($this->session->flashdata('highlight-id')) {
 												default: echo 'NONE'; break;
 											} ?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['TerritoryManager']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<i class="bi bi-eye btn-view-client" style="color: #408AF7;"></i>
 											<?php if ($this->session->userdata('UserRestrictions')['clients_edit'] == 1): ?>
 											<i class="bi bi-pencil btn-update-client" style="color: #229F4B;"></i>
@@ -154,8 +153,8 @@ $(document).ready(function() {
 		$('#newClientModal').modal('toggle');
 	});
 
-	if(window.location.hash && window.location.hash.substring(0, 3) == '#C-') {
-		var client_no = window.location.hash.substring(1, 9);
+	if(window.location.hash && window.location.hash.substring(0, 2) == '#C') {
+		var client_no = window.location.hash.substring(1);
 		$('#ClientModal').modal('toggle');
 		getClientDetails(client_no);
 	}

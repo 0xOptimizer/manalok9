@@ -309,7 +309,8 @@ if ($this->session->flashdata('highlight-id')) {
 		}
 	});
 	// DELETE PRODUCT
-	$('.delete_product').on('click', function() {
+	// $('.delete_product').on('click', function() {
+	$(document).on('click', '.delete_product', function() {
 		$('#prompt_delete').modal('toggle');
 		$('#item_id').text($(this).attr('data-value'));
 		$('#movetoarchive').prop("href", '<?=base_url()?>admin/move_to_archive?code='+$(this).attr('data-value'));
@@ -418,7 +419,8 @@ if ($this->session->flashdata('highlight-id')) {
 		});
 	}
 
-	$('.update_prd').on('click', function() {
+	// $('.update_prd').on('click', function() {
+	$(document).on('click', '.update_prd', function() {
 		var prd_id = $(this).attr('data-value');
 		Get_ProductJSON(prd_id)
 	});

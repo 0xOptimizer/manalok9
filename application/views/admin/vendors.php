@@ -58,13 +58,13 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="table-responsive">
 					<table id="vendorsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th></th>
-							<th>VENDOR #</th>
-							<th>NAME</th>
-							<th>TIN</th>
-							<th>ADDRESS</th>
-							<th>CONTACT #</th>
-							<th>KIND</th>
+							<th class="text-center">ID</th>
+							<th class="text-center">VENDOR #</th>
+							<th class="text-center">NAME</th>
+							<th class="text-center">TIN</th>
+							<th class="text-center">ADDRESS</th>
+							<th class="text-center">CONTACT #</th>
+							<th class="text-center">KIND</th>
 							<th></th>
 						</thead>
 						<tbody>
@@ -72,28 +72,28 @@ if ($this->session->flashdata('highlight-id')) {
 							if ($getVendors->num_rows() > 0):
 								foreach ($getVendors->result_array() as $row): ?>
 									<tr class="tr_class_modal" data-no="<?=$row['VendorNo']?>">
-										<td>
+										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['VendorNo']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['Name']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['TIN']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['Address']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['ContactNum']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<?=$row['ProductServiceKind']?>
 										</td>
-										<td>
+										<td class="text-center">
 											<i class="bi bi-eye btn-view-vendor" style="color: #408AF7;"></i>
 											<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
 											<i class="bi bi-pencil btn-update-vendor" style="color: #229F4B;"></i>
@@ -152,8 +152,8 @@ $(document).ready(function() {
 		$('#newVendorModal').modal('toggle');
 	});
 
-	if(window.location.hash && window.location.hash.substring(0, 3) == '#V-') {
-		var vendor_no = window.location.hash.substring(1, 9);
+	if(window.location.hash && window.location.hash.substring(0, 2) == '#V') {
+		var vendor_no = window.location.hash.substring(1);
 		$('#VendorModal').modal('toggle');
 		getVendorDetails(vendor_no);
 	}

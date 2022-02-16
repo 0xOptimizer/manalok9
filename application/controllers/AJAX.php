@@ -72,6 +72,40 @@ class AJAX extends CI_Controller {
 			echo json_encode($userRestrictions);
 		}
 	}
+	public function getProductStocks()
+	{
+		$sku = $this->input->get('sku');
+		if (strlen($sku) > 0) {
+			$productStocks = $this->Model_Selects->GetProductStocks($sku)->result_array();
+
+			echo json_encode($productStocks);
+		}
+	}
+	public function getClientSalesOrders()
+	{
+		$clientNo = $this->input->get('no');
+		if (strlen($clientNo) > 0) {
+			$clientSalesOrders = $this->Model_Selects->GetSalesOrdersByBillClientNoFulfilled($clientNo)->result_array();
+
+			foreach ($clientSalesOrders as $key => $row) {
+				$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo']);
+
+				$clientSalesOrders[$key]['ItemCount'] = $orderTransactions->num_rows();
+			}
+
+			echo json_encode($clientSalesOrders);
+		}
+	}
+	public function getClientSalesOrderProducts()
+	{
+		$salesOrderNo = $this->input->get('no');
+		if (strlen($salesOrderNo) > 0) {
+			$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($salesOrderNo)->result_array();
+
+			echo json_encode($orderTransactions);
+		}
+	}
+
 	public function validateEmailRegistration()
 	{
 		$email = $this->input->post('email');
