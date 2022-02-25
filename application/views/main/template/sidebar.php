@@ -122,6 +122,15 @@
 					</li>
 				<?php endif; ?>
 
+				<?php //if ($this->session->userdata('UserRestrictions')['invoice_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-returns">
+						<a href="<?=base_url().'admin/returns'?>" class='sidebar-link'>
+							<i class="bi bi-reply-fill"></i>
+							<span>Returns</span>
+						</a>
+					</li>
+				<?php //endif; ?>
+
 				<?php if ($this->session->userdata('UserRestrictions')['accounts_view'] == 1 || $this->session->userdata('UserRestrictions')['accounts_view'] == 1): ?>
 				<li class="sidebar-title">ACCOUNTING</li>
 				<?php endif; ?>

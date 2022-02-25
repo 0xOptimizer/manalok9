@@ -76,6 +76,8 @@ $route['admin/product_restocking'] = 'Admin/product_restocking';
 $route['admin/bills'] = 'Admin/bills';
 $route['admin/invoices'] = 'Admin/invoices';
 
+$route['admin/returns'] = 'Admin/returns';
+
 $route['admin/accounts'] = 'Admin/accounts';
 $route['admin/journals'] = 'Admin/journals';
 
@@ -186,6 +188,9 @@ $route['GetBrand_data'] = 'AJAX/GetBrand_data';
 
 $route['admin/getUserRestrictions'] = 'AJAX/getUserRestrictions';
 $route['admin/getProductStocks'] = 'AJAX/getProductStocks';
+
+$route['admin/getClientSalesOrders'] = 'AJAX/getClientSalesOrders';
+$route['admin/getClientSalesOrderProducts'] = 'AJAX/getClientSalesOrderProducts';
 
 
 // CART

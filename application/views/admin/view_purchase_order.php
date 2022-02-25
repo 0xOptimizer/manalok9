@@ -34,10 +34,10 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 		padding-left: 20px;
 		color: #FFFFFF;
 	}
-	.modal-backdrop {
-		opacity: 0 !important;
-	}
 	@media print {
+		.modal-backdrop {
+			opacity: 0 !important;
+		}
 		#app {
 			display: none;
 		}
@@ -80,6 +80,8 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 					</div>
 					<div class="col-12">
 						<button type="button" class="generateform-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE PO FORM</button>
+						|
+						<button type="button" class="accounting-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-receipt"></i> ACCOUNTING</button>
 					</div>
 				</div>
 			</div>
@@ -216,6 +218,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 					<div class="col-sm-12 table-responsive">
 						<table id="billsTable" class="standard-table table">
 							<thead style="font-size: 12px;">
+								<th class="text-center">ID</th>
 								<th class="text-center">BILL #</th>
 								<th class="text-center">VENDOR</th>
 								<th class="text-center">AMOUNT</th>
@@ -227,6 +230,9 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 							<?php if ($getPOBills->num_rows() > 0):
 								foreach ($getPOBills->result_array() as $row): ?>
 									<tr>
+										<td class="text-center">
+											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+										</td>
 										<td class="text-center">
 											<?=$row['BillNo']?>
 										</td>
@@ -254,12 +260,12 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 								$total_bill_amount = $this->Model_Selects->GetTotalBillsByPONo($purchaseOrder['OrderNo'])->row_array()['Amount'];
 								?>
 								<tr>
-									<td class="font-weight-bold text-center" colspan="2">TOTAL</td>
+									<td class="font-weight-bold text-center" colspan="3">TOTAL</td>
 									<td class="font-weight-bold text-center"><?=number_format($total_bill_amount, 2)?></td>
 									<td colspan="3"></td>
 								</tr>
 								<tr style="border-color: #a7852d;">
-									<td class="font-weight-bold text-center" colspan="2">REMAINING PAYMENT</td>
+									<td class="font-weight-bold text-center" colspan="3">REMAINING PAYMENT</td>
 									<td class="font-weight-bold text-center"><?=number_format($transactionsPriceTotal - $total_bill_amount, 2)?></td>
 									<td colspan="3"></td>
 								</tr>
@@ -282,6 +288,130 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
 	'vendorDetails' => $vendorDetails
 )); ?>
+
+<div class="modal fade" id="AccountingModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box-seam"></i> JOURNAL TRANSACTIONS FOR PURCHASE ORDER ID #<?=$purchaseOrder['OrderNo']?></h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-12">
+						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW TRANSACTION</button>
+					</div>
+				</div>
+				<div class="row">
+					<?php $getOrderJournals = $this->Model_Selects->GetJournalByOrderNo($purchaseOrder['OrderNo']); ?>
+					<div class="col-sm-12 table-responsive">
+						<table class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">ID</th>
+								<th class="text-center">DATE</th>
+								<th class="text-center">DESCRIPTION</th>
+								<th class="text-center">TOTAL</th>
+								<th></th>
+							</thead>
+							<tbody>
+								<?php
+								if ($getOrderJournals->num_rows() > 0):
+									foreach ($getOrderJournals->result_array() as $row): ?>
+										<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
+											<td class="text-center">
+												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+											</td>
+											<td class="text-center"><?=$row['Date']?></td>
+											<td class="text-center"><?=$row['Description']?></td>
+											<td class="text-center"><?=number_format($row['Total'], 2)?></td>
+											<td class="text-center">
+												<a href="<?=base_url() . 'admin/journals#J'. $row['ID']?>">
+													<i class="bi bi-eye btn-view-journal" style="color: #408AF7;"></i>
+												</a>
+												<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
+													<i class="bi bi-trash text-danger btn-delete-journal"></i>
+												<?php endif; ?>
+											</td>
+										</tr>
+								<?php endforeach;
+								endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="AddJournalTransactionModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<form id="formAddJournal" action="<?php echo base_url() . 'FORM_addJournal';?>" method="POST" enctype="multipart/form-data">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-list-ul" style="font-size: 24px;"></i> NEW JOURNAL TRANSACTION FOR PURCHASE ORDER ID #<?=$purchaseOrder['OrderNo']?></h4>
+				</div>
+				<div class="modal-body mx-4">
+					<div class="row">
+						<input type="hidden" id="transactionsCount" name="transactions-count" value="0">
+						<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
+						<div class="form-group col-12 col-md-8">
+							<label class="input-label">DESCRIPTION</label>
+							<textarea rows="4" class="form-control standard-input-pad" name="description" placeholder="Payment of rent / Purchase of supplies" required></textarea>
+						</div>
+						<div class="form-group col-12 col-md-4">
+							<div class="row">
+								<div class="form-group col-12">
+									<label class="input-label">DATE</label>
+									<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-12">
+									<label class="input-label">TIME</label>
+									<input type="time" class="form-control" name="time" value="<?=date("H:i");?>" required>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-12">
+							<div class="table-responsive">
+								<table id="newTransactionsTable" class="standard-table table">
+									<thead style="font-size: 12px;">
+										<th>ACCOUNT</th>
+										<th>DEBIT</th>
+										<th>CREDIT</th>
+										<th></th>
+									</thead>
+									<tbody>
+										<tr class="font-weight-bold add-account-row">
+											<td><i class="bi bi-plus"></i> New Account</td>
+											<td colspan="3"></td>
+										</tr>
+										<tr style="border-color: #a7852d;">
+											<td style="color: #a7852d;">Total</td>
+											<td class="debitTotal">0</td>
+											<td class="creditTotal">0</td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="feedback-form modal-footer">
+					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add New Journal Transaction</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
+	<form id="formDeleteJournal" action="<?php echo base_url() . 'FORM_deleteJournal';?>" method="POST" enctype="multipart/form-data">
+		<input id="journalIDDelete" type="hidden" name="journal-id">
+	</form>
+<?php endif; ?>
 
 <form id="formExportTable" action="<?php echo base_url() . 'admin/xlsPurchaseOrder';?>" method="POST">
 	<input type="hidden" name="order_no" value="<?=$orderNo?>">
@@ -324,6 +454,27 @@ $(document).ready(function() {
 	// 	'bLengthChange': false,
 	// 	'order': [[ 0, 'desc' ]],
 	// });
+	function showAlert(type, message) {
+		if ($('.alertNotification').length > 0) {
+			$('.alertNotification').remove();
+		}
+		$('body').append($('<div>')
+			.attr({
+				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				role: 'alert',
+				'data-bs-dismiss': 'alert'
+			}).css({ 'z-index': 9999, cursor: 'pointer' })
+			.append($('<strong>').html(type[0].toUpperCase() + type.slice(1) + '! '))
+			.append($('<span>').html(message))
+			.append($('<button>')
+				.attr({
+					type: 'button', 
+					class: 'btn-close',
+					'data-bs-dismiss': 'alert',
+					'aria-label': 'Close'
+				}))
+		);
+	}
 
 	$('.purchasebilling-btn').on('click', function() {
 		$('#PurchaseBilling').modal('toggle');
@@ -360,20 +511,74 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).on('submit', '#formAddPOBill', function(t) {
-		// ACCOUNTING CHECKS
-		let totalDebit = parseFloat($('.debitTotal').html());
-		let totalCredit = parseFloat($('.creditTotal').html());
-		if (totalDebit != totalCredit) {
-			alert('Debit and Credit must be equal.');
-			t.preventDefault();
-		} else if (totalDebit <= 0 || totalCredit <= 0) {
-			alert('Total must be more than 0.');
-			t.preventDefault();
+
+	// FORM GENERATION
+	$('.generateform-btn').on('click', function() {
+		$('#PurchaseOrderFormModal').modal('toggle');
+	});
+	$('#generate_form').click(function() {
+		$('.inputManual').hide();
+		$.each($('.inputManual'), function(key, obj) {
+			$(this).parent().append(
+				$('<span>').html($(this).val())
+			);
+		});
+		$('#purchaseOrderForm').appendTo('body');
+		$('#PurchaseOrderFormModal').modal('toggle');
+		window.print();
+		$('#purchaseOrderForm').appendTo('#PurchaseOrderFormModal .modal-body');
+		$('.inputManual').show();
+		$('.inputManual').siblings('span').remove();
+	});
+	$('#generate_excel').click(function() {
+		$('#xls_deliverto').val($('#deliverto').val());
+		$('#xls_page').val($('#page').val());
+		$('#xls_attn').val($('#attn').val());
+		$('#xls_supplierinvoiceno').val($('#supplierinvoiceno').val());
+		$('#xls_terms').val($('#terms').val());
+		$('#xls_memo').val($('#memo').val());
+		$('#xls_freight').val($('#freight').val());
+		$('#xls_salestax').val($('#salestax').val());
+		$('#xls_lessdeposit').val($('#lessdeposit').val());
+		$('#xls_balancedue').val($('#balancedue').val());
+		$('#xls_preparedby').val($('#preparedby').val());
+		$('#xls_orderedby').val($('#orderedby').val());
+		$('#xls_approvedby').val($('#approvedby').val());
+		$('#formExportTable').submit();
+	});
+
+
+	// ACCOUNTING
+
+	$(document).on('click', '.btn-delete-journal', function() {
+		let journal_id = $(this).parents('tr').data('id');
+		if (!confirm('Delete Journal #'+ journal_id +'? (This action cannot be undone)')) {
+			event.preventDefault();
+		} else {
+			$('#journalIDDelete').val(journal_id);
+			$('#formDeleteJournal').submit();
 		}
 	});
 
-	// ACCOUNTING ADD
+	$('.accounting-btn').on('click', function() {
+		$('#AccountingModal').modal('toggle');
+	});
+
+	$('.newtransaction-btn').on('click', function() {
+		$('#AccountingModal').data('action', 'newtransaction');
+		$('#AccountingModal').modal('toggle');
+	});
+	$(document).on('hidden.bs.modal', '#AccountingModal', function (event) {
+		if ($('#AccountingModal').data('action') == 'newtransaction') {
+			$('#AccountingModal').data('action', '');
+			$('#AddJournalTransactionModal').modal('toggle');
+		}
+	});
+	$(document).on('hidden.bs.modal', '#AddJournalTransactionModal', function (event) {
+		$('#AccountingModal').modal('toggle');
+	});
+
+
 	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
 	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
 
@@ -430,6 +635,7 @@ $(document).ready(function() {
 				class: 'inpDebit  w-100',
 				type: 'number',
 				min: '0',
+				step: '0.0001',
 				value: 0
 			})))
 			.append($('<td>').attr({ // column-3
@@ -438,6 +644,7 @@ $(document).ready(function() {
 				class: 'inpCredit  w-100',
 				type: 'number',
 				min: '0',
+				step: '0.0001',
 				value: 0
 			})))
 			.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
@@ -461,8 +668,7 @@ $(document).ready(function() {
 	});
 
 	// add two two transaction accounts
-	$('.add-account-row').click();
-	$('.add-account-row').click();
+	$('.add-account-row').click(); $('.add-account-row').click();
 
 	$(document).on('click', '.remove-account-row', function() {
 		$(this).parents('tr').remove();
@@ -475,52 +681,31 @@ $(document).ready(function() {
 	// disable other debit/credit on change
 	$(document).on('focus keyup change', '.inpDebit', function() {
 		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpCredit').attr('disabled', '');
+			$(this).parents('tr').find('.inpCredit').val(0);
+			$(this).parents('tr').find('.inpCredit').attr('disabled', '');
 		} else {
-			$(this).parents('td').siblings('td').children('.inpCredit').removeAttr('disabled');
+			$(this).parents('tr').find('.inpCredit').removeAttr('disabled');
 		}
 	});
 	$(document).on('focus keyup change', '.inpCredit', function() {
 		if ($(this).val() > 0) {
-			$(this).parents('td').siblings('td').children('.inpDebit').attr('disabled', '');
+			$(this).parents('tr').find('.inpDebit').val(0);
+			$(this).parents('tr').find('.inpDebit').attr('disabled', '');
 		} else {
-			$(this).parents('td').siblings('td').children('.inpDebit').removeAttr('disabled');
+			$(this).parents('tr').find('.inpDebit').removeAttr('disabled');
 		}
 	});
 
-
-	$('.generateform-btn').on('click', function() {
-		$('#PurchaseOrderFormModal').modal('toggle');
-	});
-	$('#generate_form').click(function() {
-		$('.inputManual').hide();
-		$.each($('.inputManual'), function(key, obj) {
-			$(this).parent().append(
-				$('<span>').html($(this).val())
-			);
-		});
-		$('#purchaseOrderForm').appendTo('body');
-		$('#PurchaseOrderFormModal').modal('toggle');
-		window.print();
-		$('#purchaseOrderForm').appendTo('#PurchaseOrderFormModal .modal-body');
-		$('.inputManual').show();
-		$('.inputManual').siblings('span').remove();
-	});
-	$('#generate_excel').click(function() {
-		$('#xls_deliverto').val($('#deliverto').val());
-		$('#xls_page').val($('#page').val());
-		$('#xls_attn').val($('#attn').val());
-		$('#xls_supplierinvoiceno').val($('#supplierinvoiceno').val());
-		$('#xls_terms').val($('#terms').val());
-		$('#xls_memo').val($('#memo').val());
-		$('#xls_freight').val($('#freight').val());
-		$('#xls_salestax').val($('#salestax').val());
-		$('#xls_lessdeposit').val($('#lessdeposit').val());
-		$('#xls_balancedue').val($('#balancedue').val());
-		$('#xls_preparedby').val($('#preparedby').val());
-		$('#xls_orderedby').val($('#orderedby').val());
-		$('#xls_approvedby').val($('#approvedby').val());
-		$('#formExportTable').submit();
+	$('#formAddJournal').on('submit', function(e) {
+		let totalDebit = parseFloat($('.debitTotal').html());
+		let totalCredit = parseFloat($('.creditTotal').html());
+		if (totalDebit != totalCredit) {
+			showAlert('warning', 'Debit and Credit must be equal.');
+			e.preventDefault();
+		} else if (totalDebit <= 0 || totalCredit <= 0) {
+			showAlert('warning', 'Total must be more than 0.');
+			e.preventDefault();
+		}
 	});
 });
 </script>
