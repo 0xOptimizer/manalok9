@@ -193,6 +193,7 @@ $(document).ready(function() {
 				$('.m_category').text(category);
 				$('.ms_category option[value=' + response.Category + ']').prop('selected', true);
 				$('.m_territorymanager').text(response.TerritoryManager).val(response.TerritoryManager);
+				$('.m_email').text(response.Email).val(response.Email);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log(textStatus, errorThrown);

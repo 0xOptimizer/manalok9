@@ -76,7 +76,10 @@ $route['admin/product_restocking'] = 'Admin/product_restocking';
 $route['admin/bills'] = 'Admin/bills';
 $route['admin/invoices'] = 'Admin/invoices';
 
+$route['admin/manual_transactions'] = 'Admin/manual_transactions';
+
 $route['admin/returns'] = 'Admin/returns';
+$route['admin/view_return'] = 'Admin/view_return';
 
 $route['admin/accounts'] = 'Admin/accounts';
 $route['admin/journals'] = 'Admin/journals';
@@ -105,6 +108,7 @@ $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
 $route['FORM_selfUpdateUser'] = 'Users/FORM_selfUpdateUser';
 $route['FORM_selfAddNewUser'] = 'Admin/FORM_selfAddNewUser';
 
+// VENDOR / CLIENT
 $route['FORM_addNewVendor'] = 'Admin/FORM_addNewVendor';
 $route['FORM_updateVendor'] = 'Admin/FORM_updateVendor';
 $route['FORM_deleteVendor'] = 'Admin/FORM_deleteVendor';
@@ -112,12 +116,22 @@ $route['FORM_addNewClient'] = 'Admin/FORM_addNewClient';
 $route['FORM_updateClient'] = 'Admin/FORM_updateClient';
 $route['FORM_deleteClient'] = 'Admin/FORM_deleteClient';
 
+// SALES ORDER / PURCHASE ORDER
 $route['FORM_addPurchaseOrder'] = 'Admin/FORM_addPurchaseOrder';
 $route['FORM_approvePurchaseOrder'] = 'Admin/FORM_approvePurchaseOrder';
 $route['FORM_addSalesOrder'] = 'Admin/FORM_addSalesOrder';
 $route['FORM_approveSalesOrder'] = 'Admin/FORM_approveSalesOrder';
 $route['FORM_removePurchaseOrderTransaction'] = 'Admin/FORM_removePurchaseOrderTransaction';
-$route['FORM_removeSalesOrderTransaction'] = 'Admin/FORM_removeSalesOrderTransaction';
+
+// MANUAL TRANSACTION
+$route['FORM_addPOManualTransaction'] = 'Admin/FORM_addPOManualTransaction';
+
+// RETURNS
+$route['FORM_addNewReturn'] = 'Admin/FORM_addNewReturn';
+$route['FORM_addNewReturnProduct'] = 'Admin/FORM_addNewReturnProduct';
+$route['FORM_updateReturnProduct'] = 'Admin/FORM_updateReturnProduct';
+$route['FORM_updateReturnProductToInventory'] = 'Admin/FORM_updateReturnProductToInventory';
+
 
 $route['AJAX_validateEmailRegistration'] = 'AJAX/validateEmailRegistration';
 $route['AJAX_sendRegistrationEmail'] = 'AJAX/sendRegistrationEmail';
@@ -126,18 +140,19 @@ $route['get_productDetails'] = 'Admin/get_productDetails';
 $route['admin/SubmitNewItemcode'] = 'Admin/SubmitNewItemcode';
 $route['admin/remove_thisicode'] = 'Admin/remove_thisicode';
 
+// ACCOUNTS / JOURNALS
 $route['FORM_addAccount'] = 'Admin/FORM_addAccount';
 $route['FORM_updateAccount'] = 'Admin/FORM_updateAccount';
 $route['FORM_addJournal'] = 'Admin/FORM_addJournal';
 $route['FORM_deleteJournal'] = 'Admin/FORM_deleteJournal';
 
-
+// BILLS / INVOICES
 $route['FORM_addPOBill'] = 'Admin/FORM_addPOBill';
 $route['FORM_addSOInvoice'] = 'Admin/FORM_addSOInvoice';
-
 $route['FORM_removeBill'] = 'Admin/FORM_removeBill';
 $route['FORM_removeInvoice'] = 'Admin/FORM_removeInvoice';
 
+// SALES ORDER MARKING
 $route['FORM_scheduleDelivery'] = 'Admin/FORM_scheduleDelivery';
 $route['FORM_markDelivered'] = 'Admin/FORM_markDelivered';
 $route['FORM_markReceived'] = 'Admin/FORM_markReceived';

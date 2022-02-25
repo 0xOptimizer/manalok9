@@ -41,6 +41,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products');  
 		return $result;
 	}
+	public function GetProductTransactionByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('products_transactions');  
+		return $result;
+	}
 	public function GetTransactionsByCode($code)
 	{
 		$this->db->select('*');
@@ -198,6 +205,14 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('clients');
 		return $result;
 	}
+	public function GetClientsWithSO()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$this->db->where('EXISTS(SELECT * FROM sales_orders WHERE clients.ClientNo = sales_orders.BillToClientNo)');
+		$result = $this->db->get('clients');
+		return $result;
+	}
 
 	// SALES
 	public function GetAllSalesOrders()
@@ -222,11 +237,12 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
-	public function GetSalesOrdersByBillClientNoFulfilled($clientNo)
+	public function GetUnreturnedSalesOrdersByBillClientNoFulfilled($clientNo)
 	{
 		$this->db->select('*');
 		$this->db->where('BillToClientNo', $clientNo);
 		$this->db->where('Status', '5');
+		$this->db->where('sales_orders.OrderNo NOT IN(SELECT SalesOrderNo FROM returns)');
 		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
@@ -330,6 +346,7 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('purchase_orders');  
 		return $result;
 	}
+	// BILLS
 	public function GetBills()
 	{
 		$this->db->select('*');
@@ -351,7 +368,30 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('bills');  
 		return $result;
 	}
+	// MANUAL TRANSACTIONS
+	public function GetManualTransactions()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('manual_transactions');  
+		return $result;
+	}
+	public function GetManualTransactionByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('manual_transactions');  
+		return $result;
+	}
+	public function GetManualTransactionsByPONo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('manual_transactions');  
+		return $result;
+	}
 
+	// RESTOCK
 	public function GetAllRestocks()
 	{
 		$this->db->select('*');
@@ -385,6 +425,52 @@ class Model_Selects extends CI_Model {
 		return $result;
 	}
 
+	// RETURNS
+	public function GetReturns()
+	{
+		$this->db->select('*');
+		$result = $this->db->get('returns');  
+		return $result;
+	}
+	public function GetReturnByReturnNo($returnNo)
+	{
+		$this->db->select('*');
+		$this->db->where('ReturnNo', $returnNo);
+		$result = $this->db->get('returns');  
+		return $result;
+	}
+	public function GetReturnBySalesNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('SalesOrderNo', $orderNo);
+		$result = $this->db->get('returns');  
+		return $result;
+	}
+	public function GetReturnProductsByReturnNo($returnNo)
+	{
+		$this->db->select('*');
+		$this->db->where('returnno', $returnNo);
+		$result = $this->db->get('product_returned');  
+		return $result;
+	}
+	public function GetReturnProductByTID($transactionid)
+	{
+		$this->db->select('*');
+		$this->db->where('transactionid', $transactionid);
+		$result = $this->db->get('product_returned');  
+		return $result;
+	}
+	public function GetUnreturnedTransactionsByOrderNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('NOT EXISTS(SELECT * FROM product_returned WHERE products_transactions.TransactionID
+		 = product_returned.transactionid)');
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+
+	// ACCOUNTING
 	public function GetAccounts()
 	{
 		$this->db->select('*');

@@ -78,6 +78,30 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('sales_orders', $data);
 		return $result;
 	}
+	// RETURNS
+	public function UpdateReturnProduct($data)
+	{
+		extract($data);
+		$this->db->where('transactionid', $transactionID);
+		$this->db->set(array(
+			'quantity' => $qty,
+			'remarks' => $remarks,
+		));
+		$result = $this->db->update('product_returned');
+		return $result;
+	}
+	public function ReturnProductInventory($data)
+	{
+		extract($data);
+		$this->db->set(array(
+			'quantity' => $newQty,
+			'quantity_total' => $newTotal,
+			'returned' => $returned,
+		));
+		$this->db->where('TransactionID', $transactionID);
+		$result = $this->db->update('product_returned');
+		return $result;
+	}
 	// ORDER / TRANSACTIONS
 	public function UpdateTransaction($data)
 	{
@@ -127,6 +151,7 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('clients', $data);
 		return $result;
 	}
+
 	public function remove_bill($billNo)
 	{
 		$this->db->where('BillNo', $billNo);
@@ -145,6 +170,7 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('accounts', $data);
 		return $result;
 	}
+
 	public function remove_itemCode($uniqueID)
 	{
 		$this->db->where('uniqueID', $uniqueID);

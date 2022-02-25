@@ -8,7 +8,7 @@
 				<div class="modal-body">
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="in-vendor-no" type="text" class="form-control standard-input-pad" value="V-<?=str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+							<input id="in-vendor-no" type="text" class="form-control standard-input-pad" value="V<?=str_pad($this->db->count_all('vendors') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
 							<label class="input-label" for="in-vendor-no">VENDOR #</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">

@@ -1,3 +1,64 @@
+<!-- FORM TRANSACTION SELECTION -->
+<div class="modal fade" id="SalesOrderFormTransactionsModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-xl" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-file-earmark-excel-fill" style="font-size: 24px;"></i> Generate Sales Order Form</h4>
+			</div>
+			<div class="modal-body">
+				<div class="table-responsive">
+					<table class="standard-table table">
+						<thead style="font-size: 12px;">
+							<th class="text-center fw-bold">QTY</th>
+							<th class="text-center fw-bold" colspan="2">ITEM DESCRIPTION</th>
+							<th class="text-center fw-bold">UNIT PRICE</th>
+							<th class="text-center fw-bold" colspan="2">TOTAL</th>
+						</thead>
+						<tbody>
+							<?php
+							if ($getTransactionsByOrderNo->num_rows() > 0):
+								$amountTotal = 0;
+								foreach ($getTransactionsByOrderNo->result_array() as $row):
+									$product = $this->Model_Selects->GetProductByCode($row['Code']);
+									$pDescription = '';
+									if ($product->num_rows() > 0) {
+										$pDetails = $product->row_array();
+										$pDescription = $pDetails['Description'];
+									}
+
+									if ($row['Freebie'] != '1') {
+										$unitPrice = $row['PriceUnit'];
+									} else {
+										$unitPrice = 0;
+									}
+
+									$amount = $row['Amount'] * $unitPrice;
+									$amountTotal += $amount;
+									?>
+									<tr class="add-formtransaction-row" data-id="<?=$row['ID']?>">
+										<td class="text-center">
+											<?=$row['Amount']?>
+										</td>
+										<td class="text-center" colspan="2">
+											<?=$pDescription?>
+										</td>
+										<td class="text-center">
+											<?=number_format($row['PriceUnit'], 2)?>
+										</td>
+										<td class="text-center amount" colspan="2" data-amount="<?=$amount?>">
+											<?=number_format($amount, 2)?>
+										</td>
+									</tr>
+							<?php endforeach;
+							endif; ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- FORM MODAL -->
 <div class="modal fade" id="SalesOrderFormModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-xl" role="document">
 		<div class="modal-content">
@@ -23,7 +84,7 @@
 								</tr>
 								<tr>
 									<td class="fw-bold">Order Date:</td>
-									<td colspan="2"><?=$salesOrder['DateCreation']?></td>
+									<td colspan="2"><?=date('Y-m-d', strtotime($salesOrder['DateCreation']))?></td>
 								</tr>
 								<tr>
 									<td colspan="3" class="fw-bold">BILL TO:</td>
@@ -56,48 +117,20 @@
 									<td class="fw-bold text-center">UNIT PRICE</td>
 									<td colspan="2" class="fw-bold text-center">TOTAL</td>
 								</tr>
-								<?php
-								if ($getTransactionsByOrderNo->num_rows() > 0):
-									$amountTotal = 0;
-									foreach ($getTransactionsByOrderNo->result_array() as $row):
-										$product = $this->Model_Selects->GetProductByCode($row['Code']);
-										$pDescription = '';
-										if ($product->num_rows() > 0) {
-											$pDetails = $product->row_array();
-											$pDescription = $pDetails['Description'];
-										}
-
-										$amount = $row['Amount'] * $row['PriceUnit'];
-										$amountTotal += $amount;
-										?>
-										<tr>
-											<td class="text-center">
-												<?=$row['Amount']?>
-											</td>
-											<td class="text-center" colspan="2">
-												<?=$pDescription?>
-											</td>
-											<td class="text-center">
-												<?=number_format($row['PriceUnit'], 2)?>
-											</td>
-											<td class="text-center" colspan="2">
-												<?=number_format($amount, 2)?>
-											</td>
-										</tr>
-								<?php endforeach;
-								endif; ?>
+								<tr class="printExclude select-formtransaction-row">
+									<td class="text-center" colspan="6" style="background-color: rgba(25, 135, 84, 0.5);">
+										<i class="bi bi-plus-square"></i> ADD TRANSACTION
+									</td>
+								</tr>
 								<tr>
 									<td colspan="2" rowspan="2" class="fw-bold text-center">CATEGORY OF ACCOUNT:</td>
 									<td class="text-end fw-bold" colspan="2">Sub-total <b>PHP </b></td>
-									<td colspan="2" class="text-center"><?=number_format($amountTotal, 2)?></td>
+									<td colspan="2" class="text-center" id="subTotal">0.00</td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">Outright Discount (<?=$salesOrder['discountOutright']?>%)</td>
-									<td colspan="2" class="text-center">
-										<?php
-										$discountOutright = $amountTotal * ($salesOrder['discountOutright'] * 0.01);
-										?>
-										<?=number_format($discountOutright, 2)?>
+									<td colspan="2" class="text-center" id="dcOutright" data-discount="<?=$salesOrder['discountOutright']?>">
+										0.00
 									</td>
 								</tr>
 								<tr>
@@ -106,37 +139,28 @@
 										<?=$accountCategories[$clientBTDetails['Category']]?>
 									</td>
 									<td colspan="2" class="fw-bold">Volume Discount (<?=$salesOrder['discountVolume']?>%)</td>
-									<td colspan="2" class="text-center">
-										<?php
-										$discountVolume = $amountTotal * ($salesOrder['discountVolume'] * 0.01);
-										?>
-										<?=number_format($discountVolume, 2)?>
+									<td colspan="2" class="text-center" id="dcVolume" data-discount="<?=$salesOrder['discountVolume']?>">
+										0.00
 									</td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">PBD Discount (<?=$salesOrder['discountPBD']?>%)</td>
-									<td colspan="2" class="text-center">
-										<?php
-										$discountPBD = $amountTotal * ($salesOrder['discountPBD'] * 0.01);
-										?>
-										<?=number_format($discountPBD, 2)?>
+									<td colspan="2" class="text-center" id="dcPBD" data-discount="<?=$salesOrder['discountPBD']?>">
+										0.00
 									</td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">Manpower Discount (<?=$salesOrder['discountManpower']?>%)</td>
-									<td colspan="2" class="text-center">
-										<?php
-										$discountManpower = $amountTotal * ($salesOrder['discountManpower'] * 0.01);
-										?>
-										<?=number_format($discountManpower, 2)?>
+									<td colspan="2" class="text-center" id="dcManpower" data-discount="<?=$salesOrder['discountManpower']?>">
+										0.00
 									</td>
 								</tr>
 								<tr>
 									<td class="fw-bold">PREPARED BY</td>
 									<td colspan="2"><input id="prepared_by" type="text" class="inputManual mt-3"></td>
 									<td class="text-end"><b>TOTAL</b></td>
-									<td colspan="2" class="text-center">
-										<?=number_format($amountTotal - ($discountOutright + $discountVolume + $discountPBD + $discountManpower), 2)?>
+									<td colspan="2" class="text-center" id="total">
+										0.00
 									</td>
 								</tr>
 							</tbody>

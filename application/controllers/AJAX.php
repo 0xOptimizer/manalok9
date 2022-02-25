@@ -85,7 +85,7 @@ class AJAX extends CI_Controller {
 	{
 		$clientNo = $this->input->get('no');
 		if (strlen($clientNo) > 0) {
-			$clientSalesOrders = $this->Model_Selects->GetSalesOrdersByBillClientNoFulfilled($clientNo)->result_array();
+			$clientSalesOrders = $this->Model_Selects->GetUnreturnedSalesOrdersByBillClientNoFulfilled($clientNo)->result_array();
 
 			foreach ($clientSalesOrders as $key => $row) {
 				$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo']);

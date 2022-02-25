@@ -4,7 +4,7 @@ $globalHeader;
 date_default_timezone_set('Asia/Manila');
 
 // Fetch invoices
-$getInvoices = $this->Model_Selects->GetInvoices();
+$getReturns = $this->Model_Selects->GetReturns();
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -38,9 +38,9 @@ if ($this->session->flashdata('highlight-id')) {
 					<div class="col-12 col-md-8">
 						<h3>Returns
 							<span class="text-center success-banner-sm">
-								<i class="bi bi-cash"></i> <?=$getInvoices->num_rows();?> TOTAL
+								<i class="bi bi-reply-fill"></i> <?=$getReturns->num_rows();?> TOTAL
 							</span>
-							<?php if ($getInvoices->num_rows() <= 0): ?>
+							<?php if ($getReturns->num_rows() <= 0): ?>
 								<span class="info-banner-sm">
 									<i class="bi bi-exclamation-diamond-fill"></i> No Returns found.
 								</span>
@@ -67,20 +67,25 @@ if ($this->session->flashdata('highlight-id')) {
 					<table id="returnsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th class="text-center">ID</th>
+							<th class="text-center">RETURN #</th>
 							<th class="text-center">SO #</th>
-							<th class="text-center">ORDER DATE</th>
-							<th class="text-center">INVOICE DATE</th>
-							<th class="text-center">CLIENT NAME</th>
-							<th class="text-center">AMOUNT PAID</th>
-							<th class="text-center">AMOUNT DUE</th>
-							<th class="text-center">MODE OF PAYMENT</th>
+							<th class="text-center">DATE</th>
 						</thead>
 						<tbody>
-							<?php if ($getInvoices->num_rows() > 0):
-								foreach ($getInvoices->result_array() as $row): ?>
-									<tr>
+							<?php if ($getReturns->num_rows() > 0):
+								foreach ($getReturns->result_array() as $row): ?>
+									<tr data-urlredirect="<?=base_url() . 'admin/view_return?returnNo=' . $row['ReturnNo'];?>">
 										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+										</td>
+										<td class="text-center">
+											<?=$row['ReturnNo']?>
+										</td>
+										<td class="text-center">
+											<?=$row['SalesOrderNo']?>
+										</td>
+										<td class="text-center">
+											<?=$row['DateCreation']?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -99,14 +104,13 @@ if ($this->session->flashdata('highlight-id')) {
 <!-- ADD RETURN MODAL -->
 <div class="modal fade" id="NewReturnModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-xl" role="document">
-		<form action="<?php echo base_url() . 'FORM_addNewReturn';?>" method="POST" enctype="multipart/form-data">
+		<form id="formAddReturn" action="<?php echo base_url() . 'FORM_addNewReturn';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-reply-fill" style="font-size: 24px;"></i> NEW RETURN</h4>
 				</div>
 				<div class="modal-body">
 					<input type="hidden" name="sopCount" id="ProductsCount" required>
-					<input type="hidden" name="clientNo" id="ClientNo" required>
 					<input type="hidden" name="salesOrderNo" id="SalesOrderNo" required>
 					<div class="row">
 						<div class="col-sm-12">
@@ -127,7 +131,7 @@ if ($this->session->flashdata('highlight-id')) {
 						</div>
 						<!-- Bottom Part -->
 						<div class="col-sm-12 table-responsive">
-							<label class="input-label">PURCHASE ITEMS</label>
+							<label class="input-label">RETURN ITEMS</label>
 							<table class="table table-hover" id="salesOrderReturnProducts">
 								<thead>
 									<tr>
@@ -136,13 +140,14 @@ if ($this->session->flashdata('highlight-id')) {
 										<th class="text-center">QTY</th>
 										<th class="text-center">PRICE</th>
 										<th class="text-center">TOTAL PRICE</th>
+										<th class="text-center">REMARKS</th>
 										<th></th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr class="newProduct">
-										<td class="font-weight-bold add-salesorderproduct-row" colspan="7" style="cursor: pointer;">
-											<i class="bi bi-plus"></i> New Product
+										<td class="font-weight-bold add-salesorderproduct-row" colspan="8" style="cursor: pointer;">
+											<i class="bi bi-plus"></i> Add Return
 										</td>
 									</tr>
 									<tr class="productsTotal" style="border-color: #a7852d;">
@@ -151,7 +156,7 @@ if ($this->session->flashdata('highlight-id')) {
 										<td class="totalFreebies text-center">0.00</td>
 										<td class="font-weight-bold text-center" style="color: #a7852d;">TOTAL</td>
 										<td class="total text-center">0.00</td>
-										<td></td>
+										<td colspan="2"></td>
 									</tr>
 								</tbody>
 							</table>
@@ -173,7 +178,7 @@ if ($this->session->flashdata('highlight-id')) {
 				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-people-fill"></i> CLIENTS</h4>
 			</div>
 			<div class="modal-body">
-				<?php $getClients = $this->Model_Selects->GetClients(); ?>
+				<?php $getClients = $this->Model_Selects->GetClientsWithSO(); ?>
 				<div class="row">
 					<div class="col-sm-12" style="margin-top: -15px;">
 						<div class="input-group">
@@ -475,12 +480,21 @@ $(document).ready(function() {
 		}
 	});
 	$(document).on('click', '.select-client-row', function() {
-		$('#ClientNo').val($(this).data('no'));
 		$('#select-client-btn span, .selectedSalesOrder').html('#' + $(this).data('no'));
 
 		// ENABLE SELECT SALESORDER BUTTON
 		$('#select-salesorder-btn').prop('disabled', false);
 		$('#select-salesorder-btn span').html('SELECT SALES ORDER');
+
+		// SET clientNo
+		$('#select-client-btn').data('ClientNo', $(this).data('no'));
+
+		// CLEAR TABLE AND SO VALUE WHEN CHANGING CLIENT
+		if ($('#ProductsCount').val() > 0 || $('#SalesOrderNo').val().length > 0) {
+			$('tr.soProduct').remove();
+			$('#SalesOrderNo').val('');
+			updProductCount();
+		}
 
 		// GET CLIENT SALES ORDERS
 		$.get('getClientSalesOrders', { dataType: 'json', no: $(this).data('no') })
@@ -515,6 +529,12 @@ $(document).ready(function() {
 	$(document).on('click', '.select-salesorder-row', function() {
 		$('#SalesOrderNo').val($(this).data('no'));
 		$('#select-salesorder-btn span').html('#' + $(this).data('no'));
+
+		// CLEAR TABLE WHEN CHANGING SO
+		if ($('#ProductsCount').val() > 0) {
+			$('tr.soProduct').remove();
+			updProductCount();
+		}
 
 		// GET CLIENT SALES ORDERS
 		$.get('getClientSalesOrderProducts', { dataType: 'json', no: $(this).data('no') })
@@ -555,6 +575,7 @@ $(document).ready(function() {
 			if (typeof $(this).attr('data-soTID') !== typeof undefined && $(this).attr('data-soTID') !== false) {
 				$(this).find('.inpTID').attr('name', 'productTIDInput_' + i);
 				$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
+				$(this).find('.inpRemarks').attr('name', 'productRemarksInput_' + i);
 
 				totalProductsCount++;
 			}
@@ -600,21 +621,21 @@ $(document).ready(function() {
 					.html($(this).find('.sopFreebie').html()))
 				.append($('<td>').attr({
 					class: 'sopTID text-center'
-				})
+				}).html($(this).find('.sopTID').html())
 					.append($('<input>').attr({ // create hidden input for transaction id
 						class: 'inpTID',
 						type: 'hidden'
-					}).val($(this).find('.sopTID').html()))
-					.html($(this).find('.sopTID').html()))
+					}).val($(this).find('.sopTID').html())))
 				.append($('<td>').attr({
 					class: 'sopQty text-center'
 				})
 					.append($('<input>').attr({
 						class: 'inpQty',
 						type: 'number',
-						value: 0,
+						value: $(this).find('.sopAmount').html(),
 						min: '0',
 						max: $(this).find('.sopAmount').html(),
+						placeholder: '*',
 						style: 'width: 5rem;',
 						required: ''
 					})))
@@ -630,6 +651,14 @@ $(document).ready(function() {
 					.append($('<span>').attr({
 						class: 'text-center'
 					}).html('0.00')))
+				.append($('<td>').attr({
+					class: 'sopRemarks text-center'
+				})
+					.append($('<input>').attr({
+						class: 'inpRemarks',
+						type: 'text',
+						style: 'width: 8rem;'
+					})))
 				.append($('<td>').attr({ class: 'text-center' })
 					.append($('<button>').attr({
 						type: 'button',
@@ -671,6 +700,35 @@ $(document).ready(function() {
 	});
 	$(document).on('hidden.bs.modal', '#SelectSOProductsModal', function (event) {
 		$('#NewReturnModal').modal('toggle');
+	});
+
+	$(document).on('submit', '#formAddReturn', function(t) { // check inputs before submitting
+		let qty = 0;
+		// check product added inputs
+		$.each($('.soProduct'), function(i, val) {
+			if (typeof $(this).attr('data-soTID') !== typeof undefined && $(this).attr('data-soTID') !== false) {
+				qty = $(this).find('.inpQty').val();
+
+				if (qty <= 0) {
+					return false;
+				}
+			}
+		});
+
+		if ($('#SalesOrderNo').val().length < 1) {
+			showAlert('warning', 'No sales order selected!');
+			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000);
+			t.preventDefault();
+		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
+			showAlert('warning', 'Return items list is empty!');
+			t.preventDefault();
+		} else if (qty <= 0) {
+			showAlert('warning', 'Product/s dont have valid qty!');
+			t.preventDefault();
+		} else if (parseFloat($('.total').html()) <= 0) {
+			showAlert('warning', 'Ordered Products Total must be more than 0!');
+			t.preventDefault();
+		}
 	});
 });
 </script>

@@ -265,6 +265,18 @@ class Admin extends MY_Controller {
 		}
 	}
 
+	public function manual_transactions()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Manual Transactions';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/manual_transactions', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
 	public function returns()
 	{
 		if ($this->session->userdata('Privilege') > 1) {
@@ -273,6 +285,18 @@ class Admin extends MY_Controller {
 			$header['pageTitle'] = 'Returns';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 			$this->load->view('admin/returns', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function view_return()
+	{
+		if ($this->session->userdata('Privilege') > 1) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Returns';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/view_return', $data);
 		} else {
 			redirect(base_url());
 		}
@@ -1013,6 +1037,7 @@ class Admin extends MY_Controller {
 		$contactNum = $this->input->post('add-contact-num');
 		$category = $this->input->post('add-category');
 		$territoryManager = $this->input->post('add-territory-manager');
+		$email = $this->input->post('add-email');
 
 		// Insert
 		$data = array(
@@ -1025,6 +1050,7 @@ class Admin extends MY_Controller {
 			'ContactNum' => $contactNum,
 			'Category' => $category,
 			'TerritoryManager' => $territoryManager,
+			'Email' => $email,
 		);
 		$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
 		if ($insertNewClient == TRUE) {
@@ -1059,6 +1085,7 @@ class Admin extends MY_Controller {
 		$contactNum = $this->input->post('upd-contact-num');
 		$category = $this->input->post('upd-category');
 		$territoryManager = $this->input->post('upd-territory-manager');
+		$email = $this->input->post('upd-email');
 
 		// Insert
 		$data = array(
@@ -1070,6 +1097,7 @@ class Admin extends MY_Controller {
 			'ContactNum' => $contactNum,
 			'Category' => $category,
 			'TerritoryManager' => $territoryManager,
+			'Email' => $email,
 		);
 		$updateClient = $this->Model_Updates->UpdateClient($data, $clientID);
 		if ($updateClient == TRUE) {
@@ -1978,12 +2006,6 @@ class Admin extends MY_Controller {
 				}
 				$this->session->set_flashdata('highlight-id', $orderID);
 
-				// ACCOUNTING JOURNAL ADD
-				// $this->addAccountingJournal('added a new journal for sales order.', '1');
-				// if ($this->input->post('second_entry') == 'true') {
-				// 	$this->addAccountingJournal('added a second journal for sales order.', '2');
-				// }
-
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('created a new sales order.', 'added sales order ' . $orderNo . ' [SalesOrderID: ' . $orderID . '].', base_url('admin/sales_orders'));
 				redirect('admin/sales_orders');
@@ -2015,7 +2037,7 @@ class Admin extends MY_Controller {
 						$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
 						// IF NOT ENOUGH STOCK FOR APPROVAL, REDIRECT
 						if ($t['Amount'] <= $p['InStock']) {
-							// approve transaction
+							// TRANSACTION
 							$dataTransaction = array(
 								'TransactionID' => $t['TransactionID'],
 								'Status' => '1',
@@ -2029,20 +2051,21 @@ class Admin extends MY_Controller {
 								'InStock' => $NewStock,
 								'Released' => $NewRelease,
 							);
-							$transactions[] = array(
-								'dataTransaction' => $dataTransaction,
-								'dataProduct' => $dataProduct,
-							);
-							
+							// STOCKS
 							$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
-
 							$n_cstocks = $s['Current_Stocks'] - $t['Amount'];
 							$n_rstocks = $s['Released_Stocks'] + $t['Amount'];
-							$data = array(
+							$dataStocks = array(
 								'Current_Stocks' => $n_cstocks,
 								'Released_Stocks' => $n_rstocks,
 							);
-							$UpdateProduct_stock = $this->Model_Updates->UpdateProduct_stock($t['stockID'],$data);
+							
+							$transactions[] = array(
+								'dataTransaction' => $dataTransaction,
+								'dataProduct' => $dataProduct,
+								'dataStocks' => $dataStocks,
+								'stockID' => $t['stockID'],
+							);
 						} else {
 							$prompt_txt =
 							'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
@@ -2056,6 +2079,7 @@ class Admin extends MY_Controller {
 				foreach ($transactions as $row) { // update transactions/products with enough stock
 					$this->Model_Updates->ApproveTransaction($row['dataTransaction']);
 					$this->Model_Updates->UpdateStock_product($row['dataProduct']);
+					$this->Model_Updates->UpdateProduct_stock($row['stockID'], $row['dataStocks']);
 				}
 				// update order status
 				$data = array(
@@ -2099,51 +2123,207 @@ class Admin extends MY_Controller {
 		}
 		redirect('admin/view_sales_order?orderNo=' . $orderNo);
 	}
-	public function FORM_removeSalesOrderTransaction()
-	{
-		$orderNo = $this->input->post('order_no');
-		if ($this->session->userdata('Privilege') > 1) {
-			$TransactionID = $this->input->post('transaction_id');
 
-			$CheckIFApproved = $this->Model_Selects->CheckIFApproved($TransactionID);
-			$code = $CheckIFApproved['Code'];
-			$CheckStocksByCode = $this->Model_Selects->CheckStocksByCode($code);
+	// Returns
+	public function FORM_addNewReturn()
+	{	
+		if (isset($_SESSION['UserID'])) {
+			$userID = $_SESSION['UserID'];
 
-			$orderDetails = $this->Model_Selects->GetSalesOrderByNo($orderNo)->row_array();
+			$returnNo = 'RT' . str_pad($this->db->count_all('returns') + 1, 6, '0', STR_PAD_LEFT);
+			$salesOrderNo = $this->input->post('salesOrderNo');
 
-			if ($CheckIFApproved['Type'] == '1' && $CheckIFApproved['OrderNo'] != NULL && $orderDetails['Status'] == '1') { // if released, if status pending
-				if ($CheckIFApproved['Status'] == '1') { // if approved, revert changes
-					// RESTOCK
-					$NewStock = $CheckStocksByCode['InStock'] + $CheckIFApproved['Amount'];
-					$NewRelease = $CheckStocksByCode['Released'] - $CheckIFApproved['Amount'];
+			$productCount = $this->input->post('sopCount');
+
+			$soDetails = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo)->row_array();
+
+			// INSERT SALES ORDER
+			$data = array(
+				'ReturnNo' => $returnNo,
+				'DateCreation' => date('Y-m-d H:i:s'),
+				'SalesOrderNo' => $salesOrderNo,
+				'ClientNo' => $soDetails['BillToClientNo'],
+				'Status' => '1',
+			);
+			$insertNewReturn = $this->Model_Inserts->InsertReturn($data);
+			if ($insertNewReturn == TRUE) {
+				$orderID = $this->db->insert_id();
+				// create new return items
+				for ($i = 0; $i < $productCount; $i++) {
+					$transactionID = trim($this->input->post('productTIDInput_' . $i));
+					$qty = trim($this->input->post('productQtyInput_' . $i));
+					$remarks = trim($this->input->post('productRemarksInput_' . $i));
+
+					$t_details = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
+
 					$data = array(
-						'Code' => $code,
-						'InStock' => $NewStock,
-						'Released' => $NewRelease,
+						'returnno' => $returnNo,
+						'stockid' => $t_details['stockID'],
+						'transactionid' => $t_details['TransactionID'],
+						'prd_sku' => $t_details['Code'],
+						'quantity' => $qty,
+						'quantity_total' => $t_details['Amount'],
+						'remarks' => $remarks,
+						'userid' => $userID,
+						'date_added' => date('Y-m-d H:i:s'),
+						'status' => 'returned',
+						'Freebie' => $t_details['Freebie'],
 					);
-					$this->Model_Updates->UpdateStock_product($data);
+					$InsertReturnData = $this->Model_Inserts->InsertReturnData($data);
 				}
-				
-				$data = array(
-					'TransactionID' => $TransactionID,
-				);
-				$removeOT = $this->Model_Updates->RemoveOrderTransaction($data);
-				if ($removeOT == TRUE) {
-					// if transactions is less than 1, change order status to rejected
-					$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($CheckIFApproved['OrderNo']);
-					if ($orderTransactions->num_rows() < 1) {
-						$data = array(
-							'Status' => '0',
-						);
-						$this->Model_Updates->UpdateSalesOrderByOrderNo($CheckIFApproved['OrderNo'], $data);
-					}
-					// LOGBOOK
-					$orderDetails = $this->Model_Selects->GetSalesOrderByNo($CheckIFApproved['OrderNo'])->row_array();
-					$this->Model_Logbook->LogbookEntry('removed transaction from sales order.', 'removed transaction ' . $TransactionID . ' from sales order ' . $orderDetails['OrderNo'] . ' [SalesOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
-				}
+				$this->session->set_flashdata('highlight-id', $returnNo);
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('created a new sales order.', 'added return ' . $returnNo . ' [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
+				redirect('admin/returns');
+			}
+			else
+			{
+				redirect('admin/returns');
 			}
 		}
-		redirect('admin/view_sales_order?orderNo=' . $orderNo);
+		else
+		{
+			redirect('admin/returns');
+		}
+	}
+	public function FORM_addNewReturnProduct() {
+		if (isset($_SESSION['UserID'])) {
+			$userID = $_SESSION['UserID'];
+
+			$returnNo = $this->input->post('returnNo');
+			$transactionID = $this->input->post('transactionID');
+
+			$transaction = $this->Model_Selects->GetReturnProductByTID($transactionID);
+			if ($transaction->num_rows() > 0) {
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Transaction is already added!
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect($_SERVER['HTTP_REFERER']);
+			} else {
+				$t_details = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
+				$data = array(
+					'returnno' => $returnNo,
+					'stockid' => $t_details['stockID'],
+					'transactionid' => $t_details['TransactionID'],
+					'prd_sku' => $t_details['Code'],
+					'quantity' => 0,
+					'quantity_total' => $t_details['Amount'],
+					'remarks' => '',
+					'userid' => $userID,
+					'date_added' => date('Y-m-d H:i:s'),
+					'status' => 'returned',
+					'Freebie' => $t_details['Freebie'],
+				);
+				$InsertReturnData = $this->Model_Inserts->InsertReturnData($data);
+			}
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('added product to returns.', 'added transaction ' . $transactionID . ' to return [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			redirect('admin/returns');
+		}
+	}
+	public function FORM_updateReturnProduct() {
+		if (isset($_SESSION['UserID'])) {
+			$userID = $_SESSION['UserID'];
+
+			$returnNo = $this->input->post('returnNo');
+			$transactionID = $this->input->post('transactionID');
+			$remarks = $this->input->post('remarks');
+			$qty = $this->input->post('qty');
+
+			if ($qty == NULL || $qty < 1) {
+				$qty = 0;
+			}
+			$data = array(
+				'qty' => $qty,
+				'remarks' => $remarks,
+				'transactionID' => $transactionID,
+			);
+			$UpdateReturnProduct = $this->Model_Updates->UpdateReturnProduct($data);
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('updated return product.', 'udpated return product ' . $transactionID . ' to return [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+	}
+	public function FORM_updateReturnProductToInventory() {
+		if (isset($_SESSION['UserID'])) {
+			$userID = $_SESSION['UserID'];
+
+			$returnNo = $this->input->post('returnNo');
+			$transactionID = $this->input->post('transactionID');
+			$qtyReturned = $this->input->post('qty');
+
+			if ($qtyReturned == NULL || $qtyReturned < 1) {
+				$qtyReturned = 0;
+			}
+			$returnProduct = $this->Model_Selects->GetReturnProductByTID($transactionID);
+			if ($returnProduct->num_rows() < 1) {
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Something went wrong, please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect($_SERVER['HTTP_REFERER']);
+			} elseif ($qtyReturned == NULL || $qtyReturned < 1) {
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Invalid Qty.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect($_SERVER['HTTP_REFERER']);
+			} else {
+				$returnProductDetails = $returnProduct->row_array();
+				$data = array(
+					'newQty' => $returnProductDetails['quantity'] - $qtyReturned,
+					'newTotal' => $returnProductDetails['quantity_total'] - $qtyReturned,
+					'returned' => $returnProductDetails['returned'] + $qtyReturned,
+					'transactionID' => $transactionID,
+				);
+				$ReturnProductInventory = $this->Model_Updates->ReturnProductInventory($data);
+				if ($ReturnProductInventory) {
+					$p = $this->Model_Selects->CheckStocksByCode($returnProductDetails['prd_sku']);
+					$t = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
+					$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+
+					$dataProduct = array(
+						'Code' => $t['Code'],
+						'InStock' => $p['InStock'] + $qtyReturned,
+						'Released' => $p['Released'] - $qtyReturned,
+					);
+					$dataStocks = array(
+						'Current_Stocks' => $s['Current_Stocks'] + $qtyReturned,
+						'Released_Stocks' =>  $s['Released_Stocks'] - $qtyReturned,
+					);
+
+					$this->Model_Updates->UpdateStock_product($dataProduct);
+					// $this->Model_Updates->UpdateStocksCount($p['Code'], $p['InStock'] + $qtyReturned);
+					$this->Model_Updates->UpdateProduct_stock($returnProductDetails['stockid'], $dataStocks);
+				}
+			}
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('updated return product.', 'udpated return product ' . $transactionID . ' to return [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
+			redirect($_SERVER['HTTP_REFERER']);
+		}
+		else
+		{
+			redirect($_SERVER['HTTP_REFERER']);
+		}
 	}
 
 	// VENDOR / CLIENT
@@ -2660,6 +2840,42 @@ class Admin extends MY_Controller {
 		}
 		redirect($_SERVER['HTTP_REFERER']);
 	}
+	public function FORM_addPOManualTransaction()
+	{
+		$purchaseOrderNo = $this->input->post('purchase-order-no');
+		$itemNo = $this->input->post('item-no');
+		$description = $this->input->post('description');
+		$qty = $this->input->post('qty');
+		$unitCost = $this->input->post('unit-cost');
+
+		// Insert
+		$data = array(
+			'OrderNo' => $purchaseOrderNo,
+			'ItemNo' => $itemNo,
+			'Description' => $description,
+			'Qty' => $qty,
+			'UnitCost' => $unitCost,
+			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+		);
+		$insertManualTransaction = $this->Model_Inserts->InsertManualTransaction($data);
+		if ($insertManualTransaction == TRUE) {
+			$mTransactionID = $this->db->insert_id();
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('adde a new manual transaction.', 'adde a new manual transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
+			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+		}
+		else
+		{
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+		}
+	}
 	public function FORM_addPOBill()
 	{
 		$purchaseOrderNo = $this->input->post('purchase-order-no');
@@ -2681,7 +2897,7 @@ class Admin extends MY_Controller {
 			$billID = $this->db->insert_id();
 
 			// LOGBOOK
-			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
+			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/bills'));
 			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 		}
 		else
@@ -2717,7 +2933,7 @@ class Admin extends MY_Controller {
 			$invoiceID = $this->db->insert_id();
 
 			// LOGBOOK
-			$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '].', base_url('admin/invoices'));
+			$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '] for sales order [OrderNo: ' . $salesOrderNo . '].', base_url('admin/invoices'));
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 		}
 		else

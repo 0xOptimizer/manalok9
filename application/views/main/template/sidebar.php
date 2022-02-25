@@ -94,6 +94,14 @@
 						</a>
 					</li>
 				<?php endif; ?>
+				<?php //if ($this->session->userdata('UserRestrictions')['manual_transactions_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-manual-transactions">
+						<a href="<?=base_url().'admin/manual_transactions'?>" class='sidebar-link'>
+							<i class="bi bi-receipt"></i>
+							<span>Manual Transactions</span>
+						</a>
+					</li>
+				<?php //endif; ?>
 				
 				<?php if ($this->session->userdata('UserRestrictions')['clients_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-clients pt-3">

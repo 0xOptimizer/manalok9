@@ -394,7 +394,7 @@ $(document).ready(function() {
 		'columnDefs': [ {
 				'targets': 0,
 				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('stockID text-center').html($('<span>').addClass('db-identifier').css({ 'font-style': 'italic', 'font-size': '12px' }).html(cellData));
+					$(td).addClass('stockID text-center').html($('<span>').addClass('db-identifier').css({ 'font-style': 'italic', 'font-size': '12px' }).html(cellData)).data('stockID',cellData);
 				}
 			}, {
 				'targets': 1,
@@ -630,11 +630,14 @@ $(document).ready(function() {
 			$(productClass).attr('data-stockid', productstockID);
 			$(productClass + ' .select-product-btn').html($(this).data('sku'));
 			$(productClass + ' .inpSKU').val($(this).data('sku'));
-			$(productClass + ' .inpStockID').val($(this).children('.stockID').html());
+			$(productClass + ' .inpStockID').val($(this).children('.stockID').data('stockID'));
 			$(productClass + ' .productAdded').html($(this).children('.stockDateAdded').html());
 			$(productClass + ' .productPrice').children('span').html($(this).children('.stockPrice').html()).data('price', $(this).children('.stockPrice').data('retailPrice'));
 
-			$(productClass + ' .inpQty').attr('max', $(this).children('.stockCurrentStocks').html());
+			$(productClass + ' .inpQty').attr({
+				'max': $(this).children('.stockCurrentStocks').html(),
+				'min': 1
+			}).val(1);
 
 			$('#SelectProductStockModal').modal('toggle');
 			tableStocks.clear();

@@ -63,6 +63,11 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('purchase_orders', $data);
 		return $result;
 	}
+	public function InsertManualTransaction($data)
+	{
+		$result = $this->db->insert('manual_transactions', $data);
+		return $result;
+	}
 	public function InsertBill($data)
 	{
 		$result = $this->db->insert('bills', $data);
@@ -79,6 +84,18 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('invoices', $data);
 		return $result;
 	}
+	// RETURNS
+	public function InsertReturn($data)
+	{
+		$result = $this->db->insert('returns', $data);
+		return $result;
+	}
+	public function InsertReturnData($data)
+	{
+		$result = $this->db->insert('product_returned', $data);
+		return $result;
+	}
+	// ACCOUNTS / JOURNALS
 	public function InsertAccount($data)
 	{
 		$result = $this->db->insert('accounts', $data);

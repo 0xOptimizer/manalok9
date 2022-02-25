@@ -52,10 +52,14 @@
 							<label class="input-label" for="upd-category">CATEGORY</label>
 						</div>
 					</div>
-					<div class="form-row d-flex flex-wrap">
-						<div class="form-group col-12 col-sm-12 col-md-11 m-auto mb-3">
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
 							<input id="upd-territory-manager" type="text" class="form-control standard-input-pad m_territorymanager" name="upd-territory-manager" placeholder="Jane Doe" required>
 							<label class="input-label" for="upd-territory-manager">TERRITORY MANAGER</label>
+						</div>
+						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
+							<input id="upd-email" type="email" class="form-control standard-input-pad m_email" name="upd-email" placeholder="john@email.com" required>
+							<label class="input-label" for="upd-email">EMAIL</label>
 						</div>
 					</div>
 				</div>

@@ -18,6 +18,8 @@ $getPOBills = $this->Model_Selects->GetBillsByPONo($orderNo);
 
 $getAccounts = $this->Model_Selects->GetAccountSelection();
 
+$getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo($orderNo);
+
 ?>
 <style>
 	.rotate-text {
@@ -35,6 +37,9 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 		color: #FFFFFF;
 	}
 	@media print {
+		.printExclude {
+			display: none;
+		}
 		.modal-backdrop {
 			opacity: 0 !important;
 		}
@@ -68,7 +73,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12">
-						<h3>Purchase Order ID #<?=$purchaseOrder['ID']?>
+						<h3><i class="bi bi-receipt"></i> Purchase Order ID #<?=$purchaseOrder['ID']?>
 							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 							<?php elseif ($purchaseOrder['Status'] == '2'): ?>
@@ -125,6 +130,62 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 								</table>
 							</div>
 						</div>
+						<?php if ($getManualTransactionsByPONo->num_rows() > 0): ?>
+							<div class="row mt-4">
+								<div class="col-sm-12">
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<span style="font-size: 1.5em; color: #ebebeb;">
+													<b><i class="bi bi-pencil"></i> MANUAL TRANSACTIONS </b>
+												</span>
+												<div class="col-12">
+													<button type="button" class="newmanualtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW MANUAL TRANSACTION</button>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12 table-responsive">
+													<table id="transactionsTable" class="standard-table table">
+														<thead style="font-size: 12px;">
+															<th class="text-center">ID</th>
+															<th class="text-center">ITEM NO</th>
+															<th class="text-center">DESCRIPTION</th>
+															<th class="text-center">AMOUNT</th>
+															<th class="text-center">PRICE</th>
+															<th class="text-center">TOTAL</th>
+														</thead>
+														<tbody>
+															<?php foreach ($getManualTransactionsByPONo->result_array() as $row): ?>
+																<tr>
+																	<td class="text-center">
+																		<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+																	</td>
+																	<td class="text-center">
+																		<?=$row['ItemNo']?>
+																	</td>
+																	<td class="text-center">
+																		<?=$row['Description']?>
+																	</td>
+																	<td class="text-center">
+																		<?=$row['Qty']?>
+																	</td>
+																	<td class="text-center">
+																		<?=number_format($row['UnitCost'], 2)?>
+																	</td>
+																	<td class="text-center">
+																		<?=number_format($row['Qty'] * $row['UnitCost'], 2)?>
+																	</td>
+																</tr>
+															<?php endforeach; ?>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						<?php endif; ?>
 					</div>
 					<div class="col-12 col-sm-5 col-md-3">
 						<div class="row">
@@ -144,7 +205,6 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 									</a>
 								)</label>
 							</div>
-							<?php $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($purchaseOrder['OrderNo']); ?>
 							<div class="col-12 mb-2">
 								<div class="card">
 									<div class="text-center p-2">
@@ -156,7 +216,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 										<div class="row">
 											<span style="font-size: 1.5em; color: #ebebeb;">
 												<b>
-													<?=$orderTransactions->num_rows()?>
+													<?=$getTransactionsByOrderNo->num_rows()?>
 												</b>
 											</span>
 										</div>
@@ -170,8 +230,15 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 												<b>
 													<?php
 													$transactionsPriceTotal = 0;
-													foreach ($orderTransactions->result_array() as $transaction) {
-														$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+													if ($getTransactionsByOrderNo->num_rows() > 0) {
+														foreach ($getTransactionsByOrderNo->result_array() as $transaction) {
+															$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
+														}
+													}
+													if ($getTransactionsByOrderNo->num_rows() > 0) {
+														foreach ($getManualTransactionsByPONo->result_array() as $mtransaction) {
+															$transactionsPriceTotal += $mtransaction['Qty'] * $mtransaction['UnitCost'];
+														}
 													}
 													echo number_format($transactionsPriceTotal, 2);
 													?>
@@ -201,7 +268,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 				<div class="row">
 					<div class="col-12">
 						<h3>
-							Bills
+							<i class="bi bi-cash"></i> Bills
 						</h3>
 					</div>
 				</div>
@@ -279,6 +346,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
 <?php $this->load->view('admin/modals/add_bill', array('purchaseOrder' => $purchaseOrder)); ?>
+<?php $this->load->view('admin/modals/add_manual_transaction', array('purchaseOrderNo' => $purchaseOrder['OrderNo'])); ?>
 <?php endif; ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
@@ -286,6 +354,7 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 
 <?php $this->load->view('admin/modals/purchase_order_form.php', array(
 	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
+	'getManualTransactionsByPONo' => $getManualTransactionsByPONo,
 	'vendorDetails' => $vendorDetails
 )); ?>
 
@@ -479,6 +548,9 @@ $(document).ready(function() {
 	$('.purchasebilling-btn').on('click', function() {
 		$('#PurchaseBilling').modal('toggle');
 	});
+	$('.newmanualtransaction-btn').on('click', function() {
+		$('#PurchaseManualTransaction').modal('toggle');
+	});
 
 	$(document).on('click', '.removeot-btn', function() {
 		if (!confirm('Remove Transaction from Purchase Order?') && $(this).data('id').length > 0) {
@@ -511,6 +583,61 @@ $(document).ready(function() {
 		}
 	});
 
+	// PO FORM FUNCTIONS
+	$('.select-formtransaction-row').on('click', function() {
+		$('#PurchaseOrderFormModal').data('selectTransactions', true);
+		$('#PurchaseOrderFormModal').modal('toggle');
+
+		$('#PurchaseOrderFormModal').data('prevscroll', $('#PurchaseOrderFormModal').scrollTop());
+	});
+	$(document).on('hidden.bs.modal', '#PurchaseOrderFormModal', function (event) {
+		if ($('#PurchaseOrderFormModal').data('selectTransactions')) {
+			$('#PurchaseOrderFormTransactionsModal').modal('toggle');
+			$('#PurchaseOrderFormModal').data('selectTransactions', false);
+		}
+	});
+	$(document).on('hidden.bs.modal', '#PurchaseOrderFormTransactionsModal', function (event) {
+		$('#PurchaseOrderFormModal').modal('toggle');
+		setTimeout(function() {
+			$('#PurchaseOrderFormModal').animate({
+				scrollTop: $('#PurchaseOrderFormModal').data('prevscroll')
+			}, 50);
+		}, 50);
+	});
+	function moneyFormat(value) {
+		return value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+	}
+	function updFormTotalPrice() {
+		let totalAmount = 0;
+		$.each($('.poFormTransaction .amount'), function(key, obj) {
+			totalAmount += parseFloat($(this).data('amount'));
+		});
+		$('#totalAmount').html(moneyFormat(totalAmount));
+	}
+	
+	$(document).on('click', '.add-formtransaction-row', function() {
+		let ftClass = 'formTransaction_' + $(this).data('type') + '_' + $(this).data('id');
+		if ($('.' + ftClass).length < 1) {
+			let tRow = $(this).clone();
+			tRow.removeClass('add-formtransaction-row').addClass('poFormTransaction ' + ftClass);
+			tRow.find('.amount').before($('<td>').addClass('text-center').append($('<input>')
+				.attr({
+					type: 'text',
+					class: 'inputManual formInputUnit'
+				}))
+			);
+			tRow.find('.totalAmountUnit').addClass('amount').removeClass('totalAmountUnit');
+
+			$('.select-formtransaction-row').before(tRow);
+
+			$(this).addClass('bg-secondary');
+		} else {
+			$('.' + ftClass).remove();
+			$(this).removeClass('bg-secondary');
+		}
+		updFormTotalPrice();
+	});
+
 
 	// FORM GENERATION
 	$('.generateform-btn').on('click', function() {
@@ -531,25 +658,41 @@ $(document).ready(function() {
 		$('.inputManual').siblings('span').remove();
 	});
 	$('#generate_excel').click(function() {
-		$('#xls_deliverto').val($('#deliverto').val());
-		$('#xls_page').val($('#page').val());
-		$('#xls_attn').val($('#attn').val());
-		$('#xls_supplierinvoiceno').val($('#supplierinvoiceno').val());
-		$('#xls_terms').val($('#terms').val());
-		$('#xls_memo').val($('#memo').val());
-		$('#xls_freight').val($('#freight').val());
-		$('#xls_salestax').val($('#salestax').val());
-		$('#xls_lessdeposit').val($('#lessdeposit').val());
-		$('#xls_balancedue').val($('#balancedue').val());
-		$('#xls_preparedby').val($('#preparedby').val());
-		$('#xls_orderedby').val($('#orderedby').val());
-		$('#xls_approvedby').val($('#approvedby').val());
-		$('#formExportTable').submit();
+		if ($('.poFormTransaction').length > 0) {
+			$('#xls_deliverto').val($('#deliverto').val());
+			$('#xls_page').val($('#page').val());
+			$('#xls_attn').val($('#attn').val());
+			$('#xls_supplierinvoiceno').val($('#supplierinvoiceno').val());
+			$('#xls_terms').val($('#terms').val());
+			$('#xls_memo').val($('#memo').val());
+			$('#xls_freight').val($('#freight').val());
+			$('#xls_salestax').val($('#salestax').val());
+			$('#xls_lessdeposit').val($('#lessdeposit').val());
+			$('#xls_balancedue').val($('#balancedue').val());
+			$('#xls_preparedby').val($('#preparedby').val());
+			$('#xls_orderedby').val($('#orderedby').val());
+			$('#xls_approvedby').val($('#approvedby').val());
+
+			// SET ROW INPUT VALUES
+			$('.excelExportInputRow').remove();
+			$.each($('.poFormTransaction'), function(key, obj) {
+				$('#formExportTable').append($('<input>')
+					.attr({
+						class: 'excelExportInputRow',
+						type: 'hidden',
+						name: $(this).data('type') + '[]'
+					}).val($(this).data('id') + '_' + $(this).find('.formInputUnit').val())
+				);
+			});
+
+			$('#formExportTable').submit();
+		} else {
+			showAlert('warning', 'No transactions selected!');
+		}
 	});
 
 
 	// ACCOUNTING
-
 	$(document).on('click', '.btn-delete-journal', function() {
 		let journal_id = $(this).parents('tr').data('id');
 		if (!confirm('Delete Journal #'+ journal_id +'? (This action cannot be undone)')) {

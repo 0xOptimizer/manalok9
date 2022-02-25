@@ -19,6 +19,10 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 
 $getAccounts = $this->Model_Selects->GetAccountSelection();
 
+
+$return = $this->Model_Selects->GetReturnBySalesNo($salesOrder['OrderNo']);
+$returnedProducts = array();
+
 ?>
 <style>
 	.rotate-text {
@@ -36,6 +40,9 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 		color: #FFFFFF;
 	}
 	@media print {
+		.printExclude {
+			display: none;
+		}
 		.modal-backdrop {
 			opacity: 0 !important;
 		}
@@ -113,6 +120,16 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 										if ($getTransactionsByOrderNo->num_rows() > 0):
 											foreach ($getTransactionsByOrderNo->result_array() as $no => $row): ?>
 												<tr>
+													<?php
+													$returnedProduct = $this->Model_Selects->GetReturnProductByTID($row['TransactionID']);
+													$totalReturnedQty = 0;
+													if ($returnedProduct->num_rows() > 0) {
+														$rProductDetails = $returnedProduct->row_array();
+														$rProductDetails['PriceUnit'] = $row['PriceUnit'];
+														array_push($returnedProducts, $rProductDetails);
+														$totalReturnedQty = $rProductDetails['quantity'] + $rProductDetails['returned'];
+													}
+													?>
 													<td class="text-center">
 														<span style="font-style: italic; font-size: 12px;"><?=$no+1?></span>
 													</td>
@@ -123,13 +140,13 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 														<?=$row['Code']?>
 													</td>
 													<td class="text-center">
-														<?=$row['Amount']?>
+														<?=($row['Amount'] - $totalReturnedQty)?>
 													</td>
 													<td class="text-center">
 														<?=number_format($row['PriceUnit'], 2)?>
 													</td>
 													<td class="text-center">
-														<?=number_format($row['Amount'] * $row['PriceUnit'], 2)?>
+														<?=number_format(($row['Amount'] - $totalReturnedQty) * $row['PriceUnit'], 2)?>
 													</td>
 													<td class="text-center">
 														<?php if ($row['Freebie'] == 1): ?>
@@ -137,7 +154,6 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 														<?php else: ?>
 															<i class="bi bi-x-circle text-danger"></i>
 														<?php endif; ?>
-														
 													</td>
 												</tr>
 										<?php endforeach;
@@ -146,6 +162,70 @@ $getAccounts = $this->Model_Selects->GetAccountSelection();
 								</table>
 							</div>
 						</div>
+						<?php if (sizeof($returnedProducts) > 0): ?>
+							<div class="row mt-4">
+								<div class="col-sm-12">
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												<span style="font-size: 1.5em; color: #ebebeb;">
+													<b> RETURNED ITEMS </b>
+												</span>
+												<a href="<?=base_url() . 'admin/view_return?returnNo='. $return->row_array()['ReturnNo']?>">
+													<i class="bi bi-eye"></i> <?=$return->row_array()['ReturnNo']?>
+												</a>
+											</div>
+											<div class="row">
+												<div class="col-sm-12 table-responsive">
+													<table id="transactionsTable" class="standard-table table">
+														<thead style="font-size: 12px;">
+															<th class="text-center">TRANSACTION ID</th>
+															<th class="text-center">PRODUCT CODE</th>
+															<th class="text-center">QTY</th>
+															<th class="text-center">RETURNED TO INVENTORY</th>
+															<th class="text-center">PRICE</th>
+															<th class="text-center">TOTAL</th>
+															<th class="text-center">FREEBIE</th>
+														</thead>
+														<tbody>
+															<?php foreach ($returnedProducts as $row): ?>
+																<tr>
+																	<td class="text-center">
+																		<?=$row['transactionid']?>
+																	</td>
+																	<td class="text-center">
+																		<?=$row['prd_sku']?>
+																	</td>
+																	<td class="text-center">
+																		<?=$row['quantity']?>
+																	</td>
+																	<td class="text-center">
+																		<?=$row['returned']?>
+																	</td>
+																	<td class="text-center">
+																		<?=number_format($row['PriceUnit'], 2)?>
+																	</td>
+																	<td class="text-center">
+																		<?=number_format(($row['quantity'] + $row['returned']) * $row['PriceUnit'], 2)?>
+																	</td>
+																	<td class="text-center">
+																		<?php if ($row['Freebie'] == 1): ?>
+																			<i class="bi bi-check-circle text-success"></i>
+																		<?php else: ?>
+																			<i class="bi bi-x-circle text-danger"></i>
+																		<?php endif; ?>
+																	</td>
+																</tr>
+															<?php endforeach; ?>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						<?php endif; ?>
 					</div>
 					<div class="col-12 col-sm-5 col-md-3">
 						<div class="row">
@@ -733,6 +813,67 @@ $(document).ready(function() {
 		}
 	});
 
+	// PO FORM FUNCTIONS
+	$('.select-formtransaction-row').on('click', function() {
+		$('#SalesOrderFormModal').data('selectTransactions', true);
+		$('#SalesOrderFormModal').modal('toggle');
+
+		$('#SalesOrderFormModal').data('prevscroll', $('#SalesOrderFormModal').scrollTop());
+	});
+	$(document).on('hidden.bs.modal', '#SalesOrderFormModal', function (event) {
+		if ($('#SalesOrderFormModal').data('selectTransactions')) {
+			$('#SalesOrderFormTransactionsModal').modal('toggle');
+			$('#SalesOrderFormModal').data('selectTransactions', false);
+		}
+	});
+	$(document).on('hidden.bs.modal', '#SalesOrderFormTransactionsModal', function (event) {
+		$('#SalesOrderFormModal').modal('toggle');
+		setTimeout(function() {
+			$('#SalesOrderFormModal').animate({
+				scrollTop: $('#SalesOrderFormModal').data('prevscroll')
+			}, 50);
+		}, 50);
+	});
+
+	function moneyFormat(value) {
+		return value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+	}
+	function updFormTotalPrice() {
+		let totalAmount = 0;
+		$.each($('.soFormTransaction .amount'), function(key, obj) {
+			totalAmount += parseFloat($(this).data('amount'));
+		});
+		$('#subTotal').html(moneyFormat(totalAmount));
+
+		let dcOutright = $('#dcOutright').data('discount');
+		$('#dcOutright').html(moneyFormat(totalAmount * (dcOutright / 100)));
+		let dcVolume = $('#dcVolume').data('discount');
+		$('#dcVolume').html(moneyFormat(totalAmount * (dcVolume / 100)));
+		let dcPBD = $('#dcPBD').data('discount');
+		$('#dcPBD').html(moneyFormat(totalAmount * (dcPBD / 100)));
+		let dcManpower = $('#dcManpower').data('discount');
+		$('#dcManpower').html(moneyFormat(totalAmount * (dcManpower / 100)));
+
+		$('#total').html(moneyFormat(totalAmount - (totalAmount * ((dcOutright + dcVolume + dcPBD + dcManpower) / 100))));
+	}
+	
+	$(document).on('click', '.add-formtransaction-row', function() {
+		let ftClass = 'formTransaction_' + $(this).data('id');
+		if ($('.' + ftClass).length < 1) {
+			let tRow = $(this).clone();
+			tRow.removeClass('add-formtransaction-row').addClass('soFormTransaction ' + ftClass);
+			tRow.find('.totalAmountUnit').addClass('amount').removeClass('totalAmountUnit');
+
+			$('.select-formtransaction-row').before(tRow);
+
+			$(this).addClass('bg-secondary');
+		} else {
+			$('.' + ftClass).remove();
+			$(this).removeClass('bg-secondary');
+		}
+		updFormTotalPrice();
+	});
+
 
 	// FORM GENERATION
 	$('.generateform-btn').on('click', function() {
@@ -753,13 +894,29 @@ $(document).ready(function() {
 		$('.inputManual').siblings('span').remove();
 	});
 	$('#generate_excel').click(function() {
-		$('#xls_preparedby').val($('#prepared_by').val());
-		$('#formExportTable').submit();
+		if ($('.soFormTransaction').length > 0) {
+			$('#xls_preparedby').val($('#prepared_by').val());
+
+			// SET ROW INPUT VALUES
+			$('.excelExportInputRow').remove();
+			$.each($('.soFormTransaction'), function(key, obj) {
+				$('#formExportTable').append($('<input>')
+					.attr({
+						class: 'excelExportInputRow',
+						type: 'hidden',
+						name: 'transactions[]'
+					}).val($(this).data('id'))
+				);
+			});
+
+			$('#formExportTable').submit();
+		} else {
+			showAlert('warning', 'No transactions selected!');
+		}
 	});
 
 
 	// ACCOUNTING
-
 	$(document).on('click', '.btn-delete-journal', function() {
 		let journal_id = $(this).parents('tr').data('id');
 		if (!confirm('Delete Journal #'+ journal_id +'? (This action cannot be undone)')) {

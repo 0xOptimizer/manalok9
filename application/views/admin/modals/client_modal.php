@@ -38,9 +38,13 @@
 						<h6>CATEGORY</h6>
 						<label class="m_category"></label>
 					</div>
-					<div class="col-12 my-3">
+					<div class="col-12 col-md-6 my-3">
 						<h6>TERRITORY MANAGER</h6>
 						<label class="m_territorymanager"></label>
+					</div>
+					<div class="col-12 col-md-6 my-3">
+						<h6>EMAIL</h6>
+						<label class="m_email"></label>
 					</div>
 				</div>
 			</div>
