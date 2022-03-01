@@ -28,13 +28,13 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-8">
-						<h3>Manual Transactions
+						<h3><i class="bi bi-pencil"></i> Manual Purchases
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-cash"></i> <?=$getManualTransactions->num_rows();?> TOTAL
 							</span>
 							<?php if ($getManualTransactions->num_rows() <= 0): ?>
 								<span class="info-banner-sm">
-									<i class="bi bi-exclamation-diamond-fill"></i> No Manual Transactions found.
+									<i class="bi bi-exclamation-diamond-fill"></i> No Manual Purchases found.
 								</span>
 							<?php endif; ?>
 						</h3>
@@ -116,7 +116,7 @@ if ($this->session->flashdata('highlight-id')) {
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
 
 <script>
-$('.sidebar-admin-manual-transactions').addClass('active');
+$('.sidebar-admin-manual-purchases').addClass('active');
 $(document).ready(function() {
 	<?php if (!isset($highlightID) && $highlightID != 'N/A'): ?>
 		$('#manualTransactionsTable').find("[data-id='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 

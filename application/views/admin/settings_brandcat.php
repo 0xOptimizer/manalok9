@@ -43,7 +43,7 @@ date_default_timezone_set('Asia/Manila');
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-12">
-						<h3>BRAND CATEGORY</h3>
+						<h3><i class="bi bi-list-ol"></i> Brand Category</h3>
 						
 					</div>
 					<div class="col-12 col-md-12 pt-4 pb-2">

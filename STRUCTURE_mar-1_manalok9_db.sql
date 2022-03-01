@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Feb 25, 2022 at 02:14 PM
+-- Generation Time: Mar 01, 2022 at 05:09 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -43,10 +43,12 @@ CREATE TABLE `accounts` (
 CREATE TABLE `bills` (
   `ID` int(11) NOT NULL,
   `BillNo` varchar(255) DEFAULT NULL,
-  `OrderNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
   `Amount` varchar(255) DEFAULT NULL,
   `ModeOfPayment` varchar(255) DEFAULT NULL,
-  `Date` varchar(50) DEFAULT NULL
+  `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -176,10 +178,12 @@ CREATE TABLE `clients` (
 CREATE TABLE `invoices` (
   `ID` int(11) NOT NULL,
   `InvoiceNo` varchar(255) DEFAULT NULL,
-  `OrderNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
   `Amount` varchar(255) DEFAULT NULL,
   `ModeOfPayment` varchar(255) DEFAULT NULL,
-  `Date` varchar(50) DEFAULT NULL
+  `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -432,7 +436,7 @@ CREATE TABLE `sales_orders` (
   `discountVolume` int(11) DEFAULT 0,
   `discountPBD` int(11) DEFAULT 0,
   `discountManpower` int(11) DEFAULT 0,
-  `Status` int(11) DEFAULT NULL COMMENT '0 = rejected; 1 = for approval; 2 = approved'
+  `Status` int(11) DEFAULT NULL COMMENT '0=rejected;1=for approval;2=approved/for invoicing;3=for delivery;4=delivered;5=fulfilled/received;'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -578,7 +582,8 @@ CREATE TABLE `vendors` (
   `TIN` varchar(255) DEFAULT NULL,
   `Address` varchar(255) DEFAULT NULL,
   `ContactNum` varchar(255) DEFAULT NULL,
-  `ProductServiceKind` varchar(255) DEFAULT NULL
+  `ProductServiceKind` varchar(255) DEFAULT NULL,
+  `Email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

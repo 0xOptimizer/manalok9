@@ -76,7 +76,7 @@ $returnedProducts = array();
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<h3>Sales Order ID #<?=$salesOrder['ID']?>
+						<h3><i class="bi bi-receipt"></i> Sales Order ID #<?=$salesOrder['ID']?>
 							<?php if ($salesOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 							<?php elseif ($salesOrder['Status'] == '2'): ?>
@@ -231,14 +231,16 @@ $returnedProducts = array();
 						<div class="row">
 							<div class="col-12 mb-1">
 								<h6>SALES ORDER #</h6>
-								<label><?=$salesOrder['OrderNo']?></label>
+								<label class="salesOrderNo"><?=$salesOrder['OrderNo']?></label>
 							</div>
 							<div class="col-12 mb-1">
 								<h6>SALES ORDER DATE</h6>
 								<label><?=$salesOrder['Date']?></label>
 							</div>
 							<div class="col-12 mb-1">
-								<h6>BILL TO</h6>
+								<h6>BILL TO
+									<button type="button" class="emailbtclient-btn btn btn-sm-primary" data-email="<?=$clientBTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+								</h6>
 								<label><?=$clientBTDetails['Name']?> (
 									<a href="<?=base_url() . 'admin/clients#'. $clientBTDetails["ClientNo"]?>">
 										<i class="bi bi-eye"></i> <?=$clientBTDetails['ClientNo']?>
@@ -246,7 +248,9 @@ $returnedProducts = array();
 								)</label>
 							</div>
 							<div class="col-12 mb-1">
-								<h6>SHIP TO</h6>
+								<h6>SHIP TO
+									<button type="button" class="emailstclient-btn btn btn-sm-primary" data-email="<?=$clientSTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+								</h6>
 								<label><?=$clientSTDetails['Name']?> (
 									<a href="<?=base_url() . 'admin/clients#'. $clientSTDetails["ClientNo"]?>">
 										<i class="bi bi-eye"></i> <?=$clientSTDetails['ClientNo']?>
@@ -504,7 +508,7 @@ $returnedProducts = array();
 	</div>
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation'] == 1): ?>
-<?php $this->load->view('admin/modals/add_invoice', array('salesOrder' => $salesOrder)); ?>
+<?php $this->load->view('admin/modals/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
 <?php endif; ?>
 <?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery'] == 1): ?>
 <div class="modal fade" id="DeliveryScheduling" tabindex="-1" role="dialog" aria-hidden="true">
@@ -720,6 +724,7 @@ $returnedProducts = array();
 	<input id="xls_preparedby" type="hidden" name="prepared_by">
 </form>
 
+<?php $this->load->view('admin/modals/add_mail.php'); ?>
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -1076,6 +1081,20 @@ $(document).ready(function() {
 			showAlert('warning', 'Total must be more than 0.');
 			e.preventDefault();
 		}
+	});
+
+	// EMAIL
+	$(document).on('click', '.emailbtclient-btn, .emailstclient-btn', function() {
+		$('.send_to').val($(this).data('email'));
+		$('.mail_subject').val(
+			'Sales Order # ' + $('.salesOrderNo').html()
+		);
+		// $('.mail_message').val($(this).data('email'));
+		// $('.mail_attachment').val($(this).data('email'));
+		$('#add_mailtosend').modal('toggle');
+	});
+	$('#submit_formsend').on('click', function() {
+		$('#form_emailsend').submit();
 	});
 });
 </script>

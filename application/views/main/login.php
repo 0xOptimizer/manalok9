@@ -13,20 +13,15 @@ $globalHeader;
 			<div id="auth-left">
 				<h1 class="text-center mb-4"><img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>"></h1>
 				<?=$this->session->flashdata('prompt');?>
-				<div class="row mb-1">
-					<span class="text-center success-banner">
-						<i class="bi bi-exclamation-diamond-fill"></i> [DEMO] Email: admin | Password: admin
-					</span>
-				</div>
 				<form action="<?php echo base_url() . 'FORM_loginValidation';?>" method="POST" enctype="multipart/form-data">
 					<div class="form-group position-relative has-icon-left mt-2 mb-4">
-						<input type="text" class="form-control form-control-xl" name="email" placeholder="Email" value="admin">
+						<input type="text" class="form-control form-control-xl" name="email" placeholder="Email" value="test_admin@gmail.com">
 						<div class="form-control-icon">
 							<i class="bi bi-envelope" style="font-size: 18px;"></i>
 						</div>
 					</div>
 					<div class="form-group position-relative has-icon-left">
-						<input type="password" class="form-control form-control-xl" name="password" placeholder="Password" value="admin">
+						<input type="password" class="form-control form-control-xl" name="password" placeholder="Password" value="1234">
 						<div class="form-control-icon">
 							<i class="bi bi-shield-lock" style="font-size: 18px;"></i>
 						</div>

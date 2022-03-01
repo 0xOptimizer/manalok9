@@ -79,6 +79,10 @@
 									<label class="input-label">TERRITORY MANAGER</label>
 									<input type="text" class="form-control viewonly billTerritory newBillInput shipToBillInput" name="bill-territory-manager" placeholder="Jane Doe" readonly>
 								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">EMAIL</label>
+									<input type="email" class="form-control viewonly billEmail newBillInput shipToBillInput" name="bill-email" placeholder="john@email.com" readonly>
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-12 col-md-6">
@@ -132,6 +136,10 @@
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">TERRITORY MANAGER</label>
 									<input type="text" class="form-control viewonly shipTerritory newShipInput" name="ship-territory-manager" placeholder="Jane Doe" readonly>
+								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">EMAIL</label>
+									<input type="email" class="form-control viewonly shipEmail newShipInput" name="ship-email" placeholder="john@email.com" readonly>
 								</div>
 							</div>
 						</div>

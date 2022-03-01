@@ -94,7 +94,7 @@ class Mail_Controller extends CI_Controller {
 			// $this->email->set_header('Content-type', 'text/html');
 
 
-			$this->email->from('devt5599@gmail.com');
+			$this->email->from('MANALOK9');
 			$this->email->to($send_to);
 			$this->email->subject($mail_subject);
 
@@ -134,7 +134,7 @@ class Mail_Controller extends CI_Controller {
 					else
 					{
 						$prompt_txt =
-						'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Error!</strong> Sending error. Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -145,7 +145,7 @@ class Mail_Controller extends CI_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Error!</strong> There is a problem uploading the file. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -177,7 +177,7 @@ class Mail_Controller extends CI_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Error!</strong> Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';

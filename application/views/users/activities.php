@@ -48,7 +48,7 @@ $getUserLogs = $this->Model_Selects->GetUserLogs($this->session->userdata('UserI
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<h3>My Activities
+						<h3><i class="bi bi-person-badge-fill"></i> My Activities
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-person-badge-fill"></i> <?=$getUserLogs->num_rows();?> TOTAL
 							</span>

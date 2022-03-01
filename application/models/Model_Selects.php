@@ -121,6 +121,17 @@ class Model_Selects extends CI_Model {
 		return $result->row_array();
 	}
 
+	public function product_stocks_between_months($from,$to)
+	{
+		$this->db->select('*, SUM(Current_Stocks) in_stock, SUM(Released_Stocks) released');
+		if ($from != NULL && $to != NULL) {
+			$this->db->where('DATE(Date_Added) BETWEEN ("'. $from .'") AND ("'. $to .'")');
+		}
+		$this->db->group_by('Product_SKU');
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
+
 	public function GetUserLogs($userID)
 	{
 		$this->db->select('*');
@@ -249,6 +260,7 @@ class Model_Selects extends CI_Model {
 	public function GetInvoices()
 	{
 		$this->db->select('*');
+		$this->db->where('Status', '1');
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('invoices');  
 		return $result;
@@ -257,6 +269,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('Status', '1');
 		$result = $this->db->get('invoices');  
 		return $result;
 	}
@@ -264,6 +277,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select_sum('Amount');
 		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('Status', '1');
 		$result = $this->db->get('invoices');  
 		return $result;
 	}
@@ -350,6 +364,7 @@ class Model_Selects extends CI_Model {
 	public function GetBills()
 	{
 		$this->db->select('*');
+		$this->db->where('Status', '1');
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('bills');  
 		return $result;
@@ -358,6 +373,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('Status', '1');
 		$result = $this->db->get('bills');  
 		return $result;
 	}
@@ -365,6 +381,7 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select_sum('Amount');
 		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('Status', '1');
 		$result = $this->db->get('bills');  
 		return $result;
 	}

@@ -191,14 +191,16 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 						<div class="row">
 							<div class="col-12">
 								<h6>PURCHASE ORDER #</h6>
-								<label><?=$purchaseOrder['OrderNo']?></label>
+								<label class="purchaseOrderNo"><?=$purchaseOrder['OrderNo']?></label>
 							</div>
 							<div class="col-12">
 								<h6>DATE CREATION</h6>
 								<label><?=$purchaseOrder['DateCreation']?></label>
 							</div>
 							<div class="col-12 mb-3">
-								<h6>PURCHASED FROM</h6>
+								<h6>PURCHASED FROM
+									<button type="button" class="emailvendor-btn btn btn-sm-primary" data-email="<?=$vendorDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+								</h6>
 								<label><?=$vendorDetails['Name']?> (
 									<a href="<?=base_url() . 'admin/vendors#'. $purchaseOrder["VendorNo"]?>">
 										<i class="bi bi-eye"></i> <?=$purchaseOrder['VendorNo']?>
@@ -345,7 +347,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 	</div>
 </div>
 <?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
-<?php $this->load->view('admin/modals/add_bill', array('purchaseOrder' => $purchaseOrder)); ?>
+<?php $this->load->view('admin/modals/add_bill_po', array('purchaseOrder' => $purchaseOrder)); ?>
 <?php $this->load->view('admin/modals/add_manual_transaction', array('purchaseOrderNo' => $purchaseOrder['OrderNo'])); ?>
 <?php endif; ?>
 <div class="prompts">
@@ -500,6 +502,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 	<input id="xls_approvedby" type="hidden" name="approvedby">
 </form>
 
+<?php $this->load->view('admin/modals/add_mail.php'); ?>
 <?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -849,6 +852,20 @@ $(document).ready(function() {
 			showAlert('warning', 'Total must be more than 0.');
 			e.preventDefault();
 		}
+	});
+
+	// EMAIL
+	$(document).on('click', '.emailvendor-btn', function() {
+		$('.send_to').val($(this).data('email'));
+		$('.mail_subject').val(
+			'Purchase Order # ' + $('.purchaseOrderNo').html()
+		);
+		// $('.mail_message').val($(this).data('email'));
+		// $('.mail_attachment').val($(this).data('email'));
+		$('#add_mailtosend').modal('toggle');
+	});
+	$('#submit_formsend').on('click', function() {
+		$('#form_emailsend').submit();
 	});
 });
 </script>

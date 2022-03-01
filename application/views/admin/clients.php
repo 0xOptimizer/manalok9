@@ -28,7 +28,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<h3>Clients
+						<h3><i class="bi bi-people-fill"></i> Clients
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-people-fill"></i> <?=$getClients->num_rows();?> TOTAL
 							</span>
@@ -61,7 +61,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<th class="text-center">ID</th>
 							<th class="text-center">CLIENT #</th>
 							<th class="text-center">NAME</th>
-							<th class="text-center">TIN</th>
+							<th class="text-center">EMAIL</th>
 							<th class="text-center">CONTACT #</th>
 							<th class="text-center">CATEGORY</th>
 							<th class="text-center">TERRITORY MANAGER</th>
@@ -81,7 +81,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['Name']?>
 										</td>
 										<td class="text-center">
-											<?=$row['TIN']?>
+											<?=($row['Email'] ? $row['Email'] : '---')?>
 										</td>
 										<td class="text-center">
 											<?=$row['ContactNum']?>

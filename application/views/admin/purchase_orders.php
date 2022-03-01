@@ -70,7 +70,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12">
-						<h3>Purchase Orders
+						<h3><i class="bi bi-receipt"></i> Purchase Orders
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-receipt"></i> <?=$getAllPurchaseOrders->num_rows();?> TOTAL
 							</span>
@@ -553,6 +553,7 @@ $(document).ready(function() {
 					$('.purchaseAddress').val(response.Address);
 					$('.purchaseContactNum').val(response.ContactNum);
 					$('.purchaseKind').val(response.ProductServiceKind);
+					$('.purchaseEmail').val(response.Email);
 
 					$('#PurchaseFromNo').val(response.VendorNo); // change vendor no input
 
@@ -572,6 +573,7 @@ $(document).ready(function() {
 		$('.purchaseAddress').val('');
 		$('.purchaseContactNum').val('');
 		$('.purchaseKind').val('');
+		$('.purchaseEmail').val('');
 		// change no value
 		$('.purchaseNo').val($('.purchaseNo').data('newvno'));
 		$('#PurchaseFromNo').val('newVendor');
@@ -594,6 +596,7 @@ $(document).ready(function() {
 			$('.purchaseAddress').val('');
 			$('.purchaseContactNum').val('');
 			$('.purchaseKind').val('');
+			$('.purchaseEmail').val('');
 			
 			$('.purchaseNo').val('');
 			$('#PurchaseFromNo').val('');

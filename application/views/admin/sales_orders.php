@@ -70,7 +70,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12">
-						<h3>Sales Orders
+						<h3><i class="bi bi-receipt"></i> Sales Orders
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-receipt"></i> <?=$getAllSalesOrders->num_rows();?> TOTAL
 							</span>
@@ -635,9 +635,8 @@ $(document).ready(function() {
 			$(productClass + ' .productPrice').children('span').html($(this).children('.stockPrice').html()).data('price', $(this).children('.stockPrice').data('retailPrice'));
 
 			$(productClass + ' .inpQty').attr({
-				'max': $(this).children('.stockCurrentStocks').html(),
-				'min': 1
-			}).val(1);
+				'max': $(this).children('.stockCurrentStocks').html()
+			}).val(0);
 
 			$('#SelectProductStockModal').modal('toggle');
 			tableStocks.clear();
@@ -760,6 +759,7 @@ $(document).ready(function() {
 					$('.billContact').val(response.ContactNum);
 					$('.billTIN').val(response.TIN);
 					$('.billTerritory').val(response.TerritoryManager);
+					$('.billEmail').val(response.Email);
 
 					$('.billCategory option[value=' + response.Category + ']').prop('selected', true);
 					$('.billCategory').change();
@@ -787,6 +787,7 @@ $(document).ready(function() {
 		$('.billContact').val('');
 		$('.billTIN').val('');
 		$('.billTerritory').val('');
+		$('.billEmail').val('');
 		$('.billCategory option[value=0]').prop('selected', true);
 		$('.billCategory').change();
 		// change no value
@@ -816,6 +817,7 @@ $(document).ready(function() {
 			$('.billContact').val('');
 			$('.billTIN').val('');
 			$('.billTerritory').val('');
+			$('.billEmail').val('');
 			$('.billCategory option[value=0]').prop('selected', true);
 			$('.billCategory').change();
 			// change no value
@@ -842,6 +844,7 @@ $(document).ready(function() {
 			$('.shipContact').val('');
 			$('.shipTIN').val('');
 			$('.shipTerritory').val('');
+			$('.shipEmail').val('');
 			$('.shipCategory option[value=0]').prop('selected', true);
 			// change no value
 			$('.shipNo').val('');
@@ -925,6 +928,7 @@ $(document).ready(function() {
 					$('.shipContact').val(response.ContactNum);
 					$('.shipTIN').val(response.TIN);
 					$('.shipTerritory').val(response.TerritoryManager);
+					$('.shipEmail').val(response.Email);
 
 					$('.shipCategory option[value=' + response.Category + ']').prop('selected', true);
 
@@ -951,6 +955,7 @@ $(document).ready(function() {
 		$('.shipContact').val('');
 		$('.shipTIN').val('');
 		$('.shipTerritory').val('');
+		$('.shipEmail').val('');
 		$('.shipCategory option[value=0]').prop('selected', true);
 		// change no value
 		$('.shipNo').val($('.shipNo').data('newcno'));
@@ -977,6 +982,7 @@ $(document).ready(function() {
 			$('.shipContact').val('');
 			$('.shipTIN').val('');
 			$('.shipTerritory').val('');
+			$('.shipEmail').val('');
 			$('.shipCategory option[value=0]').prop('selected', true);
 			// change no value
 			$('.shipNo').val('');
@@ -1042,6 +1048,7 @@ $(document).ready(function() {
 			$('.shipContact').val($('.billContact').val());
 			$('.shipTIN').val($('.billTIN').val());
 			$('.shipTerritory').val($('.billTerritory').val());
+			$('.shipEmail').val($('.billEmail').val());
 
 			$('.shipCategory option[value=' + $('.billCategory').val() + ']').prop('selected', true);
 			hideShipNameDropdown();

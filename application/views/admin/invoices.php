@@ -28,7 +28,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-8">
-						<h3>Invoices
+						<h3><i class="bi bi-cash"></i> Invoices
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-cash"></i> <?=$getInvoices->num_rows();?> TOTAL
 							</span>
@@ -39,7 +39,10 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php endif; ?>
 						</h3>
 					</div>
-					<div class="col-sm-12 col-md-4 mr-auto pt-4 pb-2" style="margin-top: -15px;">
+					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<button type="button" class="newinvoice-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-cash"></i> NEW INVOICE</button>
+					</div>
+					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
@@ -54,55 +57,53 @@ if ($this->session->flashdata('highlight-id')) {
 					<table id="invoicesTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th class="text-center">ID</th>
-							<th class="text-center">SO #</th>
-							<th class="text-center">ORDER DATE</th>
-							<th class="text-center">INVOICE DATE</th>
-							<th class="text-center">CLIENT NAME</th>
-							<th class="text-center">AMOUNT PAID</th>
-							<th class="text-center">AMOUNT DUE</th>
+							<th class="text-center">INVOICE NO</th>
+							<th class="text-center">DESCRIPTION</th>
+							<th class="text-center">DATE</th>
+							<th class="text-center">AMOUNT</th>
 							<th class="text-center">MODE OF PAYMENT</th>
+							<th class="text-center">ORDER NO</th>
+							<th class="text-center"></th>
 						</thead>
 						<tbody>
 							<?php if ($getInvoices->num_rows() > 0):
 								foreach ($getInvoices->result_array() as $row): ?>
-									<tr data-urlredirect="<?=base_url() . 'admin/view_sales_order?orderNo=' . $row['OrderNo'];?>">
+									<tr>
 										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
 										<td class="text-center">
-											<?=$row['OrderNo']?>
+											<?=$row['InvoiceNo']?>
 										</td>
-										<?php
-										$so_details = $this->Model_Selects->GetSalesOrderByNo($row['OrderNo'])->row_array();
-										$client_details = $this->Model_Selects->GetClientByNo($so_details['BillToClientNo'])->row_array();
-										$total_invoice_amount = $this->Model_Selects->GetTotalInvoicesBySONo($row['OrderNo'])->row_array()['Amount'];
-										?>
 										<td class="text-center">
-											<?=$so_details['Date']?>
+											<?php if ($row['Description'] != NULL): ?>
+												<?=$row['Description']?>
+											<?php else: ?>
+												---
+											<?php endif; ?>
 										</td>
 										<td class="text-center">
 											<?=$row['Date']?>
 										</td>
 										<td class="text-center">
-											<?=$client_details['Name']?>
-										</td>
-										<td class="text-center">
-											<?=number_format($total_invoice_amount, 2)?>
-										</td>
-										<td class="text-center">
-											<?php
-											$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo']);
-											if ($orderTransactions->num_rows() > 0) {
-												$transactionsPriceTotal = 0;
-												foreach ($orderTransactions->result_array() as $transaction) {
-													$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
-												}
-												echo number_format($transactionsPriceTotal - $total_invoice_amount, 2);
-											}
-											?>
+											<?=number_format($row['Amount'], 2)?>
 										</td>
 										<td class="text-center">
 											<?=$row['ModeOfPayment']?>
+										</td>
+										<td class="text-center">
+											<?php if ($row['OrderNo'] != NULL): ?>
+												<a href="<?=base_url() . 'admin/view_sales_order?orderNo='. $row["OrderNo"]?>">
+													<i class="bi bi-eye"></i> <?=$row['OrderNo']?>
+												</a>
+											<?php else: ?>
+												N/A
+											<?php endif; ?>
+										</td>
+										<td>
+											<a href="FORM_removeInvoice?ino=<?=$row['InvoiceNo']?>">
+												<button type="button" class="btn removeInvoice"><i class="bi bi-trash text-danger"></i></button>
+											</a>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -114,6 +115,7 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php $this->load->view('admin/modals/add_invoice'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
@@ -143,18 +145,14 @@ $(document).ready(function() {
 		table.search($(this).val()).draw();
 	});
 
-	// $(document).on('click', '.tr_invoice_modal', function() {
-	// 	$('.m_orderno').text($(this).children('.soNo').html());
-	// 	$('.m_orderdate').text($(this).children('.oDate').html());
-	// 	$('.m_vendorname').text($(this).children('.vName').html());
-	// 	$('.m_amountdue').text($(this).children('.aDue').html());
-	// 	$('.m_paymentdate').text($(this).children('.pDate').html());
-	// 	$('.m_partialfull').text($(this).children('.partialFull').html());
-	// 	$('.m_balance').text($(this).children('.balance').html());
-	// 	$('.m_modepayment').text($(this).children('.modePayment').html());
-
-	// 	$('#SalesOrderModal').modal('toggle');
-	// });
+	$('.newinvoice-btn').on('click', function() {
+		$('#newInvoiceModal').modal('toggle');
+	});
+	$(document).on('click', '.removeInvoice', function() {
+		if (!confirm('Remove Invoice?')) {
+			event.preventDefault();
+		}
+	});
 });
 </script>
 

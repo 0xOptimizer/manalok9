@@ -28,7 +28,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-8">
-						<h3>Bills
+						<h3><i class="bi bi-cash"></i> Bills
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-cash"></i> <?=$getBills->num_rows();?> TOTAL
 							</span>
@@ -39,7 +39,10 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php endif; ?>
 						</h3>
 					</div>
-					<div class="col-sm-12 col-md-4 mr-auto pt-4 pb-2" style="margin-top: -15px;">
+					<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<button type="button" class="newbill-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-cash"></i> NEW BILL</button>
+					</div>
+					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
@@ -54,55 +57,53 @@ if ($this->session->flashdata('highlight-id')) {
 					<table id="billsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th class="text-center">ID</th>
-							<th class="text-center">PO #</th>
-							<th class="text-center">ORDER DATE</th>
-							<th class="text-center">BILL DATE</th>
-							<th class="text-center">VENDOR NAME</th>
-							<th class="text-center">AMOUNT PAID</th>
-							<th class="text-center">AMOUNT DUE</th>
+							<th class="text-center">BILL NO</th>
+							<th class="text-center">DESCRIPTION</th>
+							<th class="text-center">DATE</th>
+							<th class="text-center">AMOUNT</th>
 							<th class="text-center">MODE OF PAYMENT</th>
+							<th class="text-center">ORDER NO</th>
+							<th class="text-center"></th>
 						</thead>
 						<tbody>
 							<?php if ($getBills->num_rows() > 0):
 								foreach ($getBills->result_array() as $row): ?>
-									<tr data-urlredirect="<?=base_url() . 'admin/view_purchase_order?orderNo=' . $row['OrderNo'];?>">
+									<tr>
 										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
 										<td class="text-center">
-											<?=$row['OrderNo']?>
+											<?=$row['BillNo']?>
 										</td>
-										<?php
-										$po_details = $this->Model_Selects->GetPurchaseOrderByNo($row['OrderNo'])->row_array();
-										$v_details = $this->Model_Selects->GetVendorByNo($po_details['VendorNo'])->row_array();
-										$total_bill_amount = $this->Model_Selects->GetTotalBillsByPONo($row['OrderNo'])->row_array()['Amount'];
-										?>
 										<td class="text-center">
-											<?=$po_details['Date']?>
+											<?php if ($row['Description'] != NULL): ?>
+												<?=$row['Description']?>
+											<?php else: ?>
+												---
+											<?php endif; ?>
 										</td>
 										<td class="text-center">
 											<?=$row['Date']?>
 										</td>
 										<td class="text-center">
-											<?=$v_details['Name']?>
-										</td>
-										<td class="text-center">
-											<?=number_format($total_bill_amount, 2)?>
-										</td>
-										<td class="text-center">
-											<?php
-											$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo']);
-											if ($orderTransactions->num_rows() > 0) {
-												$transactionsPriceTotal = 0;
-												foreach ($orderTransactions->result_array() as $transaction) {
-													$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
-												}
-												echo number_format($transactionsPriceTotal - $total_bill_amount, 2);
-											}
-											?>
+											<?=number_format($row['Amount'], 2)?>
 										</td>
 										<td class="text-center">
 											<?=$row['ModeOfPayment']?>
+										</td>
+										<td class="text-center">
+											<?php if ($row['OrderNo'] != NULL): ?>
+												<a href="<?=base_url() . 'admin/view_purchase_order?orderNo='. $row["OrderNo"]?>">
+													<i class="bi bi-eye"></i> <?=$row['OrderNo']?>
+												</a>
+											<?php else: ?>
+												N/A
+											<?php endif; ?>
+										</td>
+										<td>
+											<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
+												<button type="button" class="btn removeBill"><i class="bi bi-trash text-danger"></i></button>
+											</a>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -114,6 +115,7 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<?php $this->load->view('admin/modals/add_bill'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
@@ -143,15 +145,14 @@ $(document).ready(function() {
 		table.search($(this).val()).draw();
 	});
 
-	// $(document).on('click', '.tr_bill_modal', function() {
-	// 	$('.m_orderno').text($(this).children('.poNo').html());
-	// 	$('.m_orderdate').text($(this).children('.oDate').html());
-	// 	$('.m_vendorname').text($(this).children('.vName').html());
-	// 	$('.m_amountpaid').text($(this).children('.aPaid').html());
-	// 	$('.m_amountdue').text($(this).children('.aDue').html());
-
-	// 	$('#PurchaseOrderModal').modal('toggle');
-	// });
+	$('.newbill-btn').on('click', function() {
+		$('#newBillModal').modal('toggle');
+	});
+	$(document).on('click', '.removeBill', function() {
+		if (!confirm('Remove Bill?')) {
+			event.preventDefault();
+		}
+	});
 });
 </script>
 

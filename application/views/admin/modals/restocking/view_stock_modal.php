@@ -76,8 +76,9 @@
                 RETAIL
               </dt>
               <dd class="col-12 col-sm-12 col-md-9">
+                &#8369
                 <label id="ret_price">
-                  &#8369 
+                  
                 </label>
               </dd>
             </dl>
@@ -86,8 +87,9 @@
                 ORIGINAL
               </dt>
               <dd class="col-12 col-sm-12 col-md-9">
+                &#8369
                 <label id="original_price">
-                  &#8369 
+                  
                 </label>
               </dd>
             </dl>

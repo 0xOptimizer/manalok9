@@ -36,7 +36,7 @@ $globalHeader;
 				<div class="row">
 					<div class="col-12 col-md-6">
 						<h3>
-							Mail
+							<i class="bi bi-envelope"></i> Mail
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">

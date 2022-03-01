@@ -42,7 +42,7 @@ date_default_timezone_set('Asia/Manila');
 					<div class="row">
 						<div class="col-12 col-md-12">
 							<h3>
-								Restocking
+								<i class="bi bi-card-list"></i> Restocking
 							</h3>
 						</div>
 						<div class="col-12 col-md-12 pt-4 pb-2">

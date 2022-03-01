@@ -74,7 +74,7 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="page-title">
 					<div class="row">
 						<div class="col-12 col-md-6">
-							<h3>Products
+							<h3><i class="bi bi-bag-fill"></i> Products
 								<span class="text-center success-banner-sm">
 									<i class="bi bi-bag-fill"></i> <?=$getAllProductsv2->num_rows();?> TOTAL
 								</span>

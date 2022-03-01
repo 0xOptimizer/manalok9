@@ -54,7 +54,7 @@ if ($getLoginCredentials->num_rows() > 0) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-6 order-md-1 order-last">
-						<h3>Your Profile</h3>
+						<h3><i class="bi bi-person-fill"></i> Your Profile</h3>
 						<p class="text-subtitle text-muted">Customize your profile and login credentials.</p>
 					</div>
 				</div>

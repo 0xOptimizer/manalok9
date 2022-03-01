@@ -33,7 +33,7 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<h3>Return ID #<?=$return['ID']?> <span class="text-secondary">[ <?=$returnNo?> ]</span>
+						<h3><i class="bi bi-reply-fill"></i> Return ID #<?=$return['ID']?> <span class="text-secondary">[ <?=$returnNo?> ]</span>
 						</h3>
 						<a href="<?=base_url() . 'admin/view_sales_order?orderNo='. $return["SalesOrderNo"]?>">
 							<i class="bi bi-eye"></i> <?=$return['SalesOrderNo']?>

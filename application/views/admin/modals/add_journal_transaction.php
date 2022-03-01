@@ -3,7 +3,7 @@
 		<form id="formAddJournal" action="<?php echo base_url() . 'FORM_addJournal';?>" method="POST" enctype="multipart/form-data">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-list-ul" style="font-size: 24px;"></i> New Transaction</h4>
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-pen" style="font-size: 24px;"></i> New Transaction</h4>
 				</div>
 				<div class="modal-body mx-4">
 					<div class="row">

@@ -354,7 +354,7 @@ $(document).ready(function () {
 		var stock_id = $(this).data('id');
 		Get_Stock_Details(stock_id);
 	});
-	$('.modal_view').on('hidden.bs.modal', function () {
+	$('#view_stock_modal').on('hidden.bs.modal', function () {
 		Clear_Labels();
 	});
 	$('.modal_update').on('click',function () {

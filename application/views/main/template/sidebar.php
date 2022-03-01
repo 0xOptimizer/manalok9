@@ -94,11 +94,11 @@
 						</a>
 					</li>
 				<?php endif; ?>
-				<?php //if ($this->session->userdata('UserRestrictions')['manual_transactions_view'] == 1): ?>
-					<li class="sidebar-item sidebar-admin-manual-transactions">
-						<a href="<?=base_url().'admin/manual_transactions'?>" class='sidebar-link'>
-							<i class="bi bi-receipt"></i>
-							<span>Manual Transactions</span>
+				<?php //if ($this->session->userdata('UserRestrictions')['manual_purchases_view'] == 1): ?>
+					<li class="sidebar-item sidebar-admin-manual-purchases">
+						<a href="<?=base_url().'admin/manual_purchases'?>" class='sidebar-link'>
+							<i class="bi bi-pencil"></i>
+							<span>Manual Purchases</span>
 						</a>
 					</li>
 				<?php //endif; ?>
@@ -154,7 +154,7 @@
 				<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_view'] == 1): ?>
 					<li class="sidebar-item sidebar-admin-accounting-journal-transactions">
 						<a href="<?=base_url().'admin/journals'?>" class='sidebar-link'>
-							<i class="bi bi-list-ul"></i>
+							<i class="bi bi-pen"></i>
 							<span>Journal Transactions</span>
 						</a>
 					</li>

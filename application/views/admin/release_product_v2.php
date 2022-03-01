@@ -47,7 +47,7 @@ date_default_timezone_set('Asia/Manila');
 					<div class="row">
 						<div class="col-12 col-md-12">
 							<h3>
-								Releasing
+								<i class="bi bi-card-checklist"></i> Releasing
 							</h3>
 						</div>
 						<div class="col-12 col-md-12 pt-4 pb-2">
@@ -155,6 +155,7 @@ date_default_timezone_set('Asia/Manila');
 	<?php $this->load->view('admin/modals/releasing/modal_scan_releasing.php'); ?>
 	<?php $this->load->view('admin/modals/releasing/modal_manual_releasing.php'); ?>
 	<?php $this->load->view('admin/modals/releasing/modal_release_quantity.php'); ?>
+	<?php $this->load->view('admin/modals/releasing/modal_stock_selection.php'); ?>
 
 	<?php $this->load->view('main/globals/scripts.php'); ?>
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
@@ -174,6 +175,44 @@ date_default_timezone_set('Asia/Manila');
 	</script>
 	<script type="text/javascript">
 		/* VARIABLES */
+		var tableStocks = $('#selectstocksTable').DataTable( {
+			sDom: 'lrtip',
+			'bLengthChange': false,
+			'order': [[ 0, 'desc' ]],
+			'createdRow': function(row, data, dataIndex) {
+				$(row).addClass('select-stock-row').data('stock_id', data[0]);
+			},
+			'columnDefs': [ {
+					'targets': 0,
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).addClass('text-center').html($('<span>').addClass('db-identifier').css({ 'font-style': 'italic', 'font-size': '12px' }).html(cellData)).data('stockID',cellData);
+					}
+				}, {
+					'targets': 1,
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).addClass('text-center');
+					}
+				}, {
+					'targets': 2,
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).addClass('text-center');
+					}
+				}, {
+					'targets': 3,
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).addClass('stockPrice text-center').html(parseFloat(cellData).toFixed(2)).data('retailPrice', cellData);
+					}
+				}, {
+					'targets': 4,
+					'createdCell': function (td, cellData, rowData, row, col) {
+						$(td).addClass('text-center');
+					}
+				}
+			]
+		});
+		$('#tableStocksSearch').on('keyup change', function(){
+			tableStocks.search($(this).val()).draw();
+		});
 	</script>
 	<script type="text/javascript" src="<?=base_url()?>assets/js/releasing.js"></script>
 

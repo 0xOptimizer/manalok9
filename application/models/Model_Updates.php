@@ -155,13 +155,19 @@ class Model_Updates extends CI_Model {
 	public function remove_bill($billNo)
 	{
 		$this->db->where('BillNo', $billNo);
-		$result = $this->db->delete('bills');
+		$data = array(
+			'Status' => '0'
+		);
+		$result = $this->db->update('bills', $data);
 		return $result;
 	}
 	public function remove_invoice($invoiceNo)
 	{
 		$this->db->where('InvoiceNo', $invoiceNo);
-		$result = $this->db->delete('invoices');
+		$data = array(
+			'Status' => '0'
+		);
+		$result = $this->db->update('invoices', $data);
 		return $result;
 	}
 	public function UpdateAccount($data, $accountID)

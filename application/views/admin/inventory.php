@@ -3,12 +3,37 @@ $globalHeader;
 
 date_default_timezone_set('Asia/Manila');
 
+$sbmf = $this->input->get('sbmf');
+$sbmfy = $this->input->get('sbmfy');
+$sbmt = $this->input->get('sbmt');
+$sbmty = $this->input->get('sbmty');
+
+if ($sbmf != NULL && $sbmfy != NULL && $sbmt != NULL && $sbmty != NULL) {
+	$from = date('Y-m-d', strtotime($sbmfy	 .'-'. $sbmf));
+	$to = date('Y-m-t', strtotime($sbmty	 .'-'. $sbmt));
+	$rangeText = date('F Y', strtotime($from)) .' TO '. date('F Y', strtotime($to));
+} elseif ($sbmf != NULL && $sbmfy == NULL && $sbmt != NULL && $sbmty == NULL) {
+	$from = date('Y-m-d', strtotime($sbmf));
+	$to = date('Y-m-t', strtotime($sbmt));
+	$rangeText = date('F j, Y', strtotime($from)) .' TO '. date('F j, Y', strtotime($to));
+} else {
+	$from = NULL;
+	$to = NULL;
+	$rangeText = 'TOTAL';
+}
+
+$getAllProducts = $this->Model_Selects->product_stocks_between_months($from,$to);
 $totalStocks = 0;
-$getAllProducts = $this->Model_Selects->GetAllProducts();
+
 if ($getAllProducts->num_rows() > 0) {
 	foreach ($getAllProducts->result_array() as $row) {
-		$totalStocks += $row['InStock'];
+		$totalStocks += $row['in_stock'];
 	}
+}
+
+if ($from == NULL && $to == NULL) {
+	$from = date('Y-m-d');
+	$to = date('Y-m-t');
 }
 
 ?>
@@ -43,25 +68,31 @@ if ($getAllProducts->num_rows() > 0) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-sm-12">
-						<h3>Inventory
+						<h3><i class="bi bi-cart-fill"></i> Inventory
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-cart-fill"></i> <?=$totalStocks;?> IN STOCK
 							</span>
 							<span class="text-center info-banner-sm">
-								<i class="bi bi-exclamation-triangle-fill"></i> JULY XX, XXXX TO AUGUST XX, XXXX
+								<i class="bi bi-exclamation-triangle-fill"></i> <?=strtoupper($rangeText)?>
 							</span>
 							<!-- <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW</button> -->
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="btn btn-sm-success">TOTAL</button>
-						<button type="button" class="btn btn-sm-secondary disabled-hover">MONTHLY</button>
-						<button type="button" class="btn btn-sm-secondary disabled-hover">SEMI-ANNUAL</button>
-						<button type="button" class="btn btn-sm-secondary disabled-hover">ANNUAL</button>
-						<button type="button" class="btn btn-sm-secondary disabled-hover">CUSTOM DATE</button>
+						<button type="button" class="btn btn-sm-success" onclick="window.location.replace('<?=base_url()?>admin/inventory');">
+							<i class="bi bi-clock-fill"></i> TOTAL
+						</button>
+						<button type="button" class="btn btn-sm-success sortbymonth-btn">
+							<i class="bi bi-calendar-fill"></i> MONTHLY
+						</button>
+						<button type="button" class="btn btn-sm-success sortbyday-btn">
+							<i class="bi bi-calendar-fill"></i> CUSTOM DATE
+						</button>
 						<?php if ($this->session->userdata('Privilege') > 1): ?>
 							|
-							<button type="button" class="generatereport-btn btn btn-sm-primary">GENERATE REPORT</button>
+							<button type="button" class="generatereport-btn btn btn-sm-primary">
+								<i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT
+							</button>
 						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
@@ -80,8 +111,6 @@ if ($getAllProducts->num_rows() > 0) {
 						<thead style="font-size: 12px;">
 							<th>PRODUCT</th>
 							<th>IN STOCKS</th>
-							<th>SHO | Shopee</th>
-							<th>PHYS | Physical Shop</th>
 							<th>RELEASED</th>
 							<!-- <th>CURRENT STOCKS</th> -->
 						</thead>
@@ -91,19 +120,13 @@ if ($getAllProducts->num_rows() > 0) {
 								foreach ($getAllProducts->result_array() as $row): ?>
 									<tr>
 										<td>
-											<?=$row['Code'];?>
+											<?=$row['Product_SKU'];?>
 										</td>
 										<td>
-											<?=$row['InStock'];?>
+											<?=$row['in_stock'];?>
 										</td>
 										<td>
-											0
-										</td>
-										<td>
-											0
-										</td>
-										<td>
-											<?=$row['Released']?>
+											<?=$row['released']?>
 										</td>
 										<!-- <td>
 											150
@@ -119,6 +142,81 @@ if ($getAllProducts->num_rows() > 0) {
 	</div>
 </div>
 <?php $this->load->view('admin/modals/generate_report')?>
+<div class="modal fade" id="SortByMonthModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<form action="" method="GET">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-calendar-fill" style="font-size: 24px;"></i> Sort By Month</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-12 col-md-6 mb-2">
+							<select class="form-control" name="sbmf">
+								<?php for ($i = 1; $i <= 12; $i++): ?>
+									<option value="<?=$i?>" <?=(date('m', strtotime($from)) == $i ? 'selected' : '')?>><?=date('F', strtotime(date('Y') .'-'. $i .'-01'))?></option>
+								<?php endfor; ?>
+							</select>
+							<label class="input-label">FROM</label>
+						</div>
+						<div class="form-group col-12 col-md-6 mb-2">
+							<select class="form-control" name="sbmfy">
+								<?php for ($i = date('Y'); $i >= 1990; $i--): ?>
+									<option value="<?=$i?>" <?=(date('Y', strtotime($from)) == $i ? 'selected' : '')?>><?=$i?></option>
+								<?php endfor; ?>
+							</select>
+						</div>
+						<div class="form-group col-12 col-md-6 mb-2">
+							<select class="form-control" name="sbmt">
+								<?php for ($i = 1; $i <= 12; $i++): ?>
+									<option value="<?=$i?>" <?=(date('m', strtotime($to)) == $i ? 'selected' : '')?>><?=date('F', strtotime(date('Y') ."-". $i ."-01"))?></option>
+								<?php endfor; ?>
+							</select>
+							<label class="input-label">TO</label>
+						</div>
+						<div class="form-group col-12 col-md-6 mb-2">
+							<select class="form-control" name="sbmty">
+								<?php for ($i = date('Y'); $i >= 1990; $i--): ?>
+									<option value="<?=$i?>" <?=(date('Y', strtotime($to)) == $i ? 'selected' : '')?>><?=$i?></option>
+								<?php endfor; ?>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="feedback-form modal-footer">
+					<button type="submit" class="btn btn-success"><i class="bi bi-calendar-check-fill"></i> SORT</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="modal fade" id="SortByDayModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-sm" role="document">
+		<form action="" method="GET">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-calendar-fill" style="font-size: 24px;"></i> Sort By Day</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-12 mb-2">
+							<input type="date" class="form-control" name="sbdf" value="<?=date('Y-m-d', strtotime($from))?>" required>
+							<label class="input-label">FROM</label>
+						</div>
+						<div class="form-group col-12 mb-2">
+							<input type="date" class="form-control" name="sbdt" value="<?=date('Y-m-d', strtotime($to))?>" required>
+							<label class="input-label">TO</label>
+						</div>
+					</div>
+				</div>
+				<div class="feedback-form modal-footer">
+					<button type="submit" class="btn btn-success"><i class="bi bi-calendar-check-fill"></i> SORT</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
@@ -133,6 +231,13 @@ if ($getAllProducts->num_rows() > 0) {
 <script>
 $('.sidebar-admin-inventory').addClass('active');
 $(document).ready(function() {
+	$('.sortbymonth-btn').on('click', function() {
+		$('#SortByMonthModal').modal('toggle');
+	});
+	$('.sortbyday-btn').on('click', function() {
+		$('#SortByDayModal').modal('toggle');
+	});
+
 	var table = $('#productsTable').DataTable( {
 		sDom: 'lrtip',
 		"bLengthChange": false,

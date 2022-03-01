@@ -26,32 +26,59 @@ $(document).ready(function () {
 
 		});
 	}
-	function Get_Stock_data(uid,prd_sku) {
+	// function Get_Stock_data(uid,prd_sku) {
+	// 	$.ajax({
+	// 		url : 'Get_Stock_details',
+	// 		type : 'POST',
+	// 		data : { uid : uid , prd_sku : prd_sku },
+	// 		success : function(response) {
+	// 			var data = $.parseJSON(response);
+				
+	// 			$('#s_uid').html(data.product_stocks.uids);
+	// 			$('#s_sku').html(data.product_stocks.prd_sku);
+	// 			$('#c_stocks').html(data.product_stocks.c_stocks);
+	// 			$('#r_stocks').html(data.product_stocks.r_stocks);
+	// 			$('#r_price').html(data.product_stocks.r_price);
+	// 			$('#or_price').html(data.product_stocks.org_price);
+	// 			$('#total_pricesss').html(data.product_stocks.total_price);
+	// 			$('#manufacturer_name').html(data.product_stocks.manufacturer);
+	// 			$('#exp_date').html(data.product_stocks.exp_date);
+	// 			$('#descrpts').html(data.product_stocks.description);
+	// 			$('#btn_release_stock').data('id',data.product_stocks.id);
+	// 			$('#btn_release_stock').data('uid',data.product_stocks.uids);
+	// 			$('#btn_release_stock').data('sku',data.product_stocks.prd_sku);
+	// 			$('#btn_release_stock').data('quantity',data.product_stocks.c_stocks);
+				
+	// 		}
+	// 	});
+	// }
+	function Show_Stock_Table(prd_sku) {
 		$.ajax({
-			url : 'Get_Stock_details',
-			type : 'POST',
-			data : { uid : uid , prd_sku : prd_sku },
+			url: "getProductStocks",
+			type: "GET",
+			data: { sku : prd_sku },
 			success : function(response) {
-				var data = $.parseJSON(response);
-				
-				$('#s_uid').html(data.product_stocks.uids);
-				$('#s_sku').html(data.product_stocks.prd_sku);
-				$('#c_stocks').html(data.product_stocks.c_stocks);
-				$('#r_stocks').html(data.product_stocks.r_stocks);
-				$('#r_price').html(data.product_stocks.r_price);
-				$('#or_price').html(data.product_stocks.org_price);
-				$('#total_pricesss').html(data.product_stocks.total_price);
-				$('#manufacturer_name').html(data.product_stocks.manufacturer);
-				$('#exp_date').html(data.product_stocks.exp_date);
-				$('#descrpts').html(data.product_stocks.description);
-				$('#btn_release_stock').data('id',data.product_stocks.id);
-				$('#btn_release_stock').data('uid',data.product_stocks.uids);
-				$('#btn_release_stock').data('sku',data.product_stocks.prd_sku);
-				$('#btn_release_stock').data('quantity',data.product_stocks.c_stocks);
-				
+				tableStocks.clear();
+				let productStocks = $.parseJSON(response);
+				$.each(productStocks, function(index, val) {
+					tableStocks.row.add([
+						val.ID,
+						val.Current_Stocks,
+						val.Retail_Price,
+						val.Date_Added,
+						val.Expiration_Date
+					]);
+				});
+				tableStocks.draw();
+
+				$('#product_sku').html(prd_sku);
+				$('#modal_stock_selection').data('shown', true);
+
+				$('#modal_manual_releasing').modal('hide');
+				$('#modal_scan_releasing').modal('hide');
 			}
 		});
-	}
+	};
 	$('#modal_scan_releasing').on('shown.bs.modal',function() {
 		/* START QUAGGA */
 		Start_QuaggaScanner();
@@ -78,7 +105,7 @@ $(document).ready(function () {
 
 						setTimeout(function() {
 
-							Get_Stock_data(uid,prd_sku);
+							Show_Stock_Table(data.prd_details.Code);
 							$('.ajx_res_prompt').html('');
 							$('#modal_scan_releasing').modal('hide');
 
@@ -143,19 +170,79 @@ $(document).ready(function () {
 	});
 	$('#btn_restock_manual').on('click',function () {
 		/* SUBMIT SKU GET PRODUCT STOCK */
-		var prd_sku = $('#inp_sku').val();
+		Show_Stock_Table($('#inp_sku').val());
+
+		// $.ajax({
+		// 	url: "submit_get_prdstocks",
+		// 	type: "POST",
+		// 	data: { prd_sku : prd_sku },
+		// 	success : function(response) {
+				
+		// 		var data = $.parseJSON(response);
+
+		// 		switch (data.prompt.status)
+		// 		{
+		// 			case 'sku_input_null':
+		// 			$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Enter SKU.</p>');
+		// 			break;
+
+		// 			case 'stock_found':
+		// 			$('.ajx_res_prompt').html('<p class="text-success align-middle"><i class="bi bi-check-circle-fill"></i> Stock found.</p>');
+		// 			$('#s_uid').html(data.product_stocks.uids);
+		// 			$('#s_sku').html(data.product_stocks.prd_sku);
+		// 			$('#c_stocks').html(data.product_stocks.c_stocks);
+		// 			$('#r_stocks').html(data.product_stocks.r_stocks);
+		// 			$('#r_price').html(data.product_stocks.r_price);
+		// 			$('#or_price').html(data.product_stocks.org_price);
+		// 			$('#total_pricesss').html(data.product_stocks.total_price);
+		// 			$('#manufacturer_name').html(data.product_stocks.manufacturer);
+		// 			$('#exp_date').html(data.product_stocks.exp_date);
+		// 			$('#descrpts').html(data.product_stocks.description);
+		// 			$('#modal_manual_releasing').modal('hide');
+		// 			$('#btn_release_stock').data('id',data.product_stocks.id);
+		// 			$('#btn_release_stock').data('uid',data.product_stocks.uids);
+		// 			$('#btn_release_stock').data('sku',data.product_stocks.prd_sku);
+		// 			$('#btn_release_stock').data('quantity',data.product_stocks.c_stocks);
+					
+		// 			$('#action_section').html('');
+		// 			break;
+
+		// 			case 'product_found_no_stock':
+		// 			$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> No stock available.</p>');
+		// 			break;
+
+		// 			case 'product_notfound':
+		// 			$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> This product doesn\'t exist.</p>');
+		// 			break;
+
+		// 			default:
+		// 			$('.ajx_res_prompt').html('<p class="text-primary align-middle"><i class="bi bi-info-circle-fill"></i> This form is for manual releasing, Always check the Product SKU before submiting.</p>');
+		// 		}
+		// 	}
+		// });
+	});
+
+	$('#modal_manual_releasing, #modal_scan_releasing').on('hidden.bs.modal', function (event) {
+		if ($('#modal_stock_selection').data('shown')) {
+			$('#modal_stock_selection').modal('show');
+			$('#modal_stock_selection').data('shown', false);
+		}
+	});
+	$(document).on('click', '.select-stock-row', function() {
+		var stock_id = $(this).data('stock_id');
 		$.ajax({
-			url: "submit_get_prdstocks",
+			url: "submit_get_singlestock",
 			type: "POST",
-			data: { prd_sku : prd_sku },
+			data: { stock_id : stock_id },
 			success : function(response) {
+				console.log(response);
 				
 				var data = $.parseJSON(response);
 
 				switch (data.prompt.status)
 				{
-					case 'sku_input_null':
-					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Enter SKU.</p>');
+					case 'stock_id_input_null':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> Error, no stock id.</p>');
 					break;
 
 					case 'stock_found':
@@ -179,20 +266,18 @@ $(document).ready(function () {
 					$('#action_section').html('');
 					break;
 
-					case 'product_found_no_stock':
-					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> No stock available.</p>');
-					break;
-
-					case 'product_notfound':
-					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> This product doesn\'t exist.</p>');
+					case 'stock_not_found':
+					$('.ajx_res_prompt').html('<p class="text-warning align-middle"><i class="bi bi-exclamation-circle-fill"></i> This stock doesn\'t exist.</p>');
 					break;
 
 					default:
-					$('.ajx_res_prompt').html('<p class="text-primary align-middle"><i class="bi bi-info-circle-fill"></i> This form is for manual releasing, Always check the Product SKU before submiting.</p>');
+					$('.ajx_res_prompt').html('<p class="text-primary align-middle"><i class="bi bi-info-circle-fill"></i> Select stock.</p>');
 				}
 			}
 		});
+		$('#modal_stock_selection').modal('hide');
 	});
+
 	$('#btn_release_stock').on('click', function () {
 
 		if ($(this).data('id') !== "" && $(this).data('uid') !== "" && $(this).data('sku') !== "" && $(this).data('quantity') !== "") {

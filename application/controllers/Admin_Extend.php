@@ -596,6 +596,48 @@ class Admin_Extend extends CI_Controller {
 			exit();
 		}
 	}
+	public function submit_get_singlestock()
+	{
+		/* VARIABLES */
+		$stock_id = $this->input->post('stock_id');
+
+		if (empty($stock_id)) {
+			$data['prompt'] = array('status' => 'stock_id_input_null', );
+			echo json_encode($data);
+			exit();
+		}
+
+		$Check_prd_stockid = $this->Model_Selects->Check_prd_stockid($stock_id);
+		if ($Check_prd_stockid->num_rows() > 0) {
+
+			/* GET STOCK DETAILS */
+			$gts = $Check_prd_stockid->row_array();
+			$data['product_stocks'] = array(
+				'id' => $gts['ID'],
+				'uids' => $gts['UID'],
+				'prd_sku' => $gts['Product_SKU'],
+				'stocks' => $gts['Stocks'],
+				'c_stocks' => $gts['Current_Stocks'],
+				'r_stocks' => $gts['Released_Stocks'],
+				'r_price' => $gts['Retail_Price'],
+				'org_price' => $gts['Price_PerItem'],
+				'total_price' => $gts['Total_Price'],
+				'manufacturer' => $gts['Manufactured_By'],
+				'description' => $gts['Description'],
+				'exp_date' => $gts['Expiration_Date'],
+				'date_added' => $gts['Date_Added'],
+			);
+			$data['prompt'] = array('status' => 'stock_found', );
+			echo json_encode($data);
+			exit();
+		}
+		else
+		{
+			$data['prompt'] = array('status' => 'stock_not_found', );
+			echo json_encode($data);
+			exit();
+		}
+	}
 	public function submit_releasestockss()
 	{
 		if (!isset($_SESSION['UserID'])) {

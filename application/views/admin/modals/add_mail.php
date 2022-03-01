@@ -14,14 +14,14 @@
                   <label>
                     <i class="bi bi-forward"></i> TO
                   </label>
-                  <input type="text" class="form-control standard-input-pad" name="send_to">
+                  <input type="text" class="form-control standard-input-pad send_to" name="send_to">
                   
                 </div>
                 <div class="form-group col-7 p-3">
                   <label>
                     <i class="bi bi-card-text"></i> SUBJECT
                   </label>
-                  <input type="text" class="form-control standard-input-pad" name="mail_subject">
+                  <input type="text" class="form-control standard-input-pad mail_subject" name="mail_subject">
                   
                 </div>
               </div>
@@ -32,7 +32,7 @@
                   <label>
                     <i class="bi bi-chat-left"></i> MESSAGE
                   </label>
-                  <textarea class="form-control standard-input-pad" rows="4" name="mail_message"></textarea>
+                  <textarea class="form-control standard-input-pad mail_message" rows="4" name="mail_message"></textarea>
                   
                 </div>
               </div>
@@ -43,7 +43,7 @@
                   <label>
                     <i class="bi bi-paperclip"></i> ATTACHMENT
                   </label>
-                  <input type="file" class="form-control standard-input-pad" name="mail_attachment">
+                  <input type="file" class="form-control standard-input-pad mail_attachment" name="mail_attachment">
                   
                 </div>
               </div>

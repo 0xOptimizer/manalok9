@@ -58,6 +58,10 @@
 									<label class="input-label">KIND OF PRODUCT/SERVICE</label>
 									<input type="text" class="form-control viewonly purchaseKind newVendorInput" name="vendor-kind" placeholder="Soap" readonly>
 								</div>
+								<div class="form-group col-sm-12 col-md-6">
+									<label class="input-label">EMAIL</label>
+									<input type="email" class="form-control viewonly purchaseEmail newVendorInput" name="vendor-email" placeholder="john@email.com" readonly>
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-12 col-md-6">

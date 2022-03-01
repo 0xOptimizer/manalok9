@@ -48,6 +48,136 @@ class Admin extends MY_Controller {
 		}
 		// $this->output->enable_profiler(TRUE);
 	}
+
+	function sendEmail($send_to, $mail_subject, $mail_message) {
+		$config = Array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.gmail.com',
+			'smtp_port' => 587,
+			'smtp_user' => 'devt5599@gmail.com',
+			'smtp_pass' => '', // NEED PASSWORD ---------------------------------------
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'wordwrap' => TRUE
+		);
+		$this->load->library('email', $config);
+
+		$this->email->set_newline("\r\n");
+		$this->email->set_header('MIME-Version', '1.0; charset=iso-8859-1');
+		// $this->email->set_header('Content-type', 'text/html');
+
+
+		$this->email->from('MANALOK9');
+		$this->email->to($send_to);
+		$this->email->subject($mail_subject);
+
+
+		$this->email->message($mail_message);
+
+		if($this->email->send())
+		{
+			$data = array(
+				'sent_to' => $send_to,
+				'subject' => $mail_subject,
+				'message' => $mail_message,
+				'attachment' => 'No attachment',
+			);
+			$EmailInsert = $this->Model_Inserts->EmailInsert($data);
+		}
+	}
+	function userRestrictionsArray() {
+		$userRestrictions = array(
+			'products_view',
+			'products_add',
+			'products_edit',
+			'products_delete',
+
+			'releasing_view',
+			'releasing_scan_add_stock',
+			'releasing_manual_add_stock',
+
+			'restocking_view',
+			'restocking_scan_add_stock',
+			'restocking_manual_add_stock',
+			'restocking_update_stock',
+			'restocking_delete_stock',
+
+			'inventory_view',
+
+			'users_view',
+			'users_add',
+			'users_edit',
+			'users_edit_login',
+
+			'vendors_view',
+			'vendors_add',
+			'vendors_edit',
+			'vendors_delete',
+
+			'purchase_orders_view',
+			'purchase_orders_add',
+			'purchase_orders_approve',
+			'purchase_orders_bill_creation',
+			'purchase_orders_accounting',
+
+			'bills_view',
+			'bills_add',
+			'bills_delete',
+
+			'manual_purchases_view',
+
+			'clients_view',
+			'clients_add',
+			'clients_edit',
+			'clients_delete',
+
+			'sales_orders_view',
+			'sales_orders_add',
+			'sales_orders_mark_for_invoicing',
+			'sales_orders_schedule_delivery',
+			'sales_orders_mark_as_delivered',
+			'sales_orders_mark_as_received',
+			'sales_orders_fulfill',
+			'sales_orders_invoice_creation',
+			'sales_orders_accounting',
+
+			'invoice_view',
+			'invoice_add',
+			'invoice_delete',
+
+			'returns_view',
+			'returns_add',
+			'return_product_add',
+			'return_product_edit',
+			'return_product_return_to_inventory',
+
+			'brand_category_view',
+
+			'accounts_view',
+			'accounts_add',
+			'accounts_edit',
+
+			'journal_transactions_view',
+			'journal_transactions_add',
+			'journal_transactions_delete',
+
+			'branding_view',
+			'branding_add',
+			'branding_edit',
+			'branding_delete',
+
+			'mail_view',
+			'mail_add',
+
+			'my_activities_view',
+
+			'trash_bin_view',
+			'trash_bin_retrieve',
+			'trash_bin_delete',
+		);
+		return $userRestrictions;
+	}
+
 	public function index()
 	{
 		$data = [];
@@ -265,12 +395,12 @@ class Admin extends MY_Controller {
 		}
 	}
 
-	public function manual_transactions()
+	public function manual_purchases()
 	{
 		if ($this->session->userdata('Privilege') > 1) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
-			$header['pageTitle'] = 'Manual Transactions';
+			$header['pageTitle'] = 'Manual Purchases';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 			$this->load->view('admin/manual_transactions', $data);
 		} else {
@@ -1535,6 +1665,7 @@ class Admin extends MY_Controller {
 
 			$orderNo = 'PO' . str_pad($this->db->count_all('purchase_orders') + 1, 6, '0', STR_PAD_LEFT);
 			$date = $this->input->post('date');
+			$time = $this->input->post('time');
 			$purchaseFromNo = $this->input->post('purchaseFromNo');
 			$productCount = $this->input->post('productCount');
 			$shipVia = $this->input->post('shipVia');
@@ -1547,6 +1678,7 @@ class Admin extends MY_Controller {
 				$address = $this->input->post('vendor-address');
 				$contactNum = $this->input->post('vendor-contact-num');
 				$kind = $this->input->post('vendor-kind');
+				$email = $this->input->post('vendor-email');
 				
 				// Insert
 				$data = array(
@@ -1556,6 +1688,7 @@ class Admin extends MY_Controller {
 					'Address' => $address,
 					'ContactNum' => $contactNum,
 					'ProductServiceKind' => $kind,
+					'Email' => $email,
 				);
 				$insertNewVendor = $this->Model_Inserts->InsertNewVendor($data);
 			}
@@ -1600,7 +1733,7 @@ class Admin extends MY_Controller {
 							// 'Manufactured_By' => $p_details['manufacturer'],
 							// 'Description' => $p_details['description'],
 							'Expiration_Date' => $expiration,
-							'Date_Added' => date('Y-m-d H:i:s A'),
+							'Date_Added' => date('Y-m-d H:i:s'),
 							'UserID' => $userID,
 							'Status' => '0',
 						);
@@ -1829,6 +1962,7 @@ class Admin extends MY_Controller {
 				$billContactNum = $this->input->post('bill-contact-num');
 				$billCategory = $this->input->post('bill-category');
 				$billTerritoryManager = $this->input->post('bill-territory-manager');
+				$billEmail = $this->input->post('bill-email');
 
 				// Insert
 				$data = array(
@@ -1841,6 +1975,7 @@ class Admin extends MY_Controller {
 					'ContactNum' => $billContactNum,
 					'Category' => $billCategory,
 					'TerritoryManager' => $billTerritoryManager,
+					'Email' => $billEmail,
 				);
 				$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
 
@@ -1858,6 +1993,7 @@ class Admin extends MY_Controller {
 				$shipContactNum = $this->input->post('ship-contact-num');
 				$shipCategory = $this->input->post('ship-category');
 				$shipTerritoryManager = $this->input->post('ship-territory-manager');
+				$billEmail = $this->input->post('bill-email');
 
 				// Insert
 				$data = array(
@@ -1870,6 +2006,7 @@ class Admin extends MY_Controller {
 					'ContactNum' => $shipContactNum,
 					'Category' => $shipCategory,
 					'TerritoryManager' => $shipTerritoryManager,
+					'Email' => $billEmail,
 				);
 				$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
 			}
@@ -2090,6 +2227,16 @@ class Admin extends MY_Controller {
 
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('approved sales order.', 'approved sales order ' . $orderDetails['OrderNo'] . ' [SalesOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
+
+				// EMAIL CLIENT
+				$client = $this->Model_Selects->GetClientByNo($orderDetails['BillToClientNo']);
+				if ($client->num_rows() > 0) {
+					$this->sendEmail(
+						$client->row_array()['Email'],
+						'Your Order Has Been Approved',
+						'Your sales order [Order No ' . $orderDetails['OrderNo'] . '] has been approved and marked for invoicing.'
+					);
+				}
 			} elseif ($approved == '0' && $orderDetails['Status'] == '1') { // if rejected and pending
 				$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
 				foreach ($orderTransactions as $key => $t) {
@@ -2862,7 +3009,7 @@ class Admin extends MY_Controller {
 			$mTransactionID = $this->db->insert_id();
 
 			// LOGBOOK
-			$this->Model_Logbook->LogbookEntry('adde a new manual transaction.', 'adde a new manual transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
+			$this->Model_Logbook->LogbookEntry('adde a new manual purchase transaction.', 'adde a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
 			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 		}
 		else
@@ -2879,6 +3026,7 @@ class Admin extends MY_Controller {
 	public function FORM_addPOBill()
 	{
 		$purchaseOrderNo = $this->input->post('purchase-order-no');
+		$description = $this->input->post('description');
 		$amount = $this->input->post('amount');
 		$modeOfPayment = $this->input->post('mode-payment');
 		$date = $this->input->post('date');
@@ -2888,6 +3036,7 @@ class Admin extends MY_Controller {
 		$data = array(
 			'BillNo' => "B" . str_pad($this->db->count_all('bills') + 1, 6, '0', STR_PAD_LEFT),
 			'OrderNo' => $purchaseOrderNo,
+			'Description' => $description,
 			'Amount' => $amount,
 			'ModeOfPayment' => $modeOfPayment,
 			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
@@ -2912,9 +3061,45 @@ class Admin extends MY_Controller {
 			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 		}
 	}
+	public function FORM_addBill()
+	{
+		$description = $this->input->post('description');
+		$amount = $this->input->post('amount');
+		$modeOfPayment = $this->input->post('mode-payment');
+		$date = $this->input->post('date');
+		$time = $this->input->post('time');
+
+		// Insert
+		$data = array(
+			'BillNo' => "B" . str_pad($this->db->count_all('bills') + 1, 6, '0', STR_PAD_LEFT),
+			'Description' => $description,
+			'Amount' => $amount,
+			'ModeOfPayment' => $modeOfPayment,
+			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+		);
+		$insertBill = $this->Model_Inserts->InsertBill($data);
+		if ($insertBill == TRUE) {
+			$billID = $this->db->insert_id();
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
+			redirect('admin/bills');
+		}
+		else
+		{
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+			redirect('admin/bills');
+		}
+	}
 	public function FORM_addSOInvoice()
 	{
 		$salesOrderNo = $this->input->post('sales-order-no');
+		$description = $this->input->post('description');
 		$amount = $this->input->post('amount');
 		$modeOfPayment = $this->input->post('mode-payment');
 		$date = $this->input->post('date');
@@ -2924,6 +3109,7 @@ class Admin extends MY_Controller {
 		$data = array(
 			'InvoiceNo' => "I" . str_pad($this->db->count_all('invoices') + 1, 6, '0', STR_PAD_LEFT),
 			'OrderNo' => $salesOrderNo,
+			'Description' => $description,
 			'Amount' => $amount,
 			'ModeOfPayment' => $modeOfPayment,
 			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
@@ -2946,6 +3132,42 @@ class Admin extends MY_Controller {
 			</div>';
 			$this->session->set_flashdata('prompt_status',$prompt_txt);
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+		}
+	}
+	public function FORM_addInvoice()
+	{
+		$description = $this->input->post('description');
+		$amount = $this->input->post('amount');
+		$modeOfPayment = $this->input->post('mode-payment');
+		$date = $this->input->post('date');
+		$time = $this->input->post('time');
+
+		// Insert
+		$data = array(
+			'InvoiceNo' => "I" . str_pad($this->db->count_all('invoices') + 1, 6, '0', STR_PAD_LEFT),
+			'Description' => $description,
+			'Amount' => $amount,
+			'ModeOfPayment' => $modeOfPayment,
+			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+		);
+		$insertInvoice = $this->Model_Inserts->InsertInvoice($data);
+		if ($insertInvoice == TRUE) {
+			$invoiceID = $this->db->insert_id();
+
+			// LOGBOOK
+			$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '].', base_url('admin/invoices'));
+			redirect('admin/invoices');
+		}
+		else
+		{
+			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+			$prompt_txt =
+			'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+			<strong>Warning!</strong> Error uploading data. Please try again.
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>';
+			$this->session->set_flashdata('prompt_status',$prompt_txt);
+			redirect('admin/invoices');
 		}
 	}
 	public function FORM_removeBill()
@@ -2979,6 +3201,20 @@ class Admin extends MY_Controller {
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('scheduled delivery.', 'scheduled delivery for sales order [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+
+			$order = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
+			if ($order->num_rows() > 0) {
+				$orderDetails = $order->row_array();
+				// EMAIL CLIENT
+				$client = $this->Model_Selects->GetClientByNo($orderDetails['BillToClientNo']);
+				if ($client->num_rows() > 0) {
+					$this->sendEmail(
+						$client->row_array()['Email'],
+						'Your Order Has Been Scheduled For Delivery',
+						'Your sales order [Order No ' . $orderDetails['OrderNo'] . '] has been scheduled for delivery on ' . $date . '.'
+					);
+				}
+			}
 		}
 		else
 		{
@@ -3005,6 +3241,20 @@ class Admin extends MY_Controller {
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('marked SO as delivered.', 'sales order marked as delivered [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+
+			$order = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
+			if ($order->num_rows() > 0) {
+				$orderDetails = $order->row_array();
+				// EMAIL CLIENT
+				$client = $this->Model_Selects->GetClientByNo($orderDetails['BillToClientNo']);
+				if ($client->num_rows() > 0) {
+					$this->sendEmail(
+						$client->row_array()['Email'],
+						'Your Order Has Been Delivered',
+						'Your sales order [Order No ' . $orderDetails['OrderNo'] . '] has been successfully delivered.'
+					);
+				}
+			}
 		}
 		else
 		{
@@ -3031,6 +3281,20 @@ class Admin extends MY_Controller {
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('marked SO as received.', 'sales order marked as received [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
 			redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+
+			$order = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
+			if ($order->num_rows() > 0) {
+				$orderDetails = $order->row_array();
+				// EMAIL CLIENT
+				$client = $this->Model_Selects->GetClientByNo($orderDetails['BillToClientNo']);
+				if ($client->num_rows() > 0) {
+					$this->sendEmail(
+						$client->row_array()['Email'],
+						'Your Order Has Been Fulfilled',
+						'Your sales order [Order No ' . $orderDetails['OrderNo'] . '] has been fulfilled.'
+					);
+				}
+			}
 		}
 		else
 		{

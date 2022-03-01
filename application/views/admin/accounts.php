@@ -30,7 +30,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12">
-						<h3>Accounts
+						<h3><i class="bi bi-list-ul"></i> Accounts
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-list-ul"></i> <?=$getAccounts->num_rows();?> TOTAL
 							</span>
@@ -43,7 +43,7 @@ if ($this->session->flashdata('highlight-id')) {
 					</div>
 					<?php if ($this->session->userdata('UserRestrictions')['accounts_add'] == 1): ?>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="newaccount-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW ACCOUNT</button>
+						<button type="button" class="newaccount-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-list-ul"></i> NEW ACCOUNT</button>
 						|
 						<a href="<?=base_url() . 'admin/trial_balance';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> TRIAL BALANCE</a>
 						<a href="<?=base_url() . 'admin/income_statement';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> INCOME STATEMENT</a>

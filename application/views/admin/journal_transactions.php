@@ -45,7 +45,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12">
-						<h3>Journal Transactions
+						<h3><i class="bi bi-pen"></i> Journal Transactions
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-list-ul"></i> <?=$getJournals->num_rows();?> TOTAL
 							</span>
@@ -58,7 +58,7 @@ if ($this->session->flashdata('highlight-id')) {
 					</div>
 					<div class="col-sm-12 col-md-7 pt-4 pb-2">
 						<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
-						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW TRANSACTION</button>
+						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-pen"></i> NEW TRANSACTION</button>
 						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-3 pt-4 pb-2" style="margin-top: -15px;">

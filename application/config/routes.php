@@ -76,7 +76,7 @@ $route['admin/product_restocking'] = 'Admin/product_restocking';
 $route['admin/bills'] = 'Admin/bills';
 $route['admin/invoices'] = 'Admin/invoices';
 
-$route['admin/manual_transactions'] = 'Admin/manual_transactions';
+$route['admin/manual_purchases'] = 'Admin/manual_purchases';
 
 $route['admin/returns'] = 'Admin/returns';
 $route['admin/view_return'] = 'Admin/view_return';
@@ -148,7 +148,9 @@ $route['FORM_deleteJournal'] = 'Admin/FORM_deleteJournal';
 
 // BILLS / INVOICES
 $route['FORM_addPOBill'] = 'Admin/FORM_addPOBill';
+$route['FORM_addBill'] = 'Admin/FORM_addBill';
 $route['FORM_addSOInvoice'] = 'Admin/FORM_addSOInvoice';
+$route['FORM_addInvoice'] = 'Admin/FORM_addInvoice';
 $route['FORM_removeBill'] = 'Admin/FORM_removeBill';
 $route['FORM_removeInvoice'] = 'Admin/FORM_removeInvoice';
 
@@ -260,6 +262,7 @@ $route['admin/product_releasingv2'] = 'Admin_Extend/product_releasingv2';
 $route['admin/Get_Stock_details'] = 'Admin_Extend/Get_Stock_details';
 $route['admin/Getprd_stocks'] = 'Admin_Extend/Getprd_stocks';
 $route['admin/submit_get_prdstocks'] = 'Admin_Extend/submit_get_prdstocks';
+$route['admin/submit_get_singlestock'] = 'Admin_Extend/submit_get_singlestock';
 $route['admin/submit_releasestockss'] = 'Admin_Extend/submit_releasestockss';
 
 $route['admin/Get_Stock_UsingID'] = 'Admin_Extend/Get_Stock_UsingID';
