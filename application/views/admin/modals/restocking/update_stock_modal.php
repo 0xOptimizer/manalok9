@@ -1,3 +1,4 @@
+<?php if (!$this->session->userdata('UserRestrictions')['restocking_update_stock']) return; ?>
 <div class="modal fade" id="update_stock_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">

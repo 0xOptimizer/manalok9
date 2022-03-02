@@ -47,7 +47,9 @@ date_default_timezone_set('Asia/Manila');
 						
 					</div>
 					<div class="col-12 col-md-12 pt-4 pb-2">
-						<button type="button" class="addbrand-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD BRAND</button>
+						<?php if ($this->session->userdata('UserRestrictions')['branding_add']): ?>
+							<button type="button" class="addbrand-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD BRAND</button>
+						<?php endif; ?>
 					</div>
 					<p class="text-subtitle text-muted">Create or update Brand properties.</p>
 				</div>
@@ -87,8 +89,12 @@ date_default_timezone_set('Asia/Manila');
 										</td>
 										<td class="d-flex flex-wrap justify-content-center">
 											<a class="btn-viewbrand" style="margin-left: 6px; margin-right: 6px; color: #2E87EC;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-eye"></i> </a>
-											<a class="btn-updatebrand" style="margin-left: 6px; margin-right: 6px; color: #44BE9A;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-pencil-square"></i> </a>
-											<a class="btn-removebrand" style="margin-left: 6px; margin-right: 6px; color: #E14A22;" href="<?=base_url()?>Del_brand?uid=<?php echo $row['UniqueID']; ?>" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-trash"></i> </a>
+											<?php if ($this->session->userdata('UserRestrictions')['branding_edit']): ?>
+												<a class="btn-updatebrand" style="margin-left: 6px; margin-right: 6px; color: #44BE9A;" href="#" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-pencil-square"></i> </a>
+											<?php endif; ?>
+											<?php if ($this->session->userdata('UserRestrictions')['branding_delete']): ?>
+												<a class="btn-removebrand" style="margin-left: 6px; margin-right: 6px; color: #E14A22;" href="<?=base_url()?>Del_brand?uid=<?php echo $row['UniqueID']; ?>" data-value="<?php echo $row['UniqueID']; ?>"> <i class="bi bi-trash"></i> </a>
+											<?php endif; ?>
 										</td>
 									</tr>
 								<?php } ?>
@@ -104,17 +110,16 @@ date_default_timezone_set('Asia/Manila');
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/add_brandcat.php'); ?>
-<?php $this->load->view('admin/modals/view_brandcat.php'); ?>
-<?php $this->load->view('admin/modals/update_brandcat.php'); ?>
-<?php $this->load->view('admin/modals/add_brandvar.php'); ?>
-<?php $this->load->view('admin/modals/add_brandsize.php'); ?>
+<?php $this->load->view('admin/modals/branding/view_brandcat.php'); ?>
+<?php $this->load->view('admin/modals/branding/add_brandcat.php'); ?>
+<?php $this->load->view('admin/modals/branding/add_brandvar.php'); ?>
+<?php $this->load->view('admin/modals/branding/add_brandsize.php'); ?>
+<?php $this->load->view('admin/modals/branding/update_brandcat.php'); ?>
 
-<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 
 <!-- <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
@@ -123,10 +128,10 @@ date_default_timezone_set('Asia/Manila');
 <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
 
 <script>
-$(document).ready(function() {
-
 	//--------------- SIDEBAR ---------------//
 	$('.sidebar-admin-settings-bcat').addClass('active');
+$(document).ready(function() {
+
 
 	//--------------- TABLE ---------------//
 	$('#brandsss').DataTable();
@@ -140,7 +145,8 @@ $(document).ready(function() {
 	});
 
 	//--------------- VIEW ---------------//
-	$( ".btn-viewbrand" ).click(function() {
+	$(document).on('click', '.btn-viewbrand', function() {
+	// $( ".btn-viewbrand" ).click(function() {
 		var uid = $(this).attr('data-value');
 		$.ajax({
 			url: '<?=base_url()?>GetBrand_data',
@@ -192,7 +198,8 @@ $(document).ready(function() {
 	});
 
 	//--------------- UPDATE ---------------//
-	$( ".btn-updatebrand" ).click(function() {
+	$(document).on('click', '.btn-updatebrand', function() {
+	// $( ".btn-updatebrand" ).click(function() {
 		var uid = $(this).attr('data-value');
 		$.ajax({
 			url: '<?=base_url()?>GetBrand_data',
@@ -408,6 +415,11 @@ $(document).ready(function() {
 	// 		}
 	// 	});
 	// });
+	$(document).on('click', '.btn-removebrand', function() {
+		if (!confirm('Remove Brand?')) {
+			event.preventDefault();
+		}
+	});
 	
 
 

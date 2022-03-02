@@ -13,7 +13,7 @@ class Admin extends MY_Controller {
 		$this->load->model('Model_Logbook');
 		$this->load->model('Model_Updates');
 		$this->load->model('Model_Deletes');
-		if($this->Model_Security->CheckPrivilegeLevel() >= 1) {
+		if($this->Model_Security->CheckPrivilegeLevel() >= 0) {
 			$this->load->model('Model_Inserts');
 			$this->load->model('Model_Updates');
 
@@ -84,98 +84,6 @@ class Admin extends MY_Controller {
 			);
 			$EmailInsert = $this->Model_Inserts->EmailInsert($data);
 		}
-	}
-	function userRestrictionsArray() {
-		$userRestrictions = array(
-			'products_view',
-			'products_add',
-			'products_edit',
-			'products_delete',
-
-			'releasing_view',
-			'releasing_scan_add_stock',
-			'releasing_manual_add_stock',
-
-			'restocking_view',
-			'restocking_scan_add_stock',
-			'restocking_manual_add_stock',
-			'restocking_update_stock',
-			'restocking_delete_stock',
-
-			'inventory_view',
-
-			'users_view',
-			'users_add',
-			'users_edit',
-			'users_edit_login',
-
-			'vendors_view',
-			'vendors_add',
-			'vendors_edit',
-			'vendors_delete',
-
-			'purchase_orders_view',
-			'purchase_orders_add',
-			'purchase_orders_approve',
-			'purchase_orders_bill_creation',
-			'purchase_orders_accounting',
-
-			'bills_view',
-			'bills_add',
-			'bills_delete',
-
-			'manual_purchases_view',
-
-			'clients_view',
-			'clients_add',
-			'clients_edit',
-			'clients_delete',
-
-			'sales_orders_view',
-			'sales_orders_add',
-			'sales_orders_mark_for_invoicing',
-			'sales_orders_schedule_delivery',
-			'sales_orders_mark_as_delivered',
-			'sales_orders_mark_as_received',
-			'sales_orders_fulfill',
-			'sales_orders_invoice_creation',
-			'sales_orders_accounting',
-
-			'invoice_view',
-			'invoice_add',
-			'invoice_delete',
-
-			'returns_view',
-			'returns_add',
-			'return_product_add',
-			'return_product_edit',
-			'return_product_return_to_inventory',
-
-			'brand_category_view',
-
-			'accounts_view',
-			'accounts_add',
-			'accounts_edit',
-
-			'journal_transactions_view',
-			'journal_transactions_add',
-			'journal_transactions_delete',
-
-			'branding_view',
-			'branding_add',
-			'branding_edit',
-			'branding_delete',
-
-			'mail_view',
-			'mail_add',
-
-			'my_activities_view',
-
-			'trash_bin_view',
-			'trash_bin_retrieve',
-			'trash_bin_delete',
-		);
-		return $userRestrictions;
 	}
 
 	public function index()
@@ -538,48 +446,10 @@ class Admin extends MY_Controller {
 		$privilege = $this->input->post('userPrivilege');
 
 		// USER RESTRICTIONS
-		$userRestrictions = array(
-			'products_view' => $this->input->post('products_view'),
-			'products_add' => $this->input->post('products_add'),
-			'products_edit' => $this->input->post('products_edit'),
-			'products_delete' => $this->input->post('products_delete'),
-			'releasing_view' => $this->input->post('releasing_view'),
-			'restocking_view' => $this->input->post('restocking_view'),
-			'inventory_view' => $this->input->post('inventory_view'),
-			'users_view' => $this->input->post('users_view'),
-			'users_add' => $this->input->post('users_add'),
-			'users_edit' => $this->input->post('users_edit'),
-			'vendors_view' => $this->input->post('vendors_view'),
-			'vendors_add' => $this->input->post('vendors_add'),
-			'vendors_edit' => $this->input->post('vendors_edit'),
-			'vendors_delete' => $this->input->post('vendors_delete'),
-			'purchase_orders_view' => $this->input->post('purchase_orders_view'),
-			'purchase_orders_add' => $this->input->post('purchase_orders_add'),
-			'purchase_orders_approve' => $this->input->post('purchase_orders_approve'),
-			'purchase_orders_bill_creation' => $this->input->post('purchase_orders_bill_creation'),
-			'bills_view' => $this->input->post('bills_view'),
-			'clients_view' => $this->input->post('clients_view'),
-			'clients_add' => $this->input->post('clients_add'),
-			'clients_edit' => $this->input->post('clients_edit'),
-			'clients_delete' => $this->input->post('clients_delete'),
-			'sales_orders_view' => $this->input->post('sales_orders_view'),
-			'sales_orders_add' => $this->input->post('sales_orders_add'),
-			'sales_orders_mark_for_invoicing' => $this->input->post('sales_orders_mark_for_invoicing'),
-			'sales_orders_schedule_delivery' => $this->input->post('sales_orders_schedule_delivery'),
-			'sales_orders_mark_as_delivered' => $this->input->post('sales_orders_mark_as_delivered'),
-			'sales_orders_mark_as_received' => $this->input->post('sales_orders_mark_as_received'),
-			'sales_orders_fulfill' => $this->input->post('sales_orders_fulfill'),
-			'sales_orders_invoice_creation' => $this->input->post('sales_orders_invoice_creation'),
-			'invoice_view' => $this->input->post('invoice_view'),
-			'brand_category_view' => $this->input->post('brand_category_view'),
-			'trash_bin_view' => $this->input->post('trash_bin_view'),
-			'accounts_view' => $this->input->post('accounts_view'),
-			'accounts_add' => $this->input->post('accounts_add'),
-			'accounts_edit' => $this->input->post('accounts_edit'),
-			'journal_transactions_view' => $this->input->post('journal_transactions_view'),
-			'journal_transactions_add' => $this->input->post('journal_transactions_add'),
-			'journal_transactions_delete' => $this->input->post('journal_transactions_delete')
-		);
+		$userRestrictions = array();
+		foreach ($this->config->item('user_restrictions') as $restriction) {
+			$userRestrictions[$restriction] = ($this->input->post($restriction) == 'on' ? '1' : '0');
+		}
 
 
 		$pImageChecker = $this->input->post('pImageChecker');
@@ -661,18 +531,9 @@ class Admin extends MY_Controller {
 			// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
 			
 			// INSERT USER RESTRICTIONS
-			foreach ($userRestrictions as $key => $val) {
-				$allowed = 0;
-				if ($val == 'on') {
-					$allowed = 1;
-				}
-				$data = array(
-					'UserID' => $userID,
-					'Action' => $key,
-					'Allowed' => $allowed,
-				);
-				$this->Model_Inserts->InsertUserRestrictions($data);
-			}
+			$data = $userRestrictions;
+			$data['UserID'] = $userID;
+			$this->Model_Inserts->InsertUserRestrictions($data);
 
 			// LOGBOOK
 			$this->Model_Logbook->LogbookEntry('created a new user.', 'added a new user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
@@ -713,48 +574,10 @@ class Admin extends MY_Controller {
 		$loginPassword = $this->input->post('newLoginPassword');
 
 		// USER RESTRICTIONS
-		$userRestrictions = array(
-			'products_view' => $this->input->post('products_view_update'),
-			'products_add' => $this->input->post('products_add_update'),
-			'products_edit' => $this->input->post('products_edit_update'),
-			'products_delete' => $this->input->post('products_delete_update'),
-			'releasing_view' => $this->input->post('releasing_view_update'),
-			'restocking_view' => $this->input->post('restocking_view_update'),
-			'inventory_view' => $this->input->post('inventory_view_update'),
-			'users_view' => $this->input->post('users_view_update'),
-			'users_add' => $this->input->post('users_add_update'),
-			'users_edit' => $this->input->post('users_edit_update'),
-			'vendors_view' => $this->input->post('vendors_view_update'),
-			'vendors_add' => $this->input->post('vendors_add_update'),
-			'vendors_edit' => $this->input->post('vendors_edit_update'),
-			'vendors_delete' => $this->input->post('vendors_delete_update'),
-			'purchase_orders_view' => $this->input->post('purchase_orders_view_update'),
-			'purchase_orders_add' => $this->input->post('purchase_orders_add_update'),
-			'purchase_orders_approve' => $this->input->post('purchase_orders_approve_update'),
-			'purchase_orders_bill_creation' => $this->input->post('purchase_orders_bill_creation_update'),
-			'bills_view' => $this->input->post('bills_view_update'),
-			'clients_view' => $this->input->post('clients_view_update'),
-			'clients_add' => $this->input->post('clients_add_update'),
-			'clients_edit' => $this->input->post('clients_edit_update'),
-			'clients_delete' => $this->input->post('clients_delete_update'),
-			'sales_orders_view' => $this->input->post('sales_orders_view_update'),
-			'sales_orders_add' => $this->input->post('sales_orders_add_update'),
-			'sales_orders_mark_for_invoicing' => $this->input->post('sales_orders_mark_for_invoicing_update'),
-			'sales_orders_schedule_delivery' => $this->input->post('sales_orders_schedule_delivery_update'),
-			'sales_orders_mark_as_delivered' => $this->input->post('sales_orders_mark_as_delivered_update'),
-			'sales_orders_mark_as_received' => $this->input->post('sales_orders_mark_as_received_update'),
-			'sales_orders_fulfill' => $this->input->post('sales_orders_fulfill_update'),
-			'sales_orders_invoice_creation' => $this->input->post('sales_orders_invoice_creation_update'),
-			'invoice_view' => $this->input->post('invoice_view_update'),
-			'accounts_view' => $this->input->post('accounts_view_update'),
-			'accounts_add' => $this->input->post('accounts_add_update'),
-			'accounts_edit' => $this->input->post('accounts_edit_update'),
-			'journal_transactions_view' => $this->input->post('journal_transactions_view_update'),
-			'journal_transactions_add' => $this->input->post('journal_transactions_add_update'),
-			'journal_transactions_delete' => $this->input->post('journal_transactions_delete_update'),
-			'brand_category_view' => $this->input->post('brand_category_view_update'),
-			'trash_bin_view' => $this->input->post('trash_bin_view_update')
-		);
+		$userRestrictions = array();
+		foreach ($this->config->item('user_restrictions') as $restriction) {
+			$userRestrictions[$restriction] = ($this->input->post($restriction .'_update') == 'on' ? '1' : '0');
+		}
 		
 		$config['upload_path'] = './uploads/'.$userID;
 		$config['allowed_types'] = 'gif|jpg|png';
@@ -828,35 +651,19 @@ class Admin extends MY_Controller {
 		$updateEmployee = $this->Model_Updates->UpdateUser($data, $userID);
 		if ($updateEmployee == TRUE) {
 			// UPDATE RESTRICTIONS
-			$allUserRestrictions = $this->Model_Selects->GetUserRestrictions($userID);
+			$GetUserRestrictions = $this->Model_Selects->GetUserRestrictions($userID);
 
-			if ($allUserRestrictions->num_rows() != sizeof($userRestrictions)) { // if incorrect amount of restrictions, delete current and add new
-				$this->Model_Deletes->Delete_user_restriction($userID);
-				foreach ($userRestrictions as $key => $val) {
-					$allowed = 0;
-					if ($val == 'on') {
-						$allowed = 1;
-					}
-					$data = array(
-						'UserID' => $userID,
-						'Action' => $key,
-						'Allowed' => $allowed,
-					);
-					$this->Model_Inserts->InsertUserRestrictions($data);
-				}
+			$data = $userRestrictions;
+			if ($GetUserRestrictions->num_rows() > 0) {
+				$this->Model_Updates->UpdateUserRestrictions($userID, $data);
 			} else {
-				foreach ($userRestrictions as $key => $val) {
-					$allowed = 0;
-					if ($val == 'on') {
-						$allowed = 1;
-					}
-					$data = array(
-						'Allowed' => $allowed,
-					);
-					$this->Model_Updates->UpdateUserRestriction($userID, $key, $data);
-				}
+				// INSERT USER RESTRICTIONS IF NOT EXISTING
+				$data['UserID'] = $userID;
+				$this->Model_Inserts->InsertUserRestrictions($data);
 			}
+
 			$this->Model_Logbook->LogbookEntry('updated user details.', 'updated details of user' . ($firstName ? ' ' . $firstName : '') . ($middleName ? ' ' . $middleName : '') . ($lastName ? ' ' . $lastName : '') . ' [UserID: ' . $userID . '].', base_url('admin/users'));
+
 			if ($loginEmail != NULL && $loginPassword != NULL) {
 				$loginData = array(
 					'LoginEmail' => $loginEmail,
@@ -974,57 +781,14 @@ class Admin extends MY_Controller {
 		if ($insertNewEmployee == TRUE) {
 			$this->session->set_flashdata('isApplicantAdded', 'true');
 
-			// INSERT USER RESTRICTIONS
-			$userRestrictions = array(
-				'products_view',
-				'products_add',
-				'products_edit',
-				'products_delete',
-				'releasing_view',
-				'restocking_view',
-				'inventory_view',
-				'users_view',
-				'users_add',
-				'users_edit',
-				'vendors_view',
-				'vendors_add',
-				'vendors_edit',
-				'vendors_delete',
-				'purchase_orders_view',
-				'purchase_orders_add',
-				'purchase_orders_approve',
-				'purchase_orders_bill_creation',
-				'bills_view',
-				'clients_view',
-				'clients_add',
-				'clients_edit',
-				'clients_delete',
-				'sales_orders_view',
-				'sales_orders_add',
-				'sales_orders_mark_for_invoicing',
-				'sales_orders_schedule_delivery',
-				'sales_orders_mark_as_delivered',
-				'sales_orders_mark_as_received',
-				'sales_orders_fulfill',
-				'sales_orders_invoice_creation',
-				'invoice_view',
-				'brand_category_view',
-				'trash_bin_view',
-				'accounts_view',
-				'accounts_add',
-				'accounts_edit',
-				'journal_transactions_view',
-				'journal_transactions_add',
-				'journal_transactions_delete'
-			);
-			foreach ($userRestrictions as $key) {
-				$data = array(
-					'UserID' => $userID,
-					'Action' => $key,
-					'Allowed' => 0,
-				);
-				$this->Model_Inserts->InsertUserRestrictions($data);
+			// USER RESTRICTIONS
+			$userRestrictions = array();
+			foreach ($this->config->item('user_restrictions') as $restriction) {
+				$userRestrictions[$restriction] = 0;
 			}
+			$data = $userRestrictions;
+			$data['UserID'] = $userID;
+			$this->Model_Inserts->InsertUserRestrictions($data);
 
 			if ($loginEmail != NULL && $loginPassword != NULL) {
 				$loginData = array(
@@ -1063,6 +827,7 @@ class Admin extends MY_Controller {
 		$address = $this->input->post('add-address');
 		$contactNum = $this->input->post('add-contact-num');
 		$kind = $this->input->post('add-kind');
+		$email = $this->input->post('add-email');
 		
 		// Insert
 		$data = array(
@@ -1072,6 +837,7 @@ class Admin extends MY_Controller {
 			'Address' => $address,
 			'ContactNum' => $contactNum,
 			'ProductServiceKind' => $kind,
+			'Email' => $email,
 		);
 		$insertNewVendor = $this->Model_Inserts->InsertNewVendor($data);
 		if ($insertNewVendor == TRUE) {
@@ -1103,6 +869,7 @@ class Admin extends MY_Controller {
 		$address = $this->input->post('upd-address');
 		$contactNum = $this->input->post('upd-contact-num');
 		$kind = $this->input->post('upd-kind');
+		$email = $this->input->post('upd-email');
 
 		// Insert
 		$data = array(
@@ -1111,6 +878,7 @@ class Admin extends MY_Controller {
 			'Address' => $address,
 			'ContactNum' => $contactNum,
 			'ProductServiceKind' => $kind,
+			'Email' => $email,
 		);
 		$updateVendor = $this->Model_Updates->UpdateVendor($data, $vendorID);
 		if ($updateVendor == TRUE) {
@@ -1851,6 +1619,7 @@ class Admin extends MY_Controller {
 				// update order status
 				$data = array(
 					'OrderNo' => $orderNo,
+					'DateApproved' => date('Y-m-d H:i:s'),
 					'Status' => '2',
 				);
 				$this->Model_Updates->UpdatePurchaseOrder($data);
@@ -2995,22 +2764,35 @@ class Admin extends MY_Controller {
 		$qty = $this->input->post('qty');
 		$unitCost = $this->input->post('unit-cost');
 
-		// Insert
-		$data = array(
-			'OrderNo' => $purchaseOrderNo,
-			'ItemNo' => $itemNo,
-			'Description' => $description,
-			'Qty' => $qty,
-			'UnitCost' => $unitCost,
-			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
-		);
-		$insertManualTransaction = $this->Model_Inserts->InsertManualTransaction($data);
-		if ($insertManualTransaction == TRUE) {
-			$mTransactionID = $this->db->insert_id();
+		$orderDetails = $this->Model_Selects->GetPurchaseOrderByNo($purchaseOrderNo)->row_array();
+		if ($orderDetails['Status'] < 2) {
+			// Insert
+			$data = array(
+				'OrderNo' => $purchaseOrderNo,
+				'ItemNo' => $itemNo,
+				'Description' => $description,
+				'Qty' => $qty,
+				'UnitCost' => $unitCost,
+				'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+			);
+			$insertManualTransaction = $this->Model_Inserts->InsertManualTransaction($data);
+			if ($insertManualTransaction == TRUE) {
+				$mTransactionID = $this->db->insert_id();
 
-			// LOGBOOK
-			$this->Model_Logbook->LogbookEntry('adde a new manual purchase transaction.', 'adde a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
-			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('adde a new manual purchase transaction.', 'adde a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
+				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+			}
 		}
 		else
 		{

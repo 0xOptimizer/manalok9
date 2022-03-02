@@ -254,19 +254,17 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 									</span>
 								</div>
 								<div class="additional-data ml-2">
-									<div class="row mt-2">
-										<div class="col-sm-6">
+									<div class="row">
+										<div class="col-12 mt-2">
 											<button type="button" class="btn btn-primary" style="width: 150px;"><i class="bi bi-server"></i> DATABASE</button>
 										</div>
-										<div class="col-sm-6">
+										<div class="col-12 mt-2">
 											<button type="button" class="backup-btn btn btn-info" style="width: 150px;"><i class="bi bi-back"></i> BACKUP</button>
 										</div>
-									</div>
-									<div class="row mt-2">
-										<div class="col-sm-6">
+										<div class="col-12 mt-2">
 											<a href="<?=base_url() . 'admin/security';?>" class="btn btn-danger" style="width: 150px;"><i class="bi bi-shield-fill"></i> SECURITY</a>
 										</div>
-										<div class="col-sm-6">
+										<div class="col-12 mt-2">
 											<button type="button" class="btn btn-secondary" style="width: 150px;"><i class="bi bi-wrench"></i> SETTINGS</button>
 										</div>
 									</div>
@@ -296,11 +294,10 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 <!-- Create a new employee modal -->
 <?php $this->load->view('admin/modals/database_backupprompt.php'); ?>
 
-<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.css">
 <script src="<?php base_url(); ?>assets/js/Chart.bundle.min.js"></script>

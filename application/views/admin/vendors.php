@@ -40,8 +40,8 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<?php if ($this->session->userdata('UserRestrictions')['vendors_add'] == 1): ?>
-						<button type="button" class="newvendor-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-shop-window"></i> NEW VENDOR</button>
+						<?php if ($this->session->userdata('UserRestrictions')['vendors_add']): ?>
+							<button type="button" class="newvendor-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-shop-window"></i> NEW VENDOR</button>
 						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
@@ -95,11 +95,11 @@ if ($this->session->flashdata('highlight-id')) {
 										</td>
 										<td class="text-center">
 											<i class="bi bi-eye btn-view-vendor" style="color: #408AF7;"></i>
-											<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
-											<i class="bi bi-pencil btn-update-vendor" style="color: #229F4B;"></i>
+											<?php if ($this->session->userdata('UserRestrictions')['vendors_edit']): ?>
+												<i class="bi bi-pencil btn-update-vendor" style="color: #229F4B;"></i>
 											<?php endif; ?>
-											<?php if ($this->session->userdata('UserRestrictions')['vendors_delete'] == 1): ?>
-											<i class="bi bi-trash text-danger btn-delete-vendor"></i>
+											<?php if ($this->session->userdata('UserRestrictions')['vendors_delete']): ?>
+												<i class="bi bi-trash text-danger btn-delete-vendor"></i>
 											<?php endif; ?>
 										</td>
 									</tr>
@@ -115,25 +115,16 @@ if ($this->session->flashdata('highlight-id')) {
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
-<!-- New vendor modal -->
-<?php if ($this->session->userdata('UserRestrictions')['vendors_add'] == 1): ?>
-<?php $this->load->view('admin/modals/add_vendor.php'); ?>
-<?php endif; ?>
-<?php $this->load->view('admin/modals/vendor_modal.php'); ?>
-<?php if ($this->session->userdata('UserRestrictions')['vendors_edit'] == 1): ?>
-<?php $this->load->view('admin/modals/update_vendor.php'); ?>
-<?php endif; ?>
-<?php if ($this->session->userdata('UserRestrictions')['vendors_delete'] == 1): ?>
-	<form id="formDeleteVendor" action="<?php echo base_url() . 'FORM_deleteVendor';?>" method="POST" enctype="multipart/form-data">
-		<input id="vendorNoDelete" type="hidden" name="vendor-no">
-	</form>
-<?php endif; ?>
+
+<?php $this->load->view('admin/modals/vendors/add_vendor.php'); ?>
+<?php $this->load->view('admin/modals/vendors/vendor_modal.php'); ?>
+<?php $this->load->view('admin/modals/vendors/update_vendor.php'); ?>
+<?php $this->load->view('admin/modals/vendors/delete_vendor.php'); ?>
 
 <?php $this->load->view('admin/modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -233,6 +224,7 @@ $(document).ready(function() {
 				$('.m_address').text(response.Address).val(response.Address);
 				$('.m_contactnum').text(response.ContactNum).val(response.ContactNum);
 				$('.m_kind').text(response.ProductServiceKind).val(response.ProductServiceKind);
+				$('.m_email').text(response.Email).val(response.Email);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log(textStatus, errorThrown);
@@ -259,8 +251,8 @@ $(document).ready(function() {
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 </html>

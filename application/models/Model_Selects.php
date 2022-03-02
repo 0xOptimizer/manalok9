@@ -142,9 +142,8 @@ class Model_Selects extends CI_Model {
 	}
 	public function GetUserRestrictions($userID)
 	{
-		$this->db->select('Action, Allowed');
+		$this->db->select('*');
 		$this->db->where('UserID', $userID);
-		$this->db->order_by('ID', 'asc');
 		$result = $this->db->get('user_restrictions'); 
 		return $result;
 	}

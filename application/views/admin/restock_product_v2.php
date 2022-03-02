@@ -46,18 +46,26 @@ date_default_timezone_set('Asia/Manila');
 							</h3>
 						</div>
 						<div class="col-12 col-md-12 pt-4 pb-2">
-							<a id="scan_barcode_stocking" href="#" class="scnrestock-btn btn btn-sm-success" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#add_stock_restocking">
-								<i class="bi bi-plus-square"></i>
-								SCAN BARCODE
-							</a>
-							<a id="add_stock" href="#" class="scnrestock-btn btn btn-sm-success" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#add_stock_restocking_manual">
-								<i class="bi bi-plus-square"></i>
-								ADD STOCK
-							</a>
-							|
+							<?php if ($this->session->userdata('UserRestrictions')['restocking_scan_add_stock']): ?>
+								<a id="scan_barcode_stocking" href="#" class="scnrestock-btn btn btn-sm-success" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#add_stock_restocking">
+									<i class="bi bi-plus-square"></i>
+									SCAN BARCODE
+								</a>
+							<?php endif; ?>
+							<?php if ($this->session->userdata('UserRestrictions')['restocking_manual_add_stock']): ?>
+								<a id="add_stock" href="#" class="scnrestock-btn btn btn-sm-success" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#add_stock_restocking_manual">
+									<i class="bi bi-plus-square"></i>
+									ADD STOCK
+								</a>
+							<?php endif; ?>
+							<?php if ($this->session->userdata('UserRestrictions')['restocking_scan_add_stock'] || $this->session->userdata('UserRestrictions')['restocking_manual_add_stock']): ?>
+								|
+							<?php endif; ?>
 							<a href="#" class="scnrestock-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cloud-download"></i> GENERATE REPORT</a>
-							|
-							<a href="#" class="scnrestock-btn btn btn-sm-secondary" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#restocking_cart_modal"><i class="bi bi-cart"></i> CART</a>
+							<?php if ($this->session->userdata('UserRestrictions')['restocking_scan_add_stock'] || $this->session->userdata('UserRestrictions')['restocking_manual_add_stock']): ?>
+								|
+								<a href="#" class="scnrestock-btn btn btn-sm-secondary" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#restocking_cart_modal"><i class="bi bi-cart"></i> CART</a>
+							<?php endif; ?>
 						</div>
 					</div>
 				</div>
@@ -124,12 +132,16 @@ date_default_timezone_set('Asia/Manila');
 											<a class="modal_view mx-2 text-primary" href="#" data-id="<?php echo $row['ID']; ?>">
 												<i class="bi bi-eye"></i>
 											</a>
-											<a class="modal_update mx-2 text-success" href="#" data-id="<?php echo $row['ID']; ?>">
-												<i class="bi bi-pencil-square"></i>
-											</a>
-											<a class="modal_delete mx-2 text-danger" href="#" data-id="<?php echo $row['ID']; ?>">
-												<i class="bi bi-trash"></i>
-											</a>
+											<?php if ($this->session->userdata('UserRestrictions')['restocking_update_stock']): ?>
+												<a class="modal_update mx-2 text-success" href="#" data-id="<?php echo $row['ID']; ?>">
+													<i class="bi bi-pencil-square"></i>
+												</a>
+											<?php endif; ?>
+											<?php if ($this->session->userdata('UserRestrictions')['restocking_delete_stock']): ?>
+												<a class="modal_delete mx-2 text-danger" href="#" data-id="<?php echo $row['ID']; ?>">
+													<i class="bi bi-trash"></i>
+												</a>
+											<?php endif; ?>
 										</td>
 									</tr>
 								<?php endforeach ?>
@@ -153,19 +165,18 @@ date_default_timezone_set('Asia/Manila');
 	<?php $this->load->view('admin/modals/restocking/update_stock_modal.php'); ?>
 
 
-	<?php $this->load->view('main/globals/scripts.php'); ?>
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-	<script src="<?=base_url()?>/assets/js/main.js"></script>
 	<script src="<?=base_url()?>/assets/js/jquery.js"></script>
+	<?php $this->load->view('main/globals/scripts.php'); ?>
 
 	<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.js"></script>
 	<script>
+			$('.sidebar-admin-restock_productv2').addClass('active');
 		$(document).ready(function() {
 
-			$('.sidebar-admin-restock_productv2').addClass('active');
 
 			$('#list_release').DataTable();
 
@@ -175,7 +186,6 @@ date_default_timezone_set('Asia/Manila');
 		/* VARIABLES */
 	</script>
 	<script type="text/javascript" src="<?=base_url()?>assets/js/restocking.js"></script>
-
 	<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 

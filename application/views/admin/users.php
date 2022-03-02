@@ -63,16 +63,16 @@ $globalHeader;
 						<tr>
 							<td>
 								<div class="row">
-									<?php if ($this->session->userdata('UserRestrictions')['users_add'] == 1): ?>
-									<div class="col-xs-12 col-sm-6 col-md-3">
-										<div class="card employee-card-hover employee-add-new">
-											<div class="card-body text-center">
-												<p><img class="img-fluid rounded-circle border-gold" src="<?php echo base_url() ?>assets/images/plus.png" width="128" height="128" alt="card image"></p>
-												<h4 class="card-title">Create a New User</h4>
-												<p class="card-text">Add a new user to manage.</p>
+									<?php if ($this->session->userdata('UserRestrictions')['users_add']): ?>
+										<div class="col-xs-12 col-sm-6 col-md-3">
+											<div class="card employee-card-hover employee-add-new">
+												<div class="card-body text-center">
+													<p><img class="img-fluid rounded-circle border-gold" src="<?php echo base_url() ?>assets/images/plus.png" width="128" height="128" alt="card image"></p>
+													<h4 class="card-title">Create a New User</h4>
+													<p class="card-text">Add a new user to manage.</p>
+												</div>
 											</div>
 										</div>
-									</div>
 									<?php endif; ?>
 									<?php
 									$getAllUsers = $this->Model_Selects->GetAllUsers();
@@ -145,7 +145,7 @@ $globalHeader;
 											}
 											?>
 											<div class="col-xs-12 col-sm-6 col-md-3" style="height: 21em;">
-												<div class="card employee-standard-card employee-card-hover" data-userid="<?=$row['UserID'];?>" data-image="<?=$row['Image'];?>" data-firstname="<?=$row['FirstName'];?>" data-middlename="<?=$row['MiddleName'];?>" data-lastname="<?=$row['LastName'];?>" data-nameextension="<?=$row['NameExtension'];?>" data-dateofbirth="<?=$row['DateOfBirth'];?>" data-contactnumber="<?=$row['ContactNumber'];?>" data-address="<?=$row['Address'];?>" data-comment="<?=$row['Comment'];?>" data-privilege="<?=$row['Privilege'];?>" data-loginemail="<?=$loginEmail;?>" data-loginpassword="<?=$loginPassword;?>" style="height: 19em;">
+												<div class="card employee-standard-card employee-card-hover" data-userid="<?=$row['UserID'];?>" data-image="<?=$row['Image'];?>" data-firstname="<?=$row['FirstName'];?>" data-middlename="<?=$row['MiddleName'];?>" data-lastname="<?=$row['LastName'];?>" data-nameextension="<?=$row['NameExtension'];?>" data-dateofbirth="<?=$row['DateOfBirth'];?>" data-contactnumber="<?=$row['ContactNumber'];?>" data-address="<?=$row['Address'];?>" data-comment="<?=$row['Comment'];?>" data-privilege="<?=$row['Privilege'];?>" data-loginemail="<?=$loginEmail;?>" style="height: 19em;">
 													<div class="card-body text-center">
 														<p><img class="img-fluid rounded-circle" src="<?=base_url().$row['Image'];?>" width="128" height="128" alt="card image"></p>
 														<h4 class="card-title"<?php if($isFullNameHoverable): ?> data-toggle="tooltip" data-placement="top" data-html="true" title="<?=$fullNameHover;?>"<?php endif; ?>><?=$fullName?></h4>
@@ -179,21 +179,17 @@ $globalHeader;
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
-<?php if ($this->session->userdata('UserRestrictions')['users_add'] == 1): ?>
 <!-- New user prompt -->
-<?php $this->load->view('admin/modals/users_registration.php'); ?>
+<?php $this->load->view('admin/modals/users/users_registration.php'); ?>
 <!-- Create a new employee modal -->
-<?php $this->load->view('admin/modals/create_employee_modal.php'); ?>
-<?php endif; ?>
-<?php if ($this->session->userdata('UserRestrictions')['users_edit'] == 1): ?>
+<?php $this->load->view('admin/modals/users/create_employee_modal.php'); ?>
 <!-- Update employee modal -->
-<?php $this->load->view('admin/modals/update_employee_modal.php'); ?>
-<?php endif; ?>
-<?php $this->load->view('main/globals/scripts.php'); ?>
+<?php $this->load->view('admin/modals/users/update_employee_modal.php'); ?>
+
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/js/moment.min.js"></script>
 <script type="text/javascript">
 $('.sidebar-admin-employees').addClass('active');
@@ -207,6 +203,7 @@ $(document).ready(function() {
 		$('#userRegistration').modal('toggle');
 	});
 	// $('#UpdateEmployeeModal').modal('toggle');
+	var userRestrictions = <?=json_encode($this->config->item('user_restrictions'))?>;
 	$('.employee-standard-card').on('click', function() {
 		$('#UpdateDefaultImage').val($(this).data('image'));
 		$('#UpdateUserID').val($(this).data('userid'));
@@ -221,10 +218,8 @@ $(document).ready(function() {
 		$('#UpdateComment').val($(this).data('comment'));
 		$('#UpdatePrivilege option[value=' + (($(this).data('privilege').length < 1) ? 0 : $(this).data('privilege')) + ']').prop('selected', true);
 		let loginEmail = $(this).data('loginemail');
-		let loginPassword = $(this).data('loginpassword');
 		$('#LoginEmail').val(loginEmail);
-		$('#LoginPassword').val(loginPassword);
-		if (loginEmail == '' || loginPassword == '') {
+		if (loginEmail == '') {
 			$('.login-failed-banner').show();
 		} else {
 			$('.login-failed-banner').hide();
@@ -239,7 +234,7 @@ $(document).ready(function() {
 		$('.error-saving-banner').fadeOut('fast');
 		$('.save-btn').removeClass('btn-secondary');
 		$('.save-btn').addClass('btn-success');
-		$('.save-btn').removeAttr('disabled');
+		$('.save-btn').attr('disabled', true);
 		$('.save-btn').html('<i class="bi bi-check-square"></i> Save Changes');
 		$('#UpdateEmployeeModal').modal('toggle');
 
@@ -248,13 +243,14 @@ $(document).ready(function() {
 		// get restrictions 
 		$.get('getUserRestrictions', { dataType: 'json', userID: id })
 		.done(function(data) {
-			var userRestrictions = $.parseJSON(data);
+			var getUserRestrictions = $.parseJSON(data)[0];
 			$('.allowedActions_Update .form-check-input').removeAttr('checked');
 			$.each(userRestrictions, function(index, val) {
-				if (val.Allowed == '1') {
-					$('.allowedActions_Update [name="'+ val.Action +'_update"][id$="_Update"]').attr('checked', '');
+				console.log(getUserRestrictions[val] + ': ' + val +'_update');
+				if (getUserRestrictions[val] == '1') {
+					$('.allowedActions_Update [name="'+ val +'_update"][id$="_Update"]').attr('checked', '');
 				} else {
-					$('.allowedActions_Update [name="'+ val.Action +'_update"][id$="_Update"]').removeAttr('checked');
+					$('.allowedActions_Update [name="'+ val +'_update"][id$="_Update"]').removeAttr('checked');
 				}
 			});
 		});
@@ -299,6 +295,7 @@ $(document).ready(function() {
 		$('.employee-comment-input').fadeIn('fast');
 	});
 	$('#UpdateEmployeeToggle').on('change', function() {
+		$('.save-btn').removeAttr('disabled');
 		toggle = $('#UpdateEmployeeToggle').prop('checked');
 		if (toggle) {
 			$('#UpdateEmployeeModal').find('.modal-body').find('input').each(function() {
@@ -418,9 +415,12 @@ $(document).ready(function() {
 		});
 	});
 
+
+	// USER RESTRICTIONS
 	$('body').on('click', '.actionMain', function() {
 		if($(this).is(':checked')) {
 			$(this).parent().next('.actionSub').find('input').removeAttr('disabled');
+			$(this).parent().next('.actionSub').find('input').prop('checked', true);
 		} else {
 			$(this).parent().next('.actionSub').find('input').prop('checked', false);
 			$(this).parent().next('.actionSub').find('input').attr('disabled', '');
@@ -428,6 +428,7 @@ $(document).ready(function() {
 	});
 });
 </script>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 

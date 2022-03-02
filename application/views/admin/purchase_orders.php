@@ -82,9 +82,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add'] == 1): ?>
-						<button type="button" class="newpurchaseorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW PURCHASE ORDER</button>
-						|
+						<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add']): ?>
+							<button type="button" class="newpurchaseorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW PURCHASE ORDER</button>
+							|
 						<?php endif; ?>
 						<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 						<a href="view_purchase_summary">
@@ -165,67 +165,12 @@ if ($this->session->flashdata('highlight-id')) {
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
-<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add'] == 1): ?>
-<?php $this->load->view('admin/modals/add_purchase_order'); ?>
-<?php endif; ?>
-<div class="modal fade" id="SelectProductSKUModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;">Products</h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<input id="rowProductSelection" type="hidden">
-					<?php $getAllProducts = $this->Model_Selects->GetAllProducts(); ?>
-					<div class="col-sm-0 col-md-6">
-						<label class="input-label">PRODUCTS</label>
-					</div>
-					<div class="col-sm-12" style="margin-top: -15px;">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
-							</div>
-							<input type="text" id="tableProductsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
-						</div>
-					</div>
-					<div class="col-sm-12 table-responsive">
-						<table id="selectproductsTable" class="standard-table table">
-							<thead style="font-size: 12px;">
-								<th class="text-center">SKU</th>
-								<th class="text-center">NAME</th>
-								<th class="text-center">DESCRIPTION</th>
-							</thead>
-							<tbody>
-								<?php
-								if ($getAllProducts->num_rows() > 0):
-									foreach ($getAllProducts->result_array() as $row): ?>
-										<tr class="select-product-row" data-sku="<?=$row['Code']?>">
-											<td class="text-center">
-												<?=$row['Code']?>
-											</td>
-											<td class="text-center">
-												<?=$row['Product_Name']?>
-											</td>
-											<td class="text-center">
-												<?=$row['Description']?>
-											</td>
-										</tr>
-								<?php endforeach;
-								endif; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+
+<?php $this->load->view('admin/modals/purchase_orders/add_purchase_order'); ?>
 <?php $this->load->view('admin/modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -638,8 +583,8 @@ $(document).ready(function() {
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 </html>

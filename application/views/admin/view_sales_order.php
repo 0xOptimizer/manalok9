@@ -95,7 +95,9 @@ $returnedProducts = array();
 					<div class="col-12">
 						<button type="button" class="generateform-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE SO FORM</button>
 						|
-						<button type="button" class="accounting-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-receipt"></i> ACCOUNTING</button>
+						<?php if ($this->session->userdata('UserRestrictions')['sales_orders_accounting']): ?>
+							<button type="button" class="accounting-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-receipt"></i> ACCOUNTING</button>
+						<?php endif; ?>
 						<button type="button" class="log-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-list"></i> LOG</button>
 					</div>
 				</div>
@@ -149,7 +151,7 @@ $returnedProducts = array();
 														<?=number_format(($row['Amount'] - $totalReturnedQty) * $row['PriceUnit'], 2)?>
 													</td>
 													<td class="text-center">
-														<?php if ($row['Freebie'] == 1): ?>
+														<?php if ($row['Freebie']): ?>
 															<i class="bi bi-check-circle text-success"></i>
 														<?php else: ?>
 															<i class="bi bi-x-circle text-danger"></i>
@@ -181,7 +183,7 @@ $returnedProducts = array();
 														<thead style="font-size: 12px;">
 															<th class="text-center">TRANSACTION ID</th>
 															<th class="text-center">PRODUCT CODE</th>
-															<th class="text-center">QTY</th>
+															<th class="text-center">RETURNED</th>
 															<th class="text-center">RETURNED TO INVENTORY</th>
 															<th class="text-center">PRICE</th>
 															<th class="text-center">TOTAL</th>
@@ -209,7 +211,7 @@ $returnedProducts = array();
 																		<?=number_format(($row['quantity'] + $row['returned']) * $row['PriceUnit'], 2)?>
 																	</td>
 																	<td class="text-center">
-																		<?php if ($row['Freebie'] == 1): ?>
+																		<?php if ($row['Freebie']): ?>
 																			<i class="bi bi-check-circle text-success"></i>
 																		<?php else: ?>
 																			<i class="bi bi-x-circle text-danger"></i>
@@ -239,7 +241,9 @@ $returnedProducts = array();
 							</div>
 							<div class="col-12 mb-1">
 								<h6>BILL TO
-									<button type="button" class="emailbtclient-btn btn btn-sm-primary" data-email="<?=$clientBTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+										<button type="button" class="emailbtclient-btn btn btn-sm-primary" data-email="<?=$clientBTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php endif; ?>
 								</h6>
 								<label><?=$clientBTDetails['Name']?> (
 									<a href="<?=base_url() . 'admin/clients#'. $clientBTDetails["ClientNo"]?>">
@@ -249,7 +253,9 @@ $returnedProducts = array();
 							</div>
 							<div class="col-12 mb-1">
 								<h6>SHIP TO
-									<button type="button" class="emailstclient-btn btn btn-sm-primary" data-email="<?=$clientSTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+										<button type="button" class="emailstclient-btn btn btn-sm-primary" data-email="<?=$clientSTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php endif; ?>
 								</h6>
 								<label><?=$clientSTDetails['Name']?> (
 									<a href="<?=base_url() . 'admin/clients#'. $clientSTDetails["ClientNo"]?>">
@@ -378,7 +384,7 @@ $returnedProducts = array();
 									</div>
 								</div>
 							</div>
-							<?php if ($salesOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['sales_orders_mark_for_invoicing'] == 1): ?>
+							<?php if ($salesOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['sales_orders_mark_for_invoicing']): ?>
 								<div class="col-12 text-center">
 									<h6>MARK FOR INVOICING</h6>
 								</div>
@@ -390,13 +396,13 @@ $returnedProducts = array();
 										<button type="button" class="btn btn-success approveOrder"><i class="bi bi-check2"></i> APPROVE</button>
 									</form>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '2' && $this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery'] == 1): ?>
+							<?php elseif ($salesOrder['Status'] == '2' && $this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery']): ?>
 								<div class="col-12 text-center">
 									<button type="button" class="btn btn-success deliveryschedule-btn">
 										<i class="bi bi-truck"></i> SCHEDULE FOR DELIVERY
 									</button>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '3' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_delivered'] == 1): ?>
+							<?php elseif ($salesOrder['Status'] == '3' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_delivered']): ?>
 								<div class="col-12 text-center">
 									<form id="formMarkDelivered" action="<?php echo base_url() . 'FORM_markDelivered';?>" method="POST">
 										<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>">
@@ -405,7 +411,7 @@ $returnedProducts = array();
 										</button>
 									</form>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '4' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_received'] == 1): ?>
+							<?php elseif ($salesOrder['Status'] == '4' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_received']): ?>
 								<div class="col-12 text-center">
 									<form id="formMarkReceived" action="<?php echo base_url() . 'FORM_markReceived';?>" method="POST">
 										<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>">
@@ -414,7 +420,7 @@ $returnedProducts = array();
 										</button>
 									</form>
 								</div>
-							<?php elseif ($salesOrder['Status'] == '5' && $this->session->userdata('UserRestrictions')['sales_orders_fulfill'] == 1): ?>
+							<?php elseif ($salesOrder['Status'] == '5'): ?>
 								<div class="col-12 text-center">
 									<h5 class="text-success">SALES ORDER FULFILLED</h5>
 								</div>
@@ -434,7 +440,7 @@ $returnedProducts = array();
 							</h3>
 						</div>
 					</div>
-					<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation'] == 1): ?>
+					<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation']): ?>
 					<div class="row">
 						<div class="col-12">
 							<button type="button" class="salesinvoicing-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
@@ -479,7 +485,7 @@ $returnedProducts = array();
 											</td>
 											<td>
 												<a href="FORM_removeInvoice?ino=<?=$row['InvoiceNo']?>">
-													<button type="button" class="btn removeInvoice"><i class="bi bi-x-square text-danger"></i></button>
+													<button type="button" class="btn removeInvoice"><i class="bi bi-trash text-danger"></i></button>
 												</a>
 											</td>
 										</tr>
@@ -507,229 +513,26 @@ $returnedProducts = array();
 		<?php endif; ?>
 	</div>
 </div>
-<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation'] == 1): ?>
-<?php $this->load->view('admin/modals/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
-<?php endif; ?>
-<?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery'] == 1): ?>
-<div class="modal fade" id="DeliveryScheduling" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<form id="formScheduleDelivery" action="<?php echo base_url() . 'FORM_scheduleDelivery';?>" method="POST">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-truck" style="font-size: 24px;"></i> SO Delivery Scheduling</h4>
-				</div>
-				<div class="modal-body">
-					<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>" required>
-					<div class="form-group col-sm-12 col-md-9 mx-auto">
-						<label class="input-label">DATE</label>
-						<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Schedule for Delivery</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-<?php endif; ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/sales_order_form.php', array(
+<?php $this->load->view('admin/modals/sales_orders/sales_order_form.php', array(
+	'salesOrder' => $salesOrder,
 	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
 	'clientBTDetails' => $clientBTDetails,
 	'clientSTDetails' => $clientSTDetails
 )); ?>
+<?php $this->load->view('admin/modals/sales_orders/sales_order_accounting'); ?>
+<?php $this->load->view('admin/modals/sales_orders/sales_order_logs'); ?>
+<?php $this->load->view('admin/modals/sales_orders/schedule_delivery_sales_order'); ?>
+<?php $this->load->view('admin/modals/sales_orders/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
+<?php $this->load->view('admin/modals/mails/add_mail.php'); ?>
 
-<div class="modal fade" id="AccountingModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt"></i> JOURNAL TRANSACTIONS FOR SALES ORDER ID #<?=$salesOrder['OrderNo']?></h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-12">
-						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW TRANSACTION</button>
-					</div>
-				</div>
-				<div class="row">
-					<?php $getOrderJournals = $this->Model_Selects->GetJournalByOrderNo($salesOrder['OrderNo']); ?>
-					<div class="col-sm-12 table-responsive">
-						<table class="standard-table table">
-							<thead style="font-size: 12px;">
-								<th class="text-center">ID</th>
-								<th class="text-center">DATE</th>
-								<th class="text-center">DESCRIPTION</th>
-								<th class="text-center">TOTAL</th>
-								<th></th>
-							</thead>
-							<tbody>
-								<?php
-								if ($getOrderJournals->num_rows() > 0):
-									foreach ($getOrderJournals->result_array() as $row): ?>
-										<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
-											<td class="text-center">
-												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-											</td>
-											<td class="text-center"><?=$row['Date']?></td>
-											<td class="text-center"><?=$row['Description']?></td>
-											<td class="text-center"><?=number_format($row['Total'], 2)?></td>
-											<td class="text-center">
-												<a href="<?=base_url() . 'admin/journals#J'. $row['ID']?>">
-													<i class="bi bi-eye btn-view-journal" style="color: #408AF7;"></i>
-												</a>
-												<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
-													<i class="bi bi-trash text-danger btn-delete-journal"></i>
-												<?php endif; ?>
-											</td>
-										</tr>
-								<?php endforeach;
-								endif; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="AddJournalTransactionModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-xl" role="document">
-		<form id="formAddJournal" action="<?php echo base_url() . 'FORM_addJournal';?>" method="POST" enctype="multipart/form-data">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-list-ul" style="font-size: 24px;"></i> NEW JOURNAL TRANSACTION FOR SALES ORDER ID #<?=$salesOrder['OrderNo']?></h4>
-				</div>
-				<div class="modal-body mx-4">
-					<div class="row">
-						<input type="hidden" id="transactionsCount" name="transactions-count" value="0">
-						<input type="hidden" name="order_no" value="<?=$salesOrder['OrderNo']?>">
-						<div class="form-group col-12 col-md-8">
-							<label class="input-label">DESCRIPTION</label>
-							<textarea rows="4" class="form-control standard-input-pad" name="description" placeholder="Payment of rent / Purchase of supplies" required></textarea>
-						</div>
-						<div class="form-group col-12 col-md-4">
-							<div class="row">
-								<div class="form-group col-12">
-									<label class="input-label">DATE</label>
-									<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
-								</div>
-							</div>
-							<div class="row">
-								<div class="form-group col-12">
-									<label class="input-label">TIME</label>
-									<input type="time" class="form-control" name="time" value="<?=date("H:i");?>" required>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-12">
-							<div class="table-responsive">
-								<table id="newTransactionsTable" class="standard-table table">
-									<thead style="font-size: 12px;">
-										<th>ACCOUNT</th>
-										<th>DEBIT</th>
-										<th>CREDIT</th>
-										<th></th>
-									</thead>
-									<tbody>
-										<tr class="font-weight-bold add-account-row">
-											<td><i class="bi bi-plus"></i> New Account</td>
-											<td colspan="3"></td>
-										</tr>
-										<tr style="border-color: #a7852d;">
-											<td style="color: #a7852d;">Total</td>
-											<td class="debitTotal">0</td>
-											<td class="creditTotal">0</td>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add New Journal Transaction</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-<div class="modal fade" id="LogModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-list" style="font-size: 24px;"></i> LOGS FOR SALES ORDER ID #<?=$salesOrder['OrderNo']?></h4>
-			</div>
-			<div class="modal-body mx-4">
-				<div class="row">
-					<div class="table-responsive">
-						<table id="newTransactionsTable" class="standard-table table">
-							<thead style="font-size: 12px;">
-								<th class="text-center">DATE</th>
-								<th class="text-center">ACTION</th>
-							</thead>
-							<tbody>
-								<tr>
-									<td class="text-center"><?=$salesOrder['DateCreation']?></td>
-									<td class="text-center">CREATION DATE</td>
-								</tr>
-								<?php if ($salesOrder['MarkDateInvoicing'] != NULL): ?>
-									<tr>
-										<td class="text-center"><?=$salesOrder['MarkDateInvoicing']?></td>
-										<td class="text-center">MARKED FOR INVOICING</td>
-									</tr>
-								<?php endif; ?>
-								<?php if ($salesOrder['MarkDateDelivery'] != NULL): ?>
-									<tr>
-										<td class="text-center"><?=$salesOrder['MarkDateDelivery']?></td>
-										<td class="text-center">MARKED FOR DELIVERY</td>
-									</tr>
-								<?php endif; ?>
-								<?php if ($salesOrder['MarkDateDelivered'] != NULL): ?>
-									<tr>
-										<td class="text-center"><?=$salesOrder['MarkDateDelivered']?></td>
-										<td class="text-center">MARKED AS DELIVERED</td>
-									</tr>
-								<?php endif; ?>
-								<?php if ($salesOrder['MarkDateReceived'] != NULL): ?>
-									<tr>
-										<td class="text-center"><?=$salesOrder['MarkDateReceived']?></td>
-										<td class="text-center">MARKED AS RECEIVED</td>
-									</tr>
-								<?php endif; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
-	<form id="formDeleteJournal" action="<?php echo base_url() . 'FORM_deleteJournal';?>" method="POST" enctype="multipart/form-data">
-		<input id="journalIDDelete" type="hidden" name="journal-id">
-	</form>
-<?php endif; ?>
-
-<form id="formExportTable" action="<?php echo base_url() . 'admin/xlsSalesOrder';?>" method="POST">
-	<input type="hidden" name="order_no" value="<?=$orderNo?>">
-	<input type="hidden" name="filename" value="sales_order_<?=$orderNo?>">
-	<input id="xls_preparedby" type="hidden" name="prepared_by">
-</form>
-
-<?php $this->load->view('admin/modals/add_mail.php'); ?>
-<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
@@ -738,11 +541,6 @@ $returnedProducts = array();
 <script>
 $('.sidebar-admin-sales-orders').addClass('active');
 $(document).ready(function() {
-	// var tableTransactions = $('#transactionsTable').DataTable( {
-	// 	sDom: 'lrtip',
-	// 	'bLengthChange': false,
-	// 	'order': [[ 0, 'desc' ]],
-	// });
 	function showAlert(type, message) {
 		if ($('.alertNotification').length > 0) {
 			$('.alertNotification').remove();

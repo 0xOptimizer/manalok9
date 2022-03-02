@@ -23,7 +23,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-// $config['base_url'] = 'https://christophergamo.com';
 $config['base_url'] = 'https://localhost/manalok9/';
 
 /*
@@ -522,3 +521,100 @@ $config['rewrite_short_tags'] = FALSE;
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
+
+
+// CUSTOM CONFIG
+// main function restriction names must end with '_view'
+// new restrictions must be added on the 'user_restrictions' table as new column
+
+// if (!$this->session->userdata('UserRestrictions')['products_view']) return; // STOP FILE FROM BEING INCLUDED
+
+$config['user_restrictions'] = array(
+		'products_view',
+		'products_add',
+		'products_edit',
+		'products_delete',
+
+		'releasing_view',
+		'releasing_scan_add_stock',
+		'releasing_manual_add_stock',
+
+		'restocking_view',
+		'restocking_scan_add_stock',
+		'restocking_manual_add_stock',
+		'restocking_update_stock',
+		'restocking_delete_stock',
+
+		'inventory_view',
+
+		'users_view',
+		'users_add',
+		'users_edit',
+		'users_edit_login',
+
+		'vendors_view',
+		'vendors_add',
+		'vendors_edit',
+		'vendors_delete',
+
+		'purchase_orders_view',
+		'purchase_orders_add',
+		'purchase_orders_add_manual_transaction',
+		'purchase_orders_approve',
+		'purchase_orders_bill_creation',
+		'purchase_orders_accounting',
+
+		'bills_view',
+		'bills_add',
+		'bills_delete',
+
+		'manual_purchases_view',
+
+		'clients_view',
+		'clients_add',
+		'clients_edit',
+		'clients_delete',
+
+		'sales_orders_view',
+		'sales_orders_add',
+		'sales_orders_mark_for_invoicing',
+		'sales_orders_schedule_delivery',
+		'sales_orders_mark_as_delivered',
+		'sales_orders_mark_as_received',
+		'sales_orders_invoice_creation',
+		'sales_orders_accounting',
+
+		'invoice_view',
+		'invoice_add',
+		'invoice_delete',
+
+		'returns_view',
+		'returns_add',
+
+		'return_product_view',
+		'return_product_add',
+		'return_product_edit',
+		'return_product_return_to_inventory',
+
+		'accounts_view',
+		'accounts_add',
+		'accounts_edit',
+
+		'journal_transactions_view',
+		'journal_transactions_add',
+		'journal_transactions_delete',
+
+		'branding_view',
+		'branding_add',
+		'branding_edit',
+		'branding_delete',
+
+		'trash_bin_view',
+		'trash_bin_retrieve',
+		'trash_bin_delete',
+
+		'mail_view',
+		'mail_add',
+
+		'my_activities_view',
+	);

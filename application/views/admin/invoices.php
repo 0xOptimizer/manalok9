@@ -40,7 +40,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="newinvoice-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-cash"></i> NEW INVOICE</button>
+						<?php if ($this->session->userdata('UserRestrictions')['invoice_add']): ?>
+							<button type="button" class="newinvoice-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-cash"></i> NEW INVOICE</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -101,9 +103,11 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php endif; ?>
 										</td>
 										<td>
-											<a href="FORM_removeInvoice?ino=<?=$row['InvoiceNo']?>">
-												<button type="button" class="btn removeInvoice"><i class="bi bi-trash text-danger"></i></button>
-											</a>
+											<?php if ($this->session->userdata('UserRestrictions')['invoice_delete']): ?>
+												<a href="FORM_removeInvoice?ino=<?=$row['InvoiceNo']?>">
+													<button type="button" class="btn removeInvoice"><i class="bi bi-trash text-danger"></i></button>
+												</a>
+											<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -115,14 +119,13 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<?php $this->load->view('admin/modals/add_invoice'); ?>
+<?php $this->load->view('admin/modals/invoices/add_invoice'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -156,8 +159,8 @@ $(document).ready(function() {
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 </html>

@@ -82,9 +82,9 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<?php if ($this->session->userdata('UserRestrictions')['sales_orders_add'] == 1): ?>
-						<button type="button" class="newsalesorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW SALES ORDER</button>
-						|
+						<?php if ($this->session->userdata('UserRestrictions')['sales_orders_add']): ?>
+							<button type="button" class="newsalesorder-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW SALES ORDER</button>
+							|
 						<?php endif; ?>
 						<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 						<a href="view_sales_summary">
@@ -173,105 +173,12 @@ if ($this->session->flashdata('highlight-id')) {
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
-<?php if ($this->session->userdata('UserRestrictions')['sales_orders_add'] == 1): ?>
-<?php $this->load->view('admin/modals/add_sales_order'); ?>
-<?php endif; ?>
 
-<div class="modal fade" id="SelectProductSKUModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box-seam"></i> PRODUCTS</h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<?php $getAllProducts = $this->Model_Selects->GetStockedProducts(); ?>
-					<div class="col-sm-12" style="margin-top: -15px;">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
-							</div>
-							<input type="text" id="tableProductsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
-						</div>
-					</div>
-					<div class="col-sm-12 table-responsive">
-						<table id="selectproductsTable" class="standard-table table">
-							<thead style="font-size: 12px;">
-								<th class="text-center">SKU</th>
-								<th class="text-center">NAME</th>
-								<th class="text-center">DESCRIPTION</th>
-								<th class="text-center">STOCK</th>
-							</thead>
-							<tbody>
-								<?php
-								if ($getAllProducts->num_rows() > 0):
-									foreach ($getAllProducts->result_array() as $row): ?>
-										<tr class="select-product-row" data-sku="<?=$row['Code']?>" data-bs-dismiss="modal">
-											<td class="text-center">
-												<?=$row['Code']?>
-											</td>
-											<td class="text-center">
-												<?=$row['Product_Name']?>
-											</td>
-											<td class="text-center">
-												<?=$row['Description']?>
-											</td>
-											<td class="text-center">
-												<?=$row['InStock']?>
-											</td>
-										</tr>
-								<?php endforeach;
-								endif; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="SelectProductStockModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box"></i> STOCKS</h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<input id="rowProductSelection" type="hidden">
-					<div class="col-sm-12" style="margin-top: -15px;">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
-							</div>
-							<input type="text" id="tableStocksSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
-						</div>
-					</div>
-					<div class="col-sm-12 table-responsive">
-						<table id="selectstocksTable" class="standard-table table">
-							<thead style="font-size: 12px;">
-								<th class="text-center">ID</th>
-								<th class="text-center">SKU</th>
-								<th class="text-center">STOCK</th>
-								<th class="text-center">PRICE</th>
-								<th class="text-center">DATE ADDED</th>
-								<th class="text-center">EXPIRATION DATE</th>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
+<?php $this->load->view('admin/modals/sales_orders/add_sales_order'); ?>
 <?php $this->load->view('admin/modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -1102,158 +1009,11 @@ $(document).ready(function() {
 		}
 		updProductCount();
 	});
-	
-	// ACCOUNTING ADD
-	// var accounts_list = <?=json_encode($getAccounts->result_array())?>;
-	// var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
-
-	// function updTransactionCount(entry_no) {
-	// 	// update journal transaction count
-	// 	$('.entry_' + entry_no + ' .transactionsCount').val($('.account_row').length);
-	// 	// update journal transaction input names
-	// 	$.each($('.entry_' + entry_no + ' .account_row'), function(i, val) {
-	// 		$(this).find('.inpAccountID').attr('name', 'accountIDInput_' + i + '_' + entry_no);
-	// 		$(this).find('.inpDebit').attr('name', 'debitInput_' + i + '_' + entry_no);
-	// 		$(this).find('.inpCredit').attr('name', 'creditInput_' + i + '_' + entry_no);
-	// 	});
-	// 	// total
-	// 	let debitTotal = 0;
-	// 	$.each($('.entry_' + entry_no + ' .inpDebit'), function(i, val) {
-	// 		debitTotal += parseFloat($(this).val());
-	// 	});
-	// 	$('.entry_' + entry_no + ' .debitTotal').html(debitTotal.toFixed(2));
-	// 	let creditTotal = 0;
-	// 	$.each($('.entry_' + entry_no + ' .inpCredit'), function(i, val) {
-	// 		creditTotal += parseFloat($(this).val());
-	// 	});
-	// 	$('.entry_' + entry_no + ' .creditTotal').html(creditTotal.toFixed(2));
-	// }
-	// $(document).on('click', '.add-account-row', function() {
-	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
-	// 	var this_row = 'ar_' + $('.entry_' + entry_no + ' .account_row').length;
-	// 	$(this).before($('<tr>')
-	// 		.attr({
-	// 			class: 'account_row highlighted ' + this_row,
-	// 		}).data('id', $('.entry_' + entry_no + ' .account_row').length)
-	// 		.append($('<td>').attr({ // column-1
-	// 			class: ''
-	// 		}).append($('<select>').attr({
-	// 			class: 'select_accounts inpAccountID w-100'
-	// 		}).append($('<optgroup>').attr({
-	// 			class: 'type_0',
-	// 			label: 'REVENUES'
-	// 		})).append($('<optgroup>').attr({
-	// 			class: 'type_1',
-	// 			label: 'ASSETS'
-	// 		})).append($('<optgroup>').attr({
-	// 			class: 'type_2',
-	// 			label: 'LIABILITIES'
-	// 		})).append($('<optgroup>').attr({
-	// 			class: 'type_3',
-	// 			label: 'EXPENSES'
-	// 		})).append($('<optgroup>').attr({
-	// 			class: 'type_4',
-	// 			label: 'EQUITIES'
-	// 		}))))
-	// 		.append($('<td>').append($('<input>').attr({
-	// 			class: 'inpDebit  w-100',
-	// 			type: 'number',
-	// 			min: '0',
-	// 			step: '0.0001',
-	// 			value: 0
-	// 		})))
-	// 		.append($('<td>').append($('<input>').attr({
-	// 			class: 'inpCredit  w-100',
-	// 			type: 'number',
-	// 			min: '0',
-	// 			step: '0.0001',
-	// 			value: 0
-	// 		})))
-	// 		.append($('<td>').attr({ class: 'text-center' }).append($('<button>').attr({
-	// 			type: 'button',
-	// 			class: 'btn remove-account-row'
-	// 		}).append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
-	// 	);
-
-	// 	for (var i = accounts_list.length - 1; i >= 0; i--) {
-	// 		$('.' + this_row + ' .type_' + accounts_list[i]['Type']).append($('<option>').attr({
-	// 			value: accounts_list[i]['ID']
-	// 		}).text(accounts_list[i]['Name']));
-	// 	}
-
-	// 	setTimeout(function() {
-	// 		$('.' + this_row).removeClass('highlighted');
-	// 	}, 2000);
-	// 	$('.' + this_row).fadeIn('2000');
-
-	// 	updTransactionCount(entry_no);
-	// });
-
-	// // add two two transaction accounts
-	// $('.add-account-row').click();
-	// $('.add-account-row').click();
-
-	// $(document).on('click', '.remove-account-row', function() {
-	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
-	// 	$(this).parents('tr').remove();
-
-	// 	updTransactionCount(entry_no);
-	// });
-	// $(document).on('focus keyup change', '.inpDebit, .inpCredit', function() {
-	// 	let entry_no = $(this).parents('.entry_creation').data('entry_no');
-	// 	updTransactionCount(entry_no);
-	// });
-	// // disable other debit/credit on change
-	// $(document).on('focus keyup change', '.inpDebit', function() {
-	// 	if ($(this).val() > 0) {
-	// 		$(this).parents('tr').find('.inpCredit').val(0);
-	// 		$(this).parents('tr').find('.inpCredit').attr('disabled', '');
-	// 	} else {
-	// 		$(this).parents('tr').find('.inpCredit').removeAttr('disabled');
-	// 	}
-	// });
-	// $(document).on('focus keyup change', '.inpCredit', function() {
-	// 	if ($(this).val() > 0) {
-	// 		$(this).parents('tr').find('.inpDebit').val(0);
-	// 		$(this).parents('tr').find('.inpDebit').attr('disabled', '');
-	// 	} else {
-	// 		$(this).parents('tr').find('.inpDebit').removeAttr('disabled');
-	// 	}
-	// });
-
-
-	// $(document).on('click', '.journalSecondEntry', function() {
-	// 	if ($(this).children('i').hasClass('bi-plus')) {
-	// 		$(this).children('i').removeClass('bi-plus');
-	// 		$(this).children('i').addClass('bi-dash');
-	// 		$(this).children('span').html(' REMOVE SECOND ENTRY');
-
-	// 		$(this).removeClass('btn-primary');
-	// 		$(this).addClass('btn-danger');
-
-	// 		$('.entry_2').show();
-	// 		$('.entry_2_details').show();
-
-	// 		$('#second_entry').val('true');
-	// 	} else {
-	// 		$(this).children('i').addClass('bi-plus');
-	// 		$(this).children('i').removeClass('bi-dash');
-	// 		$(this).children('span').html(' ADD SECOND ENTRY');
-
-	// 		$(this).addClass('btn-primary');
-	// 		$(this).removeClass('btn-danger');
-
-	// 		$('.entry_2').hide();
-	// 		$('.entry_2_details').hide();
-
-	// 		$('#second_entry').val('false');
-	// 	}
-	// });
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 </html>

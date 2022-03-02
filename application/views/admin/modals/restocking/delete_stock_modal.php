@@ -1,4 +1,4 @@
-
+<?php if (!$this->session->userdata('UserRestrictions')['restocking_delete_stock']) return; ?>
 <div class="modal fade" id="Modal_DeleteStock" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

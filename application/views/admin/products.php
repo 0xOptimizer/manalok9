@@ -87,8 +87,10 @@ if ($this->session->flashdata('highlight-id')) {
 							</h3>
 						</div>
 						<div class="col-sm-12 col-md-10 pt-4 pb-2">
-							<button type="button" class="addproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD PRODUCT</button>
-							|
+							<?php if ($this->session->userdata('UserRestrictions')['products_add']): ?>
+								<button type="button" class="addproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD PRODUCT</button>
+								|
+							<?php endif; ?>
 							<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 							<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
 						</div>
@@ -156,16 +158,20 @@ if ($this->session->flashdata('highlight-id')) {
 														<i class="bi bi-eye" style="color: #408AF7;"></i>
 													</a>
 												</span>
-												<span style="margin-right: 5px;">
-													<a class="update_prd" href="#" data-value="<?=$row['ID']?>">
-														<i class="bi bi-pencil" style="color: #229F4B;"></i>
-													</a>
-												</span>
-												<span style="margin-right: 5px;">
-													<a class="delete_product" href="#" data-value="<?php echo $row['Code'] ;?>">
-														<i class="bi bi-trash" style="color: #CF3939;"></i>
-													</a>
-												</span>
+												<?php if ($this->session->userdata('UserRestrictions')['products_edit']): ?>
+													<span style="margin-right: 5px;">
+														<a class="update_prd" href="#" data-value="<?=$row['ID']?>">
+															<i class="bi bi-pencil" style="color: #229F4B;"></i>
+														</a>
+													</span>
+												<?php endif; ?>
+												<?php if ($this->session->userdata('UserRestrictions')['products_delete']): ?>
+													<span style="margin-right: 5px;">
+														<a class="delete_product" href="#" data-value="<?php echo $row['Code'] ;?>">
+															<i class="bi bi-trash" style="color: #CF3939;"></i>
+														</a>
+													</span>
+												<?php endif; ?>
 											</td>
 										</tr>
 									<?php endforeach;
@@ -182,19 +188,16 @@ if ($this->session->flashdata('highlight-id')) {
 	</div>
 
 	<!-- New product modal -->
-	<?php $this->load->view('admin/modals/add_productV2.php'); ?>
-	<!-- New transactions modal -->
-	<?php $this->load->view('admin/modals/add_transaction.php'); ?>
+	<?php $this->load->view('admin/modals/products/add_productV2.php'); ?>
 	<!-- Prompts modal -->
-	<?php $this->load->view('admin/modals/prompts/prompt_delete.php'); ?>
+	<?php $this->load->view('admin/modals/products/prompt_delete.php'); ?>
 	<!-- Update modal -->
-	<?php $this->load->view('admin/modals/update_product.php'); ?>
+	<?php $this->load->view('admin/modals/products/update_product.php'); ?>
 
 	<?php $this->load->view('admin/modals/generate_report')?>
 
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-	<script src="<?=base_url()?>/assets/js/main.js"></script>
 	<script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 	<script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -459,8 +462,8 @@ if ($this->session->flashdata('highlight-id')) {
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 </html>

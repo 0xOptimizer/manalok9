@@ -77,7 +77,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 							<?php elseif ($purchaseOrder['Status'] == '2'): ?>
-								<span class="info-banner-sm text-success"><i class="bi bi-check-circle"></i> Received</span>
+								<span class="info-banner-sm text-success"><i class="bi bi-check-circle"></i> Received [<?=$purchaseOrder['DateApproved']?>]</span>
 							<?php else: ?>
 								<span class="info-banner-sm text-danger"><i class="bi bi-trash"></i> Rejected</span>
 							<?php endif; ?>
@@ -85,8 +85,10 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 					</div>
 					<div class="col-12">
 						<button type="button" class="generateform-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE PO FORM</button>
-						|
-						<button type="button" class="accounting-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-receipt"></i> ACCOUNTING</button>
+						<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_accounting']): ?>
+							|
+							<button type="button" class="accounting-btn btn btn-sm-secondary" style="font-size: 12px;"><i class="bi bi-receipt"></i> ACCOUNTING</button>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
@@ -100,61 +102,73 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 										<th class="text-center">TRANSACTION ID</th>
 										<th class="text-center">PRODUCT CODE</th>
 										<th class="text-center">AMOUNT</th>
-										<th class="text-center">PRICE</th>
-										<th class="text-center">TOTAL</th>
+										<th class="text-center">UNIT COST</th>
+										<th class="text-center">UNIT PRICE</th>
+										<th class="text-center">TOTAL COST</th>
 									</thead>
 									<tbody>
 										<?php
 										if ($getTransactionsByOrderNo->num_rows() > 0):
-											foreach ($getTransactionsByOrderNo->result_array() as $row): ?>
-												<tr>
-													<td class="text-center">
-														<?=$row['TransactionID']?>
-													</td>
-													<td class="text-center">
-														<?=$row['Code']?>
-													</td>
-													<td class="text-center">
-														<?=$row['Amount']?>
-													</td>
-													<td class="text-center">
-														<?=number_format($row['PriceUnit'], 2)?>
-													</td>
-													<td class="text-center">
-														<?=number_format($row['Amount'] * $row['PriceUnit'], 2)?>
-													</td>
-												</tr>
-										<?php endforeach;
+											foreach ($getTransactionsByOrderNo->result_array() as $tRow): 
+												$stock = $this->Model_Selects->Check_prd_stockid($tRow['stockID']);
+												if ($stock->num_rows() > 0):
+													$sRow = $stock->row_array(); ?>
+													<tr>
+														<td class="text-center">
+															<?=$tRow['TransactionID']?>
+														</td>
+														<td class="text-center">
+															<?=$tRow['Code']?>
+														</td>
+														<td class="text-center">
+															<?=$tRow['Amount']?>
+														</td>
+														<td class="text-center">
+															<?=number_format($tRow['PriceUnit'], 2)?>
+														</td>
+														<td class="text-center">
+															<?=number_format($sRow['Retail_Price'], 2)?>
+														</td>
+														<td class="text-center">
+															<?=number_format($tRow['Amount'] * $tRow['PriceUnit'], 2)?>
+														</td>
+													</tr>
+											<?php endif;
+											endforeach;
 										endif; ?>
 									</tbody>
 								</table>
 							</div>
 						</div>
-						<?php if ($getManualTransactionsByPONo->num_rows() > 0): ?>
-							<div class="row mt-4">
-								<div class="col-sm-12">
-									<div class="card">
-										<div class="card-body">
-											<div class="row">
-												<span style="font-size: 1.5em; color: #ebebeb;">
-													<b><i class="bi bi-pencil"></i> MANUAL TRANSACTIONS </b>
-												</span>
-												<div class="col-12">
-													<button type="button" class="newmanualtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW MANUAL TRANSACTION</button>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-sm-12 table-responsive">
-													<table id="transactionsTable" class="standard-table table">
-														<thead style="font-size: 12px;">
-															<th class="text-center">ID</th>
-															<th class="text-center">ITEM NO</th>
-															<th class="text-center">DESCRIPTION</th>
-															<th class="text-center">AMOUNT</th>
-															<th class="text-center">PRICE</th>
-															<th class="text-center">TOTAL</th>
-														</thead>
-														<tbody>
+						<div class="row mt-4">
+							<div class="col-sm-12">
+								<div class="card">
+									<div class="card-body">
+										<div class="row">
+											<span style="font-size: 1.5em; color: #ebebeb;">
+												<b><i class="bi bi-pencil"></i> MANUAL TRANSACTIONS </b>
+											</span>
+											<?php if ($purchaseOrder['Status'] < 2): ?>
+												<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add_manual_transaction']): ?>
+													<div class="col-12">
+														<button type="button" class="newmanualtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW MANUAL TRANSACTION</button>
+													</div>
+												<?php endif; ?>
+											<?php endif; ?>
+										</div>
+										<div class="row">
+											<div class="col-sm-12 table-responsive">
+												<table id="transactionsTable" class="standard-table table">
+													<thead style="font-size: 12px;">
+														<th class="text-center">ID</th>
+														<th class="text-center">ITEM NO</th>
+														<th class="text-center">DESCRIPTION</th>
+														<th class="text-center">AMOUNT</th>
+														<th class="text-center">PRICE</th>
+														<th class="text-center">TOTAL</th>
+													</thead>
+													<tbody>
+														<?php if ($getManualTransactionsByPONo->num_rows() > 0): ?>
 															<?php foreach ($getManualTransactionsByPONo->result_array() as $row): ?>
 																<tr>
 																	<td class="text-center">
@@ -177,15 +191,15 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 																	</td>
 																</tr>
 															<?php endforeach; ?>
-														</tbody>
-													</table>
-												</div>
+														<?php endif; ?>
+													</tbody>
+												</table>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						<?php endif; ?>
+						</div>
 					</div>
 					<div class="col-12 col-sm-5 col-md-3">
 						<div class="row">
@@ -199,7 +213,9 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 							</div>
 							<div class="col-12 mb-3">
 								<h6>PURCHASED FROM
-									<button type="button" class="emailvendor-btn btn btn-sm-primary" data-email="<?=$vendorDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+										<button type="button" class="emailvendor-btn btn btn-sm-primary" data-email="<?=$vendorDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php endif; ?>
 								</h6>
 								<label><?=$vendorDetails['Name']?> (
 									<a href="<?=base_url() . 'admin/vendors#'. $purchaseOrder["VendorNo"]?>">
@@ -250,7 +266,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 									</div>
 								</div>
 							</div>
-							<?php if ($purchaseOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['purchase_orders_approve'] == 1): ?>
+							<?php if ($purchaseOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['purchase_orders_approve']): ?>
 								<div class="col-12 text-center">
 									<form id="approvePurchaseOrder" action="<?php echo base_url() . 'FORM_approvePurchaseOrder';?>" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
@@ -274,7 +290,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 						</h3>
 					</div>
 				</div>
-				<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
+				<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation']): ?>
 				<div class="row">
 					<div class="col-12">
 						<button type="button" class="purchasebilling-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
@@ -318,9 +334,11 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 											<?=$row['ModeOfPayment']?>
 										</td>
 										<td>
-											<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
-												<button type="button" class="btn removeBill"><i class="bi bi-x-square text-danger"></i></button>
-											</a>
+											<?php if ($this->session->userdata('UserRestrictions')['bills_delete']): ?>
+												<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
+													<button type="button" class="btn removeBill"><i class="bi bi-trash text-danger"></i></button>
+												</a>
+											<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -346,168 +364,25 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 		</div>
 	</div>
 </div>
-<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation'] == 1): ?>
-<?php $this->load->view('admin/modals/add_bill_po', array('purchaseOrder' => $purchaseOrder)); ?>
-<?php $this->load->view('admin/modals/add_manual_transaction', array('purchaseOrderNo' => $purchaseOrder['OrderNo'])); ?>
-<?php endif; ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/purchase_order_form.php', array(
+<?php $this->load->view('admin/modals/purchase_orders/purchase_order_form.php', array(
+	'purchaseOrder' => $purchaseOrder,
 	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
 	'getManualTransactionsByPONo' => $getManualTransactionsByPONo,
 	'vendorDetails' => $vendorDetails
 )); ?>
+<?php $this->load->view('admin/modals/purchase_orders/purchase_order_accounting.php'); ?>
+<?php $this->load->view('admin/modals/purchase_orders/add_manual_transaction', array('purchaseOrderNo' => $purchaseOrder['OrderNo'])); ?>
+<?php $this->load->view('admin/modals/mails/add_mail.php'); ?>
+<?php $this->load->view('admin/modals/purchase_orders/add_bill_po', array('purchaseOrder' => $purchaseOrder)); ?>
 
-<div class="modal fade" id="AccountingModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box-seam"></i> JOURNAL TRANSACTIONS FOR PURCHASE ORDER ID #<?=$purchaseOrder['OrderNo']?></h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-12">
-						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW TRANSACTION</button>
-					</div>
-				</div>
-				<div class="row">
-					<?php $getOrderJournals = $this->Model_Selects->GetJournalByOrderNo($purchaseOrder['OrderNo']); ?>
-					<div class="col-sm-12 table-responsive">
-						<table class="standard-table table">
-							<thead style="font-size: 12px;">
-								<th class="text-center">ID</th>
-								<th class="text-center">DATE</th>
-								<th class="text-center">DESCRIPTION</th>
-								<th class="text-center">TOTAL</th>
-								<th></th>
-							</thead>
-							<tbody>
-								<?php
-								if ($getOrderJournals->num_rows() > 0):
-									foreach ($getOrderJournals->result_array() as $row): ?>
-										<tr class="tr_class_modal" data-id="<?=$row['ID']?>">
-											<td class="text-center">
-												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-											</td>
-											<td class="text-center"><?=$row['Date']?></td>
-											<td class="text-center"><?=$row['Description']?></td>
-											<td class="text-center"><?=number_format($row['Total'], 2)?></td>
-											<td class="text-center">
-												<a href="<?=base_url() . 'admin/journals#J'. $row['ID']?>">
-													<i class="bi bi-eye btn-view-journal" style="color: #408AF7;"></i>
-												</a>
-												<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
-													<i class="bi bi-trash text-danger btn-delete-journal"></i>
-												<?php endif; ?>
-											</td>
-										</tr>
-								<?php endforeach;
-								endif; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade" id="AddJournalTransactionModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-xl" role="document">
-		<form id="formAddJournal" action="<?php echo base_url() . 'FORM_addJournal';?>" method="POST" enctype="multipart/form-data">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-list-ul" style="font-size: 24px;"></i> NEW JOURNAL TRANSACTION FOR PURCHASE ORDER ID #<?=$purchaseOrder['OrderNo']?></h4>
-				</div>
-				<div class="modal-body mx-4">
-					<div class="row">
-						<input type="hidden" id="transactionsCount" name="transactions-count" value="0">
-						<input type="hidden" name="order_no" value="<?=$purchaseOrder['OrderNo']?>">
-						<div class="form-group col-12 col-md-8">
-							<label class="input-label">DESCRIPTION</label>
-							<textarea rows="4" class="form-control standard-input-pad" name="description" placeholder="Payment of rent / Purchase of supplies" required></textarea>
-						</div>
-						<div class="form-group col-12 col-md-4">
-							<div class="row">
-								<div class="form-group col-12">
-									<label class="input-label">DATE</label>
-									<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
-								</div>
-							</div>
-							<div class="row">
-								<div class="form-group col-12">
-									<label class="input-label">TIME</label>
-									<input type="time" class="form-control" name="time" value="<?=date("H:i");?>" required>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="form-group col-12">
-							<div class="table-responsive">
-								<table id="newTransactionsTable" class="standard-table table">
-									<thead style="font-size: 12px;">
-										<th>ACCOUNT</th>
-										<th>DEBIT</th>
-										<th>CREDIT</th>
-										<th></th>
-									</thead>
-									<tbody>
-										<tr class="font-weight-bold add-account-row">
-											<td><i class="bi bi-plus"></i> New Account</td>
-											<td colspan="3"></td>
-										</tr>
-										<tr style="border-color: #a7852d;">
-											<td style="color: #a7852d;">Total</td>
-											<td class="debitTotal">0</td>
-											<td class="creditTotal">0</td>
-											<td></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add New Journal Transaction</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-
-<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
-	<form id="formDeleteJournal" action="<?php echo base_url() . 'FORM_deleteJournal';?>" method="POST" enctype="multipart/form-data">
-		<input id="journalIDDelete" type="hidden" name="journal-id">
-	</form>
-<?php endif; ?>
-
-<form id="formExportTable" action="<?php echo base_url() . 'admin/xlsPurchaseOrder';?>" method="POST">
-	<input type="hidden" name="order_no" value="<?=$orderNo?>">
-	<input type="hidden" name="filename" value="purchase_order_<?=$orderNo?>">
-	<input id="xls_deliverto" type="hidden" name="deliverto">
-	<input id="xls_page" type="hidden" name="page">
-	<input id="xls_attn" type="hidden" name="attn">
-	<input id="xls_supplierinvoiceno" type="hidden" name="supplierinvoiceno">
-	<input id="xls_terms" type="hidden" name="terms">
-	<input id="xls_memo" type="hidden" name="memo">
-	<input id="xls_freight" type="hidden" name="freight">
-	<input id="xls_salestax" type="hidden" name="salestax">
-	<input id="xls_lessdeposit" type="hidden" name="lessdeposit">
-	<input id="xls_balancedue" type="hidden" name="balancedue">
-	<input id="xls_preparedby" type="hidden" name="preparedby">
-	<input id="xls_orderedby" type="hidden" name="orderedby">
-	<input id="xls_approvedby" type="hidden" name="approvedby">
-</form>
-
-<?php $this->load->view('admin/modals/add_mail.php'); ?>
-<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
@@ -516,16 +391,6 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 <script>
 $('.sidebar-admin-purchase-orders').addClass('active');
 $(document).ready(function() {
-	// var tableTransactions = $('#transactionsTable').DataTable( {
-	// 	sDom: 'lrtip',
-	// 	'bLengthChange': false,
-	// 	'order': [[ 0, 'desc' ]],
-	// });
-	// var tableBills = $('#billsTable').DataTable( {
-	// 	sDom: 'lrtip',
-	// 	'bLengthChange': false,
-	// 	'order': [[ 0, 'desc' ]],
-	// });
 	function showAlert(type, message) {
 		if ($('.alertNotification').length > 0) {
 			$('.alertNotification').remove();

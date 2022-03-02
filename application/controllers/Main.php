@@ -97,8 +97,9 @@ class Main extends MY_Controller {
 							}
 
 							$UserRestrictions = array();
-							foreach ($this->Model_Selects->GetUserRestrictions($row['UserID'])->result_array() as $restrictions) {
-								$UserRestrictions[$restrictions['Action']] = $restrictions['Allowed'];
+							$GetUserRestrictions = $this->Model_Selects->GetUserRestrictions($row['UserID'])->row_array();
+							foreach ($this->config->item('user_restrictions') as $restriction) {
+								$UserRestrictions[$restriction] = $GetUserRestrictions[$restriction];
 							}
 
 							$data = array(
@@ -116,7 +117,6 @@ class Main extends MY_Controller {
 							$historyData = array(
 								'UserID' => $row['UserID'],
 								'LoginEmail' => $email,
-								'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 								'Agent' => $agent,
 								'Platform' => $platform,
 								'IPAddress' => $ipAddress,
@@ -137,7 +137,6 @@ class Main extends MY_Controller {
 						$this->session->set_flashdata('prompt',$p_text);
 						$historyData = array(
 							'LoginEmail' => $email,
-							'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 							'Agent' => $agent,
 							'Platform' => $platform,
 							'IPAddress' => $ipAddress,
@@ -159,7 +158,6 @@ class Main extends MY_Controller {
 					$historyData = array(
 						'UserID' => $loginRow['UserID'],
 						'LoginEmail' => $email,
-						'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 						'Agent' => $agent,
 						'Platform' => $platform,
 						'IPAddress' => $ipAddress,
@@ -181,7 +179,6 @@ class Main extends MY_Controller {
 				$historyData = array(
 					'UserID' => '',
 					'LoginEmail' => $email,
-					'LoginPassword' => password_hash($password, PASSWORD_BCRYPT),
 					'Agent' => $agent,
 					'Platform' => $platform,
 					'IPAddress' => $ipAddress,

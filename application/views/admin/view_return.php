@@ -26,7 +26,7 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 			<a href="#" class="burger-btn d-block d-xl-none">
 				<i class="bi bi-justify fs-3"></i>
 			</a>
-			<a href="<?=base_url() . 'admin/returns'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK RETURNS</a>
+			<a href="<?=base_url() . 'admin/returns'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO RETURNS</a>
 		</header>
 
 		<div class="page-heading">
@@ -40,7 +40,9 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 						</a>
 					</div>
 					<div class="col-12">
-						<button type="button" class="newreturn-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-reply"></i> RETURN ITEM</button>
+						<?php if ($this->session->userdata('UserRestrictions')['return_product_add']): ?>
+							<button type="button" class="newreturn-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-reply"></i> RETURN ITEM</button>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
@@ -57,7 +59,7 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 										<th class="text-center">PRODUCT CODE</th>
 										<th class="text-center">DATE</th>
 										<th class="text-center">REMARKS</th>
-										<th class="text-center">QTY / UNRETURNED</th>
+										<th class="text-center">RETURNED / UNRETURNED</th>
 										<th class="text-center">RETURNED TO INVENTORY</th>
 										<th class="text-center">FREEBIE</th>
 										<th></th>
@@ -86,7 +88,7 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 														<?=$row['remarks']?>
 													</td>
 													<td class="text-center">
-														<?=$row['quantity']?> / <?=$row['quantity_total']?>
+														<?=$row['quantity']?> / <?=$row['quantity_total'] - $row['quantity']?>
 													</td>
 													<td class="text-center remarks">
 														<?=$row['returned']?>
@@ -99,9 +101,13 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 														<?php endif; ?>
 													</td>
 													<td class="text-center">
-														<i class="bi bi-pencil btn-update-return" style="color: #229F4B;"></i>
-														<?php if ($row['quantity'] > 0): ?>
-															<i class="bi bi-reply-all btn-inventory-return" style="color: #a7852d;"></i>
+														<?php if ($this->session->userdata('UserRestrictions')['return_product_edit']): ?>
+															<i class="bi bi-pencil btn-update-return" style="color: #229F4B;"></i>
+														<?php endif; ?>
+														<?php if ($this->session->userdata('UserRestrictions')['return_product_return_to_inventory']): ?>
+															<?php if ($row['quantity'] > 0): ?>
+																<i class="bi bi-reply-all btn-inventory-return" style="color: #a7852d;"></i>
+															<?php endif; ?>
 														<?php endif; ?>
 													</td>
 												</tr>
@@ -117,169 +123,18 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 		</div>
 	</div>
 </div>
-<div class="modal fade" id="AddReturnProduct" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<form action="<?php echo base_url() . 'FORM_addNewReturnProduct';?>" method="POST">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-reply" style="font-size: 24px;"></i> Add Product</h4>
-				</div>
-				<div class="modal-body">
-					<input type="hidden" name="returnNo" value="<?=$return['ReturnNo']?>" id="addReturnNo" required>
-					<input type="hidden" name="transactionID" id="addTransactionID" required>
-					<div class="form-group col-sm-12 text-center">
-						<h5><?=$return['ReturnNo']?></h5>
-					</div>
-					<div class="form-group col-sm-12 text-center">
-						<button type="button" class="btn btn-info select-transaction-btn">
-							<i class="bi bi-plus">SELECT TRANSACTION</i>
-						</button>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Submit</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-<!-- SELECT SALES ORDER PRODUCTS MODAL -->
-<div class="modal fade" id="SelectSOProductsModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-box"></i> SALES ORDER <span class="selectedSalesOrder"></span> PRODUCTS</h4>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-sm-12" style="margin-top: -15px;">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
-							</div>
-							<input type="text" id="tableSalesOrderProductsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
-						</div>
-					</div>
-					<div class="col-sm-12 table-responsive">
-						<table id="salesOrderProductsTable" class="standard-table table">
-							<thead style="font-size: 12px;">
-								<th class="text-center">TRANSACTION ID</th>
-								<th class="text-center">PRODUCT CODE</th>
-								<th class="text-center">AMOUNT</th>
-								<th class="text-center">PRICE</th>
-								<th class="text-center">TOTAL</th>
-								<th class="text-center">FREEBIE</th>
-							</thead>
-							<tbody>
-								<?php if ($salesOrderTransactions->num_rows() > 0):
-									foreach ($salesOrderTransactions->result_array() as $row): ?>
-										<tr class="select-transaction-row" data-id="<?=$row['TransactionID']?>">
-											<td class="text-center">
-												<?=$row['TransactionID']?>
-											</td>
-											<td class="text-center">
-												<?=$row['Code']?>
-											</td>
-											<td class="text-center">
-												<?=$row['Amount']?>
-											</td>
-											<td class="text-center">
-												<?=number_format($row['PriceUnit'], 2)?>
-											</td>
-											<td class="text-center">
-												<?=number_format($row['Amount'] * $row['PriceUnit'], 2)?>
-											</td>
-											<td class="text-center">
-												<?php if ($row['Freebie'] == 1): ?>
-													<i class="bi bi-check-circle text-success"></i>
-												<?php else: ?>
-													<i class="bi bi-x-circle text-danger"></i>
-												<?php endif; ?>
-											</td>
-										</tr>
-								<?php endforeach;
-								endif; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- UPDATE RETURN ITEM -->
-<div class="modal fade" id="UpdateReturnProduct" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<form action="<?php echo base_url() . 'FORM_updateReturnProduct';?>" method="POST">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-reply" style="font-size: 24px;"></i> Update Return</h4>
-				</div>
-				<div class="modal-body">
-					<input type="hidden" name="returnNo" value="<?=$return['ReturnNo']?>" required>
-					<input type="hidden" name="transactionID" id="updateTransactionID" required>
-					<div class="form-group col-sm-12 text-center">
-						<h5><?=$return['ReturnNo']?></h5>
-					</div>
-					<div class="form-group col-sm-12 text-center">
-						<h5 class="text-secondary updateTransactionID"></h5>
-					</div>
-					<hr>
-					<div class="form-group col-sm-12 text-center mt-2">
-						<textarea rows="2" class="form-control standard-input-pad updateRemarks text-center" name="remarks" required></textarea>
-						<label class="input-label">REMARKS</label>
-					</div>
-					<div class="form-group col-sm-12 text-center">
-						<input class="form-control updateQty text-center" type="number" name="qty" min="0" max="0" required>
-						<label class="input-label">QTY</label>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Submit</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
-<!-- RETURN TO INVENTORY -->
-<div class="modal fade" id="InventoryReturnProduct" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-md" role="document">
-		<form id="updateReturnProductToInventory" action="<?php echo base_url() . 'FORM_updateReturnProductToInventory';?>" method="POST">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-reply-all" style="font-size: 24px;"></i> Return To Inventory</h4>
-				</div>
-				<div class="modal-body">
-					<input type="hidden" name="returnNo" value="<?=$return['ReturnNo']?>" required>
-					<input type="hidden" name="transactionID" id="inventoryReturnTransactionID" required>
-					<div class="form-group col-sm-12 text-center">
-						<h5><?=$return['ReturnNo']?></h5>
-					</div>
-					<div class="form-group col-sm-12 text-center">
-						<h5 class="text-secondary inventoryReturnTransactionID"></h5>
-					</div>
-					<hr>
-					<div class="form-group col-sm-12 text-center">
-						<input class="form-control inventoryReturnQty text-center" type="number" name="qty" min="1" max="1" required>
-						<label class="input-label">QTY</label>
-					</div>
-				</div>
-				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Submit</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('main/globals/scripts.php'); ?>
+<?php $this->load->view('admin/modals/returns/add_return_product.php', array('return' => $return)); ?>
+<?php $this->load->view('admin/modals/returns/update_return_product.php'); ?>
+<?php $this->load->view('admin/modals/returns/return_product_to_inventory.php'); ?>
+
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>

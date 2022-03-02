@@ -1,3 +1,4 @@
+<?php if (!$this->session->userdata('UserRestrictions')['releasing_scan_add_stock'] && !$this->session->userdata('UserRestrictions')['releasing_manual_add_stock']) return; ?>
 <div class="modal fade" id="modal_stock_selection" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">

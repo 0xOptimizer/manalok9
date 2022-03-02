@@ -22,9 +22,9 @@ class Model_Updates extends CI_Model {
 			return $result;
 		}
 	}
-	public function UpdateUserRestriction($userID, $action, $data)
+	public function UpdateUserRestrictions($userID, $data)
 	{
-		$this->db->where(array('UserID'=> $userID, 'Action' => $action));
+		$this->db->where('UserID', $userID);
 		$result = $this->db->update('user_restrictions', $data);
 		return $result;
 	}
@@ -66,6 +66,7 @@ class Model_Updates extends CI_Model {
 		extract($data);
 		$this->db->where('OrderNo', $OrderNo);
 		$this->db->set(array(
+			'DateApproved' => $DateApproved,
 			'Status' => $Status,
 		));
 		$result = $this->db->update('purchase_orders');

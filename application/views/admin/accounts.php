@@ -41,16 +41,16 @@ if ($this->session->flashdata('highlight-id')) {
 							<?php endif; ?>
 						</h3>
 					</div>
-					<?php if ($this->session->userdata('UserRestrictions')['accounts_add'] == 1): ?>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="newaccount-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-list-ul"></i> NEW ACCOUNT</button>
-						|
+						<?php if ($this->session->userdata('UserRestrictions')['accounts_add']): ?>
+							<button type="button" class="newaccount-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-list-ul"></i> NEW ACCOUNT</button>
+							|
+						<?php endif; ?>
 						<a href="<?=base_url() . 'admin/trial_balance';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> TRIAL BALANCE</a>
 						<a href="<?=base_url() . 'admin/income_statement';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> INCOME STATEMENT</a>
 						<a href="<?=base_url() . 'admin/balance_sheet';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> BALANCE SHEET</a>
 						<a href="<?=base_url() . 'admin/cash_flow';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> CASH FLOW</a>
 					</div>
-					<?php endif; ?>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
@@ -83,7 +83,7 @@ if ($this->session->flashdata('highlight-id')) {
 										<td><?=$account_types[$row['Type']]?></td>
 										<td><?=$row['Description']?></td>
 										<td>
-											<?php if ($this->session->userdata('UserRestrictions')['accounts_edit'] == 1): ?>
+											<?php if ($this->session->userdata('UserRestrictions')['accounts_edit']): ?>
 												<i class="bi bi-pencil btn-update-account" style="color: #229F4B;"></i>
 											<?php endif; ?>
 										</td>
@@ -100,16 +100,12 @@ if ($this->session->flashdata('highlight-id')) {
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
-<?php if ($this->session->userdata('UserRestrictions')['accounts_add'] == 1): ?>
-<?php $this->load->view('admin/modals/add_account'); ?>
-<?php endif; ?>
-<?php if ($this->session->userdata('UserRestrictions')['accounts_edit'] == 1): ?>
-<?php $this->load->view('admin/modals/update_account'); ?>
-<?php endif; ?>
+
+<?php $this->load->view('admin/modals/accounts/add_account'); ?>
+<?php $this->load->view('admin/modals/accounts/update_account'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>

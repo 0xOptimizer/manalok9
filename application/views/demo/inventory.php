@@ -57,11 +57,11 @@ $globalHeader;
 		</div>
 	</div>
 </div>
-<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
+<?php $this->load->view('main/globals/scripts.php'); ?>
 <script src="<?=base_url()?>/assets/js/moment.min.js"></script>
 <script type="text/javascript">
 $('.sidebar-demo-inventory').addClass('active');

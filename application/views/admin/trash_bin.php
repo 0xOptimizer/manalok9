@@ -124,16 +124,20 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['Released']?>
 										</td>
 										<td class="text-center">
-											<span style="margin-right: 15px;">
-												<a id="redo_archived" href="#" data-value="<?=$row['ID']?>">
-													<i class="bi bi-arrow-counterclockwise" style="color: #408AF7;"></i>
-												</a>
-											</span>
-											<span style="margin-right: 15px;">
-												<a id="deleted_product" href="#" data-value="<?=$row['ID']?>">
-													<i class="bi bi-trash" style="color: #CF3939;"></i>
-												</a>
-											</span>
+											<?php if ($this->session->userdata('UserRestrictions')['trash_bin_retrieve']): ?>
+												<span style="margin-right: 15px;">
+													<a id="redo_archived" href="#" data-value="<?=$row['ID']?>">
+														<i class="bi bi-arrow-counterclockwise" style="color: #408AF7;"></i>
+													</a>
+												</span>
+											<?php endif; ?>
+											<?php if ($this->session->userdata('UserRestrictions')['trash_bin_delete']): ?>
+												<span style="margin-right: 15px;">
+													<a id="deleted_product" href="#" data-value="<?=$row['ID']?>">
+														<i class="bi bi-trash" style="color: #CF3939;"></i>
+													</a>
+												</span>
+											<?php endif; ?>
 										</td>
 									</tr>
 							<?php endforeach;
@@ -145,12 +149,11 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<?php $this->load->view('admin/modals/prompts/prompt_redo'); ?>
-<?php $this->load->view('admin/modals/prompts/prompt_remove'); ?>
+<?php $this->load->view('admin/modals/trash_bin/prompt_redo'); ?>
+<?php $this->load->view('admin/modals/trash_bin/prompt_remove'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -209,8 +212,8 @@ $(document).ready(function() {
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 </html>

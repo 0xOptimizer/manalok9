@@ -40,7 +40,9 @@ $globalHeader;
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
-						<button type="button" class="newmail-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW MAIL</button>
+						<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+							<button type="button" class="newmail-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW MAIL</button>
+						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -111,11 +113,10 @@ $globalHeader;
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/add_mail.php'); ?>
+<?php $this->load->view('admin/modals/mails/add_mail.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -124,8 +125,8 @@ $globalHeader;
 
 <script>
 
-$(document).ready(function() {
 	$('.sidebar-employee-mail').addClass('active');
+$(document).ready(function() {
 
 	var table = $('#mail_table').DataTable( {
 		sDom: 'lrtip',
@@ -146,8 +147,8 @@ $(document).ready(function() {
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 
 </html>

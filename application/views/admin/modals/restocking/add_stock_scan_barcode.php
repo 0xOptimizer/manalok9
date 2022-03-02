@@ -1,3 +1,4 @@
+<?php if (!$this->session->userdata('UserRestrictions')['restocking_scan_add_stock']) return; ?>
 <style type="text/css">
 .scanner-area video, canvas {
   width: 100% !important;

@@ -40,8 +40,7 @@ class Model_Security extends CI_Model {
 	public function CheckUserRestriction($user_id, $action) {
 		$this->db->select('*');
 		$this->db->where('UserID', $user_id);
-		$this->db->where('Action', $action);
-		$result = $this->db->get('user_restrictions')->row_array()['Allowed'];
+		$result = $this->db->get('user_restrictions')->row_array()[$action];
 		return $result;
 	}
 }

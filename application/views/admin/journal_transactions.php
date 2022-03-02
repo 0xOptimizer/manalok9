@@ -57,8 +57,8 @@ if ($this->session->flashdata('highlight-id')) {
 						</h3>
 					</div>
 					<div class="col-sm-12 col-md-7 pt-4 pb-2">
-						<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
-						<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-pen"></i> NEW TRANSACTION</button>
+						<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add']): ?>
+							<button type="button" class="newtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-pen"></i> NEW TRANSACTION</button>
 						<?php endif; ?>
 					</div>
 					<div class="col-sm-12 col-md-3 pt-4 pb-2" style="margin-top: -15px;">
@@ -114,7 +114,7 @@ if ($this->session->flashdata('highlight-id')) {
 										<td class="text-center"><?=number_format($row['Total'], 2)?></td>
 										<td class="text-center">
 											<i class="bi bi-eye btn-view-journal" style="color: #408AF7;"></i>
-											<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
+											<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete']): ?>
 												<i class="bi bi-trash text-danger btn-delete-journal"></i>
 											<?php endif; ?>
 										</td>
@@ -131,19 +131,13 @@ if ($this->session->flashdata('highlight-id')) {
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
-<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_add'] == 1): ?>
-<?php $this->load->view('admin/modals/add_journal_transaction'); ?>
-<?php endif; ?>
-<?php $this->load->view('admin/modals/journal_modal.php'); ?>
-<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] == 1): ?>
-	<form id="formDeleteJournal" action="<?php echo base_url() . 'FORM_deleteJournal';?>" method="POST" enctype="multipart/form-data">
-		<input id="journalIDDelete" type="hidden" name="journal-id">
-	</form>
-<?php endif; ?>
+
+<?php $this->load->view('admin/modals/journal_transactions/journal_modal.php'); ?>
+<?php $this->load->view('admin/modals/journal_transactions/add_journal_transaction.php'); ?>
+<?php $this->load->view('admin/modals/journal_transactions/delete_journal_transaction.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
 
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
@@ -400,7 +394,7 @@ $(document).ready(function() {
 });
 </script>
 
-<script src="<?=base_url()?>/assets/js/main.js"></script>
 <?php $this->load->view('main/globals/scripts.php'); ?>
+<script src="<?=base_url()?>/assets/js/main.js"></script>
 </body>
 </html>
