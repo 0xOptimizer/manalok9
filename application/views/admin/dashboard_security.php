@@ -51,6 +51,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<a href="#" class="burger-btn d-block d-xl-none">
 				<i class="bi bi-justify fs-3"></i>
 			</a>
+			<a href="<?=base_url() . 'admin'?>" class="btn btn-sm-primary"><i class="bi bi-caret-left-fill"></i> BACK TO DASHBOARD</a>
 		</header>
 
 		<div class="page-heading">
@@ -74,14 +75,14 @@ if ($this->session->flashdata('highlight-id')) {
 							<div class="input-group-prepend">
 								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
 							</div>
-							<input type="text" id="tableSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+							<input type="text" id="securityTableSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
 						</div>
 					</div>
 				</div>
 			</div>
 			<section class="section">
 				<div class="table-responsive">
-					<table id="productsTable" class="standard-table-nodesign table">
+					<table id="securityTable" class="standard-table-nodesign table">
 						<thead style="font-size: 12px;">
 							<th></th>
 							<th>USER</th>
@@ -127,10 +128,6 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<!-- New product modal -->
-<?php $this->load->view('admin/modals/add_product.php'); ?>
-<!-- New transactions modal -->
-<?php $this->load->view('admin/modals/add_transaction.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -143,21 +140,12 @@ if ($this->session->flashdata('highlight-id')) {
 <script>
 $('.sidebar-admin-dashboard').addClass('active');
 $(document).ready(function() {
-	<?php if ($highlightID != 'N/A'): ?>
-		$('#productsTable').find("[data-code='" + "<?=$highlightID;?>" + "']").addClass('highlighted'); 
-	<?php endif; ?>
-	$('.newproduct-btn').on('click', function() {
-		$('#newProductModal').modal('toggle');
-	});
-	$('.newtransaction-btn').on('click', function() {
-		$('#newTransactionModal').modal('toggle');
-	});
-	var table = $('#productsTable').DataTable( {
+	var table = $('#securityTable').DataTable( {
 		sDom: 'lrtip',
 		"bLengthChange": false,
-    	"order": [[ 6, "desc" ]],
-    });
-    $('#tableSearch').on('keyup change', function(){
+    	"order": [[ 0, "desc" ]],
+	});
+	$('#securityTableSearch').on('keyup change', function() {
 		table.search($(this).val()).draw();
 	});
 });

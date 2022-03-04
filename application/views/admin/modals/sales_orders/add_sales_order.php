@@ -14,14 +14,10 @@
 						<div class="col-sm-12">
 							<div class="row">
 								<div class="form-group col-sm-12 col-md-6">
-									<label class="input-label">SALES ORDER #</label>
-									<input type="text" class="form-control viewonly" value="SO<?=str_pad($this->db->count_all('sales_orders') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
-								</div>
-								<div class="form-group col-sm-12 col-md-3">
 									<label class="input-label">SALES ORDER DATE</label>
 									<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
 								</div>
-								<div class="form-group col-sm-12 col-md-3">
+								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">SALES ORDER TIME</label>
 									<input type="time" class="form-control" name="time" value="<?=date("H:i");?>" required>
 								</div>
@@ -45,7 +41,7 @@
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CLIENT #</label>
-									<input type="text" class="form-control viewonly billNo shipToBillInput" data-newcno="C<?=str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+									<input type="text" class="form-control viewonly billNo shipToBillInput" data-newcno="" readonly>
 								</div>
 								<div class="form-group col-sm-12">
 									<label class="input-label">ADDRESS</label>
@@ -103,7 +99,7 @@
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CLIENT #</label>
-									<input type="text" class="form-control viewonly shipNo" data-newcno="C<?=str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
+									<input type="text" class="form-control viewonly shipNo" data-newcno="" readonly>
 								</div>
 								<div class="form-group col-sm-12">
 									<label class="input-label">ADDRESS</label>

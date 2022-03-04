@@ -350,21 +350,24 @@ $(document).ready(function () {
 		$('#up_expire_date').val('');
 		$('#up_prd_descript').val('');
 	}
-	$('.modal_view').on('click',function () {
+	$(document).on('click','.modal_view' , function () {
+	// $('.modal_view').on('click',function () { // button not working on second page of datatables
 		var stock_id = $(this).data('id');
 		Get_Stock_Details(stock_id);
 	});
 	$('#view_stock_modal').on('hidden.bs.modal', function () {
 		Clear_Labels();
 	});
-	$('.modal_update').on('click',function () {
+	$(document).on('click','.modal_update' , function () {
+	// $('.modal_update').on('click',function () { // button not working on second page of datatables
 		var stock_id = $(this).data('id');
 		Get_Stock_Details_for_update(stock_id)
 	});
 	$('.modal_update').on('hidden.bs.modal', function () {
 		Clear_Input();
 	});
-	$('.modal_delete').on('click',function function_name() {
+	$(document).on('click','.modal_delete' , function () {
+	// $('.modal_delete').on('click',function function_name() { // button not working on second page of datatables
 		if ($(this).data('id') > 0) {
 			var stock_id = $(this).data('id');
 

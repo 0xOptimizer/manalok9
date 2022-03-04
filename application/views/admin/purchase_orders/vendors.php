@@ -61,10 +61,10 @@ if ($this->session->flashdata('highlight-id')) {
 							<th class="text-center">ID</th>
 							<th class="text-center">VENDOR #</th>
 							<th class="text-center">NAME</th>
-							<th class="text-center">EMAIL</th>
 							<th class="text-center">ADDRESS</th>
 							<th class="text-center">CONTACT #</th>
-							<th class="text-center">KIND</th>
+							<th class="text-center">KIND OF PRODUCT / SERVICE</th>
+							<th class="text-center">EMAIL</th>
 							<th></th>
 						</thead>
 						<tbody>
@@ -82,9 +82,6 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['Name']?>
 										</td>
 										<td class="text-center">
-											<?=($row['Email'] ? $row['Email'] : '---')?>
-										</td>
-										<td class="text-center">
 											<?=$row['Address']?>
 										</td>
 										<td class="text-center">
@@ -92,6 +89,9 @@ if ($this->session->flashdata('highlight-id')) {
 										</td>
 										<td class="text-center">
 											<?=$row['ProductServiceKind']?>
+										</td>
+										<td class="text-center">
+											<?=($row['Email'] ? $row['Email'] : '---')?>
 										</td>
 										<td class="text-center">
 											<i class="bi bi-eye btn-view-vendor" style="color: #408AF7;"></i>

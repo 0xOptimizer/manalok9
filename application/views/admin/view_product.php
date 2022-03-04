@@ -237,6 +237,11 @@ if ($this->session->flashdata('highlight-id')) {
 															Approved
 															</span>';
 															break;
+															case '2':
+															echo '<span class="text-center warning-banner-sm">
+															Rejected
+															</span>';
+															break;
 															
 															default:
 															echo "";

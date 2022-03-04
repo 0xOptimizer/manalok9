@@ -183,7 +183,7 @@ $(document).ready(function() {
 				$('#add_brandsizes').attr('data-value' ,data['Brand'].UniqueID);
 				
 
-				console.log(data);
+				// console.log(data);
 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -353,7 +353,7 @@ $(document).ready(function() {
 					$('.sizes_sectionsss').append('<tr class="row_sizeid" data-value="'+ data[i].id +'"><td>'+ data[i].Product_Size +'</td> <td>'+ data[i].Product_Size_Abbr +'</td><td><a href="<?=base_url()?>remove_addSizes?id='+data[i].id+'"><i class="bi bi-trash"></i></td></tr>');
 				}
 				
-				console.log(data);
+				// console.log(data);
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log(textStatus, errorThrown);

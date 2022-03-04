@@ -40,6 +40,9 @@ class Users extends MY_Controller {
 				$this->globalData['image'] = $this->session->userdata('Image');
 			}
 		}
+		if (!$this->Model_Security->CheckPrivilegeLevel()) {
+			redirect();
+		}
 	}
 	public function FORM_selfUpdateUser()
 	{	
@@ -188,11 +191,15 @@ class Users extends MY_Controller {
 	}
 	public function index()
 	{
-		$data = [];
-		$data = array_merge($data, $this->globalData);
-		$header['pageTitle'] = 'Your Corner';
-		$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-		$this->load->view('users/activities', $data);
+		if($this->Model_Security->CheckUserRestriction('my_activities_view')) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Your Corner';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('users/activities', $data);
+		} else {
+			redirect(base_url());
+		}
 	}
 	public function profile()
 	{

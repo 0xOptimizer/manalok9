@@ -544,6 +544,7 @@ $config['user_restrictions'] = array(
 		'restocking_manual_add_stock',
 		'restocking_update_stock',
 		'restocking_delete_stock',
+		'restocking_cart_functions',
 
 		'inventory_view',
 

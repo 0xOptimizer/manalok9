@@ -130,7 +130,7 @@ class Model_Updates extends CI_Model {
 	{
 		extract($data);
 		$this->db->set(array(
-			'Status' => '0',
+			'Status' => '2',
 			'Date_Approval' => NULL,
 		));
 		$this->db->where('TransactionID', $TransactionID);

@@ -37,9 +37,6 @@
 												<a href="<?=base_url() . 'admin/journals#J'. $row['ID']?>">
 													<i class="bi bi-eye btn-view-journal" style="color: #408AF7;"></i>
 												</a>
-												<?php if ($this->session->userdata('UserRestrictions')['journal_transactions_delete'] || $this->session->userdata('UserRestrictions')['purchase_orders_accounting']): ?>
-													<i class="bi bi-trash text-danger btn-delete-journal"></i>
-												<?php endif; ?>
 											</td>
 										</tr>
 								<?php endforeach;

@@ -67,11 +67,11 @@
 										<label class="input-label">COMMENT</label>
 										<input id="UpdateComment" type="text" class="form-control" name="adminComment" readonly>
 									</div>
-									<div class="form-group col-sm-12">
+									<div class="form-group col-sm-12 d-none">
 										<label class="input-label">PRIVILEGE</label>
 										<select id="UpdatePrivilege" class="form-control" name="userPrivilege" readonly disabled>
-											<option value="0" selected>None</option>
-											<option value="1">Normal</option>
+											<option value="0">None</option>
+											<option value="1" selected>Normal</option>
 											<option value="2">Admin</option>
 											<option value="3">Developer</option>
 										</select>
@@ -156,7 +156,7 @@
 													substr($restriction, -5) == '_view'): ?>
 											<div class="form-check form-switch mt-2">
 												<input class="form-check-input actionMain" type="checkbox" name="<?=$restriction?>_update" id="<?=$restriction?>_Update" disabled="">
-												<label class="form-check-label fw-bolder"><?=strtoupper(str_replace('_', ' ', $restriction))?></label>
+												<label class="form-check-label fw-bolder" for="<?=$restriction?>_Update"><?=strtoupper(str_replace('_', ' ', $restriction))?></label>
 											</div>
 										<?php else: ?>
 											<?php if (substr($userRestrictions[$key - 1], -5) == '_view'): // if previous restriction was main action ?>
@@ -164,7 +164,7 @@
 											<?php endif; ?>
 											<div class="form-check form-switch">
 												<input class="form-check-input" type="checkbox" name="<?=$restriction?>_update" id="<?=$restriction?>_Update" disabled="">
-												<label class="form-check-label"><?=strtoupper(str_replace('_', ' ', $restriction))?></label>
+												<label class="form-check-label" for="<?=$restriction?>_Update"><?=strtoupper(str_replace('_', ' ', $restriction))?></label>
 											</div>
 											<?php if (!isset($userRestrictions[$key + 1]) || 
 														substr($userRestrictions[$key + 1], -5) == '_view'): // if next restriction is main action, or if it is the last restriction ?>

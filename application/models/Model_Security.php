@@ -3,6 +3,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Model_Security extends CI_Model {
 
+	public function RecordLastLogin($UserID)
+	{
+		$this->db->where('UserID', $UserID);
+		$this->db->set(array(
+			'LastLogin' => date('Y-m-d H:i:s')
+		));
+		$result = $this->db->update('users_login');
+		return $result;
+	}
+
 	public function CheckPrivilegeLevel()
 	{
 		// ~ essentials ~
@@ -37,10 +47,14 @@ class Model_Security extends CI_Model {
 	}
 
 
-	public function CheckUserRestriction($user_id, $action) {
-		$this->db->select('*');
-		$this->db->where('UserID', $user_id);
-		$result = $this->db->get('user_restrictions')->row_array()[$action];
-		return $result;
+	public function CheckUserRestriction($action) {
+		$user_id = $this->session->userdata('UserID');
+		if ($user_id) {
+			$this->db->select('*');
+			$this->db->where('UserID', $user_id);
+			return $this->db->get('user_restrictions')->row_array()[$action];
+		} else {
+			return 0;
+		}
 	}
 }

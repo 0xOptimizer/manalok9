@@ -15,13 +15,13 @@ $globalHeader;
 				<?=$this->session->flashdata('prompt');?>
 				<form action="<?php echo base_url() . 'FORM_loginValidation';?>" method="POST" enctype="multipart/form-data">
 					<div class="form-group position-relative has-icon-left mt-2 mb-4">
-						<input type="text" class="form-control form-control-xl" name="email" placeholder="Email" value="test_admin@gmail.com">
+						<input type="text" class="form-control form-control-xl" name="email" placeholder="Email">
 						<div class="form-control-icon">
 							<i class="bi bi-envelope" style="font-size: 18px;"></i>
 						</div>
 					</div>
 					<div class="form-group position-relative has-icon-left">
-						<input type="password" class="form-control form-control-xl" name="password" placeholder="Password" value="1234">
+						<input type="password" class="form-control form-control-xl" name="password" placeholder="Password">
 						<div class="form-control-icon">
 							<i class="bi bi-shield-lock" style="font-size: 18px;"></i>
 						</div>

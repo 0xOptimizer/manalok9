@@ -144,7 +144,7 @@
 	<div class="modal-dialog modal-lg" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt"></i> SALES ORDERS</h4>
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-receipt"></i> SALES ORDERS <span class="selectedClient"></span></h4>
 			</div>
 			<div class="modal-body">
 				<div class="row">

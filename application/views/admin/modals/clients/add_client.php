@@ -8,11 +8,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-row d-flex flex-wrap justify-content-center">
-						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="in-client-no" type="text" class="form-control standard-input-pad" value="C<?=str_pad($this->db->count_all('clients') + 1, 6, '0', STR_PAD_LEFT)?>" readonly>
-							<label class="input-label" for="in-client-no">CLIENT #</label>
-						</div>
-						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
+						<div class="form-group col-12 col-sm-12 col-md-9 mb-3">
 							<input id="in-name" type="text" class="form-control standard-input-pad" name="add-name" placeholder="John Doe" required>
 							<label class="input-label" for="in-name">NAME</label>
 						</div>

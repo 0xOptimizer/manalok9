@@ -112,6 +112,7 @@ $returnedProducts = array();
 										<th class="text-center">#</th>
 										<th class="text-center">TRANSACTION ID</th>
 										<th class="text-center">PRODUCT CODE</th>
+										<th class="text-center">STOCK ID</th>
 										<th class="text-center">AMOUNT</th>
 										<th class="text-center">PRICE</th>
 										<th class="text-center">TOTAL</th>
@@ -140,6 +141,9 @@ $returnedProducts = array();
 													</td>
 													<td class="text-center">
 														<?=$row['Code']?>
+													</td>
+													<td class="text-center">
+														<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['stockID']?></span>
 													</td>
 													<td class="text-center">
 														<?=($row['Amount'] - $totalReturnedQty)?>
@@ -241,27 +245,43 @@ $returnedProducts = array();
 							</div>
 							<div class="col-12 mb-1">
 								<h6>BILL TO
-									<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
-										<button type="button" class="emailbtclient-btn btn btn-sm-primary" data-email="<?=$clientBTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
+										<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+											<button type="button" class="emailbtclient-btn btn btn-sm-primary" data-email="<?=$clientBTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+										<?php endif; ?>
 									<?php endif; ?>
 								</h6>
-								<label><?=$clientBTDetails['Name']?> (
-									<a href="<?=base_url() . 'admin/clients#'. $clientBTDetails["ClientNo"]?>">
-										<i class="bi bi-eye"></i> <?=$clientBTDetails['ClientNo']?>
-									</a>
-								)</label>
+								<?php if ($clientBTDetails['ClientNo'] != NULL): ?>
+									<label><?=$clientBTDetails['Name']?> (
+										<a href="<?=base_url() . 'admin/clients#'. $clientBTDetails["ClientNo"]?>">
+											<i class="bi bi-eye"></i> <?=$clientBTDetails['ClientNo']?>
+										</a>
+									)</label>
+								<?php else: ?>
+									<label class="warning-banner-sm">
+										CLIENT DETAILS NOT AVAILABLE
+									</label>
+								<?php endif; ?>
 							</div>
 							<div class="col-12 mb-1">
 								<h6>SHIP TO
-									<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
-										<button type="button" class="emailstclient-btn btn btn-sm-primary" data-email="<?=$clientSTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+									<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
+										<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+											<button type="button" class="emailstclient-btn btn btn-sm-primary" data-email="<?=$clientSTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+										<?php endif; ?>
 									<?php endif; ?>
 								</h6>
-								<label><?=$clientSTDetails['Name']?> (
-									<a href="<?=base_url() . 'admin/clients#'. $clientSTDetails["ClientNo"]?>">
-										<i class="bi bi-eye"></i> <?=$clientSTDetails['ClientNo']?>
-									</a>
-								)</label>
+								<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
+									<label><?=$clientSTDetails['Name']?> (
+										<a href="<?=base_url() . 'admin/clients#'. $clientSTDetails["ClientNo"]?>">
+											<i class="bi bi-eye"></i> <?=$clientSTDetails['ClientNo']?>
+										</a>
+									)</label>
+								<?php else: ?>
+									<label class="warning-banner-sm">
+										CLIENT DETAILS NOT AVAILABLE
+									</label>
+								<?php endif; ?>
 							</div>
 							<?php if ($salesOrder['Status'] == '3'): ?>
 								<div class="col-12 mb-3">
@@ -275,6 +295,7 @@ $returnedProducts = array();
 							$totalDiscount = $salesOrder['discountOutright'] + $salesOrder['discountVolume'] + $salesOrder['discountPBD'] + $salesOrder['discountManpower'];
 							$transactionsPriceTotal = 0;
 							$transactionsFreebiesTotal = 0;
+							// $transactionsReturnedTotal = 0; // UNUSED
 							foreach ($orderTransactions->result_array() as $transaction) {
 								$price = $transaction['Amount'] * $transaction['PriceUnit'];
 								if ($transaction['Freebie'] == 0) {
@@ -430,7 +451,7 @@ $returnedProducts = array();
 				</div>
 			</section>
 		</div>
-		<?php if ($salesOrder['Status'] == '2'): ?>
+		<?php if ($salesOrder['Status'] >= '2'): ?>
 			<div class="page-heading">
 				<div class="page-title">
 					<div class="row">
@@ -441,11 +462,11 @@ $returnedProducts = array();
 						</div>
 					</div>
 					<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation']): ?>
-					<div class="row">
-						<div class="col-12">
-							<button type="button" class="salesinvoicing-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
+						<div class="row">
+							<div class="col-12">
+								<button type="button" class="salesinvoicing-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
+							</div>
 						</div>
-					</div>
 					<?php endif; ?>
 				</div>
 				<section>
@@ -484,9 +505,11 @@ $returnedProducts = array();
 												<?=$row['ModeOfPayment']?>
 											</td>
 											<td>
-												<a href="FORM_removeInvoice?ino=<?=$row['InvoiceNo']?>">
-													<button type="button" class="btn removeInvoice"><i class="bi bi-trash text-danger"></i></button>
-												</a>
+												<?php if ($this->session->userdata('UserRestrictions')['invoice_delete']): ?>
+													<a href="FORM_removeInvoice?ino=<?=$row['InvoiceNo']?>">
+														<button type="button" class="btn removeInvoice"><i class="bi bi-trash text-danger"></i></button>
+													</a>
+												<?php endif; ?>
 											</td>
 										</tr>
 								<?php endforeach;

@@ -16,6 +16,11 @@ class Exporting extends MY_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('Model_Selects');
+		$this->load->model('Model_Security');
+		
+		if (!$this->Model_Security->CheckPrivilegeLevel()) {
+			redirect();
+		}
 	}
 	public function xlsSalesOrder() {
 		$filename = $this->input->post('filename');

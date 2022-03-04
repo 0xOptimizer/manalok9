@@ -43,6 +43,9 @@ class Demo extends MY_Controller {
 		} else {
 			redirect('login');
 		}
+		if (!$this->Model_Security->CheckPrivilegeLevel()) {
+			redirect();
+		}
 	}
 	public function inventory()
 	{

@@ -28,7 +28,7 @@
 						<label class="m_contactnum"></label>
 					</div>
 					<div class="col-12 col-md-6 my-3">
-						<h6>KIND OF PRODUCT/SEVICE</h6>
+						<h6>KIND OF PRODUCT / SERVICE</h6>
 						<label class="m_kind"></label>
 					</div>
 					<div class="col-12 col-md-6 my-3">

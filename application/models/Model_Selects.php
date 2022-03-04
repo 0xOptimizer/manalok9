@@ -11,6 +11,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get($table);  
 		return $result;
 	}
+	public function GetUserDetails($userID)
+	{
+		$this->db->select('*');
+		$this->db->where('UserID', $userID);
+		$result = $this->db->get('users');  
+		return $result;
+	}
 	public function GetAllUsers()
 	{
 		$this->db->select('*');
@@ -25,6 +32,13 @@ class Model_Selects extends CI_Model {
 		$this->db->order_by('ID', 'desc');
 		$this->db->limit('5');
 		$result = $this->db->get('logbook');  
+		return $result;
+	}
+	public function GetRecentLogins()
+	{
+		$this->db->select('UserID, LastLogin');
+		$this->db->order_by('LastLogin', 'desc');
+		$result = $this->db->get('users_login');
 		return $result;
 	}
 	public function GetAllProducts()

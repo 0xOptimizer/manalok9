@@ -278,7 +278,7 @@ $(document).ready(function() {
 		}
 	});
 	$(document).on('click', '.select-client-row', function() {
-		$('#select-client-btn span, .selectedSalesOrder').html('#' + $(this).data('no'));
+		$('#select-client-btn span, .selectedClient').html('#' + $(this).data('no'));
 
 		// ENABLE SELECT SALESORDER BUTTON
 		$('#select-salesorder-btn').prop('disabled', false);
@@ -326,7 +326,7 @@ $(document).ready(function() {
 	});
 	$(document).on('click', '.select-salesorder-row', function() {
 		$('#SalesOrderNo').val($(this).data('no'));
-		$('#select-salesorder-btn span').html('#' + $(this).data('no'));
+		$('#select-salesorder-btn span, .selectedSalesOrder').html('#' + $(this).data('no'));
 
 		// CLEAR TABLE WHEN CHANGING SO
 		if ($('#ProductsCount').val() > 0) {

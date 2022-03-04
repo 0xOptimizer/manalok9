@@ -13,8 +13,11 @@ if ($date == date('M j, Y')) {
 	$isCurrentDate = true;
 }
 
-// Fetch products
+// Fetch dashboard logs
 $getDashLogs = $this->Model_Selects->GetDashboardLogs();
+
+// Fetch last logins
+$getRecentLogins = $this->Model_Selects->GetRecentLogins();
 
 ?>
 <style>
@@ -152,8 +155,11 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 										foreach ($getDashLogs->result_array() as $row): ?>
 											<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
 												<span style="font-size: 1.15em; color: #ebebeb;">
+													<?php
+													$userDet = $this->Model_Selects->GetUserDetails($row['UserID'], 'users')->row_array();
+													?>
 													<b>
-														<<?=$row['UserID']?>> <?=$row['Event']?>
+														[ <?=$userDet['LastName'] .', '. $userDet['FirstName']?> ] <?=$row['Event']?>
 													</b>
 												</span>
 												<div class="col-sm-12">
@@ -201,46 +207,46 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 									</span>
 								</div>
 								<div class="employees-online ml-2">
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin1&gt;
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">Clocked in 5 minutes ago</div>
-										</div>
-									</div>
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin2&gt;
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">Clocked in 33 minutes ago</div>
-										</div>
-									</div>
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin3&gt;
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">Clocked in 1 hour ago</div>
-										</div>
-									</div>
-									<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
-										<span style="font-size: 1.15em; color: #ebebeb;">
-											<b>
-												&lt;admin0&gt;
-											</b>
-										</span>
-										<div class="col-sm-12">
-											<div class="text-muted">Clocked in 3 hours ago</div>
-										</div>
-									</div>
+									<?php if ($getRecentLogins->num_rows() > 0):
+										foreach ($getRecentLogins->result_array() as $row): ?>
+											<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														&lt;<?=$row['UserID']?>&gt;
+													</b>
+												</span>
+												<div class="col-sm-12">
+													<?php
+													$dateDiff = strtotime(date('Y-m-d h:i:s A')) - strtotime($row['LastLogin']);
+													$days = $dateDiff / (60 * 60 * 24);
+													$hours = $dateDiff / (60 * 60);
+													$minutes = $dateDiff / 60;
+													if ($days > 1) {
+														$timePassed = floor($days) . ' day';
+														if ($days >= 2) {
+															$timePassed .= 's';
+														}
+													}
+													elseif ($hours > 1) {
+														$timePassed = floor($hours) . ' hour';
+														if ($hours >= 2) {
+															$timePassed .= 's';
+														}
+													}
+													elseif ($minutes > 1) {
+														$timePassed = floor($minutes) . ' minute';
+														if ($minutes >= 2) {
+															$timePassed .= 's';
+														}
+													} else {
+														$timePassed = $dateDiff . ' seconds';
+													}
+													?>
+													<div class="text-muted">Online <?=$timePassed?> ago</div>
+												</div>
+											</div>
+										<?php endforeach;
+									endif;?>
 								</div>
 							</div>
 						</div>
@@ -255,18 +261,18 @@ $getDashLogs = $this->Model_Selects->GetDashboardLogs();
 								</div>
 								<div class="additional-data ml-2">
 									<div class="row">
-										<div class="col-12 mt-2">
+										<!-- <div class="col-12 mt-2">
 											<button type="button" class="btn btn-primary" style="width: 150px;"><i class="bi bi-server"></i> DATABASE</button>
-										</div>
+										</div> -->
 										<div class="col-12 mt-2">
 											<button type="button" class="backup-btn btn btn-info" style="width: 150px;"><i class="bi bi-back"></i> BACKUP</button>
 										</div>
 										<div class="col-12 mt-2">
 											<a href="<?=base_url() . 'admin/security';?>" class="btn btn-danger" style="width: 150px;"><i class="bi bi-shield-fill"></i> SECURITY</a>
 										</div>
-										<div class="col-12 mt-2">
+										<!-- <div class="col-12 mt-2">
 											<button type="button" class="btn btn-secondary" style="width: 150px;"><i class="bi bi-wrench"></i> SETTINGS</button>
-										</div>
+										</div> -->
 									</div>
 								</div>
 								<!-- <div class="row ml-2 mt-2">

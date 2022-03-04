@@ -80,6 +80,9 @@ date_default_timezone_set('Asia/Manila');
 						<table id="list_release" class="table">
 							<thead>
 								<th>
+									ID
+								</th>
+								<th>
 									SKU
 								</th>
 								<th>
@@ -107,6 +110,9 @@ date_default_timezone_set('Asia/Manila');
 							<tbody>
 								<?php foreach ($get_allstocks->result_array() as $row): ?>
 									<tr>
+										<td>
+											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+										</td>
 										<td>
 											<?php echo (!empty($row['Product_SKU'])) ? $row['Product_SKU'] : 'N/A'; ?>
 										</td>

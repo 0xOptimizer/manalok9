@@ -32,6 +32,7 @@ class MY_Controller extends CI_Controller {
 			'DateAdded' => date('Y-m-d h:i:s A'),
 		);
 		$LogUser = $this->Model_Security->LogUser($data);
+		// $RecordLastLogin = $this->Model_Security->RecordLastLogin($userID);
 
 		if ((!isset($userID) || $userID == '') && $pageURL != base_url() && $pageURL != base_url('FORM_loginValidation')) {
 			redirect(base_url());

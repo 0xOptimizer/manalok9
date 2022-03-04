@@ -18,6 +18,10 @@ class AJAX extends CI_Controller {
 		date_default_timezone_set('Asia/Manila');
 		$this->load->model('Model_Logbook');
 		$this->load->model('Model_Updates');
+		
+		if (!$this->Model_Security->CheckPrivilegeLevel()) {
+			redirect();
+		}
 	}
 
 	public function getUserLogs()
@@ -206,6 +210,12 @@ class AJAX extends CI_Controller {
 			echo json_encode($clientDetails);
 		}
 	}
+	public function getClientDetails()
+	{
+		$clientNo = $this->input->get('client_no');
+		$getClientByNo = $this->Model_Selects->GetClientByNo($clientNo)->row_array();
+		print json_encode($getClientByNo);
+	}
 	// VENDOR NAME SEARCH
 	public function searchVendorName()
 	{
@@ -226,6 +236,25 @@ class AJAX extends CI_Controller {
 
 			echo json_encode($vendorDetails);
 		}
+	}
+	public function getVendorDetails()
+	{
+		$vendorNo = $this->input->get('vendor_no');
+		$getVendorByNo = $this->Model_Selects->GetVendorByNo($vendorNo)->row_array();
+		print json_encode($getVendorByNo);
+	}
+	
+	public function getJournalDetails()
+	{
+		$journalID = $this->input->get('journal_id');
+		$getJournalByID = $this->Model_Selects->GetJournalByID($journalID)->row_array();
+		print json_encode($getJournalByID);
+	}
+	public function getJournalTransactions()
+	{
+		$journalID = $this->input->get('journal_id');
+		$GetTransactionsByJournalID = $this->Model_Selects->GetTransactionsByJournalID($journalID)->result_array();
+		print json_encode($GetTransactionsByJournalID);
 	}
 	public function getAccountTransactionsRange()
 	{
@@ -464,53 +493,60 @@ class AJAX extends CI_Controller {
 	}
 	public function Add_BrandSizes()
 	{
-		$UniqueID = $this->input->post('uid');
-		if (empty($UniqueID)) {
-			echo 'Error! Please Try Again';
+		if ($this->Model_Security->CheckUserRestriction('branding_add')) {
+			$UniqueID = $this->input->post('uid');
+			if (empty($UniqueID)) {
+				echo 'Error! Please Try Again';
+				exit();
+			}
+			$GetAll_BrandSizes = $this->Model_Selects->GetAll_BrandSizes($UniqueID);
+			$result = $GetAll_BrandSizes->result_array();
+				
+			$result = json_encode($result);
+			echo $result;
 			exit();
+		} else {
+			redirect(base_url());
 		}
-		$GetAll_BrandSizes = $this->Model_Selects->GetAll_BrandSizes($UniqueID);
-		$result = $GetAll_BrandSizes->result_array();
-			
-		$result = json_encode($result);
-		echo $result;
-		exit();
 	}
 	public function AddNew_BrandSizes()
 	{
-		$UniqueID = $this->input->post('uid');
-		$Product_Size = $this->input->post('prd_size');
-		$Product_Size_Abbr = $this->input->post('prd_sizeabbr');
+		if ($this->Model_Security->CheckUserRestriction('branding_add')) {
+			$UniqueID = $this->input->post('uid');
+			$Product_Size = $this->input->post('prd_size');
+			$Product_Size_Abbr = $this->input->post('prd_sizeabbr');
 
-		if (empty($UniqueID) || empty($Product_Size) || empty($Product_Size_Abbr)) {
-			echo "Warning! Empty fields please try again.";
-			exit();
-		}
-		$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
-		if ($CheckBrand_UniqueID->num_rows() > 0) {
-			$data = array(
-				'UniqueID' => $UniqueID,
-				'Product_Size' => strtoupper($Product_Size),
-				'Product_Size_Abbr' => strtoupper($Product_Size_Abbr),
-			);
-			$Add_NewBrandsize = $this->Model_Inserts->Add_NewBrandsize($data);
-			if ($Add_NewBrandsize == true) {
-
-				echo "Succes! New size added.";
+			if (empty($UniqueID) || empty($Product_Size) || empty($Product_Size_Abbr)) {
+				echo "Warning! Empty fields please try again.";
 				exit();
+			}
+			$CheckBrand_UniqueID = $this->Model_Selects->CheckBrand_UniqueID($UniqueID);
+			if ($CheckBrand_UniqueID->num_rows() > 0) {
+				$data = array(
+					'UniqueID' => $UniqueID,
+					'Product_Size' => strtoupper($Product_Size),
+					'Product_Size_Abbr' => strtoupper($Product_Size_Abbr),
+				);
+				$Add_NewBrandsize = $this->Model_Inserts->Add_NewBrandsize($data);
+				if ($Add_NewBrandsize == true) {
+
+					echo "Succes! New size added.";
+					exit();
+				}
+				else
+				{
+					echo "Error! Please try again.";
+					exit();
+				}
 			}
 			else
 			{
 				echo "Error! Please try again.";
-				exit();
+					exit();
 			}
+		} else {
+			redirect(base_url());
 		}
-		else
-		{
-			echo "Error! Please try again.";
-				exit();
-		}
-		
 	}
 	public function Fill_Select_BrandData()
 	{

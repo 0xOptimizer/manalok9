@@ -61,13 +61,15 @@ $(document).ready(function () {
 				tableStocks.clear();
 				let productStocks = $.parseJSON(response);
 				$.each(productStocks, function(index, val) {
-					tableStocks.row.add([
-						val.ID,
-						val.Current_Stocks,
-						val.Retail_Price,
-						val.Date_Added,
-						val.Expiration_Date
-					]);
+					// if (val.Current_Stocks > 0) {
+						tableStocks.row.add([
+							val.ID,
+							val.Current_Stocks,
+							val.Retail_Price,
+							val.Date_Added,
+							val.Expiration_Date
+						]);
+					// }
 				});
 				tableStocks.draw();
 
@@ -146,6 +148,7 @@ $(document).ready(function () {
 					switch (data.prompt.status)
 					{
 						case 'product_found_with_stock':
+						$('#btn_restock_manual').data('found_id', true);
 						$('.ajx_res_prompt').html('<p class="text-success align-middle"><i class="bi bi-check-circle-fill"></i> Product found in database with stocks available.</p>');
 						break;
 
@@ -170,7 +173,10 @@ $(document).ready(function () {
 	});
 	$('#btn_restock_manual').on('click',function () {
 		/* SUBMIT SKU GET PRODUCT STOCK */
-		Show_Stock_Table($('#inp_sku').val());
+		if ($('#btn_restock_manual').data('found_id')) {
+			Show_Stock_Table($('#inp_sku').val());
+			$('#btn_restock_manual').data('found_id', false);
+		}
 
 		// $.ajax({
 		// 	url: "submit_get_prdstocks",

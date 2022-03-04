@@ -26,6 +26,10 @@ $globalHeader;
 		cursor: pointer;
 		transition: 0.01s;
 	}
+	.form-switch label:hover {
+		cursor: pointer;
+		background-color: rgba(120, 120, 120, 0.3);
+	}
 </style>
 </head>
 <body>
@@ -195,12 +199,12 @@ $globalHeader;
 $('.sidebar-admin-employees').addClass('active');
 $(document).ready(function() {
 	var toggle = false;
-	$('.bymyself-btn').on('click', function() {
-		$('#NewEmployeeModal').modal('toggle');
-		$('#userRegistration').modal('hide');
-	});
+	// $('.bymyself-btn').on('click', function() {
+	// 	$('#NewEmployeeModal').modal('toggle');
+	// 	$('#userRegistration').modal('hide');
+	// });
 	$('.employee-add-new').on('click', function() {
-		$('#userRegistration').modal('toggle');
+		$('#NewEmployeeModal').modal('toggle');
 	});
 	// $('#UpdateEmployeeModal').modal('toggle');
 	var userRestrictions = <?=json_encode($this->config->item('user_restrictions'))?>;

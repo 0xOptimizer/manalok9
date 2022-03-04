@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 01, 2022 at 05:09 PM
+-- Generation Time: Mar 04, 2022 at 02:57 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -289,7 +289,7 @@ CREATE TABLE `products_transactions` (
   `InStock` int(255) DEFAULT 0,
   `Date` varchar(255) DEFAULT NULL,
   `DateAdded` varchar(255) DEFAULT NULL,
-  `Status` int(11) NOT NULL COMMENT '0 = for approval\r\n1 = approved',
+  `Status` int(11) NOT NULL COMMENT '0 = for approval\r\n1 = approved\r\n2 = rejected',
   `Date_Approval` varchar(255) DEFAULT NULL,
   `UserID` varchar(255) DEFAULT NULL,
   `PriceTotal` varchar(255) DEFAULT NULL,
@@ -396,6 +396,7 @@ CREATE TABLE `purchase_orders` (
   `VendorNo` varchar(255) DEFAULT NULL,
   `ShipVia` varchar(255) DEFAULT NULL,
   `DateDelivery` varchar(255) DEFAULT NULL,
+  `DateApproved` varchar(32) DEFAULT NULL,
   `Status` int(11) DEFAULT NULL COMMENT '0 = rejected; 1 = for approval; 2 = approved'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -522,7 +523,8 @@ CREATE TABLE `users_login` (
   `ID` int(11) NOT NULL,
   `UserID` varchar(255) DEFAULT NULL,
   `LoginEmail` varchar(255) DEFAULT NULL,
-  `LoginPassword` varchar(255) DEFAULT NULL
+  `LoginPassword` varchar(255) DEFAULT NULL,
+  `LastLogin` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -565,8 +567,75 @@ CREATE TABLE `users_registrations` (
 CREATE TABLE `user_restrictions` (
   `ID` int(11) NOT NULL,
   `UserID` varchar(255) DEFAULT NULL,
-  `Action` varchar(127) DEFAULT NULL,
-  `Allowed` bit(1) DEFAULT b'0'
+  `products_view` tinyint(1) DEFAULT 0,
+  `products_add` tinyint(1) DEFAULT 0,
+  `products_edit` tinyint(1) DEFAULT 0,
+  `products_delete` tinyint(1) DEFAULT 0,
+  `releasing_view` tinyint(1) DEFAULT 0,
+  `releasing_scan_add_stock` tinyint(1) DEFAULT 0,
+  `releasing_manual_add_stock` tinyint(1) DEFAULT 0,
+  `restocking_view` tinyint(1) DEFAULT 0,
+  `restocking_scan_add_stock` tinyint(1) DEFAULT 0,
+  `restocking_manual_add_stock` tinyint(1) DEFAULT 0,
+  `restocking_update_stock` tinyint(1) DEFAULT 0,
+  `restocking_delete_stock` tinyint(1) DEFAULT 0,
+  `restocking_cart_functions` tinyint(1) DEFAULT 0,
+  `inventory_view` tinyint(1) DEFAULT 0,
+  `users_view` tinyint(1) DEFAULT 0,
+  `users_add` tinyint(1) DEFAULT 0,
+  `users_edit` tinyint(1) DEFAULT 0,
+  `users_edit_login` tinyint(1) DEFAULT 0,
+  `vendors_view` tinyint(1) DEFAULT 0,
+  `vendors_add` tinyint(1) DEFAULT 0,
+  `vendors_edit` tinyint(1) DEFAULT 0,
+  `vendors_delete` tinyint(1) DEFAULT 0,
+  `purchase_orders_view` tinyint(1) DEFAULT 0,
+  `purchase_orders_add` tinyint(1) DEFAULT 0,
+  `purchase_orders_add_manual_transaction` tinyint(1) DEFAULT 0,
+  `purchase_orders_approve` tinyint(1) DEFAULT 0,
+  `purchase_orders_bill_creation` tinyint(1) DEFAULT 0,
+  `purchase_orders_accounting` tinyint(1) DEFAULT 0,
+  `bills_view` tinyint(1) DEFAULT 0,
+  `bills_add` tinyint(1) DEFAULT 0,
+  `bills_delete` tinyint(1) DEFAULT 0,
+  `manual_purchases_view` tinyint(1) DEFAULT 0,
+  `clients_view` tinyint(1) DEFAULT 0,
+  `clients_add` tinyint(1) DEFAULT 0,
+  `clients_edit` tinyint(1) DEFAULT 0,
+  `clients_delete` tinyint(1) DEFAULT 0,
+  `sales_orders_view` tinyint(1) DEFAULT 0,
+  `sales_orders_add` tinyint(1) DEFAULT 0,
+  `sales_orders_mark_for_invoicing` tinyint(1) DEFAULT 0,
+  `sales_orders_schedule_delivery` tinyint(1) DEFAULT 0,
+  `sales_orders_mark_as_delivered` tinyint(1) DEFAULT 0,
+  `sales_orders_mark_as_received` tinyint(1) DEFAULT 0,
+  `sales_orders_invoice_creation` tinyint(1) DEFAULT 0,
+  `sales_orders_accounting` tinyint(1) DEFAULT 0,
+  `invoice_view` tinyint(1) DEFAULT 0,
+  `invoice_add` tinyint(1) DEFAULT 0,
+  `invoice_delete` tinyint(1) DEFAULT 0,
+  `returns_view` tinyint(1) DEFAULT 0,
+  `returns_add` tinyint(1) DEFAULT 0,
+  `return_product_view` tinyint(1) DEFAULT 0,
+  `return_product_add` tinyint(1) DEFAULT 0,
+  `return_product_edit` tinyint(1) DEFAULT 0,
+  `return_product_return_to_inventory` tinyint(1) DEFAULT 0,
+  `accounts_view` tinyint(1) DEFAULT 0,
+  `accounts_add` tinyint(1) DEFAULT 0,
+  `accounts_edit` tinyint(1) DEFAULT 0,
+  `journal_transactions_view` tinyint(1) DEFAULT 0,
+  `journal_transactions_add` tinyint(1) DEFAULT 0,
+  `journal_transactions_delete` tinyint(1) DEFAULT 0,
+  `branding_view` tinyint(1) DEFAULT 0,
+  `branding_add` tinyint(1) DEFAULT 0,
+  `branding_edit` tinyint(1) DEFAULT 0,
+  `branding_delete` tinyint(1) DEFAULT 0,
+  `mail_view` tinyint(1) DEFAULT 0,
+  `mail_add` tinyint(1) DEFAULT 0,
+  `my_activities_view` tinyint(1) DEFAULT 0,
+  `trash_bin_view` tinyint(1) DEFAULT 0,
+  `trash_bin_retrieve` tinyint(1) DEFAULT 0,
+  `trash_bin_delete` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
