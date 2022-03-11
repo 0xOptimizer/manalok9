@@ -131,7 +131,7 @@ class SalesOrders extends MY_Controller {
 			$territoryManager = $this->input->post('upd-territory-manager');
 			$email = $this->input->post('upd-email');
 
-			// Insert
+			// Update
 			$data = array(
 				'Name' => $name,
 				'TIN' => $tin,
@@ -245,17 +245,19 @@ class SalesOrders extends MY_Controller {
 				$shipToNo = $this->input->post('shipToNo');
 				$productCount = $this->input->post('productCount');
 
+				// BILLING CLIENT
+				$billName = $this->input->post('bill-name');
+				$billTin = $this->input->post('bill-tin');
+				$billAddress = $this->input->post('bill-address');
+				$billCityStateProvinceZip = $this->input->post('bill-city-state-province-zip');
+				$billCountry = $this->input->post('bill-country');
+				$billContactNum = $this->input->post('bill-contact-num');
+				$billCategory = $this->input->post('bill-category');
+				$billTerritoryManager = $this->input->post('bill-territory-manager');
+				$billEmail = $this->input->post('bill-email');
+
 				if ($billToNo == 'newBillClient') {
 					$billToNo = 'C' . strtoupper(uniqid());
-					$billName = $this->input->post('bill-name');
-					$billTin = $this->input->post('bill-tin');
-					$billAddress = $this->input->post('bill-address');
-					$billCityStateProvinceZip = $this->input->post('bill-city-state-province-zip');
-					$billCountry = $this->input->post('bill-country');
-					$billContactNum = $this->input->post('bill-contact-num');
-					$billCategory = $this->input->post('bill-category');
-					$billTerritoryManager = $this->input->post('bill-territory-manager');
-					$billEmail = $this->input->post('bill-email');
 
 					// Insert
 					$data = array(
@@ -271,13 +273,24 @@ class SalesOrders extends MY_Controller {
 						'Email' => $billEmail,
 					);
 					$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
-
-					if ($shipToNo == 'shipToBillingClient') { // set ship client no to bill no
-						$shipToNo = $billToNo;
-					}
+				} else {
+					// Update
+					$data = array(
+						'Name' => $billName,
+						'TIN' => $billTin,
+						'Address' => $billAddress,
+						'CityStateProvinceZip' => $billCityStateProvinceZip,
+						'Country' => $billCountry,
+						'ContactNum' => $billContactNum,
+						'Category' => $billCategory,
+						'TerritoryManager' => $billTerritoryManager,
+						'Email' => $billEmail,
+					);
+					$updateClient = $this->Model_Updates->UpdateClientByNo($data, $billToNo);
 				}
-				if ($shipToNo == 'newShipClient') {
-					$shipToNo = 'C' . strtoupper(uniqid());
+
+				if ($shipToNo != $billToNo) {
+					// SHIPPING CLIENT
 					$shipName = $this->input->post('ship-name');
 					$shipTin = $this->input->post('ship-tin');
 					$shipAddress = $this->input->post('ship-address');
@@ -286,22 +299,42 @@ class SalesOrders extends MY_Controller {
 					$shipContactNum = $this->input->post('ship-contact-num');
 					$shipCategory = $this->input->post('ship-category');
 					$shipTerritoryManager = $this->input->post('ship-territory-manager');
-					$billEmail = $this->input->post('bill-email');
+					$shipEmail = $this->input->post('ship-email');
 
-					// Insert
-					$data = array(
-						'ClientNo' => $shipToNo,
-						'Name' => $shipName,
-						'TIN' => $shipTin,
-						'Address' => $shipAddress,
-						'CityStateProvinceZip' => $shipCityStateProvinceZip,
-						'Country' => $shipCountry,
-						'ContactNum' => $shipContactNum,
-						'Category' => $shipCategory,
-						'TerritoryManager' => $shipTerritoryManager,
-						'Email' => $billEmail,
-					);
-					$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
+					if ($shipToNo == 'newShipClient' && $shipToNo != 'shipToBillingClient') {
+						$shipToNo = 'C' . strtoupper(uniqid());
+
+						// Insert
+						$data = array(
+							'ClientNo' => $shipToNo,
+							'Name' => $shipName,
+							'TIN' => $shipTin,
+							'Address' => $shipAddress,
+							'CityStateProvinceZip' => $shipCityStateProvinceZip,
+							'Country' => $shipCountry,
+							'ContactNum' => $shipContactNum,
+							'Category' => $shipCategory,
+							'TerritoryManager' => $shipTerritoryManager,
+							'Email' => $shipEmail,
+						);
+						$insertNewClient = $this->Model_Inserts->InsertNewClient($data);
+					} elseif ($shipToNo != 'shipToBillingClient') {
+						// Update
+						$data = array(
+							'Name' => $shipName,
+							'TIN' => $shipTin,
+							'Address' => $shipAddress,
+							'CityStateProvinceZip' => $shipCityStateProvinceZip,
+							'Country' => $shipCountry,
+							'ContactNum' => $shipContactNum,
+							'Category' => $shipCategory,
+							'TerritoryManager' => $shipTerritoryManager,
+							'Email' => $shipEmail,
+						);
+						$updateClient = $this->Model_Updates->UpdateClientByNo($data, $shipToNo);
+					}
+				} else { // set ship client no to bill no
+					$shipToNo = $billToNo;
 				}
 
 				// check account category
@@ -375,6 +408,7 @@ class SalesOrders extends MY_Controller {
 					// create new release transactions
 					for ($i = 0; $i < $productCount; $i++) {
 						$freebie = (($this->input->post('productFreebieInput_' . $i) == 'on') ? '1' : '0');
+						$discount = trim($this->input->post('productDiscountInput_' . $i));
 						
 						$code = trim($this->input->post('productSKUInput_' . $i));
 						$stockID = trim($this->input->post('productStockIDInput_' . $i));
@@ -388,18 +422,6 @@ class SalesOrders extends MY_Controller {
 						$transactionID .= strtoupper(uniqid());
 
 						$data = array(
-							// 'Code' => $code,
-							// 'TransactionID' => strtoupper($code) . '' . strtoupper(uniqid()),
-							// 'OrderNo' => $orderNo,
-							// 'Type' => '1',
-							// 'Amount' => $qty,
-							// 'PriceUnit' => $s_details['Retail_Price'],
-							// 'Date' => $date,
-							// 'DateAdded' => date('Y-m-d H:i:s'),
-							// 'Status' => 0,
-							// 'UserID' => $this->session->userdata('UserID'),
-							// 'PriceTotal' => $qty * $p_details['Price_PerItem'],
-
 							'Code' => $code,
 							'TransactionID' => $transactionID,
 							'OrderNo' => $orderNo,
@@ -414,6 +436,7 @@ class SalesOrders extends MY_Controller {
 							'PriceUnit' => $s_details['Retail_Price'],
 							'PriceTotal' => $s_details['Retail_Price'] * $qty,
 							'Freebie' => $freebie,
+							'UnitDiscount' => (($discount > 0) ? $discount : 0),
 						);
 						$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 						if ($insertNewTransaction == true) {
@@ -430,6 +453,7 @@ class SalesOrders extends MY_Controller {
 								'date_added' => date('Y/m/d H:i:s'),
 								'status' => 'released',
 								'Freebie' => $freebie,
+								'UnitDiscount' => (($discount > 0) ? $discount : 0),
 							);
 							$Insert_Releasedata = $this->Model_Inserts->Insert_Releasedata($data);
 						}
@@ -710,6 +734,36 @@ class SalesOrders extends MY_Controller {
 			redirect(base_url());
 		}
 	}
+	public function FORM_updateRemarks()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_remarks')) {
+			$salesOrderNo = $this->input->post('order-no');
+			$remarks = $this->input->post('remarks');
+
+			// Update
+			$data = array(
+				'Remarks' => $remarks,
+			);
+			$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+			if ($UpdateSalesOrder == TRUE) {
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('updated remarks.', 'updated remarks for sales order [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+				redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+			}
+		} else {
+			redirect(base_url());
+		}
+	}
 
 // ############################ [ INVOICES ] ############################
 	public function invoices() // PAGE DISPLAY
@@ -920,12 +974,13 @@ class SalesOrders extends MY_Controller {
 
 				$returnNo = $this->input->post('returnNo');
 				$transactionID = $this->input->post('transactionID');
+				$remarks = $this->input->post('remarks');
+				$qty = $this->input->post('qty');
 
-				$transaction = $this->Model_Selects->GetReturnProductByTID($transactionID);
-				if ($transaction->num_rows() > 0) {
+				if ($qty == NULL || $qty < 1) {
 					$prompt_txt =
 					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Warning!</strong> Transaction is already added!
+					<strong>Warning!</strong> Invalid Qty.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);
@@ -937,15 +992,32 @@ class SalesOrders extends MY_Controller {
 						'stockid' => $t_details['stockID'],
 						'transactionid' => $t_details['TransactionID'],
 						'prd_sku' => $t_details['Code'],
-						'quantity' => 0,
-						'quantity_total' => $t_details['Amount'],
-						'remarks' => '',
+						'remarks' => $remarks,
+						'quantity' => $qty,
 						'userid' => $userID,
 						'date_added' => date('Y-m-d H:i:s'),
-						'status' => 'returned',
 						'Freebie' => $t_details['Freebie'],
 					);
 					$InsertReturnData = $this->Model_Inserts->InsertReturnData($data);
+
+					if ($InsertReturnData && $remarks == 'RETURNED') {
+						$p = $this->Model_Selects->CheckStocksByCode($t_details['Code']);
+						$t = $this->Model_Selects->GetTransactionsByTID($t_details['TransactionID'])->row_array();
+						$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+
+						$dataProduct = array(
+							'Code' => $t['Code'],
+							'InStock' => $p['InStock'] + $qty,
+							'Released' => $p['Released'] - $qty,
+						);
+						$dataStocks = array(
+							'Current_Stocks' => $s['Current_Stocks'] + $qty,
+							'Released_Stocks' =>  $s['Released_Stocks'] - $qty,
+						);
+
+						$this->Model_Updates->UpdateStock_product($dataProduct);
+						$this->Model_Updates->UpdateProduct_stock($t_details['stockID'], $dataStocks);
+					}
 				}
 
 				// LOGBOOK
@@ -960,110 +1032,138 @@ class SalesOrders extends MY_Controller {
 			redirect(base_url());
 		}
 	}
-	public function FORM_updateReturnProduct()
+	// public function FORM_updateReturnProduct()
+	// {
+	// 	if ($this->Model_Security->CheckUserRestriction('return_product_edit')) {
+	// 		if (isset($_SESSION['UserID'])) {
+	// 			$userID = $_SESSION['UserID'];
+
+	// 			$returnNo = $this->input->post('returnNo');
+	// 			$transactionID = $this->input->post('transactionID');
+	// 			$remarks = $this->input->post('remarks');
+
+	// 			$data = array(
+	// 				'remarks' => $remarks,
+	// 				'transactionID' => $transactionID,
+	// 			);
+	// 			$UpdateReturnProduct = $this->Model_Updates->UpdateReturnProduct($data);
+
+	// 			// LOGBOOK
+	// 			$this->Model_Logbook->LogbookEntry('updated return product.', 'udpated return product ' . $transactionID . ' to return [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
+	// 			redirect($_SERVER['HTTP_REFERER']);
+	// 		}
+	// 		else
+	// 		{
+	// 			redirect($_SERVER['HTTP_REFERER']);
+	// 		}
+	// 	} else {
+	// 		redirect(base_url());
+	// 	}
+	// }
+	// public function FORM_updateReturnProductToInventory()
+	// {
+	// 	if ($this->Model_Security->CheckUserRestriction('return_product_return_to_inventory')) {
+	// 		if (isset($_SESSION['UserID'])) {
+	// 			$userID = $_SESSION['UserID'];
+
+	// 			$returnNo = $this->input->post('returnNo');
+	// 			$transactionID = $this->input->post('transactionID');
+	// 			$qtyReturned = $this->input->post('qty');
+
+	// 			if ($qtyReturned == NULL || $qtyReturned < 1) {
+	// 				$qtyReturned = 0;
+	// 			}
+	// 			$returnProduct = $this->Model_Selects->GetReturnProductByTID($transactionID);
+	// 			if ($returnProduct->num_rows() < 1) {
+	// 				$prompt_txt =
+	// 				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+	// 				<strong>Warning!</strong> Something went wrong, please try again.
+	// 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	// 				</div>';
+	// 				$this->session->set_flashdata('prompt_status',$prompt_txt);
+	// 				redirect($_SERVER['HTTP_REFERER']);
+	// 			} elseif ($qtyReturned == NULL || $qtyReturned < 1) {
+	// 				$prompt_txt =
+	// 				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+	// 				<strong>Warning!</strong> Invalid Qty.
+	// 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	// 				</div>';
+	// 				$this->session->set_flashdata('prompt_status',$prompt_txt);
+	// 				redirect($_SERVER['HTTP_REFERER']);
+	// 			} else {
+	// 				$returnProductDetails = $returnProduct->row_array();
+	// 				$data = array(
+	// 					'newQty' => $returnProductDetails['quantity'] - $qtyReturned,
+	// 					'newTotal' => $returnProductDetails['quantity_total'] - $qtyReturned,
+	// 					'returned' => $returnProductDetails['returned'] + $qtyReturned,
+	// 					'transactionID' => $transactionID,
+	// 				);
+	// 				$ReturnProductInventory = $this->Model_Updates->ReturnProductInventory($data);
+	// 				if ($ReturnProductInventory) {
+	// 					$p = $this->Model_Selects->CheckStocksByCode($returnProductDetails['prd_sku']);
+	// 					$t = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
+	// 					$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+
+	// 					$dataProduct = array(
+	// 						'Code' => $t['Code'],
+	// 						'InStock' => $p['InStock'] + $qtyReturned,
+	// 						'Released' => $p['Released'] - $qtyReturned,
+	// 					);
+	// 					$dataStocks = array(
+	// 						'Current_Stocks' => $s['Current_Stocks'] + $qtyReturned,
+	// 						'Released_Stocks' =>  $s['Released_Stocks'] - $qtyReturned,
+	// 					);
+
+	// 					$this->Model_Updates->UpdateStock_product($dataProduct);
+	// 					// $this->Model_Updates->UpdateStocksCount($p['Code'], $p['InStock'] + $qtyReturned);
+	// 					$this->Model_Updates->UpdateProduct_stock($returnProductDetails['stockid'], $dataStocks);
+	// 				}
+	// 			}
+
+	// 			// LOGBOOK
+	// 			$this->Model_Logbook->LogbookEntry('updated return product.', 'udpated return product ' . $transactionID . ' to return [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
+	// 			redirect($_SERVER['HTTP_REFERER']);
+	// 		}
+	// 		else
+	// 		{
+	// 			redirect($_SERVER['HTTP_REFERER']);
+	// 		}
+	// 	} else {
+	// 		redirect(base_url());
+	// 	}
+	// }
+
+	public function FORM_removeReturnProduct()
 	{
-		if ($this->Model_Security->CheckUserRestriction('return_product_edit')) {
-			if (isset($_SESSION['UserID'])) {
-				$userID = $_SESSION['UserID'];
-
-				$returnNo = $this->input->post('returnNo');
-				$transactionID = $this->input->post('transactionID');
-				$remarks = $this->input->post('remarks');
-				$qty = $this->input->post('qty');
-
-				if ($qty == NULL || $qty < 1) {
-					$qty = 0;
-				}
-				$data = array(
-					'qty' => $qty,
-					'remarks' => $remarks,
-					'transactionID' => $transactionID,
-				);
-				$UpdateReturnProduct = $this->Model_Updates->UpdateReturnProduct($data);
-
-				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('updated return product.', 'udpated return product ' . $transactionID . ' to return [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
-				redirect($_SERVER['HTTP_REFERER']);
-			}
-			else
-			{
-				redirect($_SERVER['HTTP_REFERER']);
-			}
-		} else {
-			redirect(base_url());
-		}
-	}
-	public function FORM_updateReturnProductToInventory()
-	{
-		if ($this->Model_Security->CheckUserRestriction('return_product_return_to_inventory')) {
-			if (isset($_SESSION['UserID'])) {
-				$userID = $_SESSION['UserID'];
-
-				$returnNo = $this->input->post('returnNo');
-				$transactionID = $this->input->post('transactionID');
-				$qtyReturned = $this->input->post('qty');
-
-				if ($qtyReturned == NULL || $qtyReturned < 1) {
-					$qtyReturned = 0;
-				}
-				$returnProduct = $this->Model_Selects->GetReturnProductByTID($transactionID);
-				if ($returnProduct->num_rows() < 1) {
+		if ($this->Model_Security->CheckUserRestriction('return_product_delete')) {
+			$returnProductID = $this->input->get('rid');
+			if ($returnProductID != NULL) {
+				$rProduct = $this->Model_Selects->GetReturnProductByID($returnProductID);
+				if ($rProduct->num_rows() < 1) {
 					$prompt_txt =
-					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Warning!</strong> Something went wrong, please try again.
+					'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Danger!</strong> Something went wrong.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);
-					redirect($_SERVER['HTTP_REFERER']);
-				} elseif ($qtyReturned == NULL || $qtyReturned < 1) {
-					$prompt_txt =
-					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Warning!</strong> Invalid Qty.
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>';
-					$this->session->set_flashdata('prompt_status',$prompt_txt);
-					redirect($_SERVER['HTTP_REFERER']);
 				} else {
-					$returnProductDetails = $returnProduct->row_array();
-					$data = array(
-						'newQty' => $returnProductDetails['quantity'] - $qtyReturned,
-						'newTotal' => $returnProductDetails['quantity_total'] - $qtyReturned,
-						'returned' => $returnProductDetails['returned'] + $qtyReturned,
-						'transactionID' => $transactionID,
-					);
-					$ReturnProductInventory = $this->Model_Updates->ReturnProductInventory($data);
-					if ($ReturnProductInventory) {
-						$p = $this->Model_Selects->CheckStocksByCode($returnProductDetails['prd_sku']);
-						$t = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
-						$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+					$rProductDetails = $rProduct->row_array();
 
-						$dataProduct = array(
-							'Code' => $t['Code'],
-							'InStock' => $p['InStock'] + $qtyReturned,
-							'Released' => $p['Released'] - $qtyReturned,
-						);
-						$dataStocks = array(
-							'Current_Stocks' => $s['Current_Stocks'] + $qtyReturned,
-							'Released_Stocks' =>  $s['Released_Stocks'] - $qtyReturned,
-						);
-
-						$this->Model_Updates->UpdateStock_product($dataProduct);
-						// $this->Model_Updates->UpdateStocksCount($p['Code'], $p['InStock'] + $qtyReturned);
-						$this->Model_Updates->UpdateProduct_stock($returnProductDetails['stockid'], $dataStocks);
+					if ($rProductDetails['remarks'] == 'RETURNED') {
+						$prompt_txt =
+						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Returned to inventory cannot be deleted.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+					} else {
+						$result = $this->Model_Deletes->Delete_ReturnProduct($returnProductID);
 					}
 				}
-
-				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('updated return product.', 'udpated return product ' . $transactionID . ' to return [ReturnNo: ' . $returnNo . '].', base_url('admin/returns'));
-				redirect($_SERVER['HTTP_REFERER']);
 			}
-			else
-			{
-				redirect($_SERVER['HTTP_REFERER']);
-			}
+			redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			redirect(base_url());
 		}
 	}
-
 }

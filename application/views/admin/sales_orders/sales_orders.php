@@ -36,6 +36,7 @@ if ($this->session->flashdata('highlight-id')) {
 	}
 	.viewonly {
 		color: #ccc !important;
+		border-color: #5f5f5f;
 	}
 	.footerHead {
 		color: #a7852d;
@@ -174,8 +175,8 @@ if ($this->session->flashdata('highlight-id')) {
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/sales_orders/add_sales_order'); ?>
-<?php $this->load->view('admin/modals/generate_report')?>
+<?php $this->load->view('admin/_modals/sales_orders/add_sales_order'); ?>
+<?php $this->load->view('admin/_modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -341,6 +342,7 @@ $(document).ready(function() {
 		$.each($('.orderProduct'), function(i, val) {
 			if (typeof $(this).attr('data-stockid') !== typeof undefined && $(this).attr('data-stockid') !== false) {
 				$(this).find('.inpFreebie').attr('name', 'productFreebieInput_' + i);
+				$(this).find('.inpDiscount').attr('name', 'productDiscountInput_' + i);
 				$(this).find('.inpSKU').attr('name', 'productSKUInput_' + i);
 				$(this).find('.inpStockID').attr('name', 'productStockIDInput_' + i);
 				$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
@@ -353,11 +355,19 @@ $(document).ready(function() {
 		// total
 		let subTotal = 0;
 		let totalFreebies = 0;
+
+		let totalDiscountedProducts = 0; // discounted products are not included in computation of category discounts
+		let totalProductDiscountDeductions = 0; // total price discounted
+
 		$.each($('.productTotalPrice'), function(i, val) {
 			let productTotal = parseFloat($(this).data('product-total'));
+			
+			totalProductDiscountDeductions = parseFloat($(this).data('product-discount-deduction'));
 
 			if ($(this).parents('.orderProduct').data('freebie')) {
 				totalFreebies += productTotal;
+			} else if ($(this).parents('.orderProduct').data('discounted')) {
+				totalDiscountedProducts += productTotal;
 			} else {
 				subTotal += productTotal;
 			}
@@ -401,8 +411,10 @@ $(document).ready(function() {
 		} else {
 			$('.dcManpowerAmt').html('0.00');
 		}
-		$('.totalDiscount').html(totalDiscount.toFixed(2));
-		$('.total').html((subTotal - totalDiscount).toFixed(2));
+
+		$('.totalProductDiscounts').html(totalProductDiscountDeductions.toFixed(2));
+		$('.totalCategoryDiscount').html(totalDiscount.toFixed(2));
+		$('.total').html(((subTotal - totalDiscount) + totalDiscountedProducts).toFixed(2));
 	}
 	$(document).on('click', '.add-product-row', function() {
 		let opClassName = 'op' + $('.orderProduct').length;
@@ -410,7 +422,11 @@ $(document).ready(function() {
 		$('.newProduct').before($('<tr>')
 			.attr({
 				class: 'orderProduct highlighted ' + opClassName
-			}).data('uClass', opClassName)
+			}).data({
+				'uClass': opClassName,
+				'freebie': false,
+				'discounted': false
+			})
 			.append($('<td>').attr({
 				class: 'text-center'
 			})
@@ -421,6 +437,16 @@ $(document).ready(function() {
 						class: 'inpFreebie form-check-input',
 						type: 'checkbox'
 					}))))
+			.append($('<td>').attr({
+				class: 'productDiscount text-center'
+			}).data('product-discount', 0)
+				.append($('<input>').attr({
+					class: 'inpDiscount',
+					type: 'number',
+					value: 0,
+					min: '0',
+					style: 'width: 3.5rem;'
+				})))
 			.append($('<td>').attr({
 				class: 'text-center'
 			})
@@ -463,7 +489,10 @@ $(document).ready(function() {
 				}).html('0.00').data('price', 0)))
 			.append($('<td>').attr({
 				class: 'productTotalPrice text-center'
-			}).data('product-total', 0)
+			}).data({
+				'product-total': 0,
+				'product-discount-deduction': 0
+			})
 				.append($('<span>').attr({
 					class: 'text-center'
 				}).html('0.00')))
@@ -485,7 +514,7 @@ $(document).ready(function() {
 		$('#AddSalesOrderModal').data('openModal', 'products');
 		$('#AddSalesOrderModal').modal('toggle');
 
-		$('#rowProductSelection').val($(this).parents('tr').data('uClass'));
+		$('#rowProductSelection').val($(this).parents('.orderProduct').data('uClass'));
 	});
 	$(document).on('hidden.bs.modal', '#AddSalesOrderModal', function (event) {
 		if ($('#AddSalesOrderModal').data('openModal') == 'products') {
@@ -560,7 +589,19 @@ $(document).ready(function() {
 			}, 50);
 		}, 50);
 	});
-	$(document).on('focus keyup change', '.productQty .inpQty', function() {
+	$(document).on('focus keyup change', '.inpDiscount', function() {
+		$(this).parents('.productDiscount').data('product-discount', $(this).val());
+		$(this).parents('.orderProduct').find('.inpQty').change();
+
+		if ($(this).val() > 0) { console.log('discounted');
+			$(this).parents('.orderProduct').data('discounted', true);
+		} else {
+			$(this).parents('.orderProduct').data('discounted', false);
+		}
+
+		updProductCount();
+	});
+	$(document).on('focus keyup change', '.inpQty', function() {
 		if (parseInt($(this).val()) > parseInt($(this).attr('max'))) {
 			$(this).val($(this).attr('max'));
 		} else if (parseInt($(this).val()) < parseInt($(this).attr('min'))) {
@@ -569,15 +610,24 @@ $(document).ready(function() {
 
 		let td = $(this).parent('.productQty');
 		if ($(this).val().length > 0) {
+			let discount = parseInt($(this).parents('.orderProduct').find('.productDiscount').data('product-discount'));
+			let discountTotal = 0;
 			let productTotal = parseInt($(this).val()) * parseFloat(td.siblings('.productPrice').children('span').data('price'));
-			td.siblings('.productTotalPrice').data('product-total', productTotal).children('span').html(productTotal.toFixed(2));
+
+			if ($.isNumeric(discount)) {
+				discountTotal = (discount / 100) * productTotal;
+			}
+
+			productTotal -= discountTotal;
+
+			td.siblings('.productTotalPrice').data('product-total', productTotal).data('product-discount-deduction', discountTotal).children('span').html(productTotal.toFixed(2));
 		} else {
-			td.siblings('.productTotalPrice').data('product-total', 0).children('span').html('0.00');
+			td.siblings('.productTotalPrice').data('product-total', 0).data('product-discount-deduction', 0).children('span').html('0.00');
 		}
 		updProductCount();
 	});
 	$(document).on('click', '.remove-product-btn', function() {
-		$(this).parents('tr').remove();
+		$(this).parents('.orderProduct').remove();
 		updProductCount();
 	});
 	$(document).on('change', '.inpFreebie', function(e) {
@@ -605,6 +655,9 @@ $(document).ready(function() {
 			$('.clientBillNameSearch').dropdown('show');
 		}
 	}
+	$('.newBillInput').on('focus', function() {
+		hideBillNameDropdown();
+	});
 	$('.clientBillNameSearch').on('focus keyup', function() {
 		if (!$('.billNameIcon').hasClass('bi-backspace-fill')) {
 			var searchVal = $(this).val();
@@ -641,7 +694,7 @@ $(document).ready(function() {
 			hideBillNameDropdown();
 		}
 	});
-	$(document).on('click', '.clientBillDetailsSelect', function(t) {
+	$(document).on('click', '.clientBillDetailsSelect', function(t) { // onclick of search result
 		var clientNo = $(this).data('client-no');
 		if (clientNo.length > 0) {
 			$.ajax({
@@ -655,8 +708,9 @@ $(document).ready(function() {
 						$('.billNameIcon').removeClass('bi-x-circle-fill text-danger');
 					} else if ($('.billNameIcon').hasClass('bi-backspace-fill')) {
 						$('.billNameIcon').removeClass('bi-backspace-fill text-light');
-						$('.newBillInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
 					}
+
+					$('.newBillInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
 
 					$('.billName').val(response.Name);
 					$('.billNo').val(response.ClientNo);
@@ -674,6 +728,16 @@ $(document).ready(function() {
 					$('#BillToNo').val(response.ClientNo); // change client no input
 
 					hideBillNameDropdown();
+
+					if ($('#BillToNo').val() == $('#ShipToNo').val()) {
+						$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
+						showAlert('info', 'Updating on shipping client details is disabled since shipping and billing clients are the same.');
+					}
+
+					// if shipping update has been disabled after choosing two similar clients, enable it again
+					if ($('#BillToNo').val() != $('#ShipToNo').val() && $('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient') {
+						$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log(textStatus, errorThrown);
@@ -682,23 +746,15 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).on('click', '.newBillClient', function(t) { // on clicking the new vendor button on dropdown
-		$('.newBillInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
-		$('.billCategory').removeAttr('disabled');
+	$(document).on('click', '.newBillClient', function(t) { // on clicking the new client button on dropdown
+		$('.newBillInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
 		// clear inputs
 		$('.billName').val('');
-		$('.billNo').val('');
-		$('.billAddress').val('');
-		$('.billCity').val('');
-		$('.billCountry').val('');
-		$('.billContact').val('');
-		$('.billTIN').val('');
-		$('.billTerritory').val('');
-		$('.billEmail').val('');
+		$('.newBillInput').val('');
 		$('.billCategory option[value=0]').prop('selected', true);
 		$('.billCategory').change();
 		// change no value
-		$('.billNo').val($('.billNo').data('newcno'));
+		$('.billNo').val('');
 		$('#BillToNo').val('newBillClient');
 		
 		hideBillNameDropdown();
@@ -711,20 +767,18 @@ $(document).ready(function() {
 		}
 		// show ship to bill button
 		$('.shipToBillingClient').show();
+
+		// if shipping update has been disabled after choosing two similar clients, enable it again
+		if ($('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient') {
+			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+		}
 	});
 	$(document).on('click', '.billNameIcon', function(t) { // onclick of backspace icon
 		if ($('.billNameIcon').hasClass('bi-backspace-fill')) {
-			$('.newBillInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			$('.newBillInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
 			// clear inputs
 			$('.billName').val('');
-			$('.billNo').val('');
-			$('.billAddress').val('');
-			$('.billCity').val('');
-			$('.billCountry').val('');
-			$('.billContact').val('');
-			$('.billTIN').val('');
-			$('.billTerritory').val('');
-			$('.billEmail').val('');
+			$('.newBillInput').val('');
 			$('.billCategory option[value=0]').prop('selected', true);
 			$('.billCategory').change();
 			// change no value
@@ -733,25 +787,16 @@ $(document).ready(function() {
 			// change icon
 			$('.billNameIcon').removeClass('bi-backspace-fill text-light');
 			$('.billNameIcon').addClass('bi-x-circle-fill text-danger');
-			$('.billCategory').attr('disabled', '');
 		}
 		hideBillNameDropdown();
 		// hide ship to bill button
 		$('.shipToBillingClient').hide();
+		$('.shipToSelectClient').hide();
 		if ($('#ShipToNo').val() == 'shipToBillingClient') {
-			// $('.newShipInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
-			$('.shipName').removeClass('viewonly').removeAttr('readonly').attr('required', '');
-			// $('.shipName').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			$('.shipName').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
 			// clear inputs
 			$('.shipName').val('');
-			$('.shipNo').val('');
-			$('.shipAddress').val('');
-			$('.shipCity').val('');
-			$('.shipCountry').val('');
-			$('.shipContact').val('');
-			$('.shipTIN').val('');
-			$('.shipTerritory').val('');
-			$('.shipEmail').val('');
+			$('.newShipInput').val('');
 			$('.shipCategory option[value=0]').prop('selected', true);
 			// change no value
 			$('.shipNo').val('');
@@ -760,6 +805,11 @@ $(document).ready(function() {
 			$('.shipNameIcon').addClass('bi-x-circle-fill text-danger'); // change name icon
 			$('.shipNameIcon').removeClass('bi-check-circle-fill text-success');
 			hideShipNameDropdown();
+		}
+
+		// if shipping update has been disabled after choosing two similar clients, enable it again
+		if ($('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient') {
+			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
 		}
 	});
 
@@ -774,8 +824,11 @@ $(document).ready(function() {
 			$('.clientShipNameSearch').dropdown('show');
 		}
 	}
+	$('.newShipInput').on('focus', function() {
+		hideShipNameDropdown();
+	});
 	$('.clientShipNameSearch').on('focus keyup', function() {
-		if (!$('.shipNameIcon').hasClass('bi-backspace-fill')) {
+		if (!$('.shipNameIcon').hasClass('bi-backspace-fill') && !$(this).hasClass('viewonly')) {
 			var searchVal = $(this).val();
 			if (searchVal.length > 0 ) {
 				$.ajax({
@@ -810,7 +863,7 @@ $(document).ready(function() {
 			hideShipNameDropdown();
 		}
 	});
-	$(document).on('click', '.clientShipDetailsSelect', function(t) {
+	$(document).on('click', '.clientShipDetailsSelect', function(t) { // onclick of search result
 		var clientNo = $(this).data('client-no');
 		if (clientNo.length > 0) {
 			$.ajax({
@@ -824,7 +877,6 @@ $(document).ready(function() {
 						$('.shipNameIcon').removeClass('bi-x-circle-fill text-danger');
 					} else if ($('.shipNameIcon').hasClass('bi-backspace-fill')) {
 						$('.shipNameIcon').removeClass('bi-backspace-fill text-light');
-						$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
 					}
 
 					$('.shipName').val(response.Name);
@@ -842,6 +894,13 @@ $(document).ready(function() {
 					$('#ShipToNo').val(response.ClientNo); // change client no input
 
 					hideShipNameDropdown();
+
+					if ($('#ShipToNo').val() != $('#BillToNo').val()) {
+						$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+					} else {
+						$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
+						showAlert('info', 'Updating on shipping client details is disabled since shipping and billing clients are the same.');
+					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log(textStatus, errorThrown);
@@ -850,22 +909,14 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).on('click', '.newShipClient', function(t) { // on clicking the new vendor button on dropdown
-		$('.newShipInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
-		$('.shipCategory').removeAttr('disabled');
+	$(document).on('click', '.newShipClient', function(t) { // on clicking the new client button on dropdown
+		$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
 		// clear inputs
 		$('.shipName').val('');
-		$('.shipNo').val('');
-		$('.shipAddress').val('');
-		$('.shipCity').val('');
-		$('.shipCountry').val('');
-		$('.shipContact').val('');
-		$('.shipTIN').val('');
-		$('.shipTerritory').val('');
-		$('.shipEmail').val('');
+		$('.newShipInput').val('');
 		$('.shipCategory option[value=0]').prop('selected', true);
 		// change no value
-		$('.shipNo').val($('.shipNo').data('newcno'));
+		$('.shipNo').val('');
 		$('#ShipToNo').val('newShipClient');
 		
 		hideShipNameDropdown();
@@ -879,17 +930,10 @@ $(document).ready(function() {
 	});
 	$(document).on('click', '.shipNameIcon', function(t) { // onclick of backspace icon
 		if ($('.shipNameIcon').hasClass('bi-backspace-fill')) {
-			$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
 			// clear inputs
 			$('.shipName').val('');
-			$('.shipNo').val('');
-			$('.shipAddress').val('');
-			$('.shipCity').val('');
-			$('.shipCountry').val('');
-			$('.shipContact').val('');
-			$('.shipTIN').val('');
-			$('.shipTerritory').val('');
-			$('.shipEmail').val('');
+			$('.newShipInput').val('');
 			$('.shipCategory option[value=0]').prop('selected', true);
 			// change no value
 			$('.shipNo').val('');
@@ -897,7 +941,6 @@ $(document).ready(function() {
 			// change icon
 			$('.shipNameIcon').removeClass('bi-backspace-fill text-light');
 			$('.shipNameIcon').addClass('bi-x-circle-fill text-danger');
-			$('.shipCategory').attr('disabled', '');
 		}
 		hideShipNameDropdown();
 	});
@@ -940,10 +983,35 @@ $(document).ready(function() {
 			$('.shipNameIcon').removeClass('bi-x-circle-fill text-danger');
 		} else if ($('.shipNameIcon').hasClass('bi-backspace-fill')) {
 			$('.shipNameIcon').removeClass('bi-backspace-fill text-light');
-			$('.newShipInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
 		}
+		$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
+
+		$('.shipName').val('');
+		$('.newShipInput').val('');
+
 		hideShipNameDropdown();
 		$('#ShipToNo').val('shipToBillingClient'); // change client no input
+
+		$('.shipToBillingClient').hide();
+		$('.shipToSelectClient').show();
+	});
+	$(document).on('click', '.shipToSelectClient', function(t) {
+		$('.shipToSelectClient').hide();
+		if ($('#ShipToNo').val() == 'shipToBillingClient') {
+			$('.shipToBillingClient').show();
+		}
+		$('.shipName').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+		$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
+		// clear inputs
+		$('.shipName').val('');
+		$('.newShipInput').val('');
+		$('.shipCategory option[value=0]').prop('selected', true);
+		// change no value
+		$('.shipNo').val('');
+		$('#ShipToNo').val('');
+		// change icon
+		$('.shipNameIcon').removeClass('bi-check-circle-fill text-light');
+		$('.shipNameIcon').addClass('bi-x-circle-fill text-danger');
 	});
 	$(document).on('change keyup', '.shipToBillInput', function(event) {
 		if ($('#ShipToNo').val() == 'shipToBillingClient') {

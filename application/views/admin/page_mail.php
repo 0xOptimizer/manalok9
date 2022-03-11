@@ -113,7 +113,7 @@ $globalHeader;
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/mails/add_mail.php'); ?>
+<?php $this->load->view('admin/_modals/mails/add_mail.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

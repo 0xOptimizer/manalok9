@@ -176,6 +176,7 @@ $route['FORM_approveSalesOrder'] = 'SalesOrders/FORM_approveSalesOrder';
 $route['FORM_scheduleDelivery'] = 'SalesOrders/FORM_scheduleDelivery';
 $route['FORM_markDelivered'] = 'SalesOrders/FORM_markDelivered';
 $route['FORM_markReceived'] = 'SalesOrders/FORM_markReceived';
+$route['FORM_updateRemarks'] = 'SalesOrders/FORM_updateRemarks';
 
 $route['admin/xlsSalesOrder'] = 'Exporting/xlsSalesOrder';
 
@@ -192,8 +193,9 @@ $route['admin/view_return'] = 'SalesOrders/view_return';
 
 $route['FORM_addNewReturn'] = 'SalesOrders/FORM_addNewReturn';
 $route['FORM_addNewReturnProduct'] = 'SalesOrders/FORM_addNewReturnProduct';
-$route['FORM_updateReturnProduct'] = 'SalesOrders/FORM_updateReturnProduct';
-$route['FORM_updateReturnProductToInventory'] = 'SalesOrders/FORM_updateReturnProductToInventory';
+// $route['FORM_updateReturnProduct'] = 'SalesOrders/FORM_updateReturnProduct';
+// $route['FORM_updateReturnProductToInventory'] = 'SalesOrders/FORM_updateReturnProductToInventory';
+$route['admin/FORM_removeReturnProduct'] = 'SalesOrders/FORM_removeReturnProduct';
 
 // ACCOUNTS
 $route['admin/accounts'] = 'Accounting/accounts';
@@ -281,6 +283,8 @@ $route['admin/getProductStocks'] = 'AJAX/getProductStocks';
 $route['admin/getClientSalesOrders'] = 'AJAX/getClientSalesOrders';
 $route['admin/getClientSalesOrderProducts'] = 'AJAX/getClientSalesOrderProducts';
 
+
+$route['admin/getReturnTransactionDetails'] = 'AJAX/getReturnTransactionDetails';
 
 // CART
 $route['admin/Restock_from_cart'] = 'Admin/Restock_from_cart';

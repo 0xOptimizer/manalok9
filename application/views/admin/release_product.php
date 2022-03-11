@@ -132,9 +132,9 @@ date_default_timezone_set('Asia/Manila');
 	</div>
 </div>
 <!-- Release scanner modal -->
-<?php $this->load->view('admin/modals/scan_release.php'); ?>
-<?php $this->load->view('admin/modals/release_cart_modal'); ?>
-<?php $this->load->view('admin/modals/manual_release'); ?>
+<?php $this->load->view('admin/_modals/scan_release.php'); ?>
+<?php $this->load->view('admin/_modals/release_cart_modal'); ?>
+<?php $this->load->view('admin/_modals/manual_release'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

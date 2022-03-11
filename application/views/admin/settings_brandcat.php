@@ -110,11 +110,11 @@ date_default_timezone_set('Asia/Manila');
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/branding/view_brandcat.php'); ?>
-<?php $this->load->view('admin/modals/branding/add_brandcat.php'); ?>
-<?php $this->load->view('admin/modals/branding/add_brandvar.php'); ?>
-<?php $this->load->view('admin/modals/branding/add_brandsize.php'); ?>
-<?php $this->load->view('admin/modals/branding/update_brandcat.php'); ?>
+<?php $this->load->view('admin/_modals/branding/view_brandcat.php'); ?>
+<?php $this->load->view('admin/_modals/branding/add_brandcat.php'); ?>
+<?php $this->load->view('admin/_modals/branding/add_brandvar.php'); ?>
+<?php $this->load->view('admin/_modals/branding/add_brandsize.php'); ?>
+<?php $this->load->view('admin/_modals/branding/update_brandcat.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

@@ -163,12 +163,12 @@ date_default_timezone_set('Asia/Manila');
 		<?php print $this->session->flashdata('prompt_status'); ?>
 	</div>
 
-	<?php $this->load->view('admin/modals/restocking/add_stock_restocking.php'); ?>
-	<?php $this->load->view('admin/modals/restocking/add_stock_scan_barcode.php'); ?>
-	<?php $this->load->view('admin/modals/restocking/cart_modal_restocking.php'); ?>
-	<?php $this->load->view('admin/modals/restocking/delete_stock_modal.php'); ?>
-	<?php $this->load->view('admin/modals/restocking/view_stock_modal.php'); ?>
-	<?php $this->load->view('admin/modals/restocking/update_stock_modal.php'); ?>
+	<?php $this->load->view('admin/_modals/restocking/add_stock_restocking.php'); ?>
+	<?php $this->load->view('admin/_modals/restocking/add_stock_scan_barcode.php'); ?>
+	<?php $this->load->view('admin/_modals/restocking/cart_modal_restocking.php'); ?>
+	<?php $this->load->view('admin/_modals/restocking/delete_stock_modal.php'); ?>
+	<?php $this->load->view('admin/_modals/restocking/view_stock_modal.php'); ?>
+	<?php $this->load->view('admin/_modals/restocking/update_stock_modal.php'); ?>
 
 
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>

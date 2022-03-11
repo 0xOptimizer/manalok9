@@ -119,7 +119,7 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<?php $this->load->view('admin/modals/bills/add_bill'); ?>
+<?php $this->load->view('admin/_modals/bills/add_bill'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>

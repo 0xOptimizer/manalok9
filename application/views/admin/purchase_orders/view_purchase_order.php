@@ -368,16 +368,16 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/purchase_orders/purchase_order_form.php', array(
+<?php $this->load->view('admin/_modals/purchase_orders/purchase_order_form.php', array(
 	'purchaseOrder' => $purchaseOrder,
 	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
 	'getManualTransactionsByPONo' => $getManualTransactionsByPONo,
 	'vendorDetails' => $vendorDetails
 )); ?>
-<?php $this->load->view('admin/modals/purchase_orders/purchase_order_accounting.php'); ?>
-<?php $this->load->view('admin/modals/purchase_orders/add_manual_transaction', array('purchaseOrderNo' => $purchaseOrder['OrderNo'])); ?>
-<?php $this->load->view('admin/modals/mails/add_mail.php'); ?>
-<?php $this->load->view('admin/modals/purchase_orders/add_bill_po', array('purchaseOrder' => $purchaseOrder)); ?>
+<?php $this->load->view('admin/_modals/purchase_orders/purchase_order_accounting.php'); ?>
+<?php $this->load->view('admin/_modals/purchase_orders/add_manual_transaction', array('purchaseOrderNo' => $purchaseOrder['OrderNo'])); ?>
+<?php $this->load->view('admin/_modals/mails/add_mail.php'); ?>
+<?php $this->load->view('admin/_modals/purchase_orders/add_bill_po', array('purchaseOrder' => $purchaseOrder)); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

@@ -149,8 +149,8 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<?php $this->load->view('admin/modals/trash_bin/prompt_redo'); ?>
-<?php $this->load->view('admin/modals/trash_bin/prompt_remove'); ?>
+<?php $this->load->view('admin/_modals/trash_bin/prompt_redo'); ?>
+<?php $this->load->view('admin/_modals/trash_bin/prompt_remove'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

@@ -132,9 +132,9 @@ if ($this->session->flashdata('highlight-id')) {
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/journal_transactions/journal_modal.php'); ?>
-<?php $this->load->view('admin/modals/journal_transactions/add_journal_transaction.php'); ?>
-<?php $this->load->view('admin/modals/journal_transactions/delete_journal_transaction.php'); ?>
+<?php $this->load->view('admin/_modals/journal_transactions/journal_modal.php'); ?>
+<?php $this->load->view('admin/_modals/journal_transactions/add_journal_transaction.php'); ?>
+<?php $this->load->view('admin/_modals/journal_transactions/delete_journal_transaction.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

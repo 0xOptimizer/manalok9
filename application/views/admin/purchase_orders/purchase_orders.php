@@ -166,8 +166,8 @@ if ($this->session->flashdata('highlight-id')) {
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/purchase_orders/add_purchase_order'); ?>
-<?php $this->load->view('admin/modals/generate_report')?>
+<?php $this->load->view('admin/_modals/purchase_orders/add_purchase_order'); ?>
+<?php $this->load->view('admin/_modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

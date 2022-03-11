@@ -105,7 +105,7 @@ date_default_timezone_set('Asia/Manila');
 		</div>
 	</div>
 </div>
-<?php $this->load->view('admin/modals/add_itemcode.php'); ?>
+<?php $this->load->view('admin/_modals/add_itemcode.php'); ?>
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>

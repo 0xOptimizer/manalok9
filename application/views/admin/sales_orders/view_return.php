@@ -13,8 +13,6 @@ $return = $getReturnByReturnNo->row_array();
 
 $getReturnProductsByReturnNo = $this->Model_Selects->GetReturnProductsByReturnNo($returnNo);
 
-$salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrderNo($return['SalesOrderNo']);
-
 ?>
 
 </head>
@@ -32,17 +30,12 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 		<div class="page-heading">
 			<div class="page-title">
 				<div class="row">
-					<div class="col-12 col-md-6">
+					<div class="col-12 col-md-12">
 						<h3><i class="bi bi-reply-fill"></i> Return ID #<?=$return['ID']?> <span class="text-secondary">[ <?=$returnNo?> ]</span>
 						</h3>
-						<a href="<?=base_url() . 'admin/view_sales_order?orderNo='. $return["SalesOrderNo"]?>">
+						Sales Order [ <a href="<?=base_url() . 'admin/view_sales_order?orderNo='. $return["SalesOrderNo"]?>">
 							<i class="bi bi-eye"></i> <?=$return['SalesOrderNo']?>
-						</a>
-					</div>
-					<div class="col-12">
-						<?php if ($this->session->userdata('UserRestrictions')['return_product_add']): ?>
-							<button type="button" class="newreturn-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-reply"></i> RETURN ITEM</button>
-						<?php endif; ?>
+						</a> ]
 					</div>
 				</div>
 			</div>
@@ -50,17 +43,28 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 				<div class="row">
 					<div class="col-12 ">
 						<div class="row">
+							<div class="col-12 col-sm-6 col-md-8">
+								<?php if ($this->session->userdata('UserRestrictions')['return_product_add']): ?>
+									<button type="button" class="newreturn-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-reply"></i> RETURN ITEM</button>
+								<?php endif; ?>
+							</div>
+							<div class="col-12 col-sm-6 col-md-4" style="margin-top: -15px;">
+								<div class="input-group">
+									<div class="input-group-prepend">
+										<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+									</div>
+									<input type="text" id="tableReturnsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+								</div>
+							</div>
 							<div class="col-sm-12 table-responsive">
-								<table id="returnsTable" class="standard-table table">
+								<table id="salesOrderProductsTable" class="standard-table table">
 									<thead style="font-size: 12px;">
 										<th class="text-center">#</th>
 										<th class="text-center">TRANSACTION ID</th>
 										<th class="text-center">STOCK ID</th>
-										<th class="text-center">PRODUCT CODE</th>
 										<th class="text-center">DATE</th>
 										<th class="text-center">REMARKS</th>
-										<th class="text-center">RETURNED / UNRETURNED</th>
-										<th class="text-center">RETURNED TO INVENTORY</th>
+										<th class="text-center">QUANTITY</th>
 										<th class="text-center">FREEBIE</th>
 										<th></th>
 									</thead>
@@ -68,7 +72,7 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 										<?php
 										if ($getReturnProductsByReturnNo->num_rows() > 0):
 											foreach ($getReturnProductsByReturnNo->result_array() as $no => $row): ?>
-												<tr data-id="<?=$row['transactionid']?>" data-qty="<?=$row['quantity']?>" data-total="<?=$row['quantity_total']?>">
+												<tr data-id="<?=$row['transactionid']?>">
 													<td class="text-center">
 														<span style="font-style: italic; font-size: 12px;"><?=$no+1?></span>
 													</td>
@@ -79,19 +83,13 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 														<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['stockid']?></span>
 													</td>
 													<td class="text-center">
-														<?=$row['prd_sku']?>
-													</td>
-													<td class="text-center">
 														<?=$row['date_added']?>
 													</td>
 													<td class="text-center remarks">
 														<?=$row['remarks']?>
 													</td>
-													<td class="text-center">
-														<?=$row['quantity']?> / <?=$row['quantity_total'] - $row['quantity']?>
-													</td>
-													<td class="text-center remarks">
-														<?=$row['returned']?>
+													<td class="text-center quantity_total">
+														<?=$row['quantity']?>
 													</td>
 													<td class="text-center">
 														<?php if ($row['Freebie'] == 1): ?>
@@ -101,13 +99,10 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 														<?php endif; ?>
 													</td>
 													<td class="text-center">
-														<?php if ($this->session->userdata('UserRestrictions')['return_product_edit']): ?>
-															<i class="bi bi-pencil btn-update-return" style="color: #229F4B;"></i>
-														<?php endif; ?>
-														<?php if ($this->session->userdata('UserRestrictions')['return_product_return_to_inventory']): ?>
-															<?php if ($row['quantity'] > 0): ?>
-																<i class="bi bi-reply-all btn-inventory-return" style="color: #a7852d;"></i>
-															<?php endif; ?>
+														<?php if ($this->session->userdata('UserRestrictions')['return_product_delete']): ?>
+															<a href="FORM_removeReturnProduct?rid=<?=$row['id']?>">
+																<button type="button" class="btn removeReturn"><i class="bi bi-trash text-danger"></i></button>
+															</a>
 														<?php endif; ?>
 													</td>
 												</tr>
@@ -127,9 +122,7 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/returns/add_return_product.php', array('return' => $return)); ?>
-<?php $this->load->view('admin/modals/returns/update_return_product.php'); ?>
-<?php $this->load->view('admin/modals/returns/return_product_to_inventory.php'); ?>
+<?php $this->load->view('admin/_modals/returns/add_return_product.php', array('return' => $return)); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -143,11 +136,6 @@ $salesOrderTransactions = $this->Model_Selects->GetUnreturnedTransactionsByOrder
 <script>
 $('.sidebar-admin-returns').addClass('active');
 $(document).ready(function() {
-	// var tableTransactions = $('#transactionsTable').DataTable( {
-	// 	sDom: 'lrtip',
-	// 	'bLengthChange': false,
-	// 	'order': [[ 0, 'desc' ]],
-	// });
 	function showAlert(type, message) {
 		if ($('.alertNotification').length > 0) {
 			$('.alertNotification').remove();
@@ -169,6 +157,14 @@ $(document).ready(function() {
 				}))
 		);
 	}
+	var tableReturns = $('#returnsTable').DataTable( {
+		sDom: 'lrtip',
+		"bLengthChange": false,
+    	"order": [[ 0, "desc" ]],
+	});
+	$('#tableReturnsSearch').on('keyup change', function() {
+		tableReturns.search($(this).val()).draw();
+	});
 	var tableSalesOrderProducts = $('#salesOrderProductsTable').DataTable( {
 		sDom: 'lrtip',
 		"bLengthChange": false,
@@ -203,35 +199,90 @@ $(document).ready(function() {
 		$('#addTransactionID').val($(this).data('id'));
 		$('.select-transaction-btn').html($(this).data('id'));
 		$('#SelectSOProductsModal').modal('toggle');
-	});
 
-	$(document).on('click', '.btn-update-return', function() {
-		let tr = $(this).parents('tr');
+		var tID = $(this).data('id');
+		if (tID.length > 0) {
+			$.ajax({
+				url: 'getReturnTransactionDetails',
+				type: 'GET',
+				dataType: 'JSON',
+				data: { tid: tID } ,
+				success: function (response) {
+					let good = parseInt(response.GOOD);
+					let damaged = parseInt(response.DAMAGED);
+					let returned = parseInt(response.RETURNED);
+					let orderedRemaining = parseInt(response.ORDERED) - (good + damaged + returned);
+					$('#pt_quantityorderedremaining').text(orderedRemaining).data('qty', orderedRemaining);
 
-		$('.updateTransactionID').html(tr.data('id'));
-		$('#updateTransactionID').val(tr.data('id'));
-		$('.updateRemarks').val(tr.find('.remarks').html().trim());
-		$('.updateQty').attr('max', tr.data('total')).val(tr.data('total'));
-
-		$('#UpdateReturnProduct').modal('toggle');
-	});
-
-	$(document).on('click', '.btn-inventory-return', function() {
-		let tr = $(this).parents('tr');
-
-		if (tr.data('qty') > 0) {
-			$('.inventoryReturnTransactionID').html(tr.data('id'));
-			$('#inventoryReturnTransactionID').val(tr.data('id'));
-			$('.inventoryReturnQty').attr('max', tr.data('qty')).val(tr.data('qty'));
-
-			$('#InventoryReturnProduct').modal('toggle');
-		} else {
-			showAlert('warning', 'Update return qty first!');
+					$('#rt_good').text(good).data('qty', good);
+					$('#rt_damaged').text(damaged).data('qty', damaged);
+					$('#rt_returned').text(returned).data('qty', returned);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(textStatus, errorThrown);
+				}
+			});
 		}
 	});
-	$(document).on('submit', '#updateReturnProductToInventory', function(e) {
-		if (!confirm('Return amount to product inventory? (This action cannot be undone)')) {
-			e.preventDefault();
+
+	// // EDIT RETURN PRODUCT
+	// $(document).on('click', '.btn-update-return', function() {
+	// 	let tr = $(this).parents('tr');
+
+	// 	$('.updateTransactionID').html(tr.data('id'));
+	// 	$('#updateTransactionID').val(tr.data('id'));
+
+	// 	// $('.updateQty').attr('max', tr.data('total')).val(tr.data('total'));
+
+	// 	$('.updateRemarks').val(tr.find('.remarks').html().trim());
+
+	// 	$('#UpdateReturnProduct').modal('toggle');
+	// });
+
+	// // infoMessage
+
+	// // RETURN TO INVENTORY
+	// $(document).on('click', '.btn-inventory-return', function() {
+	// 	let tr = $(this).parents('tr');
+
+	// 	if (tr.data('qty') > 0) {
+	// 		$('.inventoryReturnTransactionID').html(tr.data('id'));
+	// 		$('#inventoryReturnTransactionID').val(tr.data('id'));
+	// 		$('.inventoryReturnQty').attr('max', tr.data('qty')).val(tr.data('qty'));
+
+	// 		$('#InventoryReturnProduct').modal('toggle');
+	// 	} else {
+	// 		showAlert('warning', 'Update return qty first!');
+	// 	}
+	// });
+	// $(document).on('submit', '#updateReturnProductToInventory', function(e) {
+	// 	if (!confirm('Return amount to product inventory? (This action cannot be undone)')) {
+	// 		e.preventDefault();
+	// 	}
+	// });
+
+	$(document).on('click', '.removeReturn', function() {
+		if (!confirm('Remove Return?')) {
+			event.preventDefault();
+		}
+	});
+
+	$(document).on('submit', '#AddReturnProduct', function() {
+		if ($('#pt_quantityorderedremaining').data('qty') < $('#newReturnQty').val()) {
+			showAlert('warning', 'Selected qty is more than the remaining ordered quantity.');
+			event.preventDefault();
+		} else if ($('#newReturnQty').val() < 1) {
+			showAlert('warning', 'Qty is not valid.');
+			event.preventDefault();
+		} else if ($('#addTransactionID').val().length < 1) {
+			showAlert('warning', 'No selected transaction.');
+			event.preventDefault();
+		}
+	});
+
+	$(document).on('change', '#returnRemarks', function() {
+		if ($(this).val() == 'RETURNED') {
+			showAlert('info', 'Returning to inventory cannot be undone!');
 		}
 	});
 });

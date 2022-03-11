@@ -121,10 +121,10 @@ if ($this->session->flashdata('highlight-id')) {
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/clients/add_client.php'); ?>
-<?php $this->load->view('admin/modals/clients/client_modal.php'); ?>
-<?php $this->load->view('admin/modals/clients/update_client.php'); ?>
-<?php $this->load->view('admin/modals/clients/delete_client.php'); ?>
+<?php $this->load->view('admin/_modals/clients/add_client.php'); ?>
+<?php $this->load->view('admin/_modals/clients/client_modal.php'); ?>
+<?php $this->load->view('admin/_modals/clients/update_client.php'); ?>
+<?php $this->load->view('admin/_modals/clients/delete_client.php'); ?>
 
 <script src="<?=base_url()?>assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>assets/js/bootstrap.bundle.min.js"></script>

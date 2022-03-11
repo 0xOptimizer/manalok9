@@ -476,6 +476,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('returns');  
 		return $result;
 	}
+	public function GetReturnProductByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('id', $id);
+		$result = $this->db->get('product_returned');  
+		return $result;
+	}
 	public function GetReturnProductsByReturnNo($returnNo)
 	{
 		$this->db->select('*');
@@ -490,15 +497,23 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('product_returned');  
 		return $result;
 	}
-	public function GetUnreturnedTransactionsByOrderNo($orderNo)
+	public function GetReturnProductSumQtyByTIDRemark($transactionid, $remark)
 	{
-		$this->db->select('*');
-		$this->db->where('OrderNo', $orderNo);
-		$this->db->where('NOT EXISTS(SELECT * FROM product_returned WHERE products_transactions.TransactionID
-		 = product_returned.transactionid)');
-		$result = $this->db->get('products_transactions');
+		$this->db->select_sum('quantity');
+		$this->db->where('transactionid', $transactionid);
+		$this->db->where('remarks', $remark);
+		$result = $this->db->get('product_returned');
 		return $result;
 	}
+	// public function GetUnreturnedTransactionsByOrderNo($orderNo)
+	// {
+	// 	$this->db->select('*');
+	// 	$this->db->where('OrderNo', $orderNo);
+	// 	$this->db->where('NOT EXISTS(SELECT * FROM product_returned WHERE products_transactions.TransactionID
+	// 	 = product_returned.transactionid)');
+	// 	$result = $this->db->get('products_transactions');
+	// 	return $result;
+	// }
 
 	// ACCOUNTING
 	public function GetAccounts()

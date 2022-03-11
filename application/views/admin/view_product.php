@@ -322,9 +322,9 @@ if ($this->session->flashdata('highlight-id')) {
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 <!-- New transactions modal -->
-<?php $this->load->view('admin/modals/add_newTransaction.php'); ?>
+<?php $this->load->view('admin/_modals/add_newTransaction.php'); ?>
 
-<?php $this->load->view('admin/modals/generate_report')?>
+<?php $this->load->view('admin/_modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

@@ -286,9 +286,27 @@ $returnedProducts = array();
 							<?php if ($salesOrder['Status'] == '3'): ?>
 								<div class="col-12 mb-3">
 									<h6>DATE OF DELIVERY</h6>
+									<?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery']): ?>
+										<button type="button" class="btn btn-sm-success deliveryschedule-btn reschedule-btn" data-datescheduled="<?=$salesOrder['DateDelivery']?>">
+											<i class="bi bi-truck"></i> RESCHEDULE
+										</button>
+									<?php endif; ?>
 									<label><?=$salesOrder['DateDelivery']?></label>
 								</div>
 							<?php endif; ?>
+							<div class="col-12 mb-1">
+								<h6>REMARKS 
+									<button type="button" class="btn btn-sm addremarks-btn text-primary" data-remarks="<?=$salesOrder['Remarks']?>">
+										<i class="bi bi-pencil-square"></i>
+									</button>
+								</h6>
+								<label>
+									<?=(($salesOrder['Remarks'] == NULL) ? '- - - - - -' : $salesOrder['Remarks'])?>
+								</label>
+							</div>
+
+
+
 							<?php
 							$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($salesOrder['OrderNo']);
 							// COMPUTE TOTALS
@@ -540,17 +558,18 @@ $returnedProducts = array();
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/sales_orders/sales_order_form.php', array(
+<?php $this->load->view('admin/_modals/sales_orders/sales_order_form.php', array(
 	'salesOrder' => $salesOrder,
 	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
 	'clientBTDetails' => $clientBTDetails,
 	'clientSTDetails' => $clientSTDetails
 )); ?>
-<?php $this->load->view('admin/modals/sales_orders/sales_order_accounting'); ?>
-<?php $this->load->view('admin/modals/sales_orders/sales_order_logs'); ?>
-<?php $this->load->view('admin/modals/sales_orders/schedule_delivery_sales_order'); ?>
-<?php $this->load->view('admin/modals/sales_orders/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
-<?php $this->load->view('admin/modals/mails/add_mail.php'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/sales_order_accounting'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/sales_order_logs'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/schedule_delivery_sales_order'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
+<?php $this->load->view('admin/_modals/sales_orders/sales_order_remarks', array('salesOrder' => $salesOrder)); ?>
+<?php $this->load->view('admin/_modals/mails/add_mail.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -591,6 +610,13 @@ $(document).ready(function() {
 	});
 	$('.deliveryschedule-btn').on('click', function() {
 		$('#DeliveryScheduling').modal('toggle');
+	});
+	$('.reschedule-btn').on('click', function() {
+		$('#delivery_scheduling_date').val($(this).data('datescheduled'));
+	});
+	$('.addremarks-btn').on('click', function() {
+		$('#SORemarks').modal('toggle');
+		$('#sales_order_remarks').val($(this).data('remarks'));
 	});
 
 	$(document).on('click', '.removeot-btn', function() {

@@ -150,4 +150,17 @@ class Model_Deletes extends CI_Model {
 			return false;
 		}
 	}
+
+	public function Delete_ReturnProduct($id)
+	{
+		$this->db->where('id', $id);
+		$this->db->delete('product_returned');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

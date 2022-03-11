@@ -188,13 +188,13 @@ if ($this->session->flashdata('highlight-id')) {
 	</div>
 
 	<!-- New product modal -->
-	<?php $this->load->view('admin/modals/products/add_productV2.php'); ?>
+	<?php $this->load->view('admin/_modals/products/add_productV2.php'); ?>
 	<!-- Prompts modal -->
-	<?php $this->load->view('admin/modals/products/prompt_delete.php'); ?>
+	<?php $this->load->view('admin/_modals/products/prompt_delete.php'); ?>
 	<!-- Update modal -->
-	<?php $this->load->view('admin/modals/products/update_product.php'); ?>
+	<?php $this->load->view('admin/_modals/products/update_product.php'); ?>
 
-	<?php $this->load->view('admin/modals/generate_report')?>
+	<?php $this->load->view('admin/_modals/generate_report')?>
 
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

@@ -298,7 +298,7 @@ $getRecentLogins = $this->Model_Selects->GetRecentLogins();
 	</div>
 </div>
 <!-- Create a new employee modal -->
-<?php $this->load->view('admin/modals/database_backupprompt.php'); ?>
+<?php $this->load->view('admin/_modals/database_backupprompt.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

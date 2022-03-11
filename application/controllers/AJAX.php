@@ -244,6 +244,23 @@ class AJAX extends CI_Controller {
 		print json_encode($getVendorByNo);
 	}
 	
+	// RETURNS
+	public function getReturnTransactionDetails()
+	{
+		$tid = $this->input->get('tid');
+		if (strlen($tid) > 0) {
+			$transactionDetails['ORDERED'] = $this->Model_Selects->GetTransactionsByTID($tid)->row_array()['Amount'] + 0;
+
+			$transactionDetails['GOOD'] = $this->Model_Selects->GetReturnProductSumQtyByTIDRemark($tid, 'GOOD')->row_array()['quantity'] + 0;
+			$transactionDetails['DAMAGED'] = $this->Model_Selects->GetReturnProductSumQtyByTIDRemark($tid, 'DAMAGED')->row_array()['quantity'] + 0;
+			$transactionDetails['RETURNED'] = $this->Model_Selects->GetReturnProductSumQtyByTIDRemark($tid, 'RETURNED')->row_array()['quantity'] + 0;
+			
+
+			echo json_encode($transactionDetails);
+		}
+	}
+
+	// ACCOUNTING
 	public function getJournalDetails()
 	{
 		$journalID = $this->input->get('journal_id');

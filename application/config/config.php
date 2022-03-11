@@ -584,6 +584,7 @@ $config['user_restrictions'] = array(
 		'sales_orders_mark_as_received',
 		'sales_orders_invoice_creation',
 		'sales_orders_accounting',
+		'sales_orders_remarks',
 
 		'invoice_view',
 		'invoice_add',
@@ -594,8 +595,9 @@ $config['user_restrictions'] = array(
 
 		'return_product_view',
 		'return_product_add',
-		'return_product_edit',
-		'return_product_return_to_inventory',
+		// 'return_product_edit',
+		// 'return_product_return_to_inventory',
+		'return_product_delete',
 
 		'accounts_view',
 		'accounts_add',

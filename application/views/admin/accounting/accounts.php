@@ -101,8 +101,8 @@ if ($this->session->flashdata('highlight-id')) {
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/accounts/add_account'); ?>
-<?php $this->load->view('admin/modals/accounts/update_account'); ?>
+<?php $this->load->view('admin/_modals/accounts/add_account'); ?>
+<?php $this->load->view('admin/_modals/accounts/update_account'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

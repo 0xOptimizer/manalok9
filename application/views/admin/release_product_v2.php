@@ -160,10 +160,10 @@ date_default_timezone_set('Asia/Manila');
 		<?php print $this->session->flashdata('prompt_status'); ?>
 	</div>
 
-	<?php $this->load->view('admin/modals/releasing/modal_scan_releasing.php'); ?>
-	<?php $this->load->view('admin/modals/releasing/modal_manual_releasing.php'); ?>
-	<?php $this->load->view('admin/modals/releasing/modal_release_quantity.php'); ?>
-	<?php $this->load->view('admin/modals/releasing/modal_stock_selection.php'); ?>
+	<?php $this->load->view('admin/_modals/releasing/modal_scan_releasing.php'); ?>
+	<?php $this->load->view('admin/_modals/releasing/modal_manual_releasing.php'); ?>
+	<?php $this->load->view('admin/_modals/releasing/modal_release_quantity.php'); ?>
+	<?php $this->load->view('admin/_modals/releasing/modal_stock_selection.php'); ?>
 
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

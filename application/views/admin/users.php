@@ -184,11 +184,11 @@ $globalHeader;
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 <!-- New user prompt -->
-<?php $this->load->view('admin/modals/users/users_registration.php'); ?>
+<?php $this->load->view('admin/_modals/users/users_registration.php'); ?>
 <!-- Create a new employee modal -->
-<?php $this->load->view('admin/modals/users/create_employee_modal.php'); ?>
+<?php $this->load->view('admin/_modals/users/create_employee_modal.php'); ?>
 <!-- Update employee modal -->
-<?php $this->load->view('admin/modals/users/update_employee_modal.php'); ?>
+<?php $this->load->view('admin/_modals/users/update_employee_modal.php'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>

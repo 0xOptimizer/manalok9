@@ -141,7 +141,7 @@ if ($from == NULL && $to == NULL) {
 		</div>
 	</div>
 </div>
-<?php $this->load->view('admin/modals/generate_report')?>
+<?php $this->load->view('admin/_modals/generate_report')?>
 <div class="modal fade" id="SortByMonthModal" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<form action="" method="GET">

@@ -85,24 +85,23 @@ class Model_Updates extends CI_Model {
 		extract($data);
 		$this->db->where('transactionid', $transactionID);
 		$this->db->set(array(
-			'quantity' => $qty,
 			'remarks' => $remarks,
 		));
 		$result = $this->db->update('product_returned');
 		return $result;
 	}
-	public function ReturnProductInventory($data)
-	{
-		extract($data);
-		$this->db->set(array(
-			'quantity' => $newQty,
-			'quantity_total' => $newTotal,
-			'returned' => $returned,
-		));
-		$this->db->where('TransactionID', $transactionID);
-		$result = $this->db->update('product_returned');
-		return $result;
-	}
+	// public function ReturnProductInventory($data)
+	// {
+	// 	extract($data);
+	// 	$this->db->set(array(
+	// 		'quantity' => $newQty,
+	// 		'quantity_total' => $newTotal,
+	// 		'returned' => $returned,
+	// 	));
+	// 	$this->db->where('TransactionID', $transactionID);
+	// 	$result = $this->db->update('product_returned');
+	// 	return $result;
+	// }
 	// ORDER / TRANSACTIONS
 	public function UpdateTransaction($data)
 	{
@@ -149,6 +148,12 @@ class Model_Updates extends CI_Model {
 	public function UpdateClient($data, $clientID)
 	{
 		$this->db->where('ID', $clientID);
+		$result = $this->db->update('clients', $data);
+		return $result;
+	}
+	public function UpdateClientByNo($data, $clientNo)
+	{
+		$this->db->where('ClientNo', $clientNo);
 		$result = $this->db->update('clients', $data);
 		return $result;
 	}

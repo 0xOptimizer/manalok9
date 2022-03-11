@@ -116,12 +116,12 @@ if ($this->session->flashdata('highlight-id')) {
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
 
-<?php $this->load->view('admin/modals/vendors/add_vendor.php'); ?>
-<?php $this->load->view('admin/modals/vendors/vendor_modal.php'); ?>
-<?php $this->load->view('admin/modals/vendors/update_vendor.php'); ?>
-<?php $this->load->view('admin/modals/vendors/delete_vendor.php'); ?>
+<?php $this->load->view('admin/_modals/vendors/add_vendor.php'); ?>
+<?php $this->load->view('admin/_modals/vendors/vendor_modal.php'); ?>
+<?php $this->load->view('admin/_modals/vendors/update_vendor.php'); ?>
+<?php $this->load->view('admin/_modals/vendors/delete_vendor.php'); ?>
 
-<?php $this->load->view('admin/modals/generate_report')?>
+<?php $this->load->view('admin/_modals/generate_report')?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
