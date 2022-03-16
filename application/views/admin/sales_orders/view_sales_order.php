@@ -20,8 +20,8 @@ $getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 $getAccounts = $this->Model_Selects->GetAccountSelection();
 
 
-$return = $this->Model_Selects->GetReturnBySalesNo($salesOrder['OrderNo']);
-$returnedProducts = array();
+$returnDetails = $this->Model_Selects->GetReturnBySalesNo($salesOrder['OrderNo'])->row_array();
+$returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetails['ReturnNo']);
 
 ?>
 <style>
@@ -38,6 +38,9 @@ $returnedProducts = array();
 		padding-right: 20px;
 		padding-left: 20px;
 		color: #FFFFFF;
+	}
+	.toggleSectionInvoicing:hover, .toggleSectionReturns:hover {
+		background-color: rgba(75, 75, 75, 0.3);
 	}
 	@media print {
 		.printExclude {
@@ -76,7 +79,7 @@ $returnedProducts = array();
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-6">
-						<h3><i class="bi bi-receipt"></i> Sales Order ID #<?=$salesOrder['ID']?>
+						<h3><i class="bi bi-receipt"></i> <?=$salesOrder['OrderNo']?>
 							<?php if ($salesOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 							<?php elseif ($salesOrder['Status'] == '2'): ?>
@@ -103,17 +106,142 @@ $returnedProducts = array();
 				</div>
 			</div>
 			<section class="section">
+				<hr style="height: 4px;">
+
 				<div class="row">
-					<div class="col-12 col-sm-7 col-md-9">
+					<div class="col-12 col-md-6 mb-1">
+						<h6>SALES ORDER #</h6>
+						<label class="salesOrderNo"><?=$salesOrder['OrderNo']?></label>
+					</div>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>SALES ORDER DATE</h6>
+						<label><?=$salesOrder['Date']?></label>
+					</div>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>BILL TO
+							<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
+								<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+									&nbsp;<button type="button" class="emailbtclient-btn btn btn-sm-primary" data-email="<?=$clientBTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+								<?php endif; ?>
+							<?php endif; ?>
+						</h6>
+						<?php if ($clientBTDetails['ClientNo'] != NULL): ?>
+							<label><?=$clientBTDetails['Name']?> (
+								<a href="<?=base_url() . 'admin/clients#'. $clientBTDetails["ClientNo"]?>">
+									<i class="bi bi-eye"></i> <?=$clientBTDetails['ClientNo']?>
+								</a>
+							)</label>
+						<?php else: ?>
+							<label class="warning-banner-sm">
+								CLIENT DETAILS NOT AVAILABLE
+							</label>
+						<?php endif; ?>
+					</div>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>CATEGORY </h6>
+						<label>
+							<?php switch ($clientBTDetails['Category']) {
+								case '0': echo 'Confirmed Distributor'; break;
+								case '1': echo 'Distributor On Probation'; break;
+								case '2': echo 'Direct Dealer'; break;
+								case '3': echo 'Direct End User'; break;
+								default: echo 'NONE'; break;
+							} ?>
+						</label>
+					</div>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>SHIP TO
+							<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
+								<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+									&nbsp;<button type="button" class="emailstclient-btn btn btn-sm-primary" data-email="<?=$clientSTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+								<?php endif; ?>
+							<?php endif; ?>
+						</h6>
+						<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
+							<label><?=$clientSTDetails['Name']?> (
+								<a href="<?=base_url() . 'admin/clients#'. $clientSTDetails["ClientNo"]?>">
+									<i class="bi bi-eye"></i> <?=$clientSTDetails['ClientNo']?>
+								</a>
+							)</label>
+						<?php else: ?>
+							<label class="warning-banner-sm">
+								CLIENT DETAILS NOT AVAILABLE
+							</label>
+						<?php endif; ?>
+					</div>
+					<?php if ($salesOrder['Status'] == '3'): ?>
+						<div class="col-12 col-md-6 mb-3">
+							<h6>DATE OF DELIVERY</h6>
+							<?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery']): ?>
+								<button type="button" class="btn btn-sm-success deliveryschedule-btn reschedule-btn" data-datescheduled="<?=$salesOrder['DateDelivery']?>">
+									<i class="bi bi-truck"></i> RESCHEDULE
+								</button>
+							<?php endif; ?>
+							<label><?=$salesOrder['DateDelivery']?></label>
+						</div>
+					<?php endif; ?>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>REMARKS 
+							<button type="button" class="btn btn-sm addremarks-btn text-primary" data-remarks="<?=$salesOrder['Remarks']?>">
+								<i class="bi bi-pencil-square"></i>
+							</button>
+						</h6>
+						<label>
+							<?=(($salesOrder['Remarks'] == NULL) ? '- - - - - -' : $salesOrder['Remarks'])?>
+						</label>
+					</div>
+				</div>
+
+				<hr style="height: 4px;">
+
+				<?php
+				// $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($salesOrder['OrderNo']);
+				// COMPUTE TOTALS
+				$totalDiscount = $salesOrder['discountOutright'] + $salesOrder['discountVolume'] + $salesOrder['discountPBD'] + $salesOrder['discountManpower'];
+
+				$transactionsPriceTotal = 0;
+				$transactionsFreebiesTotal = 0;
+				$transactionsUnitDiscountTotal = 0;
+				// $transactionsReturnedTotal = 0; // UNUSED
+
+				if ($getTransactionsByOrderNo->num_rows() > 0) {
+					foreach ($getTransactionsByOrderNo->result_array() as $transaction) {
+						$price = $transaction['Amount'] * $transaction['PriceUnit'];
+						$unitDiscountPriceTotal = $price * ($transaction['UnitDiscount'] / 100);
+
+						if ($transaction['Freebie'] == 0) {
+							$transactionsPriceTotal += $price;
+						} else {
+							$transactionsFreebiesTotal += $price;
+						}
+						$transactionsUnitDiscountTotal += $unitDiscountPriceTotal;
+					}
+				}
+
+				?>
+
+				<div class="row">
+					<div class="col-12">
 						<div class="row">
-							<div class="col-sm-12 table-responsive">
+							<div class="col-12">
+								<h4>
+									<i class="bi bi-list-ul"></i> TRANSACTIONS
+								</h4>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12">
+								<button type="button" class="adtlfee-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW ADDITIONAL FEE</button>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 table-responsive mb-3">
 								<table id="transactionsTable" class="standard-table table">
 									<thead style="font-size: 12px;">
-										<th class="text-center">#</th>
 										<th class="text-center">TRANSACTION ID</th>
-										<th class="text-center">PRODUCT CODE</th>
-										<th class="text-center">STOCK ID</th>
-										<th class="text-center">AMOUNT</th>
+										<th class="text-center">PRODUCT STOCK ID</th>
+										<th class="text-center">QTY</th>
+										<th class="text-center">UNIT DISCOUNT</th>
 										<th class="text-center">PRICE</th>
 										<th class="text-center">TOTAL</th>
 										<th class="text-center">FREEBIE</th>
@@ -121,38 +249,28 @@ $returnedProducts = array();
 									<tbody>
 										<?php
 										if ($getTransactionsByOrderNo->num_rows() > 0):
-											foreach ($getTransactionsByOrderNo->result_array() as $no => $row): ?>
+											foreach ($getTransactionsByOrderNo->result_array() as $row): ?>
 												<tr>
-													<?php
-													$returnedProduct = $this->Model_Selects->GetReturnProductByTID($row['TransactionID']);
-													$totalReturnedQty = 0;
-													if ($returnedProduct->num_rows() > 0) {
-														$rProductDetails = $returnedProduct->row_array();
-														$rProductDetails['PriceUnit'] = $row['PriceUnit'];
-														array_push($returnedProducts, $rProductDetails);
-														$totalReturnedQty = $rProductDetails['quantity'] + $rProductDetails['returned'];
-													}
-													?>
-													<td class="text-center">
-														<span style="font-style: italic; font-size: 12px;"><?=$no+1?></span>
-													</td>
 													<td class="text-center">
 														<?=$row['TransactionID']?>
-													</td>
-													<td class="text-center">
-														<?=$row['Code']?>
 													</td>
 													<td class="text-center">
 														<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['stockID']?></span>
 													</td>
 													<td class="text-center">
-														<?=($row['Amount'] - $totalReturnedQty)?>
+														<?=($row['Amount'])?>
 													</td>
 													<td class="text-center">
-														<?=number_format($row['PriceUnit'], 2)?>
+														<?=($row['UnitDiscount'])?>%
+													</td>
+													<?php
+													$unitPrice = $row['PriceUnit'] - ($row['PriceUnit'] * ($row['UnitDiscount']) / 100);
+													?>
+													<td class="text-center">
+														<?=number_format($unitPrice, 2)?>
 													</td>
 													<td class="text-center">
-														<?=number_format(($row['Amount'] - $totalReturnedQty) * $row['PriceUnit'], 2)?>
+														<?=number_format(($row['Amount']) * $unitPrice, 2)?>
 													</td>
 													<td class="text-center">
 														<?php if ($row['Freebie']): ?>
@@ -167,262 +285,207 @@ $returnedProducts = array();
 									</tbody>
 								</table>
 							</div>
-						</div>
-						<?php if (sizeof($returnedProducts) > 0): ?>
-							<div class="row mt-4">
-								<div class="col-sm-12">
-									<div class="card">
-										<div class="card-body">
-											<div class="row">
-												<span style="font-size: 1.5em; color: #ebebeb;">
-													<b> RETURNED ITEMS </b>
-												</span>
-												<a href="<?=base_url() . 'admin/view_return?returnNo='. $return->row_array()['ReturnNo']?>">
-													<i class="bi bi-eye"></i> <?=$return->row_array()['ReturnNo']?>
-												</a>
+							<div class="col-12 col-md-6">
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold">
+														CATEGORY DISCOUNTS
+													</span>
+												</div>
+												<div class="row">
+													<div class="col-5 text-end">
+														OUTRIGHT:
+													</div>
+													<div class="col-3 text-end">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<b>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountOutright'] * 0.01)), 2)?>
+															</b>
+														</span>
+													</div>
+													<div class="col-4 text-start">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<i>
+																( <?=$salesOrder['discountOutright']?>% )
+															</i>
+														</span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-5 text-end">
+														VOLUME:
+													</div>
+													<div class="col-3 text-end">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<b>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountVolume'] * 0.01)), 2)?>
+															</b>
+														</span>
+													</div>
+													<div class="col-4 text-start">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<i>
+																( <?=$salesOrder['discountVolume']?>% )
+															</i>
+														</span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-5 text-end">
+														PBD:
+													</div>
+													<div class="col-3 text-end">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<b>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountPBD'] * 0.01)), 2)?>
+															</b>
+														</span>
+													</div>
+													<div class="col-4 text-start">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<i>
+																( <?=$salesOrder['discountPBD']?>% )
+															</i>
+														</span>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-5 text-end">
+														MANPOWER:
+													</div>
+													<div class="col-3 text-end">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<b>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountManpower'] * 0.01)), 2)?>
+															</b>
+														</span>
+													</div>
+													<div class="col-4 text-start">
+														<span style="font-size: 1.15em; color: #ebebeb;">
+															<i>
+																( <?=$salesOrder['discountManpower']?>% )
+															</i>
+														</span>
+													</div>
+												</div>
+												<div class="row mt-3">
+													<span class="head-text fw-bold">
+														TOTAL DISCOUNT
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.15em; color: #ebebeb;">
+														<b>
+															<?=number_format(($transactionsPriceTotal * ($totalDiscount * 0.01)), 2)?>
+														</b>
+														<i>
+															( <?=$totalDiscount?>% )
+														</i>
+													</span>
+												</div>
 											</div>
-											<div class="row">
-												<div class="col-sm-12 table-responsive">
-													<table id="transactionsTable" class="standard-table table">
-														<thead style="font-size: 12px;">
-															<th class="text-center">TRANSACTION ID</th>
-															<th class="text-center">PRODUCT CODE</th>
-															<th class="text-center">RETURNED</th>
-															<th class="text-center">RETURNED TO INVENTORY</th>
-															<th class="text-center">PRICE</th>
-															<th class="text-center">TOTAL</th>
-															<th class="text-center">FREEBIE</th>
-														</thead>
-														<tbody>
-															<?php foreach ($returnedProducts as $row): ?>
-																<tr>
-																	<td class="text-center">
-																		<?=$row['transactionid']?>
-																	</td>
-																	<td class="text-center">
-																		<?=$row['prd_sku']?>
-																	</td>
-																	<td class="text-center">
-																		<?=$row['quantity']?>
-																	</td>
-																	<td class="text-center">
-																		<?=$row['returned']?>
-																	</td>
-																	<td class="text-center">
-																		<?=number_format($row['PriceUnit'], 2)?>
-																	</td>
-																	<td class="text-center">
-																		<?=number_format(($row['quantity'] + $row['returned']) * $row['PriceUnit'], 2)?>
-																	</td>
-																	<td class="text-center">
-																		<?php if ($row['Freebie']): ?>
-																			<i class="bi bi-check-circle text-success"></i>
-																		<?php else: ?>
-																			<i class="bi bi-x-circle text-danger"></i>
-																		<?php endif; ?>
-																	</td>
-																</tr>
-															<?php endforeach; ?>
-														</tbody>
-													</table>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold">
+														TOTAL UNIT DISCOUNTS
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.15em; color: #ebebeb;">
+														<b>
+															<?=number_format($transactionsUnitDiscountTotal, 2)?>
+														</b>
+													</span>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
-						<?php endif; ?>
+							<div class="col-12 col-md-6">
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold">
+														TOTAL PRICE (DISCOUNTED)
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.5em; color: #ebebeb;">
+														<b>
+															<?php
+															echo number_format($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01)) - $transactionsUnitDiscountTotal, 2);
+															?>
+														</b>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold">
+														TOTAL PRICE (UNDISCOUNTED)
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.5em; color: #ebebeb;">
+														<b>
+															<?php
+															echo number_format($transactionsPriceTotal, 2);
+															?>
+														</b>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold">
+														TOTAL FREEBIES PRICE
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.5em; color: #ebebeb;">
+														<b>
+															<?=number_format($transactionsFreebiesTotal, 2)?>
+														</b>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="col-12 col-sm-5 col-md-3">
-						<div class="row">
-							<div class="col-12 mb-1">
-								<h6>SALES ORDER #</h6>
-								<label class="salesOrderNo"><?=$salesOrder['OrderNo']?></label>
-							</div>
-							<div class="col-12 mb-1">
-								<h6>SALES ORDER DATE</h6>
-								<label><?=$salesOrder['Date']?></label>
-							</div>
-							<div class="col-12 mb-1">
-								<h6>BILL TO
-									<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
-										<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
-											<button type="button" class="emailbtclient-btn btn btn-sm-primary" data-email="<?=$clientBTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
-										<?php endif; ?>
-									<?php endif; ?>
-								</h6>
-								<?php if ($clientBTDetails['ClientNo'] != NULL): ?>
-									<label><?=$clientBTDetails['Name']?> (
-										<a href="<?=base_url() . 'admin/clients#'. $clientBTDetails["ClientNo"]?>">
-											<i class="bi bi-eye"></i> <?=$clientBTDetails['ClientNo']?>
-										</a>
-									)</label>
-								<?php else: ?>
-									<label class="warning-banner-sm">
-										CLIENT DETAILS NOT AVAILABLE
-									</label>
-								<?php endif; ?>
-							</div>
-							<div class="col-12 mb-1">
-								<h6>SHIP TO
-									<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
-										<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
-											<button type="button" class="emailstclient-btn btn btn-sm-primary" data-email="<?=$clientSTDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
-										<?php endif; ?>
-									<?php endif; ?>
-								</h6>
-								<?php if ($clientSTDetails['ClientNo'] != NULL): ?>
-									<label><?=$clientSTDetails['Name']?> (
-										<a href="<?=base_url() . 'admin/clients#'. $clientSTDetails["ClientNo"]?>">
-											<i class="bi bi-eye"></i> <?=$clientSTDetails['ClientNo']?>
-										</a>
-									)</label>
-								<?php else: ?>
-									<label class="warning-banner-sm">
-										CLIENT DETAILS NOT AVAILABLE
-									</label>
-								<?php endif; ?>
-							</div>
-							<?php if ($salesOrder['Status'] == '3'): ?>
-								<div class="col-12 mb-3">
-									<h6>DATE OF DELIVERY</h6>
-									<?php if ($this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery']): ?>
-										<button type="button" class="btn btn-sm-success deliveryschedule-btn reschedule-btn" data-datescheduled="<?=$salesOrder['DateDelivery']?>">
-											<i class="bi bi-truck"></i> RESCHEDULE
-										</button>
-									<?php endif; ?>
-									<label><?=$salesOrder['DateDelivery']?></label>
-								</div>
-							<?php endif; ?>
-							<div class="col-12 mb-1">
-								<h6>REMARKS 
-									<button type="button" class="btn btn-sm addremarks-btn text-primary" data-remarks="<?=$salesOrder['Remarks']?>">
-										<i class="bi bi-pencil-square"></i>
-									</button>
-								</h6>
-								<label>
-									<?=(($salesOrder['Remarks'] == NULL) ? '- - - - - -' : $salesOrder['Remarks'])?>
-								</label>
-							</div>
+				</div>
 
+				<hr>
 
-
-							<?php
-							$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($salesOrder['OrderNo']);
-							// COMPUTE TOTALS
-							$totalDiscount = $salesOrder['discountOutright'] + $salesOrder['discountVolume'] + $salesOrder['discountPBD'] + $salesOrder['discountManpower'];
-							$transactionsPriceTotal = 0;
-							$transactionsFreebiesTotal = 0;
-							// $transactionsReturnedTotal = 0; // UNUSED
-							foreach ($orderTransactions->result_array() as $transaction) {
-								$price = $transaction['Amount'] * $transaction['PriceUnit'];
-								if ($transaction['Freebie'] == 0) {
-									$transactionsPriceTotal += $price;
-								} else {
-									$transactionsFreebiesTotal += $price;
-								}
-							}
-
-							?>
-							<div class="col-12 mt-3">
-								<div class="card">
-									<div class="text-center p-2">
-										<div class="row">
-											<span class="head-text">
-												TOTAL PRICE / DISCOUNTED
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.5em; color: #ebebeb;">
-												<b>
-													<?php
-													echo number_format($transactionsPriceTotal, 2) .' / ';
-													echo number_format($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01)), 2);
-													?>
-												</b>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-12">
-								<div class="card">
-									<div class="text-center p-2">
-										<div class="row">
-											<span class="head-text">
-												TOTAL FREEBIES PRICE
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.5em; color: #ebebeb;">
-												<b>
-													<?=number_format($transactionsFreebiesTotal, 2)?>
-												</b>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-12">
-								<div class="card">
-									<div class="text-center p-2">
-										<div class="row">
-											<span class="head-text">
-												DISCOUNT
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.15em; color: #ebebeb;">
-												OUTRIGHT: <br>
-												<b>
-													[ <?=number_format(($transactionsPriceTotal * ($salesOrder['discountOutright'] * 0.01)), 2)?> ]
-													( <?=$salesOrder['discountOutright']?>% )
-												</b>
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.15em; color: #ebebeb;">
-												VOLUME: <br>
-												<b>
-													[ <?=number_format(($transactionsPriceTotal * ($salesOrder['discountVolume'] * 0.01)), 2)?> ]
-													( <?=$salesOrder['discountVolume']?>% )
-												</b>
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.15em; color: #ebebeb;">
-												PBD: <br>
-												<b>
-													[ <?=number_format(($transactionsPriceTotal * ($salesOrder['discountPBD'] * 0.01)), 2)?> ]
-													( <?=$salesOrder['discountPBD']?>% )
-												</b>
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.15em; color: #ebebeb;">
-												MANPOWER: <br>
-												<b>
-													[ <?=number_format(($transactionsPriceTotal * ($salesOrder['discountManpower'] * 0.01)), 2)?> ]
-													( <?=$salesOrder['discountManpower']?>% )
-												</b>
-											</span>
-										</div>
-										<div class="row mt-3">
-											<span class="head-text">
-												TOTAL DISCOUNT
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.15em; color: #ebebeb;">
-												<b>
-													[ <?=number_format(($transactionsPriceTotal * ($totalDiscount * 0.01)), 2)?> ]
-													( <?=$totalDiscount?>% )
-												</b>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
+				<div class="row">
+					<div class="col-12">
+						<div class="row pt-4">
 							<?php if ($salesOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['sales_orders_mark_for_invoicing']): ?>
 								<div class="col-12 text-center">
 									<h6>MARK FOR INVOICING</h6>
@@ -437,11 +500,17 @@ $returnedProducts = array();
 								</div>
 							<?php elseif ($salesOrder['Status'] == '2' && $this->session->userdata('UserRestrictions')['sales_orders_schedule_delivery']): ?>
 								<div class="col-12 text-center">
+									<h6>ACTION</h6>
+								</div>
+								<div class="col-12 text-center">
 									<button type="button" class="btn btn-success deliveryschedule-btn">
 										<i class="bi bi-truck"></i> SCHEDULE FOR DELIVERY
 									</button>
 								</div>
 							<?php elseif ($salesOrder['Status'] == '3' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_delivered']): ?>
+								<div class="col-12 text-center">
+									<h6>ACTION</h6>
+								</div>
 								<div class="col-12 text-center">
 									<form id="formMarkDelivered" action="<?php echo base_url() . 'FORM_markDelivered';?>" method="POST">
 										<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>">
@@ -452,6 +521,9 @@ $returnedProducts = array();
 								</div>
 							<?php elseif ($salesOrder['Status'] == '4' && $this->session->userdata('UserRestrictions')['sales_orders_mark_as_received']): ?>
 								<div class="col-12 text-center">
+									<h6>ACTION</h6>
+								</div>
+								<div class="col-12 text-center">
 									<form id="formMarkReceived" action="<?php echo base_url() . 'FORM_markReceived';?>" method="POST">
 										<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>">
 										<button type="button" class="btn btn-success receivedmark">
@@ -461,7 +533,7 @@ $returnedProducts = array();
 								</div>
 							<?php elseif ($salesOrder['Status'] == '5'): ?>
 								<div class="col-12 text-center">
-									<h5 class="text-success">SALES ORDER FULFILLED</h5>
+									<h5 class="text-success">[ SALES ORDER FULFILLED ]</h5>
 								</div>
 							<?php endif; ?>
 						</div>
@@ -470,24 +542,27 @@ $returnedProducts = array();
 			</section>
 		</div>
 		<?php if ($salesOrder['Status'] >= '2'): ?>
+			<hr style="height: 4px;">
+
 			<div class="page-heading">
 				<div class="page-title">
-					<div class="row">
+					<div class="row pt-3 toggleSectionInvoicing" style="cursor: pointer;">
 						<div class="col-12">
-							<h3>
-								Invoicing
-							</h3>
+							<h4>
+								<i class="bi bi-receipt"></i> INVOICING
+								<i class="bi bi-caret-down-fill float-end caret"></i>
+							</h4>
 						</div>
 					</div>
 					<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation']): ?>
-						<div class="row">
+						<div class="row pt-3">
 							<div class="col-12">
 								<button type="button" class="salesinvoicing-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
 							</div>
 						</div>
 					<?php endif; ?>
 				</div>
-				<section>
+				<section class="sectionInvoicing d-none">
 					<div class="row">
 						<div class="col-sm-12 table-responsive">
 							<table id="invoicesTable" class="standard-table table">
@@ -542,11 +617,221 @@ $returnedProducts = array();
 									</tr>
 									<tr style="border-color: #a7852d;">
 										<td class="font-weight-bold text-center" colspan="3">REMAINING PAYMENT (DISCOUNTED)</td>
-										<td class="font-weight-bold text-center"><?=number_format(($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01))) - $total_invoice_amount, 2);?></td>
+										<td class="font-weight-bold text-center">
+											<?=number_format(
+												($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01)) - $transactionsUnitDiscountTotal) - $total_invoice_amount, 2);?></td>
 										<td colspan="3"></td>
 									</tr>
 								</tbody>
 							</table>
+						</div>
+					</div>
+				</section>
+			</div>
+		<?php endif; ?>
+
+		<?php if ($returnProducts->num_rows() > 0):
+
+			$returnItemsQtyTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
+			$returnItemsPriceTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
+			?>
+			<hr style="height: 4px;">
+
+			<div class="page-heading">
+				<div class="page-title">
+					<div class="row pt-3 toggleSectionReturns" style="cursor: pointer;">
+						<div class="col-12">
+							<h4>
+								<i class="bi bi-arrow-left-right"></i> RETURNED ITEMS
+								<i class="bi bi-caret-down-fill float-end caret"></i>
+							</h4>
+						</div>
+					</div>
+					<div class="row pt-3">
+						<div class="col-12">
+							<a href="<?=base_url() . 'admin/view_return?returnNo='. $returnDetails['ReturnNo']?>">
+								<i class="bi bi-eye"></i> <?=$returnDetails['ReturnNo']?>
+							</a>
+						</div>
+					</div>
+				</div>
+				<section class="sectionReturns d-none">
+					<div class="row">
+						<div class="col-sm-12 table-responsive">
+							<table id="transactionsTable" class="standard-table table">
+								<thead style="font-size: 12px;">
+									<th class="text-center">TRANSACTION ID</th>
+									<th class="text-center">STOCK ID</th>
+									<th class="text-center">DATE</th>
+									<th class="text-center">REMARKS</th>
+									<th class="text-center">QUANTITY</th>
+									<th class="text-center">TOTAL PRICE</th>
+									<th class="text-center">FREEBIE</th>
+								</thead>
+								<tbody>
+									<?php foreach ($returnProducts->result_array() as $row):
+									$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['transactionid'])->row_array();
+
+									$returnItemsQtyTotal[$row['remarks']] += $row['quantity'];
+									$returnItemsPriceTotal[$row['remarks']] += $row['quantity'] * $transactionDetails['PriceUnit']; ?>
+										<tr>
+											<td class="text-center">
+												<?=$row['transactionid']?>
+											</td>
+											<td class="text-center">
+												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['stockid']?></span>
+											</td>
+											<td class="text-center">
+												<?=$row['date_added']?>
+											</td>
+											<td class="text-center remarks">
+												<?=$row['remarks']?>
+											</td>
+											<td class="text-center quantity_total">
+												<?=$row['quantity']?>
+											</td>
+											<td class="text-center">
+												<?=number_format($row['quantity'] * $transactionDetails['PriceUnit'], 2)?>
+											</td>
+											<td class="text-center">
+												<?php if ($row['Freebie'] == 1): ?>
+													<i class="bi bi-check-circle text-success"></i>
+												<?php else: ?>
+													<i class="bi bi-x-circle text-danger"></i>
+												<?php endif; ?>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="row mt-4">
+						<div class="col-12 col-md-4 px-3">
+							<div class="row">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text fw-bold">
+												GOOD RETURNS TOTAL QTY
+											</span>
+										</div>
+										<div class="row">
+											<div class="col-12">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														<?=$returnItemsQtyTotal['GOOD']?>
+													</b>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text fw-bold">
+												GOOD RETURNS TOTAL PRICE
+											</span>
+										</div>
+										<div class="row">
+											<div class="col-12">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														<?=number_format($returnItemsPriceTotal['GOOD'], 2)?>
+													</b>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-md-4 px-3">
+							<div class="row">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text fw-bold">
+												DAMAGED RETURNS TOTAL QTY
+											</span>
+										</div>
+										<div class="row">
+											<div class="col-12">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														<?=$returnItemsQtyTotal['DAMAGED']?>
+													</b>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text fw-bold">
+												DAMAGED RETURNS TOTAL PRICE
+											</span>
+										</div>
+										<div class="row">
+											<div class="col-12">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														<?=number_format($returnItemsPriceTotal['DAMAGED'], 2)?>
+													</b>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-md-4 px-3">
+							<div class="row">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text fw-bold">
+												RETURNED ITEMS TOTAL QTY
+											</span>
+										</div>
+										<div class="row">
+											<div class="col-12">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														<?=$returnItemsQtyTotal['RETURNED']?>
+													</b>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="card">
+									<div class="text-center p-2">
+										<div class="row">
+											<span class="head-text fw-bold">
+												RETURNED ITEMS TOTAL PRICE
+											</span>
+										</div>
+										<div class="row">
+											<div class="col-12">
+												<span style="font-size: 1.15em; color: #ebebeb;">
+													<b>
+														<?=number_format($returnItemsPriceTotal['RETURNED'], 2)?>
+													</b>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</section>
@@ -566,6 +851,7 @@ $returnedProducts = array();
 )); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_accounting'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_logs'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/add_adtl_fee_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/sales_orders/schedule_delivery_sales_order'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_remarks', array('salesOrder' => $salesOrder)); ?>
@@ -605,6 +891,9 @@ $(document).ready(function() {
 		);
 	}
 
+	$('.adtlfee-btn').on('click', function() {
+		$('#SalesAdtlFee').modal('toggle');
+	});
 	$('.salesinvoicing-btn').on('click', function() {
 		$('#SalesInvoicing').modal('toggle');
 	});
@@ -942,6 +1231,25 @@ $(document).ready(function() {
 	});
 	$('#submit_formsend').on('click', function() {
 		$('#form_emailsend').submit();
+	});
+
+
+	// SECTION VIEWS
+	$(document).on('click', '.toggleSectionInvoicing', function() {
+		$('.sectionInvoicing').toggleClass('d-none');
+		$(this).find('.caret').toggleClass('bi-caret-down-fill').toggleClass('bi-caret-up-fill');
+
+		if ($(this).find('.caret').hasClass('bi-caret-up-fill')) {
+			$(document).scrollTop($(document).scrollTop() + $('.sectionInvoicing').height());
+		}
+	});
+	$(document).on('click', '.toggleSectionReturns', function() {
+		$('.sectionReturns').toggleClass('d-none');
+		$(this).find('.caret').toggleClass('bi-caret-down-fill').toggleClass('bi-caret-up-fill');
+
+		if ($(this).find('.caret').hasClass('bi-caret-up-fill')) {
+			$(document).scrollTop($(document).scrollTop() + $('.sectionReturns').height());
+		}
 	});
 });
 </script>

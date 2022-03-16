@@ -765,6 +765,73 @@ class SalesOrders extends MY_Controller {
 		}
 	}
 
+// ############################ [ ADDITIONAL FEE ] ############################
+	public function FORM_addNewSOAdtlFee()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_adtl_fees')) {
+
+			$adtlFeeNo = 'AF' . strtoupper(uniqid());
+			$salesOrderNo = $this->input->post('sales-order-no');
+			$description = $this->input->post('description');
+			$qty = $this->input->post('qty');
+			$unitPrice = $this->input->post('unit-price');
+
+			$orderDetails = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo)->row_array();
+			if ($orderDetails['Status'] > 2) {
+				// Insert
+				$data = array(
+					'AdtlFeeNo' => $adtlFeeNo,
+					'Description' => $description,
+					'Qty' => $qty,
+					'UnitPrice' => $unitPrice,
+					'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+				);
+				$insertAdtlFee = $this->Model_Inserts->InsertAdtlFee($data);
+				if ($insertAdtlFee == TRUE) {
+					$adtlFeeID = $this->db->insert_id();
+
+					// LOGBOOK
+					$this->Model_Logbook->LogbookEntry('added a new additional fee.', 'adde a new additional fee [ID: ' . $adtlFeeID . '] for sales order [OrderNo: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
+					redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+				}
+				else
+				{
+					$prompt_txt =
+					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> Error uploading data. Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+					redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+				}
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+			}
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_removeAdtlFee()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_adtl_fees')) {
+			$adtlFeeNo = $this->input->get('afno');
+			if ($adtlFeeNo != NULL) {
+				$result = $this->Model_Updates->remove_adtlfee($adtlFeeNo);
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url());
+		}
+	}
+
 // ############################ [ INVOICES ] ############################
 	public function invoices() // PAGE DISPLAY
 	{
@@ -913,7 +980,7 @@ class SalesOrders extends MY_Controller {
 
 				$soDetails = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo)->row_array();
 
-				// INSERT SALES ORDER
+				// INSERT RETURN
 				$data = array(
 					'ReturnNo' => $returnNo,
 					'DateCreation' => date('Y-m-d H:i:s'),
@@ -923,30 +990,29 @@ class SalesOrders extends MY_Controller {
 				);
 				$insertNewReturn = $this->Model_Inserts->InsertReturn($data);
 				if ($insertNewReturn == TRUE) {
-					$orderID = $this->db->insert_id();
-					// create new return items
-					for ($i = 0; $i < $productCount; $i++) {
-						$transactionID = trim($this->input->post('productTIDInput_' . $i));
-						$qty = trim($this->input->post('productQtyInput_' . $i));
-						$remarks = trim($this->input->post('productRemarksInput_' . $i));
+					// // create new return items
+					// for ($i = 0; $i < $productCount; $i++) {
+					// 	$transactionID = trim($this->input->post('productTIDInput_' . $i));
+					// 	$qty = trim($this->input->post('productQtyInput_' . $i));
+					// 	$remarks = trim($this->input->post('productRemarksInput_' . $i));
 
-						$t_details = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
+					// 	$t_details = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
 
-						$data = array(
-							'returnno' => $returnNo,
-							'stockid' => $t_details['stockID'],
-							'transactionid' => $t_details['TransactionID'],
-							'prd_sku' => $t_details['Code'],
-							'quantity' => $qty,
-							'quantity_total' => $t_details['Amount'],
-							'remarks' => $remarks,
-							'userid' => $userID,
-							'date_added' => date('Y-m-d H:i:s'),
-							'status' => 'returned',
-							'Freebie' => $t_details['Freebie'],
-						);
-						$InsertReturnData = $this->Model_Inserts->InsertReturnData($data);
-					}
+					// 	$data = array(
+					// 		'returnno' => $returnNo,
+					// 		'stockid' => $t_details['stockID'],
+					// 		'transactionid' => $t_details['TransactionID'],
+					// 		'prd_sku' => $t_details['Code'],
+					// 		'quantity' => $qty,
+					// 		'quantity_total' => $t_details['Amount'],
+					// 		'remarks' => $remarks,
+					// 		'userid' => $userID,
+					// 		'date_added' => date('Y-m-d H:i:s'),
+					// 		'status' => 'returned',
+					// 		'Freebie' => $t_details['Freebie'],
+					// 	);
+					// 	$InsertReturnData = $this->Model_Inserts->InsertReturnData($data);
+					// }
 					$this->session->set_flashdata('highlight-id', $returnNo);
 
 					// LOGBOOK
@@ -1158,6 +1224,121 @@ class SalesOrders extends MY_Controller {
 						$this->session->set_flashdata('prompt_status',$prompt_txt);
 					} else {
 						$result = $this->Model_Deletes->Delete_ReturnProduct($returnProductID);
+					}
+				}
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url());
+		}
+	}
+
+// ############################ [ REPLACEMENTS ] ############################
+	public function replacements() // PAGE DISPLAY
+	{
+		if ($this->Model_Security->CheckUserRestriction('replacements_view')) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'Replacements';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/sales_orders/replacements', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
+
+	public function FORM_addNewReplacement()
+	{
+		if ($this->Model_Security->CheckUserRestriction('replacements_add')) {	
+			if (isset($_SESSION['UserID'])) {
+				$userID = $_SESSION['UserID'];
+
+				$replacementNo = 'RT' . strtoupper(uniqid());
+				$salesOrderNo = $this->input->post('salesOrderNo');
+
+				$productCount = $this->input->post('sopCount');
+
+				$soDetails = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo)->row_array();
+
+				// INSERT SALES ORDER
+				$data = array(
+					'ReplacementNo' => $replacementNo,
+					'DateCreation' => date('Y-m-d H:i:s'),
+					'SalesOrderNo' => $salesOrderNo,
+					'ClientNo' => $soDetails['BillToClientNo'],
+					'Status' => '1',
+				);
+				$insertNewReplacement = $this->Model_Inserts->InsertReplacement($data);
+				if ($insertNewReplacement == TRUE) {
+					$orderID = $this->db->insert_id();
+					// create new replacement items
+					for ($i = 0; $i < $productCount; $i++) {
+						$transactionID = trim($this->input->post('productTIDInput_' . $i));
+						$qty = trim($this->input->post('productQtyInput_' . $i));
+						$remarks = trim($this->input->post('productRemarksInput_' . $i));
+
+						$t_details = $this->Model_Selects->GetTransactionsByTID($transactionID)->row_array();
+
+						$data = array(
+							'replacementno' => $replacementNo,
+							'stockid' => $t_details['stockID'],
+							'transactionid' => $t_details['TransactionID'],
+							'prd_sku' => $t_details['Code'],
+							'quantity' => $qty,
+							'quantity_total' => $t_details['Amount'],
+							'remarks' => $remarks,
+							'userid' => $userID,
+							'date_added' => date('Y-m-d H:i:s'),
+							'status' => 'replacemented',
+							'Freebie' => $t_details['Freebie'],
+						);
+						$InsertReplacementData = $this->Model_Inserts->InsertReplacementData($data);
+					}
+					$this->session->set_flashdata('highlight-id', $replacementNo);
+
+					// LOGBOOK
+					$this->Model_Logbook->LogbookEntry('created a new sales order.', 'added replacement ' . $replacementNo . ' [ReplacementNo: ' . $replacementNo . '].', base_url('admin/replacements'));
+					redirect('admin/replacements');
+				}
+				else
+				{
+					redirect('admin/replacements');
+				}
+			}
+			else
+			{
+				redirect('admin/replacements');
+			}
+		} else {
+			redirect(base_url());
+		}
+	}
+
+	public function FORM_removeReplacement()
+	{
+		if ($this->Model_Security->CheckUserRestriction('replacement_delete')) {
+			$replacementProductID = $this->input->get('rid');
+			if ($replacementProductID != NULL) {
+				$rProduct = $this->Model_Selects->GetReplacementProductByID($replacementProductID);
+				if ($rProduct->num_rows() < 1) {
+					$prompt_txt =
+					'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Danger!</strong> Something went wrong.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				} else {
+					$rProductDetails = $rProduct->row_array();
+
+					if ($rProductDetails['remarks'] == 'RETURNED') {
+						$prompt_txt =
+						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Replacemented to inventory cannot be deleted.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+					} else {
+						$result = $this->Model_Deletes->Delete_ReplacementProduct($replacementProductID);
 					}
 				}
 			}

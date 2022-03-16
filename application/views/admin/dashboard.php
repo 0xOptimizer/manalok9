@@ -189,7 +189,9 @@ $getRecentLogins = $this->Model_Selects->GetRecentLogins();
 														$timePassed = $dateDiff . ' seconds';
 													}
 													?>
-													<div class="text-muted"><?=$timePassed?> ago</div>
+													<div class="text-muted">
+														<i class="bi bi-clock"></i> <?=$timePassed?> ago
+													</div>
 												</div>
 											</div>
 										<?php endforeach;
@@ -212,7 +214,13 @@ $getRecentLogins = $this->Model_Selects->GetRecentLogins();
 											<div class="row mt-2" style="border-bottom: 1px solid #3c3c3c; padding-bottom: 10px;">
 												<span style="font-size: 1.15em; color: #ebebeb;">
 													<b>
-														&lt;<?=$row['UserID']?>&gt;
+														<?php 
+														$userDetails = $this->Model_Selects->GetUserDetails($row['UserID']);
+														if ($userDetails->num_rows() > 0): $userDetails = $userDetails->row_array(); ?>
+															[ <?=$userDetails['LastName']?>, <?=$userDetails['FirstName']?> ]
+														<?php else: ?>
+															&lt; <?=$row['UserID']?> &gt;
+														<?php endif; ?>
 													</b>
 												</span>
 												<div class="col-sm-12">
@@ -242,7 +250,15 @@ $getRecentLogins = $this->Model_Selects->GetRecentLogins();
 														$timePassed = $dateDiff . ' seconds';
 													}
 													?>
-													<div class="text-muted">Online <?=$timePassed?> ago</div>
+													<?php if ($minutes < 5): ?>
+														<div class="text-success">
+															<i class="bi bi-circle-fill"></i> Online
+														</div>
+													<?php else: ?>
+														<div class="text-muted">
+															<i class="bi bi-clock"></i> <?=$timePassed?> ago
+														</div>
+													<?php endif; ?>
 												</div>
 											</div>
 										<?php endforeach;

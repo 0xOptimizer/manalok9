@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 11, 2022 at 05:17 PM
+-- Generation Time: Mar 16, 2022 at 01:38 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -32,6 +32,22 @@ CREATE TABLE `accounts` (
   `Name` varchar(255) DEFAULT NULL,
   `Type` varchar(255) DEFAULT NULL COMMENT '0=revenues;1=assets;2=liabilities;3=expenses;',
   `Description` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `adtl_fees`
+--
+
+CREATE TABLE `adtl_fees` (
+  `ID` int(11) NOT NULL,
+  `AdtlFeeNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Qty` int(11) DEFAULT NULL,
+  `UnitPrice` varchar(255) DEFAULT NULL,
+  `Date` varchar(50) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -242,7 +258,7 @@ CREATE TABLE `manual_transactions` (
   `ItemNo` varchar(255) DEFAULT NULL,
   `Description` varchar(255) DEFAULT NULL,
   `Qty` int(11) DEFAULT NULL,
-  `UnitCost` varchar(255) DEFAULT NULL,
+  `UnitPrice` varchar(255) DEFAULT NULL,
   `Date` varchar(50) DEFAULT NULL,
   `Status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -397,6 +413,23 @@ CREATE TABLE `purchase_orders` (
   `DateDelivery` varchar(255) DEFAULT NULL,
   `DateApproved` varchar(32) DEFAULT NULL,
   `Status` int(11) DEFAULT NULL COMMENT '0 = rejected; 1 = for approval; 2 = approved'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `replacements`
+--
+
+CREATE TABLE `replacements` (
+  `ID` int(11) NOT NULL,
+  `ReplacementNo` varchar(64) DEFAULT NULL,
+  `TransactionNo` varchar(64) DEFAULT NULL,
+  `Quantity` varchar(16) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `DateAdded` varchar(32) DEFAULT NULL,
+  `OrderNo` varchar(64) DEFAULT NULL,
+  `Status` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -612,6 +645,7 @@ CREATE TABLE `user_restrictions` (
   `sales_orders_invoice_creation` tinyint(1) DEFAULT 0,
   `sales_orders_accounting` tinyint(1) DEFAULT 0,
   `sales_orders_remarks` tinyint(1) DEFAULT 0,
+  `sales_orders_adtl_fees` tinyint(4) DEFAULT 0,
   `invoice_view` tinyint(1) DEFAULT 0,
   `invoice_add` tinyint(1) DEFAULT 0,
   `invoice_delete` tinyint(1) DEFAULT 0,
@@ -620,6 +654,10 @@ CREATE TABLE `user_restrictions` (
   `return_product_view` tinyint(1) DEFAULT 0,
   `return_product_add` tinyint(1) DEFAULT 0,
   `return_product_delete` tinyint(1) DEFAULT 0,
+  `replacements_view` tinyint(4) DEFAULT 0,
+  `replacements_add` tinyint(4) DEFAULT 0,
+  `replacements_edit` tinyint(4) DEFAULT 0,
+  `replacements_delete` tinyint(4) DEFAULT 0,
   `accounts_view` tinyint(1) DEFAULT 0,
   `accounts_add` tinyint(1) DEFAULT 0,
   `accounts_edit` tinyint(1) DEFAULT 0,
@@ -663,6 +701,12 @@ CREATE TABLE `vendors` (
 -- Indexes for table `accounts`
 --
 ALTER TABLE `accounts`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `adtl_fees`
+--
+ALTER TABLE `adtl_fees`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -786,6 +830,12 @@ ALTER TABLE `purchase_orders`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `replacements`
+--
+ALTER TABLE `replacements`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `returns`
 --
 ALTER TABLE `returns`
@@ -853,6 +903,12 @@ ALTER TABLE `vendors`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `adtl_fees`
+--
+ALTER TABLE `adtl_fees`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -973,6 +1029,12 @@ ALTER TABLE `product_stocks`
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `replacements`
+--
+ALTER TABLE `replacements`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --

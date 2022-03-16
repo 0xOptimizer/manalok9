@@ -13,6 +13,10 @@ $return = $getReturnByReturnNo->row_array();
 
 $getReturnProductsByReturnNo = $this->Model_Selects->GetReturnProductsByReturnNo($returnNo);
 
+
+$returnItemsQtyTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
+$returnItemsPriceTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
+
 ?>
 
 </head>
@@ -31,85 +35,221 @@ $getReturnProductsByReturnNo = $this->Model_Selects->GetReturnProductsByReturnNo
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-12">
-						<h3><i class="bi bi-reply-fill"></i> Return ID #<?=$return['ID']?> <span class="text-secondary">[ <?=$returnNo?> ]</span>
+						<h3>
+							<i class="bi bi-reply-fill"></i> <?=$return['ReturnNo']?>
 						</h3>
-						Sales Order [ <a href="<?=base_url() . 'admin/view_sales_order?orderNo='. $return["SalesOrderNo"]?>">
+						<i class="bi bi-receipt"></i> Sales Order [ <a href="<?=base_url() . 'admin/view_sales_order?orderNo='. $return["SalesOrderNo"]?>">
 							<i class="bi bi-eye"></i> <?=$return['SalesOrderNo']?>
 						</a> ]
 					</div>
 				</div>
 			</div>
-			<section class="section">
+			<section class="section mt-1">
 				<div class="row">
-					<div class="col-12 ">
-						<div class="row">
-							<div class="col-12 col-sm-6 col-md-8">
-								<?php if ($this->session->userdata('UserRestrictions')['return_product_add']): ?>
-									<button type="button" class="newreturn-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-reply"></i> RETURN ITEM</button>
-								<?php endif; ?>
+					<div class="col-12 col-sm-6 col-md-8">
+						<?php if ($this->session->userdata('UserRestrictions')['return_product_add']): ?>
+							<button type="button" class="newreturn-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-reply"></i> NEW RETURN ITEM</button>
+						<?php endif; ?>
+					</div>
+					<div class="col-12 col-sm-6 col-md-4" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
 							</div>
-							<div class="col-12 col-sm-6 col-md-4" style="margin-top: -15px;">
-								<div class="input-group">
-									<div class="input-group-prepend">
-										<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							<input type="text" id="tableReturnsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
+					<div class="col-sm-12 table-responsive">
+						<table id="salesOrderProductsTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">TRANSACTION ID</th>
+								<th class="text-center">STOCK ID</th>
+								<th class="text-center">DATE</th>
+								<th class="text-center">REMARKS</th>
+								<th class="text-center">QUANTITY</th>
+								<th class="text-center">TOTAL PRICE</th>
+								<th class="text-center">FREEBIE</th>
+								<th></th>
+							</thead>
+							<tbody>
+								<?php
+								if ($getReturnProductsByReturnNo->num_rows() > 0):
+									foreach ($getReturnProductsByReturnNo->result_array() as $row):
+										$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['transactionid'])->row_array();
+
+										$returnItemsQtyTotal[$row['remarks']] += $row['quantity'];
+										$returnItemsPriceTotal[$row['remarks']] += $row['quantity'] * $transactionDetails['PriceUnit']; ?>
+										<tr data-id="<?=$row['transactionid']?>">
+											<td class="text-center">
+												<?=$row['transactionid']?>
+											</td>
+											<td class="text-center">
+												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['stockid']?></span>
+											</td>
+											<td class="text-center">
+												<?=$row['date_added']?>
+											</td>
+											<td class="text-center remarks">
+												<?=$row['remarks']?>
+											</td>
+											<td class="text-center quantity_total">
+												<?=$row['quantity']?>
+											</td>
+											<td class="text-center">
+												<?=number_format($row['quantity'] * $transactionDetails['PriceUnit'], 2)?>
+											</td>
+											<td class="text-center">
+												<?php if ($row['Freebie'] == 1): ?>
+													<i class="bi bi-check-circle text-success"></i>
+												<?php else: ?>
+													<i class="bi bi-x-circle text-danger"></i>
+												<?php endif; ?>
+											</td>
+											<td class="text-center">
+												<?php if ($this->session->userdata('UserRestrictions')['return_product_delete']): ?>
+													<a href="FORM_removeReturnProduct?rid=<?=$row['id']?>">
+														<button type="button" class="btn removeReturn"><i class="bi bi-trash text-danger"></i></button>
+													</a>
+												<?php endif; ?>
+											</td>
+										</tr>
+								<?php endforeach;
+								else: ?>
+									<tr>
+										<td class="text-center text-muted" colspan="7">
+											RETURNED ITEMS LIST IS EMPTY
+										</td>
+									</tr>
+								<?php endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="row mt-4">
+					<div class="col-12 col-md-4 px-3">
+						<div class="row">
+							<div class="card">
+								<div class="text-center p-2">
+									<div class="row">
+										<span class="head-text fw-bold">
+											GOOD RETURNS TOTAL QTY
+										</span>
 									</div>
-									<input type="text" id="tableReturnsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+									<div class="row">
+										<div class="col-12">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												<b>
+													<?=$returnItemsQtyTotal['GOOD']?>
+												</b>
+											</span>
+										</div>
+									</div>
 								</div>
 							</div>
-							<div class="col-sm-12 table-responsive">
-								<table id="salesOrderProductsTable" class="standard-table table">
-									<thead style="font-size: 12px;">
-										<th class="text-center">#</th>
-										<th class="text-center">TRANSACTION ID</th>
-										<th class="text-center">STOCK ID</th>
-										<th class="text-center">DATE</th>
-										<th class="text-center">REMARKS</th>
-										<th class="text-center">QUANTITY</th>
-										<th class="text-center">FREEBIE</th>
-										<th></th>
-									</thead>
-									<tbody>
-										<?php
-										if ($getReturnProductsByReturnNo->num_rows() > 0):
-											foreach ($getReturnProductsByReturnNo->result_array() as $no => $row): ?>
-												<tr data-id="<?=$row['transactionid']?>">
-													<td class="text-center">
-														<span style="font-style: italic; font-size: 12px;"><?=$no+1?></span>
-													</td>
-													<td class="text-center">
-														<?=$row['transactionid']?>
-													</td>
-													<td class="text-center">
-														<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['stockid']?></span>
-													</td>
-													<td class="text-center">
-														<?=$row['date_added']?>
-													</td>
-													<td class="text-center remarks">
-														<?=$row['remarks']?>
-													</td>
-													<td class="text-center quantity_total">
-														<?=$row['quantity']?>
-													</td>
-													<td class="text-center">
-														<?php if ($row['Freebie'] == 1): ?>
-															<i class="bi bi-check-circle text-success"></i>
-														<?php else: ?>
-															<i class="bi bi-x-circle text-danger"></i>
-														<?php endif; ?>
-													</td>
-													<td class="text-center">
-														<?php if ($this->session->userdata('UserRestrictions')['return_product_delete']): ?>
-															<a href="FORM_removeReturnProduct?rid=<?=$row['id']?>">
-																<button type="button" class="btn removeReturn"><i class="bi bi-trash text-danger"></i></button>
-															</a>
-														<?php endif; ?>
-													</td>
-												</tr>
-										<?php endforeach;
-										endif; ?>
-									</tbody>
-								</table>
+						</div>
+						<div class="row">
+							<div class="card">
+								<div class="text-center p-2">
+									<div class="row">
+										<span class="head-text fw-bold">
+											GOOD RETURNS TOTAL PRICE
+										</span>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												<b>
+													<?=number_format($returnItemsPriceTotal['GOOD'], 2)?>
+												</b>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-4 px-3">
+						<div class="row">
+							<div class="card">
+								<div class="text-center p-2">
+									<div class="row">
+										<span class="head-text fw-bold">
+											DAMAGED RETURNS TOTAL QTY
+										</span>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												<b>
+													<?=$returnItemsQtyTotal['DAMAGED']?>
+												</b>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="card">
+								<div class="text-center p-2">
+									<div class="row">
+										<span class="head-text fw-bold">
+											DAMAGED RETURNS TOTAL PRICE
+										</span>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												<b>
+													<?=number_format($returnItemsPriceTotal['DAMAGED'], 2)?>
+												</b>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-md-4 px-3">
+						<div class="row">
+							<div class="card">
+								<div class="text-center p-2">
+									<div class="row">
+										<span class="head-text fw-bold">
+											RETURNED ITEMS TOTAL QTY
+										</span>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												<b>
+													<?=$returnItemsQtyTotal['RETURNED']?>
+												</b>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="card">
+								<div class="text-center p-2">
+									<div class="row">
+										<span class="head-text fw-bold">
+											RETURNED ITEMS TOTAL PRICE
+										</span>
+									</div>
+									<div class="row">
+										<div class="col-12">
+											<span style="font-size: 1.15em; color: #ebebeb;">
+												<b>
+													<?=number_format($returnItemsPriceTotal['RETURNED'], 2)?>
+												</b>
+											</span>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -165,14 +305,14 @@ $(document).ready(function() {
 	$('#tableReturnsSearch').on('keyup change', function() {
 		tableReturns.search($(this).val()).draw();
 	});
-	var tableSalesOrderProducts = $('#salesOrderProductsTable').DataTable( {
-		sDom: 'lrtip',
-		"bLengthChange": false,
-    	"order": [[ 0, "desc" ]],
-	});
-	$('#tableSalesOrderProductsSearch').on('keyup change', function() {
-		tableSalesOrderProducts.search($(this).val()).draw();
-	});
+	// var tableSalesOrderProducts = $('#salesOrderProductsTable').DataTable( {
+	// 	sDom: 'lrtip',
+	// 	"bLengthChange": false,
+ //    	"order": [[ 0, "desc" ]],
+	// });
+	// $('#tableSalesOrderProductsSearch').on('keyup change', function() {
+	// 	tableSalesOrderProducts.search($(this).val()).draw();
+	// });
 
 	$('.newreturn-btn').on('click', function() {
 		$('#AddReturnProduct').modal('toggle');

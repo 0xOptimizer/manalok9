@@ -102,6 +102,28 @@ class Model_Updates extends CI_Model {
 	// 	$result = $this->db->update('product_returned');
 	// 	return $result;
 	// }
+	public function remove_adtlfee($adtlFeeNo)
+	{
+		$this->db->where('AdtlFeeNo', $adtlFeeNo);
+		$data = array(
+			'Status' => '0'
+		);
+		$result = $this->db->update('adtl_fees', $data);
+		return $result;
+	}
+	// REPLACEMENTS
+	public function UpdateReplacement($data, $replacementID)
+	{
+		$this->db->where('ID', $replacementID);
+		$result = $this->db->update('replacements', $data);
+		return $result;
+	}
+	public function UpdateReplacementByNo($data, $replacementNo)
+	{
+		$this->db->where('ReplacementNo', $replacementNo);
+		$result = $this->db->update('replacements', $data);
+		return $result;
+	}
 	// ORDER / TRANSACTIONS
 	public function UpdateTransaction($data)
 	{

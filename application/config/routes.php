@@ -172,6 +172,8 @@ $route['admin/view_sales_order'] = 'SalesOrders/view_sales_order';
 $route['admin/view_sales_summary'] = 'SalesOrders/view_sales_orders_summary';
 
 $route['FORM_addSalesOrder'] = 'SalesOrders/FORM_addSalesOrder';
+$route['FORM_addNewSOAdtlFee'] = 'SalesOrders/FORM_addNewSOAdtlFee';
+$route['FORM_removeSOAdtlFee'] = 'SalesOrders/FORM_removeSOAdtlFee';
 $route['FORM_approveSalesOrder'] = 'SalesOrders/FORM_approveSalesOrder';
 $route['FORM_scheduleDelivery'] = 'SalesOrders/FORM_scheduleDelivery';
 $route['FORM_markDelivered'] = 'SalesOrders/FORM_markDelivered';
@@ -196,6 +198,13 @@ $route['FORM_addNewReturnProduct'] = 'SalesOrders/FORM_addNewReturnProduct';
 // $route['FORM_updateReturnProduct'] = 'SalesOrders/FORM_updateReturnProduct';
 // $route['FORM_updateReturnProductToInventory'] = 'SalesOrders/FORM_updateReturnProductToInventory';
 $route['admin/FORM_removeReturnProduct'] = 'SalesOrders/FORM_removeReturnProduct';
+
+// REPLACEMENTS
+$route['admin/replacements'] = 'SalesOrders/replacements';
+
+$route['FORM_addNewReplacement'] = 'SalesOrders/FORM_addNewReplacement';
+$route['FORM_updateReplacement'] = 'SalesOrders/FORM_updateReplacement';
+$route['FORM_removeReplacement'] = 'SalesOrders/FORM_removeReplacement';
 
 // ACCOUNTS
 $route['admin/accounts'] = 'Accounting/accounts';

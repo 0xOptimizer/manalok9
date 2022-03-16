@@ -585,6 +585,7 @@ $config['user_restrictions'] = array(
 		'sales_orders_invoice_creation',
 		'sales_orders_accounting',
 		'sales_orders_remarks',
+		'sales_orders_adtl_fees',
 
 		'invoice_view',
 		'invoice_add',
@@ -598,6 +599,11 @@ $config['user_restrictions'] = array(
 		// 'return_product_edit',
 		// 'return_product_return_to_inventory',
 		'return_product_delete',
+
+		'replacements_view',
+		'replacements_add',
+		'replacements_edit',
+		'replacements_delete',
 
 		'accounts_view',
 		'accounts_add',

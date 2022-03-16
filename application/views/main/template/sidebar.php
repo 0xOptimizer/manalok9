@@ -136,6 +136,15 @@
 					</li>
 				<?php endif; ?>
 
+				<?php if ($this->session->userdata('UserRestrictions')['replacements_view']): ?>
+					<li class="sidebar-item sidebar-admin-replacements">
+						<a href="<?=base_url().'admin/replacements'?>" class='sidebar-link'>
+							<i class="bi bi-arrow-left-right"></i>
+							<span>Replacements</span>
+						</a>
+					</li>
+				<?php endif; ?>
+
 				<?php if ($this->session->userdata('UserRestrictions')['accounts_view'] || $this->session->userdata('UserRestrictions')['journal_transactions_view']): ?>
 					<li class="sidebar-title">ACCOUNTING</li>
 				<?php endif; ?>

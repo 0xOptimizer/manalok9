@@ -606,7 +606,7 @@ class PurchaseOrders extends MY_Controller {
 					$mTransactionID = $this->db->insert_id();
 
 					// LOGBOOK
-					$this->Model_Logbook->LogbookEntry('adde a new manual purchase transaction.', 'adde a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
+					$this->Model_Logbook->LogbookEntry('added a new manual purchase transaction.', 'added a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
 					redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 				}
 				else

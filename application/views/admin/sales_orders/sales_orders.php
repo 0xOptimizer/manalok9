@@ -362,7 +362,7 @@ $(document).ready(function() {
 		$.each($('.productTotalPrice'), function(i, val) {
 			let productTotal = parseFloat($(this).data('product-total'));
 			
-			totalProductDiscountDeductions = parseFloat($(this).data('product-discount-deduction'));
+			totalProductDiscountDeductions += parseFloat($(this).data('product-discount-deduction'));
 
 			if ($(this).parents('.orderProduct').data('freebie')) {
 				totalFreebies += productTotal;
@@ -593,10 +593,14 @@ $(document).ready(function() {
 		$(this).parents('.productDiscount').data('product-discount', $(this).val());
 		$(this).parents('.orderProduct').find('.inpQty').change();
 
-		if ($(this).val() > 0) { console.log('discounted');
+		if ($(this).val() > 0) {
 			$(this).parents('.orderProduct').data('discounted', true);
 		} else {
 			$(this).parents('.orderProduct').data('discounted', false);
+		}
+
+		if ($(this).parents('.orderProduct').find('.productTotalPrice').data('product-total') < 0) {
+			showAlert('danger', 'Total Price for product is below zero!')
 		}
 
 		updProductCount();
@@ -621,6 +625,10 @@ $(document).ready(function() {
 			productTotal -= discountTotal;
 
 			td.siblings('.productTotalPrice').data('product-total', productTotal).data('product-discount-deduction', discountTotal).children('span').html(productTotal.toFixed(2));
+			
+			if (productTotal < 0) {
+				showAlert('danger', 'Total Price for product is below zero!')
+			}
 		} else {
 			td.siblings('.productTotalPrice').data('product-total', 0).data('product-discount-deduction', 0).children('span').html('0.00');
 		}

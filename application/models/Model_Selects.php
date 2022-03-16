@@ -515,6 +515,29 @@ class Model_Selects extends CI_Model {
 	// 	return $result;
 	// }
 
+	// REPLACEMENTS
+	public function GetReplacements()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementByNo($no)
+	{
+		$this->db->select('*');
+		$this->db->where('ReplacementNo', $no);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+
 	// ACCOUNTING
 	public function GetAccounts()
 	{

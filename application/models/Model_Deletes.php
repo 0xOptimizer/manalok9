@@ -101,6 +101,12 @@ class Model_Deletes extends CI_Model {
 		$result = $this->db->delete('vendors');
 		return $result;
 	}
+	public function Delete_replacement($ID)
+	{
+		$this->db->where('ID', $ID);
+		$result = $this->db->delete('replacements');
+		return $result;
+	}
 	public function Delete_cartRestock_item($id)
 	{
 		$this->db->where('id', $id);
