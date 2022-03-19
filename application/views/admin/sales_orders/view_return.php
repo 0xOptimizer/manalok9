@@ -74,6 +74,7 @@ $returnItemsPriceTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
 							<tbody>
 								<?php
 								if ($getReturnProductsByReturnNo->num_rows() > 0):
+									$totalReturnPrice = 0;
 									foreach ($getReturnProductsByReturnNo->result_array() as $row):
 										$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['transactionid'])->row_array();
 
@@ -95,8 +96,12 @@ $returnItemsPriceTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
 											<td class="text-center quantity_total">
 												<?=$row['quantity']?>
 											</td>
+											<?php
+											$totalPrice = $row['quantity'] * $transactionDetails['PriceUnit'];
+											$totalReturnPrice += $totalPrice;
+											?>
 											<td class="text-center">
-												<?=number_format($row['quantity'] * $transactionDetails['PriceUnit'], 2)?>
+												<?=number_format($totalPrice, 2)?>
 											</td>
 											<td class="text-center">
 												<?php if ($row['Freebie'] == 1): ?>
@@ -113,8 +118,15 @@ $returnItemsPriceTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
 												<?php endif; ?>
 											</td>
 										</tr>
-								<?php endforeach;
-								else: ?>
+								<?php endforeach; ?>
+									<tr style="border-color: #a7852d;">
+										<td class="font-weight-bold text-end fw-bold" colspan="5">TOTAL</td>
+										<td class="font-weight-bold text-center">
+											<?=number_format($totalReturnPrice, 2);?>
+										</td>
+										<td colspan="2"></td>
+									</tr>
+								<?php else: ?>
 									<tr>
 										<td class="text-center text-muted" colspan="7">
 											RETURNED ITEMS LIST IS EMPTY
@@ -282,7 +294,7 @@ $(document).ready(function() {
 		}
 		$('body').append($('<div>')
 			.attr({
-				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				class: 'alert position-fixed bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
 				role: 'alert',
 				'data-bs-dismiss': 'alert'
 			}).css({ 'z-index': 9999, cursor: 'pointer' })

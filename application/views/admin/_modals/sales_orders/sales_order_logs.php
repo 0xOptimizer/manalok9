@@ -21,7 +21,13 @@
 								<?php if ($salesOrder['MarkDateInvoicing'] != NULL): ?>
 									<tr>
 										<td class="text-center"><?=$salesOrder['MarkDateInvoicing']?></td>
-										<td class="text-center">MARKED FOR INVOICING</td>
+										<td class="text-center">
+											<?php if ($salesOrder['Status'] == 1): ?>
+												MARKED FOR INVOICING
+											<?php else: ?>
+												REJECTED
+											<?php endif; ?>
+										</td>
 									</tr>
 								<?php endif; ?>
 								<?php if ($salesOrder['MarkDateDelivery'] != NULL): ?>

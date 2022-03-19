@@ -54,13 +54,14 @@ if ($this->session->flashdata('highlight-id')) {
 					<table id="manualTransactionsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
 							<th class="text-center">ID</th>
-							<th class="text-center">PO #</th>
+							<th class="text-center">MANUAL TRANSACTION NO</th>
 							<th class="text-center">ITEM NO</th>
 							<th class="text-center">DESCRIPTION</th>
-							<th class="text-center">AMOUNT</th>
+							<th class="text-center">QTY</th>
 							<th class="text-center">PRICE</th>
 							<th class="text-center">TOTAL</th>
 							<th class="text-center">DATE</th>
+							<th class="text-center">ORDER NO</th>
 						</thead>
 						<tbody>
 							<?php if ($getManualTransactions->num_rows() > 0):
@@ -70,9 +71,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
 										</td>
 										<td class="text-center">
-											<span class="text-primary">
-												<i class="bi bi-eye"></i> <?=$row['OrderNo']?>
-											</span>
+											<?=$row['ManualTransactionNo']?>
 										</td>
 										<td class="text-center">
 											<?=$row['ItemNo']?>
@@ -91,6 +90,11 @@ if ($this->session->flashdata('highlight-id')) {
 										</td>
 										<td class="text-center">
 											<?=$row['Date']?>
+										</td>
+										<td class="text-center">
+											<span class="text-primary">
+												<i class="bi bi-eye"></i> <?=$row['OrderNo']?>
+											</span>
 										</td>
 									</tr>
 							<?php endforeach;

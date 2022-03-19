@@ -59,13 +59,19 @@ if ($this->session->flashdata('highlight-id')) {
 							<th class="text-center">REPLACEMENT NO</th>
 							<th class="text-center">TRANSACTION NO</th>
 							<th class="text-center">QTY</th>
-							<th class="text-center">DESCRIPTION</th>
+							<th class="text-center">UNIT DISCOUNT</th>
+							<th class="text-center">PRICE</th>
+							<th class="text-center">TOTAL</th>
+							<th class="text-center">FREEBIE</th>
 							<th class="text-center">DATE ADDED</th>
 							<th class="text-center">ORDER NO</th>
+							<th class="text-center">STATUS</th>
 						</thead>
 						<tbody>
 							<?php if ($getReplacements->num_rows() > 0):
-								foreach ($getReplacements->result_array() as $row): ?>
+								foreach ($getReplacements->result_array() as $row):
+									$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['TransactionID'])->row_array();
+									?>
 									<tr>
 										<td class="text-center">
 											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
@@ -74,16 +80,29 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$row['ReplacementNo']?>
 										</td>
 										<td class="text-center">
-											<?=$row['TransactionNo']?>
+											<?=$row['TransactionID']?>
 										</td>
 										<td class="text-center">
-											<?=$row['Quantity']?>
+											<?=$transactionDetails['Amount']?>
 										</td>
 										<td class="text-center">
-											<?php if ($row['Description'] != NULL): ?>
-												<?=$row['Description']?>
+											<?=$transactionDetails['UnitDiscount']?>%
+										</td>
+										<?php
+										$unitPrice = $transactionDetails['PriceUnit'] - ($transactionDetails['PriceUnit'] * ($transactionDetails['UnitDiscount']) / 100);
+										$totalPrice = ($transactionDetails['Amount']) * $unitPrice;
+										?>
+										<td class="text-center">
+											<?=number_format($unitPrice, 2)?>
+										</td>
+										<td class="text-center">
+											<?=number_format($totalPrice, 2)?>
+										</td>
+										<td class="text-center">
+											<?php if ($transactionDetails['Freebie']): ?>
+												<i class="bi bi-check-circle text-success"></i>
 											<?php else: ?>
-												---
+												<i class="bi bi-x-circle text-danger"></i>
 											<?php endif; ?>
 										</td>
 										<td class="text-center">
@@ -96,6 +115,13 @@ if ($this->session->flashdata('highlight-id')) {
 												</a>
 											<?php else: ?>
 												N/A
+											<?php endif; ?>
+										</td>
+										<td class="text-center">
+											<?php if ($row['Status'] == 1): ?>
+												<i class="bi bi-check text-success">APPROVED</i>
+											<?php else: ?>
+												<i class="bi bi-x text-danger">REJECTED</i>
 											<?php endif; ?>
 										</td>
 									</tr>

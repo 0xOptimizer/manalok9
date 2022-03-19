@@ -36,6 +36,9 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 		padding-left: 20px;
 		color: #FFFFFF;
 	}
+	.sectionToggle:hover {
+		background-color: rgba(75, 75, 75, 0.3);
+	}
 	@media print {
 		.printExclude {
 			display: none;
@@ -73,7 +76,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12">
-						<h3><i class="bi bi-receipt"></i> Purchase Order ID #<?=$purchaseOrder['ID']?>
+						<h3><i class="bi bi-receipt"></i> <?=$purchaseOrder['OrderNo']?>
 							<?php if ($purchaseOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
 							<?php elseif ($purchaseOrder['Status'] == '2'): ?>
@@ -93,8 +96,62 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 				</div>
 			</div>
 			<section class="section">
+				<hr style="height: 4px;">
+
 				<div class="row">
-					<div class="col-12 col-sm-7 col-md-9">
+					<div class="col-12 col-md-6 mb-1">
+						<h6>PURCHASE ORDER #</h6>
+						<label class="purchaseOrderNo"><?=$purchaseOrder['OrderNo']?></label>
+					</div>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>DATE CREATION</h6>
+						<label><?=$purchaseOrder['DateCreation']?></label>
+					</div>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>PURCHASED FROM
+							<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
+								<button type="button" class="emailvendor-btn btn btn-sm-primary" data-email="<?=$vendorDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
+							<?php endif; ?>
+						</h6>
+						<label><?=$vendorDetails['Name']?> (
+							<a href="<?=base_url() . 'admin/vendors#'. $purchaseOrder["VendorNo"]?>">
+								<i class="bi bi-eye"></i> <?=$purchaseOrder['VendorNo']?>
+							</a>
+						)</label>
+					</div>
+					<div class="col-12 col-md-6 mb-1">
+						<h6>REMARKS 
+							<button type="button" class="btn btn-sm addremarks-btn text-primary" data-remarks="<?=$purchaseOrder['Remarks']?>">
+								<i class="bi bi-pencil-square"></i>
+							</button>
+						</h6>
+						<label>
+							<?=(($purchaseOrder['Remarks'] == NULL) ? '- - - - - -' : $purchaseOrder['Remarks'])?>
+						</label>
+					</div>
+				</div>
+
+				<hr style="height: 4px;">
+
+				<?php
+
+				$transactionsCostTotal = 0;
+				$transactionsManualCostTotal = 0;
+
+				?>
+
+				<div class="row">
+					<div class="col-12">
+						<div class="row">
+							<div class="col-12">
+								<h4>
+									<i class="bi bi-list-ul"></i> TRANSACTIONS
+									<span class="text-center success-banner-sm">
+										<i class="bi bi-list-ul"></i> <?=$getTransactionsByOrderNo->num_rows()?> TOTAL
+									</span>
+								</h4>
+							</div>
+						</div>
 						<div class="row">
 							<div class="col-sm-12 table-responsive">
 								<table id="transactionsTable" class="standard-table table">
@@ -112,7 +169,11 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 											foreach ($getTransactionsByOrderNo->result_array() as $tRow): 
 												$stock = $this->Model_Selects->Check_prd_stockid($tRow['stockID']);
 												if ($stock->num_rows() > 0):
-													$sRow = $stock->row_array(); ?>
+													$sRow = $stock->row_array();
+
+													$totalCost = $tRow['Amount'] * $tRow['PriceUnit'];
+													$transactionsCostTotal += $totalCost;
+													?>
 													<tr>
 														<td class="text-center">
 															<?=$tRow['TransactionID']?>
@@ -130,7 +191,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 															<?=number_format($sRow['Retail_Price'], 2)?>
 														</td>
 														<td class="text-center">
-															<?=number_format($tRow['Amount'] * $tRow['PriceUnit'], 2)?>
+															<?=number_format($totalCost, 2)?>
 														</td>
 													</tr>
 											<?php endif;
@@ -140,60 +201,107 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 								</table>
 							</div>
 						</div>
-						<div class="row mt-4">
-							<div class="col-sm-12">
-								<div class="card">
-									<div class="card-body">
-										<div class="row">
-											<span style="font-size: 1.5em; color: #ebebeb;">
-												<b><i class="bi bi-pencil"></i> MANUAL TRANSACTIONS </b>
-											</span>
-											<?php if ($purchaseOrder['Status'] < 2): ?>
-												<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add_manual_transaction']): ?>
-													<div class="col-12">
-														<button type="button" class="newmanualtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW MANUAL TRANSACTION</button>
-													</div>
-												<?php endif; ?>
-											<?php endif; ?>
-										</div>
-										<div class="row">
-											<div class="col-sm-12 table-responsive">
-												<table id="transactionsTable" class="standard-table table">
-													<thead style="font-size: 12px;">
-														<th class="text-center">ID</th>
-														<th class="text-center">ITEM NO</th>
-														<th class="text-center">DESCRIPTION</th>
-														<th class="text-center">AMOUNT</th>
-														<th class="text-center">PRICE</th>
-														<th class="text-center">TOTAL</th>
-													</thead>
-													<tbody>
-														<?php if ($getManualTransactionsByPONo->num_rows() > 0): ?>
-															<?php foreach ($getManualTransactionsByPONo->result_array() as $row): ?>
-																<tr>
-																	<td class="text-center">
-																		<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-																	</td>
-																	<td class="text-center">
-																		<?=$row['ItemNo']?>
-																	</td>
-																	<td class="text-center">
-																		<?=$row['Description']?>
-																	</td>
-																	<td class="text-center">
-																		<?=$row['Qty']?>
-																	</td>
-																	<td class="text-center">
-																		<?=number_format($row['UnitCost'], 2)?>
-																	</td>
-																	<td class="text-center">
-																		<?=number_format($row['Qty'] * $row['UnitCost'], 2)?>
-																	</td>
-																</tr>
-															<?php endforeach; ?>
+						<div class="row">
+							<div class="col-12">
+								<h6>
+									<i class="bi bi-pencil"></i> MANUAL TRANSACTIONS
+									<span class="text-center success-banner-sm">
+										<i class="bi bi-pencil"></i> <?=$getManualTransactionsByPONo->num_rows()?> TOTAL
+									</span>
+								</h6>
+								<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_add_manual_transaction']): ?>
+									<button type="button" class="newmanualtransaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW MANUAL TRANSACTION</button>
+								<?php endif; ?>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 table-responsive mb-3">
+								<table id="transactionsTable" class="standard-table table">
+									<thead style="font-size: 12px;">
+										<th class="text-center">ITEM NO</th>
+										<th class="text-center">DESCRIPTION</th>
+										<th class="text-center">AMOUNT</th>
+										<th class="text-center">COST</th>
+										<th class="text-center">TOTAL</th>
+										<th></th>
+									</thead>
+									<tbody>
+										<?php if ($getManualTransactionsByPONo->num_rows() > 0): ?>
+											<?php foreach ($getManualTransactionsByPONo->result_array() as $row): 
+
+												$totalCost = $row['Qty'] * $row['UnitCost'];
+												$transactionsManualCostTotal += $totalCost;
+												?>
+												<tr>
+													<td class="text-center">
+														<?=$row['ItemNo']?>
+													</td>
+													<td class="text-center">
+														<?=$row['Description']?>
+													</td>
+													<td class="text-center">
+														<?=$row['Qty']?>
+													</td>
+													<td class="text-center">
+														<?=number_format($row['UnitCost'], 2)?>
+													</td>
+													<td class="text-center">
+														<?=number_format($totalCost, 2)?>
+													</td>
+													<td class="text-center">
+														<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_remove_manual_transaction']): ?>
+															<a href="FORM_removeManualTransaction?mtno=<?=$row['ManualTransactionNo']?>">
+																<button type="button" class="btn removeManualTransaction"><i class="bi bi-trash text-danger"></i></button>
+															</a>
 														<?php endif; ?>
-													</tbody>
-												</table>
+													</td>
+												</tr>
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-12 col-md-6">
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold">
+														<i class="bi bi-plus-circle text-success"></i> TOTAL MANUAL TRANSACTIONS
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.15em; color: #ebebeb;">
+														<b>
+															<?=number_format($transactionsManualCostTotal, 2)?>
+														</b>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 col-md-6">
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Transactions) + (Total Manual Transactions)">
+														TOTAL PRICE
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.5em; color: #ebebeb;">
+														<b>
+															<?=number_format($transactionsCostTotal + $transactionsManualCostTotal, 2)?>
+														</b>
+													</span>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -201,71 +309,13 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 							</div>
 						</div>
 					</div>
-					<div class="col-12 col-sm-5 col-md-3">
-						<div class="row">
-							<div class="col-12">
-								<h6>PURCHASE ORDER #</h6>
-								<label class="purchaseOrderNo"><?=$purchaseOrder['OrderNo']?></label>
-							</div>
-							<div class="col-12">
-								<h6>DATE CREATION</h6>
-								<label><?=$purchaseOrder['DateCreation']?></label>
-							</div>
-							<div class="col-12 mb-3">
-								<h6>PURCHASED FROM
-									<?php if ($this->session->userdata('UserRestrictions')['mail_add']): ?>
-										<button type="button" class="emailvendor-btn btn btn-sm-primary" data-email="<?=$vendorDetails['Email']?>"><i class="bi bi-envelope-fill"></i> EMAIL</button>
-									<?php endif; ?>
-								</h6>
-								<label><?=$vendorDetails['Name']?> (
-									<a href="<?=base_url() . 'admin/vendors#'. $purchaseOrder["VendorNo"]?>">
-										<i class="bi bi-eye"></i> <?=$purchaseOrder['VendorNo']?>
-									</a>
-								)</label>
-							</div>
-							<div class="col-12 mb-2">
-								<div class="card">
-									<div class="text-center p-2">
-										<div class="row">
-											<span class="head-text">
-												TOTAL ITEMS
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.5em; color: #ebebeb;">
-												<b>
-													<?=$getTransactionsByOrderNo->num_rows()?>
-												</b>
-											</span>
-										</div>
-										<div class="row">
-											<span class="head-text">
-												TOTAL PRICE
-											</span>
-										</div>
-										<div class="row">
-											<span style="font-size: 1.5em; color: #ebebeb;">
-												<b>
-													<?php
-													$transactionsPriceTotal = 0;
-													if ($getTransactionsByOrderNo->num_rows() > 0) {
-														foreach ($getTransactionsByOrderNo->result_array() as $transaction) {
-															$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
-														}
-													}
-													if ($getTransactionsByOrderNo->num_rows() > 0) {
-														foreach ($getManualTransactionsByPONo->result_array() as $mtransaction) {
-															$transactionsPriceTotal += $mtransaction['Qty'] * $mtransaction['UnitCost'];
-														}
-													}
-													echo number_format($transactionsPriceTotal, 2);
-													?>
-												</b>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
+				</div>
+
+				<hr>
+
+				<div class="row">
+					<div class="col-12">
+						<div class="row pt-4">
 							<?php if ($purchaseOrder['Status'] == '1' && $this->session->userdata('UserRestrictions')['purchase_orders_approve']): ?>
 								<div class="col-12 text-center">
 									<form id="approvePurchaseOrder" action="<?php echo base_url() . 'FORM_approvePurchaseOrder';?>" method="POST" enctype="multipart/form-data">
@@ -281,32 +331,38 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 				</div>
 			</section>
 		</div>
+
+		<hr style="height: 4px;">
+
 		<div class="page-heading">
 			<div class="page-title">
-				<div class="row">
+				<div class="row pt-3 toggleSectionBilling sectionToggle" style="cursor: pointer;">
 					<div class="col-12">
-						<h3>
-							<i class="bi bi-cash"></i> Bills
-						</h3>
+						<h4>
+							<i class="bi bi-cash"></i> BILLS
+							<span class="text-center success-banner-sm">
+								<i class="bi bi-cash"></i> <?=$getPOBills->num_rows()?> TOTAL
+							</span>
+							<i class="bi bi-caret-down-fill float-end caret"></i>
+						</h4>
 					</div>
 				</div>
 				<?php if ($this->session->userdata('UserRestrictions')['purchase_orders_bill_creation']): ?>
-				<div class="row">
-					<div class="col-12">
-						<button type="button" class="purchasebilling-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
+					<div class="row pt-3">
+						<div class="col-12">
+							<button type="button" class="purchasebilling-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-cash"></i> NEW BILL</button>
+						</div>
 					</div>
-				</div>
 				<?php endif; ?>
 			</div>
-			<section>
+			<section class="sectionBilling d-none">
 				<div class="row">
 					<div class="col-sm-12 table-responsive">
 						<table id="billsTable" class="standard-table table">
 							<thead style="font-size: 12px;">
-								<th class="text-center">ID</th>
 								<th class="text-center">BILL #</th>
 								<th class="text-center">VENDOR</th>
-								<th class="text-center">AMOUNT</th>
+								<th class="text-center">QTY</th>
 								<th class="text-center">DATE</th>
 								<th class="text-center">MODE OF PAYMENT</th>
 								<th class="text-center"></th>
@@ -315,9 +371,6 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 							<?php if ($getPOBills->num_rows() > 0):
 								foreach ($getPOBills->result_array() as $row): ?>
 									<tr>
-										<td class="text-center">
-											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-										</td>
 										<td class="text-center">
 											<?=$row['BillNo']?>
 										</td>
@@ -353,7 +406,8 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 								</tr>
 								<tr style="border-color: #a7852d;">
 									<td class="font-weight-bold text-center" colspan="3">REMAINING PAYMENT</td>
-									<td class="font-weight-bold text-center"><?=number_format($transactionsPriceTotal - $total_bill_amount, 2)?></td>
+									<td class="font-weight-bold text-center"><?=number_format(
+										($transactionsCostTotal + $transactionsManualCostTotal) - $total_bill_amount, 2)?></td>
 									<td colspan="3"></td>
 								</tr>
 							</tbody>
@@ -378,6 +432,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 <?php $this->load->view('admin/_modals/purchase_orders/add_manual_transaction', array('purchaseOrderNo' => $purchaseOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/mails/add_mail.php'); ?>
 <?php $this->load->view('admin/_modals/purchase_orders/add_bill_po', array('purchaseOrder' => $purchaseOrder)); ?>
+<?php $this->load->view('admin/_modals/purchase_orders/purchase_order_remarks', array('purchaseOrder' => $purchaseOrder)); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -391,13 +446,18 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 <script>
 $('.sidebar-admin-purchase-orders').addClass('active');
 $(document).ready(function() {
+	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+	  return new bootstrap.Tooltip(tooltipTriggerEl)
+	});
+
 	function showAlert(type, message) {
 		if ($('.alertNotification').length > 0) {
 			$('.alertNotification').remove();
 		}
 		$('body').append($('<div>')
 			.attr({
-				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				class: 'alert position-fixed bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
 				role: 'alert',
 				'data-bs-dismiss': 'alert'
 			}).css({ 'z-index': 9999, cursor: 'pointer' })
@@ -416,8 +476,9 @@ $(document).ready(function() {
 	$('.purchasebilling-btn').on('click', function() {
 		$('#PurchaseBilling').modal('toggle');
 	});
-	$('.newmanualtransaction-btn').on('click', function() {
-		$('#PurchaseManualTransaction').modal('toggle');
+	$('.addremarks-btn').on('click', function() {
+		$('#PORemarks').modal('toggle');
+		$('#purchase_order_remarks').val($(this).data('remarks'));
 	});
 
 	$(document).on('click', '.removeot-btn', function() {
@@ -447,6 +508,16 @@ $(document).ready(function() {
 
 	$(document).on('click', '.removeBill', function() {
 		if (!confirm('Remove Bill?')) {
+			event.preventDefault();
+		}
+	});
+
+	// MANUAL TRANSACTIONS
+	$('.newmanualtransaction-btn').on('click', function() {
+		$('#PurchaseManualTransaction').modal('toggle');
+	});
+	$(document).on('click', '.removeManualTransaction', function() {
+		if (!confirm('Remove Manual Transaction?')) {
 			event.preventDefault();
 		}
 	});
@@ -731,6 +802,16 @@ $(document).ready(function() {
 	});
 	$('#submit_formsend').on('click', function() {
 		$('#form_emailsend').submit();
+	});
+
+	// SECTION VIEWS
+	$(document).on('click', '.toggleSectionBilling', function() {
+		$('.sectionBilling').toggleClass('d-none');
+		$(this).find('.caret').toggleClass('bi-caret-down-fill').toggleClass('bi-caret-up-fill');
+
+		if ($(this).find('.caret').hasClass('bi-caret-up-fill')) {
+			$(document).scrollTop($(document).scrollTop() + $('.sectionBilling').height());
+		}
 	});
 });
 </script>

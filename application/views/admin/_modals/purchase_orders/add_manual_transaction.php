@@ -1,7 +1,7 @@
 <?php if (!$this->session->userdata('UserRestrictions')['purchase_orders_add_manual_transaction']) return; ?>
 <div class="modal fade" id="PurchaseManualTransaction" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
-		<form id="formAddPOManualTransaction" action="<?php echo base_url() . 'FORM_addPOManualTransaction';?>" method="POST">
+		<form id="formAddPOManualTransaction" action="<?php echo base_url() . 'FORM_addNewManualTransaction';?>" method="POST">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> PO Manual Transaction</h4>

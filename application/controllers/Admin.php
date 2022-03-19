@@ -218,6 +218,18 @@ class Admin extends MY_Controller {
 			redirect(base_url());
 		}
 	}
+	public function user_activities()
+	{
+		if ($this->Model_Security->CheckUserRestriction('users_activities_view')) {
+			$data = [];
+			$data = array_merge($data, $this->globalData);
+			$header['pageTitle'] = 'User Activities';
+			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
+			$this->load->view('admin/user_activities', $data);
+		} else {
+			redirect(base_url());
+		}
+	}
 
 // ############################ [ BRANDING ] ############################
 	public function view_settings_bcat()
@@ -340,7 +352,7 @@ class Admin extends MY_Controller {
 					{
 				        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
 						$prompt_txt =
-						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> '. $this->image_lib->display_errors() . $tconfig['source_image'] .'
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -386,7 +398,7 @@ class Admin extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -468,7 +480,7 @@ class Admin extends MY_Controller {
 					{
 				        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
 						$prompt_txt =
-						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> '. $this->image_lib->display_errors() . $tconfig['source_image'] .'
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -538,7 +550,7 @@ class Admin extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -611,7 +623,7 @@ class Admin extends MY_Controller {
 					{
 				        // $this->Model_Logbook->SetPrompts('error', 'error', $this->image_lib->display_errors() . $tconfig['source_image']);
 						$prompt_txt =
-						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> '. $this->image_lib->display_errors() . $tconfig['source_image'] .'
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -668,7 +680,7 @@ class Admin extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -732,7 +744,7 @@ class Admin extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -781,7 +793,7 @@ class Admin extends MY_Controller {
 			if ($prd_brand1 == null || $prd_line == null || $prd_type == null || $prd_variant == null || $prd_size == null || $prd_brand2 == null || $prd_char == null || $prd_chartype == null || $product_code == null || $unit_cost == null || $unit_price == null || $product_name == null || $product_description == null) {
 				
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Complete all required data.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -794,7 +806,7 @@ class Admin extends MY_Controller {
 			if ($CheckUID->num_rows() > 0) {
 
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Product exist! Please check UID code.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -808,7 +820,7 @@ class Admin extends MY_Controller {
 			if ($CheckProduct_byCode->num_rows() > 0) {
 				// CANCEL INSERT PROMPT PRODUCT EXIST
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Product exist! Please check SKU code.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -861,7 +873,7 @@ class Admin extends MY_Controller {
 					$this->Model_Logbook->LogbookEntry('created a new product.', 'added a new product' . ($product_description ? ' ' . $product_description : '') . ' [Code: ' . $product_code . '].', base_url('admin/products'));
 
 					$prompt_txt =
-					'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Success!</strong> New product added.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -874,7 +886,7 @@ class Admin extends MY_Controller {
 					// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 
 					$prompt_txt =
-					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Error!</strong> Please! Try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1389,7 +1401,7 @@ class Admin extends MY_Controller {
 				if ($MoveProd_toarchive == true) {
 					// SUCCESS
 					$prompt_txt =
-					'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Success!</strong> Product moved to archive.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1401,7 +1413,7 @@ class Admin extends MY_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Error!</strong> Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1413,7 +1425,7 @@ class Admin extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Error!</strong> Product doesn\'t exist.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1452,7 +1464,7 @@ class Admin extends MY_Controller {
 			if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
 
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Complete all required data.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1470,7 +1482,7 @@ class Admin extends MY_Controller {
 				if ($CheckBrand_Char->num_rows() > 0) {
 
 					$prompt_txt =
-					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Brand exist please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1521,7 +1533,7 @@ class Admin extends MY_Controller {
 						}
 						
 						$prompt_txt =
-						'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Success!</strong> New brand added.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1533,7 +1545,7 @@ class Admin extends MY_Controller {
 					{
 
 						$prompt_txt =
-						'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Error!</strong> Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1565,7 +1577,7 @@ class Admin extends MY_Controller {
 			if ($brand_name == null || $brand_char == null || $brand_type == null || $brand_name_abbr == null || $brand_type_abbr == null || $prod_line == null || $prod_line_abbr == null || $prod_type == null || $prod_type_abbr == null) {
 
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Complete all required data.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1596,7 +1608,7 @@ class Admin extends MY_Controller {
 						if ($Update_BrandProperty == true) {
 
 							$prompt_txt =
-							'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+							'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Success!</strong> Brand updated.
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 							</div>';
@@ -1608,7 +1620,7 @@ class Admin extends MY_Controller {
 						{
 
 							$prompt_txt =
-							'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+							'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Warning!</strong> Property not updated.
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 							</div>';
@@ -1622,7 +1634,7 @@ class Admin extends MY_Controller {
 					{
 
 						$prompt_txt =
-						'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Error!</strong> Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1635,7 +1647,7 @@ class Admin extends MY_Controller {
 				{
 
 					$prompt_txt =
-					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Error!</strong> Brand doesn\'t exist.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1699,7 +1711,7 @@ class Admin extends MY_Controller {
 				if ($RemoveVariantBrand == true) {
 
 					$prompt_txt =
-					'<div class="alert alert-succes position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-succes position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Success!</strong> Variant removed.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1711,7 +1723,7 @@ class Admin extends MY_Controller {
 				{
 
 					$prompt_txt =
-					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Error!</strong> Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1723,7 +1735,7 @@ class Admin extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Error!</strong> Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1744,7 +1756,7 @@ class Admin extends MY_Controller {
 				$remove_size_id = $this->Model_Deletes->remove_size_id($id);
 				if ($remove_size_id == true) {
 					$prompt_txt =
-					'<div class="alert alert-succes position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-succes position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Success!</strong> Size removed.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1754,7 +1766,7 @@ class Admin extends MY_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Error!</strong> Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1765,7 +1777,7 @@ class Admin extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-error position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-error position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Error!</strong> Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1945,7 +1957,7 @@ class Admin extends MY_Controller {
 			if (empty($ID) || empty($Price_PerItem) || empty($Cost_PerItem) || empty($Product_Name)) {
 				// NULL VALUE
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Success!</strong> Empty value detected. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1968,7 +1980,7 @@ class Admin extends MY_Controller {
 					if ($UpdatePriceProduct == true) {
 						// PROMPT SUCCESS
 						$prompt_txt =
-						'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Success!</strong> Product updated.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1979,7 +1991,7 @@ class Admin extends MY_Controller {
 					else
 					{
 						$prompt_txt =
-						'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Success!</strong> Something\'s wrong while updating.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1992,7 +2004,7 @@ class Admin extends MY_Controller {
 				{
 					// ID DOESNT EXIST
 					$prompt_txt =
-					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Success!</strong> This product doesn\'t exist.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';

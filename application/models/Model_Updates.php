@@ -61,15 +61,10 @@ class Model_Updates extends CI_Model {
 	}
 
 	// PURCHASE ORDERS
-	public function UpdatePurchaseOrder($data)
+	public function UpdatePurchaseOrderByOrderNo($orderNo, $data)
 	{
-		extract($data);
-		$this->db->where('OrderNo', $OrderNo);
-		$this->db->set(array(
-			'DateApproved' => $DateApproved,
-			'Status' => $Status,
-		));
-		$result = $this->db->update('purchase_orders');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->update('purchase_orders', $data);
 		return $result;
 	}
 	// SALES ORDERS
@@ -102,12 +97,9 @@ class Model_Updates extends CI_Model {
 	// 	$result = $this->db->update('product_returned');
 	// 	return $result;
 	// }
-	public function remove_adtlfee($adtlFeeNo)
+	public function UpdateAdtlFee($data, $adtlFeeNo)
 	{
 		$this->db->where('AdtlFeeNo', $adtlFeeNo);
-		$data = array(
-			'Status' => '0'
-		);
 		$result = $this->db->update('adtl_fees', $data);
 		return $result;
 	}
@@ -166,6 +158,21 @@ class Model_Updates extends CI_Model {
 		$result = $this->db->update('vendors', $data);
 		return $result;
 	}
+	public function UpdateVendorByNo($data, $vendorNo)
+	{
+		$this->db->where('VendorNo', $vendorNo);
+		$result = $this->db->update('vendors', $data);
+		return $result;
+	}
+	public function Remove_vendor($ID)
+	{
+		$this->db->where('ID', $ID);
+		$data = array(
+			'Status' => '0'
+		);
+		$result = $this->db->update('vendors', $data);
+		return $result;
+	}
 	// CLIENTS
 	public function UpdateClient($data, $clientID)
 	{
@@ -176,6 +183,15 @@ class Model_Updates extends CI_Model {
 	public function UpdateClientByNo($data, $clientNo)
 	{
 		$this->db->where('ClientNo', $clientNo);
+		$result = $this->db->update('clients', $data);
+		return $result;
+	}
+	public function Remove_client($ID)
+	{
+		$this->db->where('ID', $ID);
+		$data = array(
+			'Status' => '0'
+		);
 		$result = $this->db->update('clients', $data);
 		return $result;
 	}

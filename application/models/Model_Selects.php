@@ -189,6 +189,7 @@ class Model_Selects extends CI_Model {
 	public function GetVendors()
 	{
 		$this->db->select('*');
+		$this->db->where('Status', '1');
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('vendors');
 		return $result;
@@ -211,6 +212,7 @@ class Model_Selects extends CI_Model {
 	public function GetClients()
 	{
 		$this->db->select('*');
+		$this->db->where('Status', '1');
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('clients');
 		return $result;
@@ -350,6 +352,15 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products'); 
 		return $result;
 	}
+	// ADTL FEES
+	public function GetAdtlFeesByOrderNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('adtl_fees');
+		return $result;
+	}
+
 	// PURCHASE
 	public function GetAllPurchaseOrders()
 	{
@@ -534,6 +545,22 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->where('ReplacementNo', $no);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementsByOrderNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('Status', 1);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementsByTransactionID($transactionID)
+	{
+		$this->db->select('*');
+		$this->db->where('TransactionID', $transactionID);
+		$this->db->where('Status', 1);
 		$result = $this->db->get('replacements');
 		return $result;
 	}

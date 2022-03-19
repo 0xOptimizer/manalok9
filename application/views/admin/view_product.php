@@ -94,7 +94,7 @@ if ($this->session->flashdata('highlight-id')) {
 								</dt>
 								<dd class="col-12 col-sm-12 col-md-10">
 									<div class="p-2">
-										<a href="<?php echo base_url().''.$prd_det['Barcode_Images']; ?>" target="_blank">
+										<a class="bg-light" href="<?php echo base_url().''.$prd_det['Barcode_Images']; ?>" target="_blank" style="padding: 30px;">
 											<img src="<?php echo base_url().''.$prd_det['Barcode_Images']; ?>">
 										</a>
 									</div>
@@ -210,7 +210,34 @@ if ($this->session->flashdata('highlight-id')) {
 												$typeText = '<span class="text-primary"><i class="bi bi-arrow-down-left-square"></i> Restock</span>';
 												if ($row['Type'] == 1) {
 													$typeText = '<span class="text-info"><i class="bi bi-arrow-up-right-square"></i> Released</span>';
-												}?>
+												}
+
+												// SHOW IF SO/PO/REPLACEMENT
+												if ($row['OrderNo'] == NULL) {
+													// check if replacement exists
+													$replacement = $this->Model_Selects->GetReplacementsByTransactionID($row['TransactionID']);
+													if ($replacement->num_rows() > 0) {
+														$typeText = 
+															'<a href="'. base_url() . 'admin/view_sales_order?orderNo='. $replacement->row_array()['OrderNo'] .'">
+																<i class="bi bi-eye"></i> Replacement
+															</a>';
+													}
+												} else {
+													$no = substr($row['OrderNo'], 0, 2);
+													if ($no == 'SO') {
+														$typeText = 
+															'<a href="'. base_url() . 'admin/view_sales_order?orderNo='. $row["OrderNo"] .'">
+																<i class="bi bi-eye"></i> Sales Order
+															</a>';
+													} elseif ($no == 'PO') {
+														$typeText = 
+															'<a href="'. base_url() . 'admin/view_purchase_order?orderNo='. $row["OrderNo"] .'">
+																<i class="bi bi-eye"></i> Purchase Order
+															</a>';
+													}
+												}
+
+												?>
 												<tr data-transactionid="<?=$row['TransactionID'];?>">
 													<td>
 														<?=$row['TransactionID'];?>
@@ -257,6 +284,8 @@ if ($this->session->flashdata('highlight-id')) {
 													<span class="info-banner-sm">
 														<i class="bi bi-exclamation-diamond-fill"></i> No transaction records found for this product.
 													</span>
+												</td>
+												<td>
 												</td>
 												<td>
 												</td>

@@ -122,6 +122,7 @@ $route['admin/inventory'] = 'Admin/inventory';
 
 // Users - Accounts
 $route['admin/users'] = 'Admin/users';
+$route['admin/user_activities'] = 'Admin/user_activities';
 
 $route['FORM_addNewUser'] = 'Admin/FORM_addNewUser';
 $route['FORM_updateUser'] = 'Admin/FORM_updateUser';
@@ -143,6 +144,7 @@ $route['admin/view_purchase_summary'] = 'PurchaseOrders/view_purchase_orders_sum
 
 $route['FORM_addPurchaseOrder'] = 'PurchaseOrders/FORM_addPurchaseOrder';
 $route['FORM_approvePurchaseOrder'] = 'PurchaseOrders/FORM_approvePurchaseOrder';
+$route['FORM_updatePORemarks'] = 'PurchaseOrders/FORM_updateRemarks';
 
 $route['admin/xlsPurchaseOrder'] = 'Exporting/xlsPurchaseOrder';
 
@@ -156,7 +158,8 @@ $route['admin/FORM_removeBill'] = 'PurchaseOrders/FORM_removeBill';
 // MANUAL TRANSACTION
 $route['admin/manual_purchases'] = 'PurchaseOrders/manual_purchases';
 
-$route['FORM_addPOManualTransaction'] = 'PurchaseOrders/FORM_addPOManualTransaction';
+$route['FORM_addNewManualTransaction'] = 'PurchaseOrders/FORM_addNewManualTransaction';
+$route['admin/FORM_removeManualTransaction'] = 'PurchaseOrders/FORM_removeManualTransaction';
 
 
 // CLIENT
@@ -173,12 +176,13 @@ $route['admin/view_sales_summary'] = 'SalesOrders/view_sales_orders_summary';
 
 $route['FORM_addSalesOrder'] = 'SalesOrders/FORM_addSalesOrder';
 $route['FORM_addNewSOAdtlFee'] = 'SalesOrders/FORM_addNewSOAdtlFee';
-$route['FORM_removeSOAdtlFee'] = 'SalesOrders/FORM_removeSOAdtlFee';
+$route['FORM_updateSOAdtlFee'] = 'SalesOrders/FORM_updateSOAdtlFee';
+$route['admin/FORM_removeSOAdtlFee'] = 'SalesOrders/FORM_removeSOAdtlFee';
 $route['FORM_approveSalesOrder'] = 'SalesOrders/FORM_approveSalesOrder';
 $route['FORM_scheduleDelivery'] = 'SalesOrders/FORM_scheduleDelivery';
 $route['FORM_markDelivered'] = 'SalesOrders/FORM_markDelivered';
 $route['FORM_markReceived'] = 'SalesOrders/FORM_markReceived';
-$route['FORM_updateRemarks'] = 'SalesOrders/FORM_updateRemarks';
+$route['FORM_updateSORemarks'] = 'SalesOrders/FORM_updateRemarks';
 
 $route['admin/xlsSalesOrder'] = 'Exporting/xlsSalesOrder';
 
@@ -203,8 +207,8 @@ $route['admin/FORM_removeReturnProduct'] = 'SalesOrders/FORM_removeReturnProduct
 $route['admin/replacements'] = 'SalesOrders/replacements';
 
 $route['FORM_addNewReplacement'] = 'SalesOrders/FORM_addNewReplacement';
-$route['FORM_updateReplacement'] = 'SalesOrders/FORM_updateReplacement';
-$route['FORM_removeReplacement'] = 'SalesOrders/FORM_removeReplacement';
+$route['FORM_approveReplacement'] = 'SalesOrders/FORM_approveReplacement';
+$route['admin/FORM_removeReplacement'] = 'SalesOrders/FORM_removeReplacement';
 
 // ACCOUNTS
 $route['admin/accounts'] = 'Accounting/accounts';

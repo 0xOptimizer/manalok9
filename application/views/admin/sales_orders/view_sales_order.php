@@ -11,17 +11,20 @@ if ($this->input->get('orderNo')) {
 $getSalesOrderByOrderNo = $this->Model_Selects->GetSalesOrderByNo($orderNo);
 $salesOrder = $getSalesOrderByOrderNo->row_array();
 $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orderNo);
+$getAdtlFeesByOrderNo = $this->Model_Selects->GetAdtlFeesByOrderNo($orderNo);
 
 $clientBTDetails = $this->Model_Selects->GetClientByNo($salesOrder['BillToClientNo'])->row_array();
 $clientSTDetails = $this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array();
 
-$getSOBills = $this->Model_Selects->GetInvoicesBySONo($orderNo);
+$getSOInvoices = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 
 $getAccounts = $this->Model_Selects->GetAccountSelection();
 
 
 $returnDetails = $this->Model_Selects->GetReturnBySalesNo($salesOrder['OrderNo'])->row_array();
 $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetails['ReturnNo']);
+
+$getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['OrderNo']);
 
 ?>
 <style>
@@ -39,7 +42,7 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 		padding-left: 20px;
 		color: #FFFFFF;
 	}
-	.toggleSectionInvoicing:hover, .toggleSectionReturns:hover {
+	.sectionToggle:hover {
 		background-color: rgba(75, 75, 75, 0.3);
 	}
 	@media print {
@@ -195,28 +198,13 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 				<hr style="height: 4px;">
 
 				<?php
-				// $orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($salesOrder['OrderNo']);
 				// COMPUTE TOTALS
 				$totalDiscount = $salesOrder['discountOutright'] + $salesOrder['discountVolume'] + $salesOrder['discountPBD'] + $salesOrder['discountManpower'];
 
 				$transactionsPriceTotal = 0;
 				$transactionsFreebiesTotal = 0;
 				$transactionsUnitDiscountTotal = 0;
-				// $transactionsReturnedTotal = 0; // UNUSED
-
-				if ($getTransactionsByOrderNo->num_rows() > 0) {
-					foreach ($getTransactionsByOrderNo->result_array() as $transaction) {
-						$price = $transaction['Amount'] * $transaction['PriceUnit'];
-						$unitDiscountPriceTotal = $price * ($transaction['UnitDiscount'] / 100);
-
-						if ($transaction['Freebie'] == 0) {
-							$transactionsPriceTotal += $price;
-						} else {
-							$transactionsFreebiesTotal += $price;
-						}
-						$transactionsUnitDiscountTotal += $unitDiscountPriceTotal;
-					}
-				}
+				$transactionsAdtlFeesTotal = 0;
 
 				?>
 
@@ -226,12 +214,10 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 							<div class="col-12">
 								<h4>
 									<i class="bi bi-list-ul"></i> TRANSACTIONS
+									<span class="text-center success-banner-sm">
+										<i class="bi bi-list-ul"></i> <?=$getTransactionsByOrderNo->num_rows()?> TOTAL
+									</span>
 								</h4>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-12">
-								<button type="button" class="adtlfee-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW ADDITIONAL FEE</button>
 							</div>
 						</div>
 						<div class="row">
@@ -249,7 +235,19 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 									<tbody>
 										<?php
 										if ($getTransactionsByOrderNo->num_rows() > 0):
-											foreach ($getTransactionsByOrderNo->result_array() as $row): ?>
+											foreach ($getTransactionsByOrderNo->result_array() as $row):
+												$price = $row['Amount'] * $row['PriceUnit'];
+												$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
+
+												// apply discount
+												$price -= $unitDiscountPriceTotal;
+												if ($row['Freebie'] == 0) {
+													$transactionsPriceTotal += $price;
+												} else {
+													$transactionsFreebiesTotal += $price;
+												}
+												$transactionsUnitDiscountTotal += $unitDiscountPriceTotal;
+												?>
 												<tr>
 													<td class="text-center">
 														<?=$row['TransactionID']?>
@@ -258,10 +256,10 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 														<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['stockID']?></span>
 													</td>
 													<td class="text-center">
-														<?=($row['Amount'])?>
+														<?=$row['Amount']?>
 													</td>
 													<td class="text-center">
-														<?=($row['UnitDiscount'])?>%
+														<?=$row['UnitDiscount']?>%
 													</td>
 													<?php
 													$unitPrice = $row['PriceUnit'] - ($row['PriceUnit'] * ($row['UnitDiscount']) / 100);
@@ -285,6 +283,69 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 									</tbody>
 								</table>
 							</div>
+						</div>
+						<?php if ($salesOrder['Status'] >= '2'): ?>
+							<div class="row">
+								<div class="col-12">
+									<h6>
+										<i class="bi bi-plus"></i> ADDITIONAL FEES
+										<span class="text-center success-banner-sm">
+											<i class="bi bi-plus"></i> <?=$getAdtlFeesByOrderNo->num_rows()?> TOTAL
+										</span>
+									</h6>
+									<button type="button" class="adtlfee-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW ADDITIONAL FEE</button>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 table-responsive mb-3">
+									<table id="transactionsTable" class="standard-table table">
+										<thead style="font-size: 12px;">
+											<th class="text-center">DESCRIPTION</th>
+											<th class="text-center">QTY</th>
+											<th class="text-center">UNIT PRICE</th>
+											<th class="text-center">TOTAL</th>
+											<th class="text-center">DATE ADDED</th>
+											<th></th>
+										</thead>
+										<tbody>
+											<?php
+											if ($getAdtlFeesByOrderNo->num_rows() > 0):
+												foreach ($getAdtlFeesByOrderNo->result_array() as $row):
+													$transactionsAdtlFeesTotal += $row['Qty'] * $row['UnitPrice'];
+													?>
+													<tr>
+														<td class="text-center afDescription" data-val="<?=$row['Description']?>">
+															<?=$row['Description']?>
+														</td>
+														<td class="text-center afQty" data-val="<?=$row['Qty']?>">
+															<?=$row['Qty']?>
+														</td>
+														<td class="text-center afUnitPrice" data-val="<?=$row['UnitPrice']?>">
+															<?=number_format($row['UnitPrice'], 2)?>
+														</td>
+														<td class="text-center">
+															<?=number_format($row['Qty'] * $row['UnitPrice'], 2)?>
+														</td>
+														<td class="text-center">
+															<?=$row['Date']?>
+														</td>
+														<td class="text-center">
+															<?php if ($this->session->userdata('UserRestrictions')['sales_orders_adtl_fees']): ?>
+																<i class="bi bi-pencil text-success updateAdtlFee" data-adtlfeeno="<?=$row['AdtlFeeNo']?>"></i>
+																<a href="FORM_removeSOAdtlFee?afno=<?=$row['AdtlFeeNo']?>">
+																	<button type="button" class="btn removeAdtlFee"><i class="bi bi-trash text-danger"></i></button>
+																</a>
+															<?php endif; ?>
+														</td>
+													</tr>
+											<?php endforeach;
+											endif; ?>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						<?php endif; ?>
+						<div class="row">
 							<div class="col-12 col-md-6">
 								<div class="row">
 									<div class="col-12">
@@ -302,7 +363,7 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 													<div class="col-3 text-end">
 														<span style="font-size: 1.15em; color: #ebebeb;">
 															<b>
-																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountOutright'] * 0.01)), 2)?>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountOutright'] / 100)), 2)?>
 															</b>
 														</span>
 													</div>
@@ -321,7 +382,7 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 													<div class="col-3 text-end">
 														<span style="font-size: 1.15em; color: #ebebeb;">
 															<b>
-																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountVolume'] * 0.01)), 2)?>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountVolume'] / 100)), 2)?>
 															</b>
 														</span>
 													</div>
@@ -340,7 +401,7 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 													<div class="col-3 text-end">
 														<span style="font-size: 1.15em; color: #ebebeb;">
 															<b>
-																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountPBD'] * 0.01)), 2)?>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountPBD'] / 100)), 2)?>
 															</b>
 														</span>
 													</div>
@@ -359,7 +420,7 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 													<div class="col-3 text-end">
 														<span style="font-size: 1.15em; color: #ebebeb;">
 															<b>
-																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountManpower'] * 0.01)), 2)?>
+																<?=number_format(($transactionsPriceTotal * ($salesOrder['discountManpower'] / 100)), 2)?>
 															</b>
 														</span>
 													</div>
@@ -372,14 +433,14 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 													</div>
 												</div>
 												<div class="row mt-3">
-													<span class="head-text fw-bold">
-														TOTAL DISCOUNT
+													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> ((Total Non-Freebie Transactions) + (Total Adtl Fees)) * (Total Discounts)">
+														<i class="bi bi-dash-circle text-danger"></i> TOTAL CATEGORY DISCOUNTS
 													</span>
 												</div>
 												<div class="row">
 													<span style="font-size: 1.15em; color: #ebebeb;">
 														<b>
-															<?=number_format(($transactionsPriceTotal * ($totalDiscount * 0.01)), 2)?>
+															<?=number_format((($transactionsPriceTotal + $transactionsAdtlFeesTotal) * ($totalDiscount / 100)), 2)?>
 														</b>
 														<i>
 															( <?=$totalDiscount?>% )
@@ -396,13 +457,33 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 											<div class="text-center p-2">
 												<div class="row">
 													<span class="head-text fw-bold">
-														TOTAL UNIT DISCOUNTS
+														<i class="bi bi-dash-circle text-danger"></i> TOTAL UNIT DISCOUNTS
 													</span>
 												</div>
 												<div class="row">
 													<span style="font-size: 1.15em; color: #ebebeb;">
 														<b>
 															<?=number_format($transactionsUnitDiscountTotal, 2)?>
+														</b>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
+												<div class="row">
+													<span class="head-text fw-bold">
+														<i class="bi bi-plus-circle text-success"></i> TOTAL ADTL FEES
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.15em; color: #ebebeb;">
+														<b>
+															<?=number_format($transactionsAdtlFeesTotal, 2)?>
 														</b>
 													</span>
 												</div>
@@ -417,16 +498,14 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 										<div class="card">
 											<div class="text-center p-2">
 												<div class="row">
-													<span class="head-text fw-bold">
-														TOTAL PRICE (DISCOUNTED)
+													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Non-Freebie Transactions) + (Total Adtl Fees)">
+														TOTAL PRICE (UNDISCOUNTED)
 													</span>
 												</div>
 												<div class="row">
 													<span style="font-size: 1.5em; color: #ebebeb;">
 														<b>
-															<?php
-															echo number_format($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01)) - $transactionsUnitDiscountTotal, 2);
-															?>
+															<?=number_format($transactionsPriceTotal + $transactionsAdtlFeesTotal, 2)?>
 														</b>
 													</span>
 												</div>
@@ -438,16 +517,20 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 									<div class="col-12">
 										<div class="card">
 											<div class="text-center p-2">
-												<div class="row">
+												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Undiscounted Price) - (Total Category Discounts) - (Total Unit Discounts)">
 													<span class="head-text fw-bold">
-														TOTAL PRICE (UNDISCOUNTED)
+														TOTAL PRICE (DISCOUNTED)
 													</span>
 												</div>
 												<div class="row">
 													<span style="font-size: 1.5em; color: #ebebeb;">
 														<b>
 															<?php
-															echo number_format($transactionsPriceTotal, 2);
+															$totalPriceDiscounted = 
+																($transactionsPriceTotal + $transactionsAdtlFeesTotal) - 
+																($transactionsPriceTotal * ($totalDiscount / 100)) - 
+																$transactionsUnitDiscountTotal;
+															echo number_format($totalPriceDiscounted, 2);
 															?>
 														</b>
 													</span>
@@ -541,15 +624,19 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 				</div>
 			</section>
 		</div>
+
 		<?php if ($salesOrder['Status'] >= '2'): ?>
 			<hr style="height: 4px;">
 
 			<div class="page-heading">
 				<div class="page-title">
-					<div class="row pt-3 toggleSectionInvoicing" style="cursor: pointer;">
+					<div class="row pt-3 toggleSectionInvoicing sectionToggle" style="cursor: pointer;">
 						<div class="col-12">
 							<h4>
 								<i class="bi bi-receipt"></i> INVOICING
+								<span class="text-center success-banner-sm">
+									<i class="bi bi-receipt"></i> <?=$getSOInvoices->num_rows()?> TOTAL
+								</span>
 								<i class="bi bi-caret-down-fill float-end caret"></i>
 							</h4>
 						</div>
@@ -557,7 +644,7 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 					<?php if ($this->session->userdata('UserRestrictions')['sales_orders_invoice_creation']): ?>
 						<div class="row pt-3">
 							<div class="col-12">
-								<button type="button" class="salesinvoicing-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW</button>
+								<button type="button" class="salesinvoicing-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-receipt"></i> NEW INVOICE</button>
 							</div>
 						</div>
 					<?php endif; ?>
@@ -567,7 +654,6 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 						<div class="col-sm-12 table-responsive">
 							<table id="invoicesTable" class="standard-table table">
 								<thead style="font-size: 12px;">
-									<th class="text-center">ID</th>
 									<th class="text-center">INVOICE #</th>
 									<th class="text-center">CLIENT</th>
 									<th class="text-center">AMOUNT</th>
@@ -576,12 +662,9 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 									<th class="text-center"></th>
 								</thead>
 								<tbody>
-								<?php if ($getSOBills->num_rows() > 0):
-									foreach ($getSOBills->result_array() as $row): ?>
+								<?php if ($getSOInvoices->num_rows() > 0):
+									foreach ($getSOInvoices->result_array() as $row): ?>
 										<tr>
-											<td class="text-center">
-												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-											</td>
 											<td class="text-center">
 												<?=$row['InvoiceNo']?>
 											</td>
@@ -611,15 +694,14 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 									$total_invoice_amount = $this->Model_Selects->GetTotalInvoicesBySONo($salesOrder['OrderNo'])->row_array()['Amount'];
 									?>
 									<tr>
-										<td class="font-weight-bold text-center" colspan="3">TOTAL</td>
-										<td class="font-weight-bold text-center"><?=number_format($total_invoice_amount, 2)?></td>
+										<td class="text-center fw-bold" colspan="3">TOTAL</td>
+										<td class="text-center"><?=number_format($total_invoice_amount, 2)?></td>
 										<td colspan="3"></td>
 									</tr>
 									<tr style="border-color: #a7852d;">
-										<td class="font-weight-bold text-center" colspan="3">REMAINING PAYMENT (DISCOUNTED)</td>
-										<td class="font-weight-bold text-center">
-											<?=number_format(
-												($transactionsPriceTotal - ($transactionsPriceTotal * ($totalDiscount * 0.01)) - $transactionsUnitDiscountTotal) - $total_invoice_amount, 2);?></td>
+										<td class="text-center fw-bold" colspan="3">REMAINING PAYMENT (DISCOUNTED)</td>
+										<td class="text-center">
+											<?=number_format($totalPriceDiscounted - $total_invoice_amount, 2);?></td>
 										<td colspan="3"></td>
 									</tr>
 								</tbody>
@@ -639,10 +721,13 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 
 			<div class="page-heading">
 				<div class="page-title">
-					<div class="row pt-3 toggleSectionReturns" style="cursor: pointer;">
+					<div class="row pt-3 toggleSectionReturns sectionToggle" style="cursor: pointer;">
 						<div class="col-12">
 							<h4>
-								<i class="bi bi-arrow-left-right"></i> RETURNED ITEMS
+								<i class="bi bi-reply-fill"></i> RETURNED ITEMS
+								<span class="text-center success-banner-sm">
+									<i class="bi bi-reply-fill"></i> <?=$returnProducts->num_rows()?> TOTAL
+								</span>
 								<i class="bi bi-caret-down-fill float-end caret"></i>
 							</h4>
 						</div>
@@ -669,11 +754,13 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 									<th class="text-center">FREEBIE</th>
 								</thead>
 								<tbody>
-									<?php foreach ($returnProducts->result_array() as $row):
-									$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['transactionid'])->row_array();
+									<?php 
+									$totalReturnPrice = 0;
+									foreach ($returnProducts->result_array() as $row):
+										$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['transactionid'])->row_array();
 
-									$returnItemsQtyTotal[$row['remarks']] += $row['quantity'];
-									$returnItemsPriceTotal[$row['remarks']] += $row['quantity'] * $transactionDetails['PriceUnit']; ?>
+										$returnItemsQtyTotal[$row['remarks']] += $row['quantity'];
+										$returnItemsPriceTotal[$row['remarks']] += $row['quantity'] * $transactionDetails['PriceUnit']; ?>
 										<tr>
 											<td class="text-center">
 												<?=$row['transactionid']?>
@@ -690,8 +777,12 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 											<td class="text-center quantity_total">
 												<?=$row['quantity']?>
 											</td>
+											<?php
+											$totalPrice = $row['quantity'] * $transactionDetails['PriceUnit'];
+											$totalReturnPrice += $totalPrice;
+											?>
 											<td class="text-center">
-												<?=number_format($row['quantity'] * $transactionDetails['PriceUnit'], 2)?>
+												<?=number_format($totalPrice, 2)?>
 											</td>
 											<td class="text-center">
 												<?php if ($row['Freebie'] == 1): ?>
@@ -702,6 +793,13 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 											</td>
 										</tr>
 									<?php endforeach; ?>
+									<tr style="border-color: #a7852d;">
+										<td class="text-end fw-bold" colspan="5">TOTAL</td>
+										<td class="text-center">
+											<?=number_format($totalReturnPrice, 2);?>
+										</td>
+										<td></td>
+									</tr>
 								</tbody>
 							</table>
 						</div>
@@ -837,6 +935,126 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 				</section>
 			</div>
 		<?php endif; ?>
+
+		<?php if ($salesOrder['Status'] >= '2' && $this->session->userdata('UserRestrictions')['replacements_view']): ?>
+			<hr style="height: 4px;">
+			<?php
+			$replacementsPriceTotal = 0;
+			$replacementsFreebiePriceTotal = 0;
+			?>
+
+			<div class="page-heading">
+				<div class="page-title">
+					<div class="row pt-3 toggleSectionReplacements sectionToggle" style="cursor: pointer;">
+						<div class="col-12">
+							<h4>
+								<i class="bi bi-arrow-left-right"></i> REPLACEMENTS
+								<span class="text-center success-banner-sm">
+									<i class="bi bi-arrow-left-right"></i> <?=$getReplacements->num_rows()?> TOTAL
+								</span>
+								<i class="bi bi-caret-down-fill float-end caret"></i>
+							</h4>
+						</div>
+					</div>
+					<?php if ($this->session->userdata('UserRestrictions')['replacements_add']): ?>
+						<div class="row pt-3">
+							<div class="col-12">
+								<button type="button" class="salesreplacements-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-arrow-left-right"></i> NEW REPLACEMENT</button>
+							</div>
+						</div>
+					<?php endif; ?>
+				</div>
+				<section class="sectionReplacements d-none">
+					<div class="row">
+						<div class="col-sm-12 table-responsive">
+							<table id="replacementsTable" class="standard-table table">
+								<thead style="font-size: 12px;">
+									<th class="text-center">TRANSACTION ID</th>
+									<th class="text-center">PRODUCT STOCK ID</th>
+									<th class="text-center">QTY</th>
+									<th class="text-center">UNIT DISCOUNT</th>
+									<th class="text-center">PRICE</th>
+									<th class="text-center">TOTAL</th>
+									<th class="text-center">FREEBIE</th>
+									<th class="text-center">DATE ADDED</th>
+									<th class="text-center"></th>
+								</thead>
+								<tbody>
+								<?php if ($getReplacements->num_rows() > 0):
+									foreach ($getReplacements->result_array() as $row):
+										$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['TransactionID'])->row_array();
+										?>
+										<tr>
+											<td class="text-center">
+												<?=$row['TransactionID']?>
+											</td>
+											<td class="text-center">
+												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$transactionDetails['stockID']?></span>
+											</td>
+											<td class="text-center">
+												<?=$transactionDetails['Amount']?>
+											</td>
+											<td class="text-center">
+												<?=$transactionDetails['UnitDiscount']?>%
+											</td>
+											<?php
+											$unitPrice = $transactionDetails['PriceUnit'] - ($transactionDetails['PriceUnit'] * ($transactionDetails['UnitDiscount']) / 100);
+											$totalPrice = ($transactionDetails['Amount']) * $unitPrice;
+
+											if ($transactionDetails['Freebie']) {
+												$replacementsFreebiePriceTotal += $totalPrice;
+											} else {
+												$replacementsPriceTotal += $totalPrice;
+											}
+											?>
+											<td class="text-center">
+												<?=number_format($unitPrice, 2)?>
+											</td>
+											<td class="text-center">
+												<?=number_format($totalPrice, 2)?>
+											</td>
+											<td class="text-center">
+												<?php if ($transactionDetails['Freebie']): ?>
+													<i class="bi bi-check-circle text-success"></i>
+												<?php else: ?>
+													<i class="bi bi-x-circle text-danger"></i>
+												<?php endif; ?>
+											</td>
+											<td class="text-center">
+												<?=$row['DateAdded']?>
+											</td>
+											<td class="text-center">
+												<?php if ($transactionDetails['Status'] == '0'): ?>
+													<?php if ($this->session->userdata('UserRestrictions')['replacements_approve']): ?>
+														<button class="btn btn-primary approveReplacement" data-replacementno="<?=$row['ReplacementNo']?>">
+															<i class="bi bi-check"></i> APPROVE
+														</button>
+													<?php endif; ?>
+												<?php else: ?>
+													<?php if ($this->session->userdata('UserRestrictions')['replacements_delete']): ?>
+														<a href="FORM_removeReplacement?rno=<?=$row['ReplacementNo']?>">
+															<button type="button" class="btn removeReplacement"><i class="bi bi-trash text-danger"></i></button>
+														</a>
+													<?php endif; ?>
+												<?php endif; ?>
+											</td>
+										</tr>
+								<?php endforeach;
+								endif; ?>
+									<tr style="border-color: #a7852d;">
+										<td class="text-end fw-bold">FREEBIES TOTAL</td>
+										<td class="text-center" colspan="2"><?=number_format($replacementsFreebiePriceTotal, 2)?></td>
+										<td class="text-end fw-bold" colspan="3">TOTAL</td>
+										<td class="text-center"><?=number_format($replacementsPriceTotal, 2)?></td>
+										<td colspan="2"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</section>
+			</div>
+		<?php endif; ?>
 	</div>
 </div>
 <div class="prompts">
@@ -846,16 +1064,20 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_form.php', array(
 	'salesOrder' => $salesOrder,
 	'getTransactionsByOrderNo' => $getTransactionsByOrderNo,
+	'getAdtlFeesByOrderNo' => $getAdtlFeesByOrderNo,
 	'clientBTDetails' => $clientBTDetails,
 	'clientSTDetails' => $clientSTDetails
 )); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_accounting'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_logs'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_adtl_fee_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
+<?php $this->load->view('admin/_modals/sales_orders/update_adtl_fee_so'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/schedule_delivery_sales_order'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_remarks', array('salesOrder' => $salesOrder)); ?>
 <?php $this->load->view('admin/_modals/mails/add_mail.php'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/add_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
+<?php $this->load->view('admin/_modals/sales_orders/approve_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -869,13 +1091,18 @@ $returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetai
 <script>
 $('.sidebar-admin-sales-orders').addClass('active');
 $(document).ready(function() {
+	var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+	  return new bootstrap.Tooltip(tooltipTriggerEl)
+	});
+
 	function showAlert(type, message) {
 		if ($('.alertNotification').length > 0) {
 			$('.alertNotification').remove();
 		}
 		$('body').append($('<div>')
 			.attr({
-				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				class: 'alert position-fixed bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
 				role: 'alert',
 				'data-bs-dismiss': 'alert'
 			}).css({ 'z-index': 9999, cursor: 'pointer' })
@@ -891,9 +1118,6 @@ $(document).ready(function() {
 		);
 	}
 
-	$('.adtlfee-btn').on('click', function() {
-		$('#SalesAdtlFee').modal('toggle');
-	});
 	$('.salesinvoicing-btn').on('click', function() {
 		$('#SalesInvoicing').modal('toggle');
 	});
@@ -908,14 +1132,70 @@ $(document).ready(function() {
 		$('#sales_order_remarks').val($(this).data('remarks'));
 	});
 
-	$(document).on('click', '.removeot-btn', function() {
-		if (!confirm('Remove Transaction from Sales Order?') && $(this).data('id').length > 0) {
+	$(document).on('click', '.removeInvoice', function() {
+		if (!confirm('Remove Invoice?')) {
 			event.preventDefault();
-		} else {
-			$('#rOTTransactionID').val($(this).data('transactionid'));
-			$('#removeSalesOrderTransaction').submit();
 		}
 	});
+
+	var tableProducts = $('#selectproductsTable').DataTable( {
+		sDom: 'lrtip',
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+	});
+	$('#tableProductsSearch').on('keyup change', function(){
+		tableProducts.search($(this).val()).draw();
+	});
+	var tableStocks = $('#selectstocksTable').DataTable( {
+		sDom: 'lrtip',
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+		'createdRow': function(row, data, dataIndex) {
+			let productstockID = data[1] + '_' + data[0];
+			$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('productstockID', productstockID);
+
+			if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length > 0 ) {
+				$(row).addClass('trAdded');
+			}
+		},
+		'columnDefs': [ {
+				'targets': 0,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockID text-center').html($('<span>').addClass('db-identifier').css({ 'font-style': 'italic', 'font-size': '12px' }).html(cellData)).data('stockID',cellData);
+				}
+			}, {
+				'targets': 1,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockSKU text-center');
+				}
+			}, {
+				'targets': 2,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockCurrentStocks text-center');
+				}
+			}, {
+				'targets': 3,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockPrice text-center').html(parseFloat(cellData).toFixed(2)).data('retailPrice', cellData);
+				}
+			}, {
+				'targets': 4,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockDateAdded text-center');
+				}
+			}, {
+				'targets': 5,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockExpirationDate text-center');
+				}
+			}
+		]
+	});
+	$('#tableStocksSearch').on('keyup change', function(){
+		tableStocks.search($(this).val()).draw();
+	});
+
+	// APPROVING
 	$(document).on('click', '.rejectOrder', function() {
 		if (!confirm('Reject Sales Order? (This action cannot be undone)')) {
 			event.preventDefault();
@@ -948,8 +1228,25 @@ $(document).ready(function() {
 		}
 	});
 
-	$(document).on('click', '.removeInvoice', function() {
-		if (!confirm('Remove Invoice?')) {
+
+	// ADTL FEES
+	$('.adtlfee-btn').on('click', function() {
+		$('#SalesAdtlFee').modal('toggle');
+	});
+	$(document).on('click', '.updateAdtlFee', function() {
+		$('#UpdateAdtlFee').modal('toggle');
+		$('#UpdateAdtlFeeNo').val($(this).data('adtlfeeno'));
+		
+		let tr = $(this).parents('tr');
+		$('.updateAdtlFeeDescription').val(tr.find('.afDescription').data('val'));
+		$('.updateAdtlFeeQty').val(tr.find('.afQty').data('val'));
+		$('.updateAdtlFeeUnitPrice').val(tr.find('.afUnitPrice').data('val'));
+	});
+	$(document).on('hidden.bs.modal', '#UpdateAdtlFee', function (event) {
+		$('#UpdateAdtlFeeNo').val(null);
+	});
+	$(document).on('click', '.removeAdtlFee', function() {
+		if (!confirm('Remove Adtl Fee?')) {
 			event.preventDefault();
 		}
 	});
@@ -1249,6 +1546,108 @@ $(document).ready(function() {
 
 		if ($(this).find('.caret').hasClass('bi-caret-up-fill')) {
 			$(document).scrollTop($(document).scrollTop() + $('.sectionReturns').height());
+		}
+	});
+	$(document).on('click', '.toggleSectionReplacements', function() {
+		$('.sectionReplacements').toggleClass('d-none');
+		$(this).find('.caret').toggleClass('bi-caret-down-fill').toggleClass('bi-caret-up-fill');
+
+		if ($(this).find('.caret').hasClass('bi-caret-up-fill')) {
+			$(document).scrollTop($(document).scrollTop() + $('.sectionReplacements').height());
+		}
+	});
+
+	// REPLACEMENTS
+	$('.salesreplacements-btn').on('click', function() {
+		$('#AddReplacementModal').modal('toggle');
+	});
+	$('.newReplacementSKU-btn').on('click', function() {
+		$('#AddReplacementModal').data('select', true).modal('toggle');
+	});
+	$(document).on('hidden.bs.modal', '#AddReplacementModal', function (event) {
+		if ($('#AddReplacementModal').data('select')) {
+			$('#AddReplacementSKUModal').modal('toggle');
+			$('#AddReplacementModal').data('select', false);
+			$('#AddReplacementSKUModal').data('select', true);
+		}
+	});
+	$('.select-product-row').on('click', function() {
+		// get product stocks
+		$.get('getProductStocks', { dataType: 'json', sku: $(this).data('sku') })
+		.done(function(data) {
+			tableStocks.clear();
+			let productStocks = $.parseJSON(data);
+			$.each(productStocks, function(index, val) {
+				tableStocks.row.add([
+					val.ID,
+					val.Product_SKU,
+					val.Current_Stocks,
+					val.Retail_Price,
+					val.Date_Added,
+					val.Expiration_Date
+				]);
+			});
+			tableStocks.draw();
+		});
+
+		$('#AddReplacementSKUModal').data('select', true).modal('toggle');
+	});
+	$(document).on('hidden.bs.modal', '#AddReplacementSKUModal', function (event) {
+		if ($('#AddReplacementSKUModal').data('select')) {
+			$('#AddReplacementStockModal').modal('toggle');
+			$('#AddReplacementSKUModal').data('select', false);
+		}
+	});
+
+	$(document).on('click', '.select-stock-row', function() {
+		let productSKU = $(this).data('sku');
+		let stockID = $(this).children('.stockID').data('stockID');
+		let stockPrice = $(this).children('.stockPrice').html();
+				
+		$('.newReplacementSKU').val(productSKU);
+		$('.newReplacementSKU-btn').text(productSKU);
+		$('.newReplacementStockID').val(stockID);
+		$('.newReplacementStockID-text').text('#'+ stockID);
+		$('.newReplacementQty').attr('max', $(this).children('.stockCurrentStocks').html());
+		$('.newReplacementCost').data('unitCost', stockPrice).text(stockPrice);
+
+
+		$('#AddReplacementStockModal').modal('toggle');
+		tableStocks.clear();
+		updProductCount();
+	});
+	$(document).on('hidden.bs.modal', '#AddReplacementStockModal', function (event) {
+		$('#AddReplacementModal').modal('toggle');
+	});
+
+	$(document).on('focus keyup change', '.newReplacementQty, .newReplacementDiscount, .newReplacementFreebie', function() {
+		updProductCount();
+	});
+	function updProductCount() {
+		if ($('.newReplacementSKU').val().length > 0) {
+			let totalCostUndiscounted = parseInt($('.newReplacementQty').val()) * parseFloat($('.newReplacementCost').data('unitCost'));
+			let totalCostDiscounted = totalCostUndiscounted - (totalCostUndiscounted * (parseInt($('.newReplacementDiscount').val()) / 100));
+
+			if (parseFloat(totalCostDiscounted) < 0) {
+				showAlert('danger', 'Total Price for product is below zero!');
+			}
+
+			if ($('.newReplacementFreebie').prop('checked')) {
+				$('.newReplacementTotalCost').text('0.00');
+			} else {
+				$('.newReplacementTotalCost').text(moneyFormat(totalCostDiscounted));
+			}
+		}
+	}
+
+
+	$(document).on('click', '.approveReplacement', function() {
+		$('#ApproveReplacementModal').modal('toggle');
+		$('#approveReplacementNo').val($(this).attr('data-replacementno'));
+	});
+	$(document).on('click', '.removeReplacement', function() {
+		if (!confirm('Remove Replacement?')) {
+			event.preventDefault();
 		}
 	});
 });

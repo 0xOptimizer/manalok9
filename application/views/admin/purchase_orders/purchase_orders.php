@@ -195,7 +195,7 @@ $(document).ready(function() {
 		}
 		$('body').append($('<div>')
 			.attr({
-				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				class: 'alert position-fixed bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
 				role: 'alert',
 				'data-bs-dismiss': 'alert'
 			}).css({ 'z-index': 9999, cursor: 'pointer' })

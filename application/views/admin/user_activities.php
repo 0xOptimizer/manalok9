@@ -1,6 +1,12 @@
 <?php
 $globalHeader;
 
+if ($this->input->get('userID')) {
+	$userID = $this->input->get('userID');
+} else {
+	redirect('admin/sales_orders');
+}
+
 date_default_timezone_set('Asia/Manila');
 $date = date('M j, Y');
 
@@ -14,7 +20,7 @@ if ($date == date('M j, Y')) {
 }
 
 // Fetch user logs
-$getUserLogs = $this->Model_Selects->GetUserLogs($this->session->userdata('UserID'));
+$getUserLogs = $this->Model_Selects->GetUserLogs($userID);
 ?>
 <style>
 	.rotate-text {
@@ -48,7 +54,7 @@ $getUserLogs = $this->Model_Selects->GetUserLogs($this->session->userdata('UserI
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-12">
-						<h3><i class="bi bi-person-badge-fill"></i> My Activities
+						<h3><i class="bi bi-person-badge-fill"></i> User Activities [ <?=$userID?> ]
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-person-badge-fill"></i> <?=$getUserLogs->num_rows();?> TOTAL
 							</span>
@@ -141,7 +147,7 @@ $getUserLogs = $this->Model_Selects->GetUserLogs($this->session->userdata('UserI
 <script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
 
 <script>
-$('.sidebar-employee-attendance').addClass('active');
+$('.sidebar-admin-employees').addClass('active');
 $(document).ready(function() {
 	
 	var table = $('#logsTable').DataTable( {
