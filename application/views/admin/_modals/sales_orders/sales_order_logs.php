@@ -22,7 +22,7 @@
 									<tr>
 										<td class="text-center"><?=$salesOrder['MarkDateInvoicing']?></td>
 										<td class="text-center">
-											<?php if ($salesOrder['Status'] == 1): ?>
+											<?php if ($salesOrder['Status'] >= 1): ?>
 												MARKED FOR INVOICING
 											<?php else: ?>
 												REJECTED

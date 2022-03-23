@@ -152,7 +152,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php elseif ($row['Status'] == '2'): ?>
 												<span><i class="bi bi-cash" style="color:#E4B55B;"></i> For Invoicing</span>
 											<?php elseif ($row['Status'] == '3'): ?>
-												<span><i class="bi bi-truck" style="color:#E4B55B;"></i> For Delivery</span>
+												<span><i class="bi bi-truck" style="color:#E4B55B;"></i> Delivery Scheduled</span>
 											<?php elseif ($row['Status'] == '4'): ?>
 												<span><i class="bi bi-check2" style="color:#E4B55B;"></i> Delivered</span>
 											<?php elseif ($row['Status'] == '5'): ?>

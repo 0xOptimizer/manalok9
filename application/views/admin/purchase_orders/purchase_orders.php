@@ -405,8 +405,11 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.select-product-row', function() {
-		$('#' + $('#rowProductSelection').val() + ' .select-product-btn').html($(this).data('sku'));
-		$('#' + $('#rowProductSelection').val() + ' .inpSKU').val($(this).data('sku'));
+		let productRow = '#' + $('#rowProductSelection').val();
+		$(productRow + ' .select-product-btn').html($(this).data('sku'));
+		$(productRow + ' .inpSKU').val($(this).data('sku'));
+		$(productRow + ' .inpCost').val($(this).find('.pCost').data('cost'));
+		$(productRow + ' .inpPrice').val($(this).find('.pPrice').data('price'));
 
 		$('#SelectProductSKUModal').modal('toggle');
 	});

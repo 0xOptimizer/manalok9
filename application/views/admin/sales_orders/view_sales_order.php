@@ -756,6 +756,8 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 								<tbody>
 									<?php 
 									$totalReturnPrice = 0;
+									$totalReturnPriceFreebie = 0;
+
 									foreach ($returnProducts->result_array() as $row):
 										$transactionDetails = $this->Model_Selects->GetTransactionsByTID($row['transactionid'])->row_array();
 
@@ -779,7 +781,12 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 											</td>
 											<?php
 											$totalPrice = $row['quantity'] * $transactionDetails['PriceUnit'];
-											$totalReturnPrice += $totalPrice;
+											
+											if ($row['Freebie'] == 1) {
+												$totalReturnPriceFreebie += $totalPrice;
+											} else {
+												$totalReturnPrice += $totalPrice;
+											}
 											?>
 											<td class="text-center">
 												<?=number_format($totalPrice, 2)?>
@@ -794,7 +801,11 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										</tr>
 									<?php endforeach; ?>
 									<tr style="border-color: #a7852d;">
-										<td class="text-end fw-bold" colspan="5">TOTAL</td>
+										<td class="text-end fw-bold" colspan="2">TOTAL FREEBIE</td>
+										<td class="text-center">
+											<?=number_format($totalReturnPriceFreebie, 2);?>
+										</td>
+										<td class="text-end fw-bold" colspan="2">TOTAL</td>
 										<td class="text-center">
 											<?=number_format($totalReturnPrice, 2);?>
 										</td>

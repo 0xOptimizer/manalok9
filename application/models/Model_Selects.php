@@ -272,6 +272,47 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
+
+	public function GetAllSalesOrdersNo($status='',$from='',$to='')
+	{
+		$this->db->select('OrderNo');
+		$this->db->distinct();
+		$this->db->order_by('ID', 'desc');
+		if ($status != '') {
+			$this->db->where('Status', $status);
+		}
+		if ($from != '' && $to != '') {
+			$from = date('Y-m-d H:i:s', strtotime($from));
+			$to = date('Y-m-d H:i:s', strtotime($to) + 86399);
+
+			$this->db->where('DateCreation >', $from);
+			$this->db->where('DateCreation <', $to);
+		}
+		$result = $this->db->get('sales_orders');
+		return $result;
+	}
+	public function GetSalesOrdersInOrderNo($orderNos)
+	{
+		$this->db->select('*');
+		if (sizeof($orderNos) > 0) {
+			$this->db->where_in('OrderNo', $orderNos);
+		} else {
+			$this->db->where('DateCreation', NULL);
+		}
+		$result = $this->db->get('sales_orders');
+		return $result;
+	}
+
+	public function GetProductTransactionsInOrderNo($orderNos)
+	{
+		$this->db->select('Code');
+		$this->db->distinct();
+		$this->db->where_in($orderNos);
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+
+	// INVOICES
 	public function GetInvoices()
 	{
 		$this->db->select('*');
@@ -463,6 +504,36 @@ class Model_Selects extends CI_Model {
 	{
 		$sql = "SELECT * FROM products_transactions AS ot WHERE Type = '0' AND EXISTS(SELECT * FROM purchase_orders AS po WHERE po.OrderNo = ot.OrderNo AND Status = $status)";
 		$result = $this->db->query($sql);
+		return $result;
+	}
+
+	public function GetAllPurchaseOrdersNo($status='',$from='',$to='')
+	{
+		$this->db->select('OrderNo');
+		$this->db->distinct();
+		$this->db->order_by('ID', 'desc');
+		if ($status != '') {
+			$this->db->where('Status', $status);
+		}
+		if ($from != '' && $to != '') {
+			$from = date('Y-m-d H:i:s', strtotime($from));
+			$to = date('Y-m-d H:i:s', strtotime($to) + 86399);
+
+			$this->db->where('DateCreation >', $from);
+			$this->db->where('DateCreation <', $to);
+		}
+		$result = $this->db->get('purchase_orders');
+		return $result;
+	}
+	public function GetPurchaseOrdersInOrderNo($orderNos)
+	{
+		$this->db->select('*');
+		if (sizeof($orderNos) > 0) {
+			$this->db->where_in('OrderNo', $orderNos);
+		} else {
+			$this->db->where('DateCreation', NULL);
+		}
+		$result = $this->db->get('purchase_orders');
 		return $result;
 	}
 
