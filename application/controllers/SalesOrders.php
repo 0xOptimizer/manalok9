@@ -852,7 +852,7 @@ class SalesOrders extends MY_Controller {
 			$unitPrice = $this->input->post('unit-price');
 
 			$orderDetails = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo)->row_array();
-			if ($orderDetails['Status'] > 2) {
+			if ($orderDetails['Status'] >= 2) {
 				// Insert
 				$data = array(
 					'AdtlFeeNo' => $adtlFeeNo,

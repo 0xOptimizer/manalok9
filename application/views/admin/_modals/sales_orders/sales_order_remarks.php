@@ -1,7 +1,7 @@
 <?php if (!$this->session->userdata('UserRestrictions')['sales_orders_remarks']) return; ?>
 <div class="modal fade" id="SORemarks" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md" role="document">
-		<form id="formSORemarks" action="<?php echo base_url() . 'FORM_updateRemarks';?>" method="POST">
+		<form id="formSORemarks" action="<?php echo base_url() . 'FORM_updateSORemarks';?>" method="POST">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-pencil-square" style="font-size: 24px;"></i> SO Remarks</h4>
