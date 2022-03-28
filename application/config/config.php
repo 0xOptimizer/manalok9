@@ -549,6 +549,7 @@ $config['user_restrictions'] = array(
 		'inventory_view',
 
 		'users_view',
+		'users_activities_view',
 		'users_add',
 		'users_edit',
 		'users_edit_login',
@@ -561,9 +562,11 @@ $config['user_restrictions'] = array(
 		'purchase_orders_view',
 		'purchase_orders_add',
 		'purchase_orders_add_manual_transaction',
+		'purchase_orders_remove_manual_transaction',
 		'purchase_orders_approve',
 		'purchase_orders_bill_creation',
 		'purchase_orders_accounting',
+		'purchase_orders_remarks',
 
 		'bills_view',
 		'bills_add',
@@ -585,6 +588,7 @@ $config['user_restrictions'] = array(
 		'sales_orders_invoice_creation',
 		'sales_orders_accounting',
 		'sales_orders_remarks',
+		'sales_orders_adtl_fees',
 
 		'invoice_view',
 		'invoice_add',
@@ -598,6 +602,11 @@ $config['user_restrictions'] = array(
 		// 'return_product_edit',
 		// 'return_product_return_to_inventory',
 		'return_product_delete',
+
+		'replacements_view',
+		'replacements_add',
+		'replacements_approve',
+		'replacements_delete',
 
 		'accounts_view',
 		'accounts_add',

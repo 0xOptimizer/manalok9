@@ -8,6 +8,9 @@ $sbmfy = $this->input->get('sbmfy');
 $sbmt = $this->input->get('sbmt');
 $sbmty = $this->input->get('sbmty');
 
+$sbdf = $this->input->get('sbdf');
+$sbdt = $this->input->get('sbdt');
+
 if ($sbmf != NULL && $sbmfy != NULL && $sbmt != NULL && $sbmty != NULL) {
 	$from = date('Y-m-d', strtotime($sbmfy	 .'-'. $sbmf));
 	$to = date('Y-m-t', strtotime($sbmty	 .'-'. $sbmt));
@@ -15,6 +18,10 @@ if ($sbmf != NULL && $sbmfy != NULL && $sbmt != NULL && $sbmty != NULL) {
 } elseif ($sbmf != NULL && $sbmfy == NULL && $sbmt != NULL && $sbmty == NULL) {
 	$from = date('Y-m-d', strtotime($sbmf));
 	$to = date('Y-m-t', strtotime($sbmt));
+	$rangeText = date('F j, Y', strtotime($from)) .' TO '. date('F j, Y', strtotime($to));
+} elseif ($sbdf != NULL && $sbdt != NULL) {
+	$from = date('Y-m-d', strtotime($sbdf));
+	$to = date('Y-m-s', strtotime($sbdt));
 	$rangeText = date('F j, Y', strtotime($from)) .' TO '. date('F j, Y', strtotime($to));
 } else {
 	$from = NULL;
@@ -33,7 +40,7 @@ if ($getAllProducts->num_rows() > 0) {
 
 if ($from == NULL && $to == NULL) {
 	$from = date('Y-m-d');
-	$to = date('Y-m-t');
+	$to = date('Y-m-d');
 }
 
 ?>

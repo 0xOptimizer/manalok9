@@ -79,6 +79,11 @@ class Model_Inserts extends CI_Model {
 		$result = $this->db->insert('sales_orders', $data);
 		return $result;
 	}
+	public function InsertAdtlFee($data)
+	{
+		$result = $this->db->insert('adtl_fees', $data);
+		return $result;
+	}
 	public function InsertInvoice($data)
 	{
 		$result = $this->db->insert('invoices', $data);
@@ -93,6 +98,12 @@ class Model_Inserts extends CI_Model {
 	public function InsertReturnData($data)
 	{
 		$result = $this->db->insert('product_returned', $data);
+		return $result;
+	}
+	// REPLACEMENTS
+	public function InsertNewReplacement($data)
+	{
+		$result = $this->db->insert('replacements', $data);
 		return $result;
 	}
 	// ACCOUNTS / JOURNALS

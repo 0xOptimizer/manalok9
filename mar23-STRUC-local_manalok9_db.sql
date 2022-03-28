@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 04, 2022 at 02:57 PM
+-- Generation Time: Mar 23, 2022 at 07:42 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -32,6 +32,23 @@ CREATE TABLE `accounts` (
   `Name` varchar(255) DEFAULT NULL,
   `Type` varchar(255) DEFAULT NULL COMMENT '0=revenues;1=assets;2=liabilities;3=expenses;',
   `Description` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `adtl_fees`
+--
+
+CREATE TABLE `adtl_fees` (
+  `ID` int(11) NOT NULL,
+  `AdtlFeeNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Qty` int(11) DEFAULT NULL,
+  `UnitPrice` varchar(255) DEFAULT NULL,
+  `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(64) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -166,7 +183,8 @@ CREATE TABLE `clients` (
   `ContactNum` varchar(255) DEFAULT NULL,
   `Category` int(11) DEFAULT NULL COMMENT '0=confirmedDistributor;\r\n1=distributorOnProbation;\r\n2=directDealer;\r\n3=directEndUser;',
   `TerritoryManager` varchar(255) DEFAULT NULL,
-  `Email` varchar(255) DEFAULT NULL
+  `Email` varchar(255) DEFAULT NULL,
+  `Status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -238,12 +256,13 @@ CREATE TABLE `logbook` (
 
 CREATE TABLE `manual_transactions` (
   `ID` int(11) NOT NULL,
-  `OrderNo` varchar(255) DEFAULT NULL,
+  `ManualTransactionNo` varchar(64) DEFAULT NULL,
   `ItemNo` varchar(255) DEFAULT NULL,
   `Description` varchar(255) DEFAULT NULL,
   `Qty` int(11) DEFAULT NULL,
   `UnitCost` varchar(255) DEFAULT NULL,
   `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
   `Status` tinyint(4) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -293,7 +312,8 @@ CREATE TABLE `products_transactions` (
   `Date_Approval` varchar(255) DEFAULT NULL,
   `UserID` varchar(255) DEFAULT NULL,
   `PriceTotal` varchar(255) DEFAULT NULL,
-  `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;'
+  `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;',
+  `UnitDiscount` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -333,7 +353,8 @@ CREATE TABLE `product_released` (
   `userid` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `date_added` varchar(255) DEFAULT NULL,
   `status` varchar(255) DEFAULT NULL,
-  `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;'
+  `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;',
+  `UnitDiscount` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -345,16 +366,13 @@ CREATE TABLE `product_released` (
 CREATE TABLE `product_returned` (
   `id` int(11) NOT NULL,
   `returnno` varchar(32) DEFAULT NULL,
-  `stockid` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `stockid` varchar(11) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `transactionid` varchar(255) DEFAULT NULL,
   `prd_sku` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `quantity` int(255) DEFAULT NULL,
-  `quantity_total` int(11) DEFAULT NULL,
-  `remarks` varchar(255) DEFAULT NULL,
-  `returned` int(11) DEFAULT 0 COMMENT 'qty returned to inventory',
-  `userid` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
-  `date_added` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `remarks` varchar(128) DEFAULT NULL,
+  `quantity` int(11) DEFAULT 0,
+  `userid` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `date_added` varchar(32) DEFAULT NULL,
   `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -397,7 +415,23 @@ CREATE TABLE `purchase_orders` (
   `ShipVia` varchar(255) DEFAULT NULL,
   `DateDelivery` varchar(255) DEFAULT NULL,
   `DateApproved` varchar(32) DEFAULT NULL,
+  `Remarks` varchar(255) DEFAULT NULL,
   `Status` int(11) DEFAULT NULL COMMENT '0 = rejected; 1 = for approval; 2 = approved'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `replacements`
+--
+
+CREATE TABLE `replacements` (
+  `ID` int(11) NOT NULL,
+  `ReplacementNo` varchar(64) DEFAULT NULL,
+  `TransactionID` varchar(64) DEFAULT NULL,
+  `DateAdded` varchar(32) DEFAULT NULL,
+  `OrderNo` varchar(64) DEFAULT NULL,
+  `Status` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -437,6 +471,7 @@ CREATE TABLE `sales_orders` (
   `discountVolume` int(11) DEFAULT 0,
   `discountPBD` int(11) DEFAULT 0,
   `discountManpower` int(11) DEFAULT 0,
+  `Remarks` varchar(255) DEFAULT NULL,
   `Status` int(11) DEFAULT NULL COMMENT '0=rejected;1=for approval;2=approved/for invoicing;3=for delivery;4=delivered;5=fulfilled/received;'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -585,6 +620,7 @@ CREATE TABLE `user_restrictions` (
   `users_add` tinyint(1) DEFAULT 0,
   `users_edit` tinyint(1) DEFAULT 0,
   `users_edit_login` tinyint(1) DEFAULT 0,
+  `users_activities_view` tinyint(1) DEFAULT 0,
   `vendors_view` tinyint(1) DEFAULT 0,
   `vendors_add` tinyint(1) DEFAULT 0,
   `vendors_edit` tinyint(1) DEFAULT 0,
@@ -592,9 +628,11 @@ CREATE TABLE `user_restrictions` (
   `purchase_orders_view` tinyint(1) DEFAULT 0,
   `purchase_orders_add` tinyint(1) DEFAULT 0,
   `purchase_orders_add_manual_transaction` tinyint(1) DEFAULT 0,
+  `purchase_orders_remove_manual_transaction` tinyint(1) DEFAULT 0,
   `purchase_orders_approve` tinyint(1) DEFAULT 0,
   `purchase_orders_bill_creation` tinyint(1) DEFAULT 0,
   `purchase_orders_accounting` tinyint(1) DEFAULT 0,
+  `purchase_orders_remarks` tinyint(1) DEFAULT 0,
   `bills_view` tinyint(1) DEFAULT 0,
   `bills_add` tinyint(1) DEFAULT 0,
   `bills_delete` tinyint(1) DEFAULT 0,
@@ -611,6 +649,8 @@ CREATE TABLE `user_restrictions` (
   `sales_orders_mark_as_received` tinyint(1) DEFAULT 0,
   `sales_orders_invoice_creation` tinyint(1) DEFAULT 0,
   `sales_orders_accounting` tinyint(1) DEFAULT 0,
+  `sales_orders_remarks` tinyint(1) DEFAULT 0,
+  `sales_orders_adtl_fees` tinyint(1) DEFAULT 0,
   `invoice_view` tinyint(1) DEFAULT 0,
   `invoice_add` tinyint(1) DEFAULT 0,
   `invoice_delete` tinyint(1) DEFAULT 0,
@@ -618,8 +658,11 @@ CREATE TABLE `user_restrictions` (
   `returns_add` tinyint(1) DEFAULT 0,
   `return_product_view` tinyint(1) DEFAULT 0,
   `return_product_add` tinyint(1) DEFAULT 0,
-  `return_product_edit` tinyint(1) DEFAULT 0,
-  `return_product_return_to_inventory` tinyint(1) DEFAULT 0,
+  `return_product_delete` tinyint(1) DEFAULT 0,
+  `replacements_view` tinyint(1) DEFAULT 0,
+  `replacements_add` tinyint(1) DEFAULT 0,
+  `replacements_approve` tinyint(1) DEFAULT 0,
+  `replacements_delete` tinyint(1) DEFAULT 0,
   `accounts_view` tinyint(1) DEFAULT 0,
   `accounts_add` tinyint(1) DEFAULT 0,
   `accounts_edit` tinyint(1) DEFAULT 0,
@@ -652,7 +695,8 @@ CREATE TABLE `vendors` (
   `Address` varchar(255) DEFAULT NULL,
   `ContactNum` varchar(255) DEFAULT NULL,
   `ProductServiceKind` varchar(255) DEFAULT NULL,
-  `Email` varchar(255) DEFAULT NULL
+  `Email` varchar(255) DEFAULT NULL,
+  `Status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -663,6 +707,12 @@ CREATE TABLE `vendors` (
 -- Indexes for table `accounts`
 --
 ALTER TABLE `accounts`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `adtl_fees`
+--
+ALTER TABLE `adtl_fees`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -786,6 +836,12 @@ ALTER TABLE `purchase_orders`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `replacements`
+--
+ALTER TABLE `replacements`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `returns`
 --
 ALTER TABLE `returns`
@@ -853,6 +909,12 @@ ALTER TABLE `vendors`
 -- AUTO_INCREMENT for table `accounts`
 --
 ALTER TABLE `accounts`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `adtl_fees`
+--
+ALTER TABLE `adtl_fees`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -973,6 +1035,12 @@ ALTER TABLE `product_stocks`
 -- AUTO_INCREMENT for table `purchase_orders`
 --
 ALTER TABLE `purchase_orders`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `replacements`
+--
+ALTER TABLE `replacements`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --

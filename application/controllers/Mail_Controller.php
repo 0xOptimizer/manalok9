@@ -76,7 +76,7 @@ class Mail_Controller extends CI_Controller {
 			if (empty($send_to) || empty($mail_subject) || empty($mail_message)) {
 
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> All fields are required. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -132,7 +132,7 @@ class Mail_Controller extends CI_Controller {
 							);
 							$EmailInsert = $this->Model_Inserts->EmailInsert($data);
 							$prompt_txt =
-							'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+							'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Success!</strong> Email with attachment sent.
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 							</div>';
@@ -142,7 +142,7 @@ class Mail_Controller extends CI_Controller {
 						else
 						{
 							$prompt_txt =
-							'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+							'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Error!</strong> Sending error. Please try again.
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 							</div>';
@@ -153,7 +153,7 @@ class Mail_Controller extends CI_Controller {
 					else
 					{
 						$prompt_txt =
-						'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Error!</strong> There is a problem uploading the file. Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -175,7 +175,7 @@ class Mail_Controller extends CI_Controller {
 						$EmailInsert = $this->Model_Inserts->EmailInsert($data);
 
 						$prompt_txt =
-						'<div class="alert alert-success position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Success!</strong> Email without attachment sent.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -185,7 +185,7 @@ class Mail_Controller extends CI_Controller {
 					else
 					{
 						$prompt_txt =
-						'<div class="alert alert-danger position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Error!</strong> Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';

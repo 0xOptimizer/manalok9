@@ -163,6 +163,12 @@ $globalHeader;
 														<?php if(!$hasLoginCredentials): ?>
 														<p class="card-text info-banner-sm"><i class="bi bi-exclamation-diamond-fill"></i> No login credentials</p>
 														<?php endif; ?>
+
+														<a class="mb-3" href="<?=base_url()?>admin/user_activities?userID=<?=$row['UserID']?>">
+															<button type="button" class="btn btn-primary btn-sm userActivitiesLink">
+																<i class="bi bi-clock-fill"></i> Activities
+															</button>
+														</a>
 														<!-- <button type="button" class="btn btn-primary btn-sm mt-2">Profile</button>
 														<button type="button" class="btn btn-primary btn-sm mt-2">Role</button>
 														<button type="button" class="btn btn-primary btn-sm mt-2">Account</button> -->
@@ -208,7 +214,10 @@ $(document).ready(function() {
 	});
 	// $('#UpdateEmployeeModal').modal('toggle');
 	var userRestrictions = <?=json_encode($this->config->item('user_restrictions'))?>;
-	$('.employee-standard-card').on('click', function() {
+	$('.employee-standard-card').on('click', function(e) {
+		if ($(e.target).hasClass('userActivitiesLink')) return;
+		console.log($(e.target));
+
 		$('#UpdateDefaultImage').val($(this).data('image'));
 		$('#UpdateUserID').val($(this).data('userid'));
 		$('#UpdatePFPInputPreview').attr('src', "<?=base_url();?>" + $(this).data('image'));
@@ -250,7 +259,6 @@ $(document).ready(function() {
 			var getUserRestrictions = $.parseJSON(data)[0];
 			$('.allowedActions_Update .form-check-input').removeAttr('checked');
 			$.each(userRestrictions, function(index, val) {
-				console.log(getUserRestrictions[val] + ': ' + val +'_update');
 				if (getUserRestrictions[val] == '1') {
 					$('.allowedActions_Update [name="'+ val +'_update"][id$="_Update"]').attr('checked', '');
 				} else {
@@ -429,6 +437,11 @@ $(document).ready(function() {
 			$(this).parent().next('.actionSub').find('input').prop('checked', false);
 			$(this).parent().next('.actionSub').find('input').attr('disabled', '');
 		}
+	});
+
+	// USER ACTIVITIES
+	$(document).on('click', '.userActivitiesLink', function(e) {
+		e.stopPropagation();
 	});
 });
 </script>

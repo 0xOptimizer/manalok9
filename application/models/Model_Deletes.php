@@ -89,16 +89,10 @@ class Model_Deletes extends CI_Model {
 		$result = $this->db->delete('journal_transactions');
 		return $result;
 	}
-	public function Delete_client($ID)
+	public function Delete_replacement($ID)
 	{
 		$this->db->where('ID', $ID);
-		$result = $this->db->delete('clients');
-		return $result;
-	}
-	public function Delete_vendor($ID)
-	{
-		$this->db->where('ID', $ID);
-		$result = $this->db->delete('vendors');
+		$result = $this->db->delete('replacements');
 		return $result;
 	}
 	public function Delete_cartRestock_item($id)
@@ -155,6 +149,31 @@ class Model_Deletes extends CI_Model {
 	{
 		$this->db->where('id', $id);
 		$this->db->delete('product_returned');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function Delete_AdtlFee($adtlFeeNo)
+	{
+		$this->db->where('AdtlFeeNo', $adtlFeeNo);
+		$this->db->delete('adtl_fees');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Delete_ManualTransaction($manualTransactionNo)
+	{
+		$this->db->where('ManualTransactionNo', $manualTransactionNo);
+		$this->db->delete('manual_transactions');
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}

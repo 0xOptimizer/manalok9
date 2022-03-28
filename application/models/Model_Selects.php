@@ -189,6 +189,7 @@ class Model_Selects extends CI_Model {
 	public function GetVendors()
 	{
 		$this->db->select('*');
+		$this->db->where('Status', '1');
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('vendors');
 		return $result;
@@ -211,6 +212,7 @@ class Model_Selects extends CI_Model {
 	public function GetClients()
 	{
 		$this->db->select('*');
+		$this->db->where('Status', '1');
 		$this->db->order_by('ID', 'desc');
 		$result = $this->db->get('clients');
 		return $result;
@@ -270,6 +272,47 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('sales_orders');  
 		return $result;
 	}
+
+	public function GetAllSalesOrdersNo($status='',$from='',$to='')
+	{
+		$this->db->select('OrderNo');
+		$this->db->distinct();
+		$this->db->order_by('ID', 'desc');
+		if ($status != '') {
+			$this->db->where('Status', $status);
+		}
+		if ($from != '' && $to != '') {
+			$from = date('Y-m-d H:i:s', strtotime($from));
+			$to = date('Y-m-d H:i:s', strtotime($to) + 86399);
+
+			$this->db->where('DateCreation >', $from);
+			$this->db->where('DateCreation <', $to);
+		}
+		$result = $this->db->get('sales_orders');
+		return $result;
+	}
+	public function GetSalesOrdersInOrderNo($orderNos)
+	{
+		$this->db->select('*');
+		if (sizeof($orderNos) > 0) {
+			$this->db->where_in('OrderNo', $orderNos);
+		} else {
+			$this->db->where('DateCreation', NULL);
+		}
+		$result = $this->db->get('sales_orders');
+		return $result;
+	}
+
+	public function GetProductTransactionsInOrderNo($orderNos)
+	{
+		$this->db->select('Code');
+		$this->db->distinct();
+		$this->db->where_in($orderNos);
+		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+
+	// INVOICES
 	public function GetInvoices()
 	{
 		$this->db->select('*');
@@ -350,6 +393,15 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('products'); 
 		return $result;
 	}
+	// ADTL FEES
+	public function GetAdtlFeesByOrderNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$result = $this->db->get('adtl_fees');
+		return $result;
+	}
+
 	// PURCHASE
 	public function GetAllPurchaseOrders()
 	{
@@ -455,6 +507,36 @@ class Model_Selects extends CI_Model {
 		return $result;
 	}
 
+	public function GetAllPurchaseOrdersNo($status='',$from='',$to='')
+	{
+		$this->db->select('OrderNo');
+		$this->db->distinct();
+		$this->db->order_by('ID', 'desc');
+		if ($status != '') {
+			$this->db->where('Status', $status);
+		}
+		if ($from != '' && $to != '') {
+			$from = date('Y-m-d H:i:s', strtotime($from));
+			$to = date('Y-m-d H:i:s', strtotime($to) + 86399);
+
+			$this->db->where('DateCreation >', $from);
+			$this->db->where('DateCreation <', $to);
+		}
+		$result = $this->db->get('purchase_orders');
+		return $result;
+	}
+	public function GetPurchaseOrdersInOrderNo($orderNos)
+	{
+		$this->db->select('*');
+		if (sizeof($orderNos) > 0) {
+			$this->db->where_in('OrderNo', $orderNos);
+		} else {
+			$this->db->where('DateCreation', NULL);
+		}
+		$result = $this->db->get('purchase_orders');
+		return $result;
+	}
+
 	// RETURNS
 	public function GetReturns()
 	{
@@ -514,6 +596,45 @@ class Model_Selects extends CI_Model {
 	// 	$result = $this->db->get('products_transactions');
 	// 	return $result;
 	// }
+
+	// REPLACEMENTS
+	public function GetReplacements()
+	{
+		$this->db->select('*');
+		$this->db->order_by('ID', 'desc');
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementByNo($no)
+	{
+		$this->db->select('*');
+		$this->db->where('ReplacementNo', $no);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementsByOrderNo($orderNo)
+	{
+		$this->db->select('*');
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('Status', 1);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
+	public function GetReplacementsByTransactionID($transactionID)
+	{
+		$this->db->select('*');
+		$this->db->where('TransactionID', $transactionID);
+		$this->db->where('Status', 1);
+		$result = $this->db->get('replacements');
+		return $result;
+	}
 
 	// ACCOUNTING
 	public function GetAccounts()

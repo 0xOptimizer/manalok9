@@ -33,7 +33,8 @@
 										$unitPrice = 0;
 									}
 
-									$amount = $row['Amount'] * $unitPrice;
+									$unitDiscountAmount = $unitPrice * ($row['UnitDiscount'] / 100);
+									$amount = $row['Amount'] * ($unitPrice - $unitDiscountAmount);
 									$amountTotal += $amount;
 									?>
 									<tr class="add-formtransaction-row" data-id="<?=$row['ID']?>">
@@ -44,7 +45,31 @@
 											<?=$pDescription?>
 										</td>
 										<td class="text-center">
-											<?=number_format($row['PriceUnit'], 2)?>
+											<?=number_format($row['PriceUnit'] - $unitDiscountAmount, 2)?> <?=($row['UnitDiscount'] > 0 ? '('. $row['UnitDiscount'] .'%)' : '')?>
+										</td>
+										<td class="text-center amount" colspan="2" data-amount="<?=$amount?>">
+											<?=number_format($amount, 2)?>
+										</td>
+									</tr>
+							<?php endforeach;
+							endif; ?>
+							<tr>
+								<td class="text-center" colspan="5"><b>ADTL FEES</b></td>
+							</tr>
+							<?php if ($getAdtlFeesByOrderNo->num_rows() > 0): 
+								foreach ($getAdtlFeesByOrderNo->result_array() as $row):
+									$amount = $row['Qty'] * $row['UnitPrice'];
+									$amountTotal += $amount;
+									?>
+									<tr class="add-formtransaction-row" data-id="<?=$row['ID']?>">
+										<td class="text-center">
+											<?=$row['Qty']?>
+										</td>
+										<td class="text-center" colspan="2">
+											<?=$row['Description']?>
+										</td>
+										<td class="text-center">
+											<?=number_format($row['UnitPrice'], 2)?>
 										</td>
 										<td class="text-center amount" colspan="2" data-amount="<?=$amount?>">
 											<?=number_format($amount, 2)?>

@@ -140,6 +140,8 @@
 								<th class="text-center">SKU</th>
 								<th class="text-center">NAME</th>
 								<th class="text-center">DESCRIPTION</th>
+								<th class="text-center">COST</th>
+								<th class="text-center">PRICE</th>
 							</thead>
 							<tbody>
 								<?php
@@ -154,6 +156,12 @@
 											</td>
 											<td class="text-center">
 												<?=$row['Description']?>
+											</td>
+											<td class="text-center pCost" data-cost="<?=$row['Cost_PerItem']?>">
+												<?=number_format($row['Cost_PerItem'], 2)?>
+											</td>
+											<td class="text-center pPrice" data-price="<?=$row['Price_PerItem']?>">
+												<?=number_format($row['Price_PerItem'], 2)?>
 											</td>
 										</tr>
 								<?php endforeach;

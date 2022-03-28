@@ -195,7 +195,7 @@ $(document).ready(function() {
 		}
 		$('body').append($('<div>')
 			.attr({
-				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				class: 'alert position-fixed bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
 				role: 'alert',
 				'data-bs-dismiss': 'alert'
 			}).css({ 'z-index': 9999, cursor: 'pointer' })
@@ -405,8 +405,11 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.select-product-row', function() {
-		$('#' + $('#rowProductSelection').val() + ' .select-product-btn').html($(this).data('sku'));
-		$('#' + $('#rowProductSelection').val() + ' .inpSKU').val($(this).data('sku'));
+		let productRow = '#' + $('#rowProductSelection').val();
+		$(productRow + ' .select-product-btn').html($(this).data('sku'));
+		$(productRow + ' .inpSKU').val($(this).data('sku'));
+		$(productRow + ' .inpCost').val($(this).find('.pCost').data('cost'));
+		$(productRow + ' .inpPrice').val($(this).find('.pPrice').data('price'));
 
 		$('#SelectProductSKUModal').modal('toggle');
 	});

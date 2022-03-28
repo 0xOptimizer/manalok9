@@ -89,16 +89,22 @@ class PurchaseOrders extends MY_Controller {
 			if ($insertNewVendor == TRUE) {
 				$vendorID = $this->db->insert_id();
 				$this->session->set_flashdata('highlight-id', $vendorID);
-				// $this->Model_Logbook->SetPrompts('success', 'success', 'New employee added.');
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Added new vendor.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('created a new vendor.', 'added a new vendor' . ($name ? ' ' . $name : '') . ' [ID: ' . $vendorID . '].', base_url('admin/vendors'));
 				redirect('admin/vendors');
 			}
 			else
 			{
-				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -132,15 +138,22 @@ class PurchaseOrders extends MY_Controller {
 			);
 			$updateVendor = $this->Model_Updates->UpdateVendor($data, $vendorID);
 			if ($updateVendor == TRUE) {
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Updated vendor.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				$this->Model_Logbook->LogbookEntry('updated vendor details.', 'updated details of vendor' . ($name ? ' ' . $name : '') . ' [vendorID: ' . $vendorID . '].', base_url('admin/vendors'));
 				$this->session->set_flashdata('highlight-id', $vendorID);
 				redirect('admin/vendors');
 			}
 			else
 			{
-				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -159,16 +172,23 @@ class PurchaseOrders extends MY_Controller {
 			$getVendorByNo = $this->Model_Selects->GetVendorByNo($vendorNo);
 
 			if ($getVendorByNo->num_rows() > 0) {
-				if ($this->Model_Deletes->Delete_vendor($getVendorByNo->row_array()['ID'])) {
+				if ($this->Model_Updates->Remove_vendor($getVendorByNo->row_array()['ID'])) {
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Deleted vendor.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('deleted vendor record.', 'deleted a vendor record [ID: ' . $vendorID . '].', base_url('admin/vendors'));
 					redirect('admin/vendors');
 				}
 				else
 				{
-					// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 					$prompt_txt =
-					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -354,6 +374,13 @@ class PurchaseOrders extends MY_Controller {
 					// }
 					$this->session->set_flashdata('highlight-id', $orderID);
 
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Added new Purchase Order.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('created a new purchase order.', 'added purchase order ' . $orderNo . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/view_purchase_order?orderNo='. $orderNo));
 					redirect('admin/purchase_orders');
@@ -412,11 +439,10 @@ class PurchaseOrders extends MY_Controller {
 					}
 					// update order status
 					$data = array(
-						'OrderNo' => $orderNo,
 						'DateApproved' => date('Y-m-d H:i:s'),
 						'Status' => '2',
 					);
-					$this->Model_Updates->UpdatePurchaseOrder($data);
+					$this->Model_Updates->UpdatePurchaseOrderByOrderNo($orderNo, $data);
 
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('approved purchase order.', 'approved purchase order ' . $orderDetails['OrderNo'] . ' [PurchaseOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_purchase_order?orderNo=' . $orderNo));
@@ -447,13 +473,58 @@ class PurchaseOrders extends MY_Controller {
 						'OrderNo' => $orderNo,
 						'Status' => '0',
 					);
-					$this->Model_Updates->UpdatePurchaseOrder($data);
+					$this->Model_Updates->UpdatePurchaseOrderByOrderNo($orderNo, $data);
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Approved Purchase Order.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
 
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('rejected purchase order.', 'rejected purchase order ' . $orderDetails['OrderNo'] . ' [PurchaseOrderID: ' . $orderDetails['ID'] . '].', base_url('admin/view_purchase_order?orderNo=' . $orderNo));
 				}
 			}
 			redirect('admin/view_purchase_order?orderNo=' . $orderNo);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_updateRemarks()
+	{
+		if ($this->Model_Security->CheckUserRestriction('purchase_orders_remarks')) {
+			$purchaseOrderNo = $this->input->post('order-no');
+			$remarks = $this->input->post('remarks');
+
+			// Update
+			$data = array(
+				'Remarks' => $remarks,
+			);
+			$UpdatePurchaseOrder = $this->Model_Updates->UpdatePurchaseOrderByOrderNo($purchaseOrderNo, $data);
+			if ($UpdatePurchaseOrder == TRUE) {
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Updated remarks.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('updated remarks.', 'updated remarks for purchase order [No: ' . $purchaseOrderNo . '].', base_url('admin/view_purchase_order?orderNo=' . $purchaseOrderNo));
+				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+			}
 		} else {
 			redirect(base_url());
 		}
@@ -496,6 +567,13 @@ class PurchaseOrders extends MY_Controller {
 			if ($insertBill == TRUE) {
 				$billID = $this->db->insert_id();
 
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Added new Bill.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/bills'));
 				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
@@ -504,7 +582,7 @@ class PurchaseOrders extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -536,6 +614,13 @@ class PurchaseOrders extends MY_Controller {
 			if ($insertBill == TRUE) {
 				$billID = $this->db->insert_id();
 
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Added new Bill.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
 				redirect('admin/bills');
@@ -543,7 +628,7 @@ class PurchaseOrders extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -560,6 +645,13 @@ class PurchaseOrders extends MY_Controller {
 			$billNo = $this->input->get('bno');
 			if ($this->session->userdata('Privilege') > 1 && $billNo != NULL) {
 				$result = $this->Model_Updates->remove_bill($billNo);
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Removed Bill.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 			}
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
@@ -581,7 +673,7 @@ class PurchaseOrders extends MY_Controller {
 		}
 	}
 	
-	public function FORM_addPOManualTransaction()
+	public function FORM_addNewManualTransaction()
 	{
 		if ($this->Model_Security->CheckUserRestriction('purchase_orders_add_manual_transaction')) {
 			$purchaseOrderNo = $this->input->post('purchase-order-no');
@@ -594,25 +686,33 @@ class PurchaseOrders extends MY_Controller {
 			if ($orderDetails['Status'] < 2) {
 				// Insert
 				$data = array(
+					'ManualTransactionNo' => 'MT' . strtoupper(uniqid()),
 					'OrderNo' => $purchaseOrderNo,
 					'ItemNo' => $itemNo,
 					'Description' => $description,
 					'Qty' => $qty,
 					'UnitCost' => $unitCost,
-					'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+					'Date' => date('Y-m-d H:i:s'),
 				);
 				$insertManualTransaction = $this->Model_Inserts->InsertManualTransaction($data);
 				if ($insertManualTransaction == TRUE) {
 					$mTransactionID = $this->db->insert_id();
 
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Added new Manual Transaction.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					// LOGBOOK
-					$this->Model_Logbook->LogbookEntry('adde a new manual purchase transaction.', 'adde a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
+					$this->Model_Logbook->LogbookEntry('added a new manual purchase transaction.', 'added a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
 					redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 				}
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -623,13 +723,33 @@ class PurchaseOrders extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-absolute bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 			}
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_removeManualTransaction()
+	{
+		if ($this->Model_Security->CheckUserRestriction('purchase_orders_remove_manual_transaction')) {
+			$manualTransactionNo = $this->input->get('mtno');
+			if ($manualTransactionNo != NULL) {
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Removed Manual Transaction.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+				$result = $this->Model_Deletes->Delete_ManualTransaction($manualTransactionNo);
+			}
+			redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			redirect(base_url());
 		}

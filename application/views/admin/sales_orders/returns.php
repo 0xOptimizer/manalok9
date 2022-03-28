@@ -131,7 +131,7 @@ $(document).ready(function() {
 		}
 		$('body').append($('<div>')
 			.attr({
-				class: 'alert position-absolute bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
+				class: 'alert position-fixed bottom-0 end-0 alert-dismissible fade show alertNotification alert-' + type, 
 				role: 'alert',
 				'data-bs-dismiss': 'alert'
 			}).css({ 'z-index': 9999, cursor: 'pointer' })
@@ -196,64 +196,64 @@ $(document).ready(function() {
 	$('#tableSalesOrdersSearch').on('keyup change', function() {
 		tableSalesOrders.search($(this).val()).draw();
 	});
-	var tableSalesOrderProducts = $('#salesOrderProductsTable').DataTable( {
-		sDom: 'lrtip',
-		"bLengthChange": false,
-    	"order": [[ 0, "desc" ]],
-		'createdRow': function(row, data, dataIndex) {
-		// 	let productstockID = data[1] + '_' + data[0];
-		// 	$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('productstockID', productstockID);
-			$(row).addClass('select-salesorderproduct-row').attr('data-selectSOP', data[0]);
+	// var tableSalesOrderProducts = $('#salesOrderProductsTable').DataTable( {
+	// 	sDom: 'lrtip',
+	// 	"bLengthChange": false,
+ //    	"order": [[ 0, "desc" ]],
+	// 	'createdRow': function(row, data, dataIndex) {
+	// 	// 	let productstockID = data[1] + '_' + data[0];
+	// 	// 	$(row).addClass('productStocks select-stock-row').data('sku', data[1]).data('productstockID', productstockID);
+	// 		$(row).addClass('select-salesorderproduct-row').attr('data-selectSOP', data[0]);
 
-		// 	if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length > 0 ) {
-		// 		$(row).addClass('trAdded');
-		// 	}
-		},
-		'columnDefs': [ {
-				'targets': 0,
-				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('sopTID text-center');
-				}
-			}, {
-				'targets': 1,
-				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('sopSKU text-center');
-				}
-			}, {
-				'targets': 2,
-				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('sopAmount text-center');
-				}
-			}, {
-				'targets': 3,
-				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('sopPrice text-center').html(parseFloat(cellData).toFixed(2)).data('price', cellData);
-				}
-			}, {
-				'targets': 4,
-				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('sopTotal text-center').html(parseFloat(cellData).toFixed(2)).data('total', cellData);
-				}
-			}, {
-				'targets': 5,
-				'createdCell': function (td, cellData, rowData, row, col) {
-					$(td).addClass('sopFreebie text-center');
-					if (cellData == 1) {
-						$(td).html($('<i>').attr({
-							class: 'bi bi-check-circle text-success'
-						})).data('freebie', true);
-					} else {
-						$(td).html($('<i>').attr({
-							class: 'bi bi-x-circle text-danger'
-						})).data('freebie', false);
-					}
-				}
-			}
-		]
-	});
-	$('#tableSalesOrderProductsSearch').on('keyup change', function() {
-		tableSalesOrderProducts.search($(this).val()).draw();
-	});
+	// 	// 	if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length > 0 ) {
+	// 	// 		$(row).addClass('trAdded');
+	// 	// 	}
+	// 	},
+	// 	'columnDefs': [ {
+	// 			'targets': 0,
+	// 			'createdCell': function (td, cellData, rowData, row, col) {
+	// 				$(td).addClass('sopTID text-center');
+	// 			}
+	// 		}, {
+	// 			'targets': 1,
+	// 			'createdCell': function (td, cellData, rowData, row, col) {
+	// 				$(td).addClass('sopSKU text-center');
+	// 			}
+	// 		}, {
+	// 			'targets': 2,
+	// 			'createdCell': function (td, cellData, rowData, row, col) {
+	// 				$(td).addClass('sopAmount text-center');
+	// 			}
+	// 		}, {
+	// 			'targets': 3,
+	// 			'createdCell': function (td, cellData, rowData, row, col) {
+	// 				$(td).addClass('sopPrice text-center').html(parseFloat(cellData).toFixed(2)).data('price', cellData);
+	// 			}
+	// 		}, {
+	// 			'targets': 4,
+	// 			'createdCell': function (td, cellData, rowData, row, col) {
+	// 				$(td).addClass('sopTotal text-center').html(parseFloat(cellData).toFixed(2)).data('total', cellData);
+	// 			}
+	// 		}, {
+	// 			'targets': 5,
+	// 			'createdCell': function (td, cellData, rowData, row, col) {
+	// 				$(td).addClass('sopFreebie text-center');
+	// 				if (cellData == 1) {
+	// 					$(td).html($('<i>').attr({
+	// 						class: 'bi bi-check-circle text-success'
+	// 					})).data('freebie', true);
+	// 				} else {
+	// 					$(td).html($('<i>').attr({
+	// 						class: 'bi bi-x-circle text-danger'
+	// 					})).data('freebie', false);
+	// 				}
+	// 			}
+	// 		}
+	// 	]
+	// });
+	// $('#tableSalesOrderProductsSearch').on('keyup change', function() {
+	// 	tableSalesOrderProducts.search($(this).val()).draw();
+	// });
 
 
 	$('.newreturn-btn').on('click', function() {
@@ -272,10 +272,11 @@ $(document).ready(function() {
 		} else if ($('#NewReturnModal').data('openModal') == 'salesorders') {
 			$('#NewReturnModal').data('openModal', '');
 			$('#SelectSalesOrdersModal').modal('toggle');
-		} else if ($('#NewReturnModal').data('openModal') == 'salesorderproducts') {
-			$('#NewReturnModal').data('openModal', '');
-			$('#SelectSOProductsModal').modal('toggle');
 		}
+		//  else if ($('#NewReturnModal').data('openModal') == 'salesorderproducts') {
+		// 	$('#NewReturnModal').data('openModal', '');
+		// 	$('#SelectSOProductsModal').modal('toggle');
+		// }
 	});
 	$(document).on('click', '.select-client-row', function() {
 		$('#select-client-btn span, .selectedClient').html('#' + $(this).data('no'));
@@ -287,12 +288,12 @@ $(document).ready(function() {
 		// SET clientNo
 		$('#select-client-btn').data('ClientNo', $(this).data('no'));
 
-		// CLEAR TABLE AND SO VALUE WHEN CHANGING CLIENT
-		if ($('#ProductsCount').val() > 0 || $('#SalesOrderNo').val().length > 0) {
-			$('tr.soProduct').remove();
-			$('#SalesOrderNo').val('');
-			updProductCount();
-		}
+		// // CLEAR TABLE AND SO VALUE WHEN CHANGING CLIENT
+		// if ($('#ProductsCount').val() > 0 || $('#SalesOrderNo').val().length > 0) {
+		// 	$('tr.soProduct').remove();
+		// 	$('#SalesOrderNo').val('');
+		// 	updProductCount();
+		// }
 
 		// GET CLIENT SALES ORDERS
 		$.get('getClientSalesOrders', { dataType: 'json', no: $(this).data('no') })
@@ -329,205 +330,206 @@ $(document).ready(function() {
 		$('#select-salesorder-btn span, .selectedSalesOrder').html('#' + $(this).data('no'));
 
 		// CLEAR TABLE WHEN CHANGING SO
-		if ($('#ProductsCount').val() > 0) {
-			$('tr.soProduct').remove();
-			updProductCount();
-		}
+		// if ($('#ProductsCount').val() > 0) {
+		// 	$('tr.soProduct').remove();
+		// 	updProductCount();
+		// }
 
 		// GET CLIENT SALES ORDERS
-		$.get('getClientSalesOrderProducts', { dataType: 'json', no: $(this).data('no') })
-		.done(function(data) {
-			tableSalesOrderProducts.clear();
-			let clientSalesOrderProducts = $.parseJSON(data);
-			$.each(clientSalesOrderProducts, function(index, val) {
-				tableSalesOrderProducts.row.add([
-					val.TransactionID,
-					val.Code,
-					val.Amount,
-					val.PriceUnit,
-					(val.Amount * val.PriceUnit),
-					val.Freebie
-				]);
-			});
-			tableSalesOrderProducts.draw();
-		});
+		// $.get('getClientSalesOrderProducts', { dataType: 'json', no: $(this).data('no') })
+		// .done(function(data) {
+		// 	tableSalesOrderProducts.clear();
+		// 	let clientSalesOrderProducts = $.parseJSON(data);
+		// 	$.each(clientSalesOrderProducts, function(index, val) {
+		// 		tableSalesOrderProducts.row.add([
+		// 			val.TransactionID,
+		// 			val.Code,
+		// 			val.Amount,
+		// 			val.PriceUnit,
+		// 			(val.Amount * val.PriceUnit),
+		// 			val.Freebie
+		// 		]);
+		// 	});
+		// 	tableSalesOrderProducts.draw();
+		// });
 
 		$('#SelectSalesOrdersModal').modal('toggle');
 	});
 
-	// ADD SALES ORDER PRODUCT
-	$(document).on('click', '.add-salesorderproduct-row', function() {
-		if ($('#SalesOrderNo').val().length < 1) {
-			showAlert('warning', 'No Sales Order selected!');
-		} else {
-			$('#NewReturnModal').data('openModal', 'salesorderproducts');
-			$('#NewReturnModal').modal('toggle');
-		}
-	});
+	// // ADD SALES ORDER PRODUCT
+	// $(document).on('click', '.add-salesorderproduct-row', function() {
+	// 	if ($('#SalesOrderNo').val().length < 1) {
+	// 		showAlert('warning', 'No Sales Order selected!');
+	// 	} else {
+	// 		$('#NewReturnModal').data('openModal', 'salesorderproducts');
+	// 		$('#NewReturnModal').modal('toggle');
+	// 	}
+	// });
 
-	// COMPUTE SO PRODUCTS TOTAL
-	function updProductCount() {
-		// update order transsaction input names
-		let totalProductsCount = 0;
-		$.each($('.soProduct'), function(i, val) {
-			if (typeof $(this).attr('data-soTID') !== typeof undefined && $(this).attr('data-soTID') !== false) {
-				$(this).find('.inpTID').attr('name', 'productTIDInput_' + i);
-				$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
-				$(this).find('.inpRemarks').attr('name', 'productRemarksInput_' + i);
+	// // COMPUTE SO PRODUCTS TOTAL
+	// function updProductCount() {
+	// 	// update order transsaction input names
+	// 	let totalProductsCount = 0;
+	// 	$.each($('.soProduct'), function(i, val) {
+	// 		if (typeof $(this).attr('data-soTID') !== typeof undefined && $(this).attr('data-soTID') !== false) {
+	// 			$(this).find('.inpTID').attr('name', 'productTIDInput_' + i);
+	// 			$(this).find('.inpQty').attr('name', 'productQtyInput_' + i);
+	// 			$(this).find('.inpRemarks').attr('name', 'productRemarksInput_' + i);
 
-				totalProductsCount++;
-			}
-		});
-		// update order transaction count
-		$('#ProductsCount').val(totalProductsCount);
-		// total
-		let total = 0;
-		let totalFreebies = 0;
-		$.each($('.sopTotalPrice'), function(i, val) {
-			let productTotal = parseFloat($(this).data('total'));
+	// 			totalProductsCount++;
+	// 		}
+	// 	});
+	// 	// update order transaction count
+	// 	$('#ProductsCount').val(totalProductsCount);
+	// 	// total
+	// 	let total = 0;
+	// 	let totalFreebies = 0;
+	// 	$.each($('.sopTotalPrice'), function(i, val) {
+	// 		let productTotal = parseFloat($(this).data('total'));
 
-			if ($(this).parents('.soProduct').data('freebie')) {
-				totalFreebies += productTotal;
-			} else {
-				total += productTotal;
-			}
-		});
-		$('.productsTotal .total').html(total.toFixed(2));
-		$('.productsTotal .totalFreebies').html(totalFreebies.toFixed(2));
+	// 		if ($(this).parents('.soProduct').data('freebie')) {
+	// 			totalFreebies += productTotal;
+	// 		} else {
+	// 			total += productTotal;
+	// 		}
+	// 	});
+	// 	$('.productsTotal .total').html(total.toFixed(2));
+	// 	$('.productsTotal .totalFreebies').html(totalFreebies.toFixed(2));
 
-		if (totalFreebies > 0) {
-			$('.productsTotal .totalFreebies').addClass('tdFreebie');
-		} else {
-			$('.productsTotal .totalFreebies').removeClass('tdFreebie');
-		}
-	}
+	// 	if (totalFreebies > 0) {
+	// 		$('.productsTotal .totalFreebies').addClass('tdFreebie');
+	// 	} else {
+	// 		$('.productsTotal .totalFreebies').removeClass('tdFreebie');
+	// 	}
+	// }
 
-	// SELECT SALES ORDER PRODUCT
-	$(document).on('click', '.select-salesorderproduct-row', function() {
-		// NEW SALES ORDER PRODUCT ROW
-		let sopClassName = 'sop' + $('.soProduct').length;
+	// // SELECT SALES ORDER PRODUCT
+	// $(document).on('click', '.select-salesorderproduct-row', function() {
+	// 	// NEW SALES ORDER PRODUCT ROW
+	// 	let sopClassName = 'sop' + $('.soProduct').length;
 
-		if ($('#salesOrderReturnProducts').find("[data-soTID='"+ $(this).find('.sopTID').html() +"']").length < 1) {
-			$('.newProduct').before($('<tr>')
-				.attr({
-					class: 'soProduct highlighted ' + sopClassName,
-					'data-soTID': $(this).find('.sopTID').html()
-				}).data('freebie', $(this).find('.sopFreebie').data('freebie'))
-				.append($('<td>').attr({
-					class: 'text-center'
-				})
-					.html($(this).find('.sopFreebie').html()))
-				.append($('<td>').attr({
-					class: 'sopTID text-center'
-				}).html($(this).find('.sopTID').html())
-					.append($('<input>').attr({ // create hidden input for transaction id
-						class: 'inpTID',
-						type: 'hidden'
-					}).val($(this).find('.sopTID').html())))
-				.append($('<td>').attr({
-					class: 'sopQty text-center'
-				})
-					.append($('<input>').attr({
-						class: 'inpQty',
-						type: 'number',
-						value: $(this).find('.sopAmount').html(),
-						min: '0',
-						max: $(this).find('.sopAmount').html(),
-						placeholder: '*',
-						style: 'width: 5rem;',
-						required: ''
-					})))
-				.append($('<td>').attr({
-					class: 'sopPrice text-center'
-				}).data('price', $(this).find('.sopPrice').data('price'))
-					.append($('<span>').attr({
-						class: 'text-center'
-					}).html($(this).find('.sopPrice').html())))
-				.append($('<td>').attr({
-					class: 'sopTotalPrice text-center' + (($(this).find('.sopFreebie').data('freebie')) ? ' tdFreebie' : '')
-				}).data('total', 0)
-					.append($('<span>').attr({
-						class: 'text-center'
-					}).html('0.00')))
-				.append($('<td>').attr({
-					class: 'sopRemarks text-center'
-				})
-					.append($('<input>').attr({
-						class: 'inpRemarks',
-						type: 'text',
-						style: 'width: 8rem;'
-					})))
-				.append($('<td>').attr({ class: 'text-center' })
-					.append($('<button>').attr({
-						type: 'button',
-						class: 'btn remove-sop-btn'
-					})
-						.append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
-			);
-			updProductCount();
-			setTimeout(function() {
-				$('.' + sopClassName).removeClass('highlighted');
-			}, 2000);
+	// 	if ($('#salesOrderReturnProducts').find("[data-soTID='"+ $(this).find('.sopTID').html() +"']").length < 1) {
+	// 		$('.newProduct').before($('<tr>')
+	// 			.attr({
+	// 				class: 'soProduct highlighted ' + sopClassName,
+	// 				'data-soTID': $(this).find('.sopTID').html()
+	// 			}).data('freebie', $(this).find('.sopFreebie').data('freebie'))
+	// 			.append($('<td>').attr({
+	// 				class: 'text-center'
+	// 			})
+	// 				.html($(this).find('.sopFreebie').html()))
+	// 			.append($('<td>').attr({
+	// 				class: 'sopTID text-center'
+	// 			}).html($(this).find('.sopTID').html())
+	// 				.append($('<input>').attr({ // create hidden input for transaction id
+	// 					class: 'inpTID',
+	// 					type: 'hidden'
+	// 				}).val($(this).find('.sopTID').html())))
+	// 			.append($('<td>').attr({
+	// 				class: 'sopQty text-center'
+	// 			})
+	// 				.append($('<input>').attr({
+	// 					class: 'inpQty',
+	// 					type: 'number',
+	// 					value: $(this).find('.sopAmount').html(),
+	// 					min: '0',
+	// 					max: $(this).find('.sopAmount').html(),
+	// 					placeholder: '*',
+	// 					style: 'width: 5rem;',
+	// 					required: ''
+	// 				})))
+	// 			.append($('<td>').attr({
+	// 				class: 'sopPrice text-center'
+	// 			}).data('price', $(this).find('.sopPrice').data('price'))
+	// 				.append($('<span>').attr({
+	// 					class: 'text-center'
+	// 				}).html($(this).find('.sopPrice').html())))
+	// 			.append($('<td>').attr({
+	// 				class: 'sopTotalPrice text-center' + (($(this).find('.sopFreebie').data('freebie')) ? ' tdFreebie' : '')
+	// 			}).data('total', 0)
+	// 				.append($('<span>').attr({
+	// 					class: 'text-center'
+	// 				}).html('0.00')))
+	// 			.append($('<td>').attr({
+	// 				class: 'sopRemarks text-center'
+	// 			})
+	// 				.append($('<input>').attr({
+	// 					class: 'inpRemarks',
+	// 					type: 'text',
+	// 					style: 'width: 8rem;'
+	// 				})))
+	// 			.append($('<td>').attr({ class: 'text-center' })
+	// 				.append($('<button>').attr({
+	// 					type: 'button',
+	// 					class: 'btn remove-sop-btn'
+	// 				})
+	// 					.append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+	// 		);
+	// 		updProductCount();
+	// 		setTimeout(function() {
+	// 			$('.' + sopClassName).removeClass('highlighted');
+	// 		}, 2000);
 
-			$(this).addClass('trAdded');
-			$('#SelectSOProductsModal').modal('toggle');
-			$('.inpQty').change();
-		} else {
-			showAlert('warning', 'Transaction is already added!');
-		}
-	});
-	$(document).on('focus keyup change', '.sopQty .inpQty', function() {
-		if (parseInt($(this).val()) > parseInt($(this).attr('max'))) {
-			$(this).val($(this).attr('max'));
-		} else if (parseInt($(this).val()) < parseInt($(this).attr('min'))) {
-			$(this).val($(this).attr('min'));
-		}
+	// 		$(this).addClass('trAdded');
+	// 		$('#SelectSOProductsModal').modal('toggle');
+	// 		$('.inpQty').change();
+	// 	} else {
+	// 		showAlert('warning', 'Transaction is already added!');
+	// 	}
+	// });
+	// $(document).on('focus keyup change', '.sopQty .inpQty', function() {
+	// 	if (parseInt($(this).val()) > parseInt($(this).attr('max'))) {
+	// 		$(this).val($(this).attr('max'));
+	// 	} else if (parseInt($(this).val()) < parseInt($(this).attr('min'))) {
+	// 		$(this).val($(this).attr('min'));
+	// 	}
 
-		let td = $(this).parent('.sopQty');
-		if ($(this).val().length > 0) {
-			let sopTotal = parseInt($(this).val()) * parseFloat(td.siblings('.sopPrice').data('price'));
-			td.siblings('.sopTotalPrice').data('total', sopTotal).children('span').html(sopTotal.toFixed(2));
-		} else {
-			td.siblings('.sopTotalPrice').data('total', 0).children('span').html('0.00');
-		}
-		updProductCount();
-	});
-	$(document).on('click', '.remove-sop-btn', function() {
-		$('#salesOrderProductsTable').find("[data-selectSOP='"+ $(this).parents('tr').attr('data-soTID') +"']").removeClass('trAdded');
-		$(this).parents('tr').remove();
-		updProductCount();
-	});
-	$(document).on('hidden.bs.modal', '#SelectSOProductsModal', function (event) {
-		$('#NewReturnModal').modal('toggle');
-	});
+	// 	let td = $(this).parent('.sopQty');
+	// 	if ($(this).val().length > 0) {
+	// 		let sopTotal = parseInt($(this).val()) * parseFloat(td.siblings('.sopPrice').data('price'));
+	// 		td.siblings('.sopTotalPrice').data('total', sopTotal).children('span').html(sopTotal.toFixed(2));
+	// 	} else {
+	// 		td.siblings('.sopTotalPrice').data('total', 0).children('span').html('0.00');
+	// 	}
+	// 	updProductCount();
+	// });
+	// $(document).on('click', '.remove-sop-btn', function() {
+	// 	$('#salesOrderProductsTable').find("[data-selectSOP='"+ $(this).parents('tr').attr('data-soTID') +"']").removeClass('trAdded');
+	// 	$(this).parents('tr').remove();
+	// 	updProductCount();
+	// });
+	// $(document).on('hidden.bs.modal', '#SelectSOProductsModal', function (event) {
+	// 	$('#NewReturnModal').modal('toggle');
+	// });
 
 	$(document).on('submit', '#formAddReturn', function(t) { // check inputs before submitting
-		let qty = 0;
-		// check product added inputs
-		$.each($('.soProduct'), function(i, val) {
-			if (typeof $(this).attr('data-soTID') !== typeof undefined && $(this).attr('data-soTID') !== false) {
-				qty = $(this).find('.inpQty').val();
+		// let qty = 0;
+		// // check product added inputs
+		// $.each($('.soProduct'), function(i, val) {
+		// 	if (typeof $(this).attr('data-soTID') !== typeof undefined && $(this).attr('data-soTID') !== false) {
+		// 		qty = $(this).find('.inpQty').val();
 
-				if (qty <= 0) {
-					return false;
-				}
-			}
-		});
+		// 		if (qty <= 0) {
+		// 			return false;
+		// 		}
+		// 	}
+		// });
 
 		if ($('#SalesOrderNo').val().length < 1) {
 			showAlert('warning', 'No sales order selected!');
 			$('#AddSalesOrderModal').animate({ scrollTop: 0 }, 1000);
 			t.preventDefault();
-		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
-			showAlert('warning', 'Return items list is empty!');
-			t.preventDefault();
-		} else if (qty <= 0) {
-			showAlert('warning', 'Product/s dont have valid qty!');
-			t.preventDefault();
-		} else if (parseFloat($('.total').html()) <= 0) {
-			showAlert('warning', 'Ordered Products Total must be more than 0!');
-			t.preventDefault();
 		}
+		//  else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
+		// 	showAlert('warning', 'Return items list is empty!');
+		// 	t.preventDefault();
+		// } else if (qty <= 0) {
+		// 	showAlert('warning', 'Product/s dont have valid qty!');
+		// 	t.preventDefault();
+		// } else if (parseFloat($('.total').html()) <= 0) {
+		// 	showAlert('warning', 'Ordered Products Total must be more than 0!');
+		// 	t.preventDefault();
+		// }
 	});
 });
 </script>
