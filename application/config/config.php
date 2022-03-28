@@ -549,7 +549,7 @@ $config['user_restrictions'] = array(
 		'inventory_view',
 
 		'users_view',
-		'users_activities_view',
+		'users_activities',
 		'users_add',
 		'users_edit',
 		'users_edit_login',

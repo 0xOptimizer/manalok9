@@ -220,7 +220,7 @@ class Admin extends MY_Controller {
 	}
 	public function user_activities()
 	{
-		if ($this->Model_Security->CheckUserRestriction('users_activities_view')) {
+		if ($this->Model_Security->CheckUserRestriction('users_activities')) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
 			$header['pageTitle'] = 'User Activities';

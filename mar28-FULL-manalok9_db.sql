@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.5
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Mar 28, 2022 at 06:04 AM
--- Server version: 10.5.12-MariaDB
--- PHP Version: 7.3.32
+-- Host: localhost
+-- Generation Time: Mar 28, 2022 at 01:21 PM
+-- Server version: 10.4.21-MariaDB
+-- PHP Version: 7.3.31
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -19,8 +18,69 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `id17300669_inventory_db`
+-- Database: `manalok9_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `accounts`
+--
+
+CREATE TABLE `accounts` (
+  `ID` int(11) NOT NULL,
+  `Name` varchar(255) DEFAULT NULL,
+  `Type` varchar(255) DEFAULT NULL COMMENT '0=revenues;1=assets;2=liabilities;3=expenses;',
+  `Description` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `adtl_fees`
+--
+
+CREATE TABLE `adtl_fees` (
+  `ID` int(11) NOT NULL,
+  `AdtlFeeNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Qty` int(11) DEFAULT NULL,
+  `UnitPrice` varchar(255) DEFAULT NULL,
+  `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(64) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bills`
+--
+
+CREATE TABLE `bills` (
+  `ID` int(11) NOT NULL,
+  `BillNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Amount` varchar(255) DEFAULT NULL,
+  `ModeOfPayment` varchar(255) DEFAULT NULL,
+  `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brand_category`
+--
+
+CREATE TABLE `brand_category` (
+  `ID` int(11) NOT NULL,
+  `Brand_Name` varchar(255) DEFAULT NULL,
+  `Brand_Char` varchar(255) DEFAULT NULL,
+  `Brand_Type` varchar(255) DEFAULT NULL,
+  `UniqueID` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `brand_category`
@@ -49,6 +109,27 @@ INSERT INTO `brand_category` (`ID`, `Brand_Name`, `Brand_Char`, `Brand_Type`, `U
 (46, 'MANALO K9 (CANVASS BAG)', '0021', 'CANVASS BAG', 'MNJCbxsgZNN0iEInX9tThB'),
 (47, 'META SHIRT', '022', 'T-SHIRT', 'abwauSmKvpLEtUIBhGx7ZU');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brand_properties`
+--
+
+CREATE TABLE `brand_properties` (
+  `id` int(11) NOT NULL,
+  `UniqueID` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `Brand_Abbr` varchar(255) DEFAULT NULL,
+  `Brand_Type_Abbr` varchar(255) NOT NULL,
+  `Product_Line` varchar(255) DEFAULT NULL,
+  `Product_line_Abbr` varchar(255) DEFAULT NULL,
+  `Product_Type` varchar(255) DEFAULT NULL,
+  `Product_Type_Abbr` varchar(255) DEFAULT NULL,
+  `Product_Size` varchar(255) DEFAULT NULL,
+  `Product_Size_Abbr` varchar(255) DEFAULT NULL,
+  `Vcpd` varchar(255) DEFAULT NULL,
+  `Vcpd_Abbr` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Dumping data for table `brand_properties`
 --
@@ -75,6 +156,19 @@ INSERT INTO `brand_properties` (`id`, `UniqueID`, `Brand_Abbr`, `Brand_Type_Abbr
 (45, '367mHF4JOfpzmZsii2nrvo', 'MK9', 'MG', 'MERCHANDISE', 'MERCH', 'MUG', 'MG', NULL, NULL, NULL, NULL),
 (46, 'MNJCbxsgZNN0iEInX9tThB', 'MK9', 'CANBAG', 'MERCHANDISE', 'MERCH', 'CANVASS BAG', 'CANBAG', NULL, NULL, NULL, NULL),
 (47, 'abwauSmKvpLEtUIBhGx7ZU', 'MS', 'TS', 'MERCHANDISE', 'MERCH', 'T-SHIRT', 'TS', NULL, NULL, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brand_size`
+--
+
+CREATE TABLE `brand_size` (
+  `id` int(11) NOT NULL,
+  `UniqueID` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `Product_Size` varchar(255) DEFAULT NULL,
+  `Product_Size_Abbr` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `brand_size`
@@ -147,6 +241,19 @@ INSERT INTO `brand_size` (`id`, `UniqueID`, `Product_Size`, `Product_Size_Abbr`)
 (120, 'abwauSmKvpLEtUIBhGx7ZU', 'LARGE', 'L'),
 (121, 'abwauSmKvpLEtUIBhGx7ZU', 'EXTRA LARGE', 'XL'),
 (122, 'abwauSmKvpLEtUIBhGx7ZU', 'EXTRA EXTRA LARGE', '2XL');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brand_vcpd`
+--
+
+CREATE TABLE `brand_vcpd` (
+  `id` int(11) NOT NULL,
+  `UniqueID` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `Vcpd` varchar(255) DEFAULT NULL,
+  `Vcpd_Abbr` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `brand_vcpd`
@@ -246,6 +353,125 @@ INSERT INTO `brand_vcpd` (`id`, `UniqueID`, `Vcpd`, `Vcpd_Abbr`) VALUES
 (146, '84eqCTbpWMCeGX6rsXDQaA', 'MK9 SPORTS JUG SILVER FREE SIZE ', 'SILVER'),
 (147, 'MNJCbxsgZNN0iEInX9tThB', 'MK9 CANVASS BAG WHITE   10\"X12\"', 'CANBAG'),
 (148, 'abwauSmKvpLEtUIBhGx7ZU', 'META SHIRT BLACK ROUND', 'MSBR');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart_release`
+--
+
+CREATE TABLE `cart_release` (
+  `cart_id` int(11) NOT NULL,
+  `user_id` varchar(255) DEFAULT NULL,
+  `item_code` varchar(255) DEFAULT NULL,
+  `quantity` varchar(255) DEFAULT NULL,
+  `total_price` varchar(255) DEFAULT NULL,
+  `time_stamp` varchar(255) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL COMMENT '0 = pending\r\n1 = approved\r\n2 = cancelled'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart_restocking`
+--
+
+CREATE TABLE `cart_restocking` (
+  `id` int(11) NOT NULL,
+  `uid` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `product_sku` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `quantity` varchar(255) DEFAULT NULL,
+  `retail_price` varchar(255) DEFAULT NULL,
+  `original_price` varchar(255) DEFAULT NULL,
+  `manufacturer` varchar(255) DEFAULT NULL,
+  `expiration` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `user_id` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `date_added` varchar(255) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL COMMENT 'new = 1 ,\r\nadd to stock = 2'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `clients`
+--
+
+CREATE TABLE `clients` (
+  `ID` int(11) NOT NULL,
+  `ClientNo` varchar(255) DEFAULT NULL,
+  `Name` varchar(255) DEFAULT NULL,
+  `TIN` varchar(255) DEFAULT NULL,
+  `Address` varchar(255) DEFAULT NULL,
+  `CityStateProvinceZip` varchar(255) DEFAULT NULL,
+  `Country` varchar(255) DEFAULT NULL,
+  `ContactNum` varchar(255) DEFAULT NULL,
+  `Category` int(11) DEFAULT NULL COMMENT '0=confirmedDistributor;\r\n1=distributorOnProbation;\r\n2=directDealer;\r\n3=directEndUser;',
+  `TerritoryManager` varchar(255) DEFAULT NULL,
+  `Email` varchar(255) DEFAULT NULL,
+  `Status` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `invoices`
+--
+
+CREATE TABLE `invoices` (
+  `ID` int(11) NOT NULL,
+  `InvoiceNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Amount` varchar(255) DEFAULT NULL,
+  `ModeOfPayment` varchar(255) DEFAULT NULL,
+  `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `journals`
+--
+
+CREATE TABLE `journals` (
+  `ID` int(11) NOT NULL,
+  `Date` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Total` varchar(255) DEFAULT NULL,
+  `Type` varchar(127) DEFAULT NULL,
+  `OrderNo` varchar(64) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `journal_transactions`
+--
+
+CREATE TABLE `journal_transactions` (
+  `ID` int(11) NOT NULL,
+  `JournalID` int(11) DEFAULT NULL,
+  `AccountID` int(11) DEFAULT NULL,
+  `Debit` varchar(31) DEFAULT NULL,
+  `Credit` varchar(31) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `logbook`
+--
+
+CREATE TABLE `logbook` (
+  `ID` int(11) NOT NULL,
+  `Event` text DEFAULT NULL,
+  `Description` text DEFAULT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `PageURL` varchar(255) DEFAULT NULL,
+  `DateAdded` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `logbook`
@@ -512,6 +738,48 @@ INSERT INTO `logbook` (`ID`, `Event`, `Description`, `UserID`, `PageURL`, `DateA
 (258, 'created a new product.', 'added a new product META SHIRT ROUND | S [Code: MS022MERCHTSMSBRS].', '61a5caf447cae', 'https://inventory-system-test.000webhostapp.com/admin/products', '2022-03-25 01:46:57 PM'),
 (259, 'created a new product.', 'added a new product META SHIRT ROUND | M [Code: MS022MERCHTSMSBRM].', '61a5caf447cae', 'https://inventory-system-test.000webhostapp.com/admin/products', '2022-03-25 01:47:43 PM');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `manual_transactions`
+--
+
+CREATE TABLE `manual_transactions` (
+  `ID` int(11) NOT NULL,
+  `ManualTransactionNo` varchar(64) DEFAULT NULL,
+  `ItemNo` varchar(255) DEFAULT NULL,
+  `Description` varchar(255) DEFAULT NULL,
+  `Qty` int(11) DEFAULT NULL,
+  `UnitCost` varchar(255) DEFAULT NULL,
+  `Date` varchar(50) DEFAULT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `Status` tinyint(4) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products`
+--
+
+CREATE TABLE `products` (
+  `ID` int(11) NOT NULL,
+  `U_ID` varchar(255) DEFAULT NULL,
+  `Code` varchar(255) DEFAULT NULL,
+  `Product_Name` varchar(255) DEFAULT NULL,
+  `Description` text DEFAULT NULL,
+  `InStock` int(255) DEFAULT 0,
+  `Released` int(255) DEFAULT 0,
+  `Product_Category` varchar(255) DEFAULT NULL,
+  `Product_Weight` varchar(255) DEFAULT NULL,
+  `Price_PerItem` varchar(255) DEFAULT NULL,
+  `Cost_PerItem` varchar(255) DEFAULT NULL,
+  `DateAdded` varchar(255) DEFAULT NULL,
+  `PriceSelling` varchar(255) DEFAULT '0',
+  `Barcode_Images` varchar(255) DEFAULT NULL,
+  `Status` int(11) DEFAULT NULL COMMENT '1 = added\r\n2 = archive\r\n3 = removed'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 --
 -- Dumping data for table `products`
 --
@@ -632,6 +900,51 @@ INSERT INTO `products` (`ID`, `U_ID`, `Code`, `Product_Name`, `Description`, `In
 (150, '754664155939', 'MS022MERCHTSMSBRS', 'META SHIRT SMALL', 'META SHIRT ROUND | S', 0, 0, 'TS', 'S', '500', '157', '2022-03-25 01:46:57 PM', '0', 'assets/barcode_images/754664155939-pbarcode.png', 1),
 (151, '036184520117', 'MS022MERCHTSMSBRM', 'META SHIRT MEDIUM', 'META SHIRT ROUND | M', 0, 0, 'TS', 'M', '500', '157', '2022-03-25 01:47:43 PM', '0', 'assets/barcode_images/036184520117-pbarcode.png', 1);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_transactions`
+--
+
+CREATE TABLE `products_transactions` (
+  `ID` int(11) NOT NULL,
+  `Code` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `TransactionID` varchar(255) DEFAULT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `stockID` int(11) DEFAULT NULL,
+  `Type` tinyint(1) DEFAULT NULL COMMENT '0 = Restocked; 1 = Released;',
+  `Amount` int(255) DEFAULT 0,
+  `PriceUnit` varchar(255) DEFAULT '0',
+  `InStock` int(255) DEFAULT 0,
+  `Date` varchar(255) DEFAULT NULL,
+  `DateAdded` varchar(255) DEFAULT NULL,
+  `Status` int(11) NOT NULL COMMENT '0 = for approval\r\n1 = approved\r\n2 = rejected',
+  `Date_Approval` varchar(255) DEFAULT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `PriceTotal` varchar(255) DEFAULT NULL,
+  `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;',
+  `UnitDiscount` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_details`
+--
+
+CREATE TABLE `product_details` (
+  `id` int(11) NOT NULL,
+  `item_code` varchar(255) DEFAULT NULL,
+  `first_brand` varchar(255) DEFAULT NULL,
+  `Second_brand` varchar(255) DEFAULT NULL,
+  `prd_char` varchar(255) DEFAULT NULL,
+  `char_type` varchar(255) DEFAULT NULL,
+  `prd_line` varchar(255) DEFAULT NULL,
+  `prd_type` varchar(255) DEFAULT NULL,
+  `prd_variant` varchar(255) DEFAULT NULL,
+  `prd_size` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Dumping data for table `product_details`
 --
@@ -751,6 +1064,163 @@ INSERT INTO `product_details` (`id`, `item_code`, `first_brand`, `Second_brand`,
 (150, 'MS022MERCHTSMSBRXS', 'MS', 'META SHIRT', '022', 'T-SHIRT', 'MERCH', 'TS', 'MSBR', 'XS'),
 (151, 'MS022MERCHTSMSBRS', 'MS', 'META SHIRT', '022', 'T-SHIRT', 'MERCH', 'TS', 'MSBR', 'S'),
 (152, 'MS022MERCHTSMSBRM', 'MS', 'META SHIRT', '022', 'T-SHIRT', 'MERCH', 'TS', 'MSBR', 'M');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_released`
+--
+
+CREATE TABLE `product_released` (
+  `id` int(11) NOT NULL,
+  `stockid` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `transactionid` varchar(255) DEFAULT NULL,
+  `uid` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `prd_sku` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `quantity` varchar(255) DEFAULT NULL,
+  `retail_price` varchar(255) DEFAULT NULL,
+  `total_price` varchar(255) DEFAULT NULL,
+  `userid` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `date_added` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;',
+  `UnitDiscount` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_returned`
+--
+
+CREATE TABLE `product_returned` (
+  `id` int(11) NOT NULL,
+  `returnno` varchar(32) DEFAULT NULL,
+  `stockid` varchar(11) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `transactionid` varchar(255) DEFAULT NULL,
+  `prd_sku` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `remarks` varchar(128) DEFAULT NULL,
+  `quantity` int(11) DEFAULT 0,
+  `userid` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `date_added` varchar(32) DEFAULT NULL,
+  `Freebie` int(11) DEFAULT 0 COMMENT '0=no;1=yes;'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product_stocks`
+--
+
+CREATE TABLE `product_stocks` (
+  `ID` int(11) NOT NULL,
+  `UID` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `Product_SKU` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `Stocks` varchar(255) DEFAULT NULL,
+  `Current_Stocks` varchar(255) DEFAULT NULL,
+  `Released_Stocks` varchar(255) DEFAULT NULL,
+  `Retail_Price` varchar(255) DEFAULT NULL,
+  `Price_PerItem` varchar(255) DEFAULT NULL,
+  `Total_Price` varchar(255) DEFAULT NULL,
+  `Manufactured_By` varchar(255) DEFAULT NULL,
+  `Description` text DEFAULT NULL,
+  `Expiration_Date` varchar(255) DEFAULT NULL,
+  `Date_Added` varchar(255) DEFAULT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `Status` int(11) NOT NULL DEFAULT 1 COMMENT '0=not accepted;1=accepted;'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `purchase_orders`
+--
+
+CREATE TABLE `purchase_orders` (
+  `ID` int(11) NOT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `Date` varchar(255) DEFAULT NULL,
+  `DateCreation` varchar(255) DEFAULT NULL,
+  `VendorNo` varchar(255) DEFAULT NULL,
+  `ShipVia` varchar(255) DEFAULT NULL,
+  `DateDelivery` varchar(255) DEFAULT NULL,
+  `DateApproved` varchar(32) DEFAULT NULL,
+  `Remarks` varchar(255) DEFAULT NULL,
+  `Status` int(11) DEFAULT NULL COMMENT '0 = rejected; 1 = for approval; 2 = approved'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `replacements`
+--
+
+CREATE TABLE `replacements` (
+  `ID` int(11) NOT NULL,
+  `ReplacementNo` varchar(64) DEFAULT NULL,
+  `TransactionID` varchar(64) DEFAULT NULL,
+  `DateAdded` varchar(32) DEFAULT NULL,
+  `OrderNo` varchar(64) DEFAULT NULL,
+  `Status` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `returns`
+--
+
+CREATE TABLE `returns` (
+  `ID` int(11) NOT NULL,
+  `ReturnNo` varchar(255) DEFAULT NULL,
+  `DateCreation` varchar(255) DEFAULT NULL,
+  `SalesOrderNo` varchar(255) DEFAULT NULL COMMENT 'sales order no of returned items',
+  `ClientNo` varchar(255) DEFAULT NULL,
+  `Status` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sales_orders`
+--
+
+CREATE TABLE `sales_orders` (
+  `ID` int(11) NOT NULL,
+  `OrderNo` varchar(255) DEFAULT NULL,
+  `Date` varchar(255) DEFAULT NULL,
+  `DateCreation` varchar(255) DEFAULT NULL,
+  `BillToClientNo` varchar(255) DEFAULT NULL,
+  `ShipToClientNo` varchar(255) DEFAULT NULL,
+  `DateDelivery` varchar(32) DEFAULT NULL,
+  `MarkDateInvoicing` varchar(32) DEFAULT NULL,
+  `MarkDateDelivery` varchar(32) DEFAULT NULL,
+  `MarkDateDelivered` varchar(32) DEFAULT NULL,
+  `MarkDateReceived` varchar(32) DEFAULT NULL,
+  `discountOutright` int(11) DEFAULT 0,
+  `discountVolume` int(11) DEFAULT 0,
+  `discountPBD` int(11) DEFAULT 0,
+  `discountManpower` int(11) DEFAULT 0,
+  `Remarks` varchar(255) DEFAULT NULL,
+  `Status` int(11) DEFAULT NULL COMMENT '0=rejected;1=for approval;2=approved/for invoicing;3=for delivery;4=delivered;5=fulfilled/received;'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `security_log`
+--
+
+CREATE TABLE `security_log` (
+  `ID` int(11) NOT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `Agent` varchar(255) DEFAULT NULL,
+  `Platform` varchar(255) DEFAULT NULL,
+  `IPAddress` varchar(50) DEFAULT NULL,
+  `Country` varchar(255) DEFAULT NULL,
+  `PageURL` varchar(255) DEFAULT NULL,
+  `DateAdded` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `security_log`
@@ -3962,6 +4432,62 @@ INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `C
 (3192, '61a5caf447cae', 'Desktop: Chrome 99.0.4844.82', 'Windows 10', '27.109.79.217', 'TBD', 'https://inventory-system-test.000webhostapp.com/Add_newProductV2', '2022-03-25 01:47:43 PM'),
 (3193, '61a5caf447cae', 'Desktop: Chrome 99.0.4844.82', 'Windows 10', '27.109.79.217', 'TBD', 'https://inventory-system-test.000webhostapp.com/admin/products', '2022-03-25 01:47:43 PM');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_itemcode`
+--
+
+CREATE TABLE `tb_itemcode` (
+  `uniqueID` varchar(255) DEFAULT NULL,
+  `Brand_Top` varchar(255) DEFAULT NULL,
+  `Cat_Char` varchar(255) DEFAULT NULL,
+  `Prod_Type` varchar(255) DEFAULT NULL,
+  `Brand_Bot` varchar(255) DEFAULT NULL,
+  `Prod_Line` varchar(255) DEFAULT NULL,
+  `New_Type` varchar(255) DEFAULT NULL,
+  `Prod_Variant` varchar(255) DEFAULT NULL,
+  `Prod_Size` varchar(255) DEFAULT NULL,
+  `ItemCode` varchar(255) DEFAULT NULL,
+  `TimeStamp` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tb_mailsent`
+--
+
+CREATE TABLE `tb_mailsent` (
+  `id` int(11) NOT NULL,
+  `sent_to` varchar(255) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `message` text DEFAULT NULL,
+  `attachment` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `ID` int(11) NOT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `Image` varchar(255) DEFAULT NULL,
+  `FirstName` varchar(255) DEFAULT NULL,
+  `MiddleName` varchar(255) DEFAULT NULL,
+  `LastName` varchar(255) DEFAULT NULL,
+  `NameExtension` varchar(255) DEFAULT NULL,
+  `DateOfBirth` varchar(255) DEFAULT NULL,
+  `ContactNumber` varchar(255) DEFAULT NULL,
+  `Address` varchar(255) DEFAULT NULL,
+  `Comment` varchar(255) DEFAULT NULL,
+  `Privilege` varchar(2) DEFAULT NULL COMMENT '0 = None; 1 = Normal; 2 = Admin; 3 = Developer',
+  `DateAdded` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 --
 -- Dumping data for table `users`
 --
@@ -3969,12 +4495,44 @@ INSERT INTO `security_log` (`ID`, `UserID`, `Agent`, `Platform`, `IPAddress`, `C
 INSERT INTO `users` (`ID`, `UserID`, `Image`, `FirstName`, `MiddleName`, `LastName`, `NameExtension`, `DateOfBirth`, `ContactNumber`, `Address`, `Comment`, `Privilege`, `DateAdded`) VALUES
 (1, '61a5caf447cae', 'assets/images/faces/1.jpg', 'John', 'Rogers', 'Doe', 'Jr', '1989-06-22', '09123456789', '123 Tester City', '', '3', '2021-12-29 09:33:43 PM');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_login`
+--
+
+CREATE TABLE `users_login` (
+  `ID` int(11) NOT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `LoginEmail` varchar(255) DEFAULT NULL,
+  `LoginPassword` varchar(255) DEFAULT NULL,
+  `LastLogin` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 --
 -- Dumping data for table `users_login`
 --
 
 INSERT INTO `users_login` (`ID`, `UserID`, `LoginEmail`, `LoginPassword`, `LastLogin`) VALUES
 (1, '61a5caf447cae', 'test_admin@gmail.com', '$2y$10$dzijod41MPcFfa5T9qxG5.VxeIOwmPRJ5FuTBqWX0R9S6uxJcIflO', '2022-03-16 07:30:46');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_login_history`
+--
+
+CREATE TABLE `users_login_history` (
+  `ID` int(11) NOT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `LoginEmail` varchar(255) DEFAULT NULL,
+  `LoginPassword` varchar(255) DEFAULT NULL,
+  `Agent` varchar(255) DEFAULT NULL,
+  `Platform` varchar(255) DEFAULT NULL,
+  `IPAddress` varchar(255) DEFAULT NULL,
+  `Success` tinyint(1) DEFAULT NULL COMMENT '0 = failed; 1 = success',
+  `DateAdded` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users_login_history`
@@ -4077,6 +4635,19 @@ INSERT INTO `users_login_history` (`ID`, `UserID`, `LoginEmail`, `LoginPassword`
 (94, '61a5caf447cae', 'test_admin@gmail.com', NULL, 'Desktop: Chrome 99.0.4844.82', 'Windows 10', '110.93.85.43', 1, '2022-03-25 10:22:41 AM'),
 (95, '61a5caf447cae', 'test_admin@gmail.com', NULL, 'Desktop: Chrome 99.0.4844.82', 'Windows 10', '27.109.79.217', 1, '2022-03-25 01:31:14 PM');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_registrations`
+--
+
+CREATE TABLE `users_registrations` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `DateAdded` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Dumping data for table `users_registrations`
 --
@@ -4085,12 +4656,522 @@ INSERT INTO `users_registrations` (`id`, `email`, `token`, `DateAdded`) VALUES
 (1, 'lorelynsabalos@gmail.com', '54288fe214a94b1d37a25982162b52042ba11bd2fa05352d', '2022-01-29 03:15:51 PM'),
 (2, 'elonor.relato@gmail.com', '9a060bd97ad97d59bb5dc73f2bdff99fa4501e9a59b476c3', '2022-01-29 03:17:21 PM');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_restrictions`
+--
+
+CREATE TABLE `user_restrictions` (
+  `ID` int(11) NOT NULL,
+  `UserID` varchar(255) DEFAULT NULL,
+  `products_view` tinyint(1) DEFAULT 0,
+  `products_add` tinyint(1) DEFAULT 0,
+  `products_edit` tinyint(1) DEFAULT 0,
+  `products_delete` tinyint(1) DEFAULT 0,
+  `releasing_view` tinyint(1) DEFAULT 0,
+  `releasing_scan_add_stock` tinyint(1) DEFAULT 0,
+  `releasing_manual_add_stock` tinyint(1) DEFAULT 0,
+  `restocking_view` tinyint(1) DEFAULT 0,
+  `restocking_scan_add_stock` tinyint(1) DEFAULT 0,
+  `restocking_manual_add_stock` tinyint(1) DEFAULT 0,
+  `restocking_update_stock` tinyint(1) DEFAULT 0,
+  `restocking_delete_stock` tinyint(1) DEFAULT 0,
+  `restocking_cart_functions` tinyint(1) DEFAULT 0,
+  `inventory_view` tinyint(1) DEFAULT 0,
+  `users_view` tinyint(1) DEFAULT 0,
+  `users_add` tinyint(1) DEFAULT 0,
+  `users_edit` tinyint(1) DEFAULT 0,
+  `users_edit_login` tinyint(1) DEFAULT 0,
+  `users_activities` tinyint(1) DEFAULT 0,
+  `vendors_view` tinyint(1) DEFAULT 0,
+  `vendors_add` tinyint(1) DEFAULT 0,
+  `vendors_edit` tinyint(1) DEFAULT 0,
+  `vendors_delete` tinyint(1) DEFAULT 0,
+  `purchase_orders_view` tinyint(1) DEFAULT 0,
+  `purchase_orders_add` tinyint(1) DEFAULT 0,
+  `purchase_orders_add_manual_transaction` tinyint(1) DEFAULT 0,
+  `purchase_orders_remove_manual_transaction` tinyint(1) DEFAULT 0,
+  `purchase_orders_approve` tinyint(1) DEFAULT 0,
+  `purchase_orders_bill_creation` tinyint(1) DEFAULT 0,
+  `purchase_orders_accounting` tinyint(1) DEFAULT 0,
+  `purchase_orders_remarks` tinyint(1) DEFAULT 0,
+  `bills_view` tinyint(1) DEFAULT 0,
+  `bills_add` tinyint(1) DEFAULT 0,
+  `bills_delete` tinyint(1) DEFAULT 0,
+  `manual_purchases_view` tinyint(1) DEFAULT 0,
+  `clients_view` tinyint(1) DEFAULT 0,
+  `clients_add` tinyint(1) DEFAULT 0,
+  `clients_edit` tinyint(1) DEFAULT 0,
+  `clients_delete` tinyint(1) DEFAULT 0,
+  `sales_orders_view` tinyint(1) DEFAULT 0,
+  `sales_orders_add` tinyint(1) DEFAULT 0,
+  `sales_orders_mark_for_invoicing` tinyint(1) DEFAULT 0,
+  `sales_orders_schedule_delivery` tinyint(1) DEFAULT 0,
+  `sales_orders_mark_as_delivered` tinyint(1) DEFAULT 0,
+  `sales_orders_mark_as_received` tinyint(1) DEFAULT 0,
+  `sales_orders_invoice_creation` tinyint(1) DEFAULT 0,
+  `sales_orders_accounting` tinyint(1) DEFAULT 0,
+  `sales_orders_remarks` tinyint(1) DEFAULT 0,
+  `sales_orders_adtl_fees` tinyint(1) DEFAULT 0,
+  `invoice_view` tinyint(1) DEFAULT 0,
+  `invoice_add` tinyint(1) DEFAULT 0,
+  `invoice_delete` tinyint(1) DEFAULT 0,
+  `returns_view` tinyint(1) DEFAULT 0,
+  `returns_add` tinyint(1) DEFAULT 0,
+  `return_product_view` tinyint(1) DEFAULT 0,
+  `return_product_add` tinyint(1) DEFAULT 0,
+  `return_product_delete` tinyint(1) DEFAULT 0,
+  `replacements_view` tinyint(1) DEFAULT 0,
+  `replacements_add` tinyint(1) DEFAULT 0,
+  `replacements_approve` tinyint(1) DEFAULT 0,
+  `replacements_delete` tinyint(1) DEFAULT 0,
+  `accounts_view` tinyint(1) DEFAULT 0,
+  `accounts_add` tinyint(1) DEFAULT 0,
+  `accounts_edit` tinyint(1) DEFAULT 0,
+  `journal_transactions_view` tinyint(1) DEFAULT 0,
+  `journal_transactions_add` tinyint(1) DEFAULT 0,
+  `journal_transactions_delete` tinyint(1) DEFAULT 0,
+  `branding_view` tinyint(1) DEFAULT 0,
+  `branding_add` tinyint(1) DEFAULT 0,
+  `branding_edit` tinyint(1) DEFAULT 0,
+  `branding_delete` tinyint(1) DEFAULT 0,
+  `mail_view` tinyint(1) DEFAULT 0,
+  `mail_add` tinyint(1) DEFAULT 0,
+  `my_activities_view` tinyint(1) DEFAULT 0,
+  `trash_bin_view` tinyint(1) DEFAULT 0,
+  `trash_bin_retrieve` tinyint(1) DEFAULT 0,
+  `trash_bin_delete` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 --
 -- Dumping data for table `user_restrictions`
 --
 
-INSERT INTO `user_restrictions` (`ID`, `UserID`, `products_view`, `products_add`, `products_edit`, `products_delete`, `releasing_view`, `releasing_scan_add_stock`, `releasing_manual_add_stock`, `restocking_view`, `restocking_scan_add_stock`, `restocking_manual_add_stock`, `restocking_update_stock`, `restocking_delete_stock`, `restocking_cart_functions`, `inventory_view`, `users_view`, `users_add`, `users_edit`, `users_edit_login`, `vendors_view`, `vendors_add`, `vendors_edit`, `vendors_delete`, `purchase_orders_view`, `purchase_orders_add`, `purchase_orders_add_manual_transaction`, `purchase_orders_approve`, `purchase_orders_bill_creation`, `purchase_orders_accounting`, `bills_view`, `bills_add`, `bills_delete`, `manual_purchases_view`, `clients_view`, `clients_add`, `clients_edit`, `clients_delete`, `sales_orders_view`, `sales_orders_add`, `sales_orders_mark_for_invoicing`, `sales_orders_schedule_delivery`, `sales_orders_mark_as_delivered`, `sales_orders_mark_as_received`, `sales_orders_invoice_creation`, `sales_orders_accounting`, `invoice_view`, `invoice_add`, `invoice_delete`, `returns_view`, `returns_add`, `return_product_view`, `return_product_add`, `return_product_edit`, `return_product_return_to_inventory`, `accounts_view`, `accounts_add`, `accounts_edit`, `journal_transactions_view`, `journal_transactions_add`, `journal_transactions_delete`, `branding_view`, `branding_add`, `branding_edit`, `branding_delete`, `mail_view`, `mail_add`, `my_activities_view`, `trash_bin_view`, `trash_bin_retrieve`, `trash_bin_delete`) VALUES
-(1, '61a5caf447cae', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+INSERT INTO `user_restrictions` (`ID`, `UserID`, `products_view`, `products_add`, `products_edit`, `products_delete`, `releasing_view`, `releasing_scan_add_stock`, `releasing_manual_add_stock`, `restocking_view`, `restocking_scan_add_stock`, `restocking_manual_add_stock`, `restocking_update_stock`, `restocking_delete_stock`, `restocking_cart_functions`, `inventory_view`, `users_view`, `users_add`, `users_edit`, `users_edit_login`, `users_activities`, `vendors_view`, `vendors_add`, `vendors_edit`, `vendors_delete`, `purchase_orders_view`, `purchase_orders_add`, `purchase_orders_add_manual_transaction`, `purchase_orders_remove_manual_transaction`, `purchase_orders_approve`, `purchase_orders_bill_creation`, `purchase_orders_accounting`, `purchase_orders_remarks`, `bills_view`, `bills_add`, `bills_delete`, `manual_purchases_view`, `clients_view`, `clients_add`, `clients_edit`, `clients_delete`, `sales_orders_view`, `sales_orders_add`, `sales_orders_mark_for_invoicing`, `sales_orders_schedule_delivery`, `sales_orders_mark_as_delivered`, `sales_orders_mark_as_received`, `sales_orders_invoice_creation`, `sales_orders_accounting`, `sales_orders_remarks`, `sales_orders_adtl_fees`, `invoice_view`, `invoice_add`, `invoice_delete`, `returns_view`, `returns_add`, `return_product_view`, `return_product_add`, `return_product_delete`, `replacements_view`, `replacements_add`, `replacements_approve`, `replacements_delete`, `accounts_view`, `accounts_add`, `accounts_edit`, `journal_transactions_view`, `journal_transactions_add`, `journal_transactions_delete`, `branding_view`, `branding_add`, `branding_edit`, `branding_delete`, `mail_view`, `mail_add`, `my_activities_view`, `trash_bin_view`, `trash_bin_retrieve`, `trash_bin_delete`) VALUES
+(1, '61a5caf447cae', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vendors`
+--
+
+CREATE TABLE `vendors` (
+  `ID` int(11) NOT NULL,
+  `VendorNo` varchar(255) DEFAULT NULL,
+  `Name` varchar(255) DEFAULT NULL,
+  `TIN` varchar(255) DEFAULT NULL,
+  `Address` varchar(255) DEFAULT NULL,
+  `ContactNum` varchar(255) DEFAULT NULL,
+  `ProductServiceKind` varchar(255) DEFAULT NULL,
+  `Email` varchar(255) DEFAULT NULL,
+  `Status` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `accounts`
+--
+ALTER TABLE `accounts`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `adtl_fees`
+--
+ALTER TABLE `adtl_fees`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `bills`
+--
+ALTER TABLE `bills`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `brand_category`
+--
+ALTER TABLE `brand_category`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `brand_properties`
+--
+ALTER TABLE `brand_properties`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `brand_size`
+--
+ALTER TABLE `brand_size`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `brand_vcpd`
+--
+ALTER TABLE `brand_vcpd`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `cart_release`
+--
+ALTER TABLE `cart_release`
+  ADD PRIMARY KEY (`cart_id`);
+
+--
+-- Indexes for table `cart_restocking`
+--
+ALTER TABLE `cart_restocking`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `clients`
+--
+ALTER TABLE `clients`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `invoices`
+--
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `journals`
+--
+ALTER TABLE `journals`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `journal_transactions`
+--
+ALTER TABLE `journal_transactions`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `logbook`
+--
+ALTER TABLE `logbook`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `manual_transactions`
+--
+ALTER TABLE `manual_transactions`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `products_transactions`
+--
+ALTER TABLE `products_transactions`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `product_details`
+--
+ALTER TABLE `product_details`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `product_released`
+--
+ALTER TABLE `product_released`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `product_returned`
+--
+ALTER TABLE `product_returned`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `product_stocks`
+--
+ALTER TABLE `product_stocks`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `purchase_orders`
+--
+ALTER TABLE `purchase_orders`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `replacements`
+--
+ALTER TABLE `replacements`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `returns`
+--
+ALTER TABLE `returns`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `sales_orders`
+--
+ALTER TABLE `sales_orders`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `security_log`
+--
+ALTER TABLE `security_log`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `tb_mailsent`
+--
+ALTER TABLE `tb_mailsent`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `users_login`
+--
+ALTER TABLE `users_login`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `users_login_history`
+--
+ALTER TABLE `users_login_history`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `users_registrations`
+--
+ALTER TABLE `users_registrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `user_restrictions`
+--
+ALTER TABLE `user_restrictions`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `vendors`
+--
+ALTER TABLE `vendors`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `accounts`
+--
+ALTER TABLE `accounts`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `adtl_fees`
+--
+ALTER TABLE `adtl_fees`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `bills`
+--
+ALTER TABLE `bills`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `brand_category`
+--
+ALTER TABLE `brand_category`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+
+--
+-- AUTO_INCREMENT for table `brand_properties`
+--
+ALTER TABLE `brand_properties`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+
+--
+-- AUTO_INCREMENT for table `brand_size`
+--
+ALTER TABLE `brand_size`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+
+--
+-- AUTO_INCREMENT for table `brand_vcpd`
+--
+ALTER TABLE `brand_vcpd`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=149;
+
+--
+-- AUTO_INCREMENT for table `cart_release`
+--
+ALTER TABLE `cart_release`
+  MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `cart_restocking`
+--
+ALTER TABLE `cart_restocking`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `clients`
+--
+ALTER TABLE `clients`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `invoices`
+--
+ALTER TABLE `invoices`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `journals`
+--
+ALTER TABLE `journals`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `journal_transactions`
+--
+ALTER TABLE `journal_transactions`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `logbook`
+--
+ALTER TABLE `logbook`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=260;
+
+--
+-- AUTO_INCREMENT for table `manual_transactions`
+--
+ALTER TABLE `manual_transactions`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `products`
+--
+ALTER TABLE `products`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=152;
+
+--
+-- AUTO_INCREMENT for table `products_transactions`
+--
+ALTER TABLE `products_transactions`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `product_details`
+--
+ALTER TABLE `product_details`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=153;
+
+--
+-- AUTO_INCREMENT for table `product_released`
+--
+ALTER TABLE `product_released`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `product_returned`
+--
+ALTER TABLE `product_returned`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `product_stocks`
+--
+ALTER TABLE `product_stocks`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `purchase_orders`
+--
+ALTER TABLE `purchase_orders`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `replacements`
+--
+ALTER TABLE `replacements`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `returns`
+--
+ALTER TABLE `returns`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `sales_orders`
+--
+ALTER TABLE `sales_orders`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `security_log`
+--
+ALTER TABLE `security_log`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3194;
+
+--
+-- AUTO_INCREMENT for table `tb_mailsent`
+--
+ALTER TABLE `tb_mailsent`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `users_login`
+--
+ALTER TABLE `users_login`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `users_login_history`
+--
+ALTER TABLE `users_login_history`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
+
+--
+-- AUTO_INCREMENT for table `users_registrations`
+--
+ALTER TABLE `users_registrations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `user_restrictions`
+--
+ALTER TABLE `user_restrictions`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `vendors`
+--
+ALTER TABLE `vendors`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
