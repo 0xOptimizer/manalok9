@@ -110,7 +110,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<th class="text-center">SO #</th>
 							<th class="text-center">DATE</th>
 							<th class="text-center">ITEMS</th>
-							<th class="text-center">TOTAL PRICE</th>
+							<th class="text-center">REMAINING PAYMENT</th>
 							<th class="text-center">STATUS</th>
 						</thead>
 						<tbody>
@@ -132,19 +132,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$orderTransactions->num_rows()?>
 										</td>
 										<td class="text-center">
-											<?php
-											if ($orderTransactions->num_rows() > 0) {
-												$transactionsPriceTotal = 0;
-												foreach ($orderTransactions->result_array() as $transaction) {
-													if ($transaction['Freebie'] == 0) {
-														$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
-													}
-												}
-												echo number_format($transactionsPriceTotal, 2);
-											} else {
-												echo '0';
-											}
-											?>
+											<?=number_format($row['TotalRemainingPayment'], 2)?>
 										</td>
 										<td class="text-center">
 											<?php if ($row['Status'] == '1'): ?>
@@ -739,7 +727,7 @@ $(document).ready(function() {
 
 					if ($('#BillToNo').val() == $('#ShipToNo').val()) {
 						$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
-						showAlert('info', 'Updating on shipping client details is disabled since shipping and billing clients are the same.');
+						// showAlert('info', 'Updating on shipping client details is disabled since shipping and billing clients are the same.');
 					}
 
 					// if shipping update has been disabled after choosing two similar clients, enable it again
@@ -907,7 +895,7 @@ $(document).ready(function() {
 						$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
 					} else {
 						$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
-						showAlert('info', 'Updating on shipping client details is disabled since shipping and billing clients are the same.');
+						// showAlert('info', 'Updating on shipping client details is disabled since shipping and billing clients are the same.');
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {

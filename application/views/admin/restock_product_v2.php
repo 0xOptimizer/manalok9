@@ -170,6 +170,8 @@ date_default_timezone_set('Asia/Manila');
 	<?php $this->load->view('admin/_modals/restocking/view_stock_modal.php'); ?>
 	<?php $this->load->view('admin/_modals/restocking/update_stock_modal.php'); ?>
 
+	<?php $this->load->view('admin/_modals/restocking/modal_manual_restock_product_selection.php'); ?>
+
 
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -185,6 +187,39 @@ date_default_timezone_set('Asia/Manila');
 
 
 			$('#list_release').DataTable();
+
+			var tableProducts = $('#selectproductsTable').DataTable( {
+				sDom: 'lrtip',
+				'bLengthChange': false,
+				'order': [[ 0, 'desc' ]],
+			});
+			$('#tableProductsSearch').on('keyup change', function(){
+				tableProducts.search($(this).val()).draw();
+			});
+
+			$(document).on('click', '.manualselect-btn', function() {
+				$('#add_stock_restocking_manual').data('openModal', 'products');
+				$('#add_stock_restocking_manual').modal('toggle');
+			});
+			$(document).on('hidden.bs.modal', '#add_stock_restocking_manual', function (event) {
+				if ($('#add_stock_restocking_manual').data('openModal') == 'products') {
+					$('#add_stock_restocking_manual').data('openModal', '');
+					$('#SelectProductSKUModal').modal('toggle');
+				}
+			});
+			$(document).on('hidden.bs.modal', '#SelectProductSKUModal', function (event) {
+				$('#add_stock_restocking_manual').modal('toggle');
+			});
+
+			$(document).on('click', '.select-product-row', function() {
+				$('#m_pre_sku').val($(this).data('sku'));
+				$('#m_orig_price').val($(this).find('.pCost').data('cost'));
+				$('#m_r_price').val($(this).find('.pPrice').data('price'));
+
+				$('#m_pre_sku').change();
+
+				$('#SelectProductSKUModal').modal('toggle');
+			});
 
 		});
 	</script>

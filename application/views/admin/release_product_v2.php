@@ -165,6 +165,9 @@ date_default_timezone_set('Asia/Manila');
 	<?php $this->load->view('admin/_modals/releasing/modal_release_quantity.php'); ?>
 	<?php $this->load->view('admin/_modals/releasing/modal_stock_selection.php'); ?>
 
+	<?php $this->load->view('admin/_modals/releasing/modal_manual_release_product_selection.php'); ?>
+
+
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/jquery.js"></script>
@@ -219,6 +222,37 @@ date_default_timezone_set('Asia/Manila');
 		});
 		$('#tableStocksSearch').on('keyup change', function(){
 			tableStocks.search($(this).val()).draw();
+		});
+
+		var tableProducts = $('#selectproductsTable').DataTable( {
+			sDom: 'lrtip',
+			'bLengthChange': false,
+			'order': [[ 5, 'desc' ]],
+		});
+		$('#tableProductsSearch').on('keyup change', function(){
+			tableProducts.search($(this).val()).draw();
+		});
+
+		$(document).on('click', '.manualselect-btn', function() {
+			$('#modal_manual_releasing').data('openModal', 'products');
+			$('#modal_manual_releasing').modal('toggle');
+		});
+		$(document).on('hidden.bs.modal', '#modal_manual_releasing', function (event) {
+			if ($('#modal_manual_releasing').data('openModal') == 'products') {
+				$('#modal_manual_releasing').data('openModal', '');
+				$('#SelectProductSKUModal').modal('toggle');
+			}
+		});
+		$(document).on('hidden.bs.modal', '#SelectProductSKUModal', function (event) {
+			$('#modal_manual_releasing').modal('toggle');
+		});
+
+		$(document).on('click', '.select-product-row', function() {
+			$('#inp_sku').val($(this).data('sku'));
+
+			$('#inp_sku').change();
+
+			$('#SelectProductSKUModal').modal('toggle');
 		});
 	</script>
 	<script type="text/javascript" src="<?=base_url()?>assets/js/releasing.js"></script>

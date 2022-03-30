@@ -353,6 +353,8 @@ class SalesOrders extends MY_Controller {
 							'Email' => $shipEmail,
 						);
 						$updateClient = $this->Model_Updates->UpdateClientByNo($data, $shipToNo);
+					} elseif ($shipToNo == 'shipToBillingClient') { // set ship client no to bill no
+						$shipToNo = $billToNo;
 					}
 				} else { // set ship client no to bill no
 					$shipToNo = $billToNo;
@@ -487,6 +489,9 @@ class SalesOrders extends MY_Controller {
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+					// UPDATE REMAINING PAYMENT
+					$this->totalRemainingSOPayment($orderNo);
 
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('created a new sales order.', 'added sales order ' . $orderNo . ' [SalesOrderID: ' . $orderID . '].', base_url('admin/view_sales_order?orderNo='. $orderNo));
@@ -849,6 +854,7 @@ class SalesOrders extends MY_Controller {
 			$salesOrderNo = $this->input->post('sales-order-no');
 			$description = $this->input->post('description');
 			$qty = $this->input->post('qty');
+			$unitDiscount = $this->input->post('unit-discount');
 			$unitPrice = $this->input->post('unit-price');
 
 			$orderDetails = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo)->row_array();
@@ -858,6 +864,7 @@ class SalesOrders extends MY_Controller {
 					'AdtlFeeNo' => $adtlFeeNo,
 					'Description' => $description,
 					'Qty' => $qty,
+					'UnitDiscount' => $unitDiscount,
 					'UnitPrice' => $unitPrice,
 					'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
 					'OrderNo' => $salesOrderNo,
@@ -872,6 +879,9 @@ class SalesOrders extends MY_Controller {
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+					// UPDATE REMAINING PAYMENT
+					$this->totalRemainingSOPayment($salesOrderNo);
 
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('added a new additional fee.', 'adde a new additional fee [ID: ' . $adtlFeeID . '] for sales order [OrderNo: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
@@ -909,12 +919,14 @@ class SalesOrders extends MY_Controller {
 			$adtlFeeNo = $this->input->post('adtl-fee-no');
 			$description = $this->input->post('description');
 			$qty = $this->input->post('qty');
+			$unitDiscount = $this->input->post('unit-discount');
 			$unitPrice = $this->input->post('unit-price');
 
 			// Update
 			$data = array(
 				'Description' => $description,
 				'Qty' => $qty,
+				'UnitDiscount' => $unitDiscount,
 				'UnitPrice' => $unitPrice,
 			);
 			$updateAdtlFee = $this->Model_Updates->UpdateAdtlFee($data, $adtlFeeNo);
@@ -927,6 +939,10 @@ class SalesOrders extends MY_Controller {
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
 
+				// UPDATE REMAINING PAYMENT
+				$this->totalRemainingSOPayment($salesOrderNo);
+
+				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('updated client details.', 'updated details of adtl fee' . ' [adtlFeeNo: ' . $adtlFeeNo . '].', $_SERVER['HTTP_REFERER']);
 				$this->session->set_flashdata('highlight-id', $adtlFeeNo);
 				redirect($_SERVER['HTTP_REFERER']);
@@ -950,16 +966,34 @@ class SalesOrders extends MY_Controller {
 		if ($this->Model_Security->CheckUserRestriction('sales_orders_adtl_fees')) {
 			$adtlFeeNo = $this->input->get('afno');
 			if ($adtlFeeNo != NULL) {
+				$adtlFee = $this->Model_Selects->GetAdtlFeesByAdtlFeeNo($adtlFeeNo);
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Removed Aditional Fee.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				$removeAdtlFee = $this->Model_Deletes->Delete_AdtlFee($adtlFeeNo);
+				if ($removeAdtlFee) {
+					if ($adtlFee->num_rows() > 0) {
+						$adtlFeeDetails = $adtlFee->row_array();
 
+						$updateSORemainingPayment = $this->totalRemainingSOPayment($adtlFeeDetails['OrderNo']);
+						if (!$updateSORemainingPayment) {
+							$prompt_txt =
+							'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Danger!</strong> Sales Order remaining payment not updated.
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
+						}
+					}
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Removed Aditional Fee.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
+
+				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('removed adtl fee.', 'removed adtl fee' . ' [adtlFeeNo: ' . $adtlFeeNo . '].', $_SERVER['HTTP_REFERER']);
-				$result = $this->Model_Deletes->Delete_AdtlFee($adtlFeeNo);
 			}
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
@@ -1004,12 +1038,25 @@ class SalesOrders extends MY_Controller {
 			if ($insertInvoice == TRUE) {
 				$invoiceID = $this->db->insert_id();
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Added Invoice.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				$updateSORemainingPayment = $this->totalRemainingSOPayment($salesOrderNo);
+				if ($updateSORemainingPayment) {
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Added Invoice.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				} else {
+					$prompt_txt =
+					'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Danger!</strong> Sales Order remaining payment not updated.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
+
+				// UPDATE REMAINING PAYMENT
+				$this->totalRemainingSOPayment($salesOrderNo);
 
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('generated a new invoice.', 'generated a new invoice [ID: ' . $invoiceID . '] for sales order [OrderNo: ' . $salesOrderNo . '].', base_url('admin/invoices'));
@@ -1080,18 +1127,35 @@ class SalesOrders extends MY_Controller {
 	{
 		if ($this->Model_Security->CheckUserRestriction('invoice_delete')) {
 			$invoiceNo = $this->input->get('ino');
-			if ($this->session->userdata('Privilege') > 1 && $invoiceNo != NULL) {
-				$result = $this->Model_Updates->remove_invoice($invoiceNo);
+			if ($invoiceNo != NULL) {
+				$invoice = $this->Model_Selects->GetInvoiceByInvoiceNo($invoiceNo);
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Added Invoice.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				$removeInvoice = $this->Model_Updates->remove_invoice($invoiceNo);
+				if ($removeInvoice) {
+					if ($invoice->num_rows() > 0) {
+						$invoiceDetails = $invoice->row_array();
+
+						$updateSORemainingPayment = $this->totalRemainingSOPayment($invoiceDetails['OrderNo']);
+						if (!$updateSORemainingPayment) {
+							$prompt_txt =
+							'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Danger!</strong> Sales Order remaining payment not updated.
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
+						}
+					}
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Removed Invoice.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
 
 				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('deleted invoice.', 'deleted invoice [ID: ' . $invoiceID . '].', base_url('admin/invoices'));
+				$this->Model_Logbook->LogbookEntry('deleted invoice.', 'deleted invoice [No: ' . $invoiceNo . '].', base_url('admin/invoices'));
 			}
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
@@ -1604,5 +1668,69 @@ class SalesOrders extends MY_Controller {
 		} else {
 			redirect(base_url());
 		}
+	}
+
+
+
+// ############################ [ PRIVATE FUNCTIONS ] ############################
+	private function totalRemainingSOPayment($salesOrderNo) {
+		$getSalesOrderByOrderNo = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
+		$salesOrder = $getSalesOrderByOrderNo->row_array();
+		$getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($salesOrderNo);
+		$getAdtlFeesByOrderNo = $this->Model_Selects->GetAdtlFeesByOrderNo($salesOrderNo);
+
+		$totalDiscount = $salesOrder['discountOutright'] + $salesOrder['discountVolume'] + $salesOrder['discountPBD'] + $salesOrder['discountManpower'];
+		$transactionsPriceTotal = 0;
+		$transactionsFreebiesTotal = 0;
+		$transactionsUnitDiscountTotal = 0;
+		$transactionsAdtlUnitDiscountTotal = 0;
+		$transactionsAdtlFeesTotal = 0;
+
+		if ($getTransactionsByOrderNo->num_rows() > 0) {
+			foreach ($getTransactionsByOrderNo->result_array() as $row) {
+				$price = $row['PriceUnit'];
+				$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
+
+				// apply discount
+				$price -= $unitDiscountPriceTotal;
+				if ($row['Freebie'] == 0) {
+					$transactionsPriceTotal += ($price * $row['Amount']);
+					$transactionsUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Amount']);
+				} else {
+					$transactionsFreebiesTotal += ($price * $row['Amount']);
+				}
+			}
+		}
+
+		if ($getAdtlFeesByOrderNo->num_rows() > 0) {
+			foreach ($getAdtlFeesByOrderNo->result_array() as $row) {
+				$price = $row['UnitPrice'];
+				$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
+
+				// apply discount
+				$price -= $unitDiscountPriceTotal;
+				$transactionsAdtlFeesTotal += ($price * $row['Qty']);
+				$transactionsAdtlUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Qty']);
+			}
+		}
+
+		$totalPriceDiscounted = 
+			($transactionsPriceTotal + $transactionsAdtlFeesTotal) - 
+			($transactionsPriceTotal * ($totalDiscount / 100)) - 
+			($transactionsUnitDiscountTotal + $transactionsAdtlUnitDiscountTotal);
+
+		$total_invoice_amount = $this->Model_Selects->GetTotalInvoicesBySONo($salesOrderNo);
+		if ($total_invoice_amount->num_rows()) {
+			$amount = $total_invoice_amount->row_array()['Amount'];
+		} else {
+			$amount = 0;
+		}
+
+		$totalRemainingPayment = $totalPriceDiscounted - $amount;
+		// Update SO Total
+		$data = array(
+			'TotalRemainingPayment' => $totalRemainingPayment,
+		);
+		return $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
 	}
 }

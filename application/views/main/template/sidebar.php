@@ -3,7 +3,7 @@
 		<div class="sidebar-header">
 			<div class="d-flex justify-content-between">
 				<div class="logo">
-					<a href="index.html"><img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>" width="250" height="70"></a>
+					<a href="<?=base_url()?>"><img src="<?=base_url() . 'assets/images/manalok9_logo.png'?>" width="250" height="70"></a>
 				</div>
 				<div class="toggler">
 					<a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>

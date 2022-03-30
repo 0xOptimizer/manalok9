@@ -161,7 +161,7 @@
 								</tr>
 								<tr>
 									<?php $accountCategories = array('CONFIRMED DISTRIBUTOR', 'DISTRIBUTOR ON PROBATION', 'DIRECT DEALER', 'DIRECT END USER'); ?>
-									<td colspan="2" rowspan="3" class="text-center">
+									<td colspan="2" rowspan="2" class="text-center">
 										<?=$accountCategories[$clientBTDetails['Category']]?>
 									</td>
 									<td colspan="2" class="fw-bold">Volume Discount (<?=$salesOrder['discountVolume']?>%)</td>
@@ -176,6 +176,12 @@
 									</td>
 								</tr>
 								<tr>
+									<td class="fw-bold">
+										REMARKS
+									</td>
+									<td>
+										<?=$salesOrder['Remarks']?>
+									</td>
 									<td colspan="2" class="fw-bold">Manpower Discount (<?=$salesOrder['discountManpower']?>%)</td>
 									<td colspan="2" class="text-center" id="dcManpower" data-discount="<?=$salesOrder['discountManpower']?>">
 										0.00

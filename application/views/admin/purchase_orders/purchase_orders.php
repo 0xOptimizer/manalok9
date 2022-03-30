@@ -131,17 +131,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?=$orderTransactions->num_rows()?>
 										</td>
 										<td class="text-center">
-											<?php
-											if ($orderTransactions->num_rows() > 0) {
-												$transactionsPriceTotal = 0;
-												foreach ($orderTransactions->result_array() as $transaction) {
-													$transactionsPriceTotal += $transaction['Amount'] * $transaction['PriceUnit'];
-												}
-												echo number_format($transactionsPriceTotal, 2);
-											} else {
-												echo '0';
-											}
-											?>
+											<?=number_format($row['TotalRemainingPayment'], 2)?>
 										</td>
 										<td class="text-center">
 											<?php if ($row['Status'] == '1'): ?>
@@ -410,6 +400,8 @@ $(document).ready(function() {
 		$(productRow + ' .inpSKU').val($(this).data('sku'));
 		$(productRow + ' .inpCost').val($(this).find('.pCost').data('cost'));
 		$(productRow + ' .inpPrice').val($(this).find('.pPrice').data('price'));
+
+		$(productRow + ' .inpQty').change();
 
 		$('#SelectProductSKUModal').modal('toggle');
 	});

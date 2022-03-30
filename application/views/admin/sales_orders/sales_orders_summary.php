@@ -40,7 +40,7 @@ if ($sbst == NULL || $sbst == 'ALL') {
 $soNoArr = array_column($this->Model_Selects->GetAllSalesOrdersNo($status,$from,$to)->result_array(), 'OrderNo');
 $getSalesOrders = $this->Model_Selects->GetSalesOrdersInOrderNo($soNoArr);
 
-$soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInOrderNo($soNoArr)->result_array(), 'Code');
+$soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInSalesOrderNo($soNoArr,$status)->result_array(), 'Code');
 
 ?>
 

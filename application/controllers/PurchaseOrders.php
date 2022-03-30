@@ -381,6 +381,9 @@ class PurchaseOrders extends MY_Controller {
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);
 
+					// UPDATE REMAINING PAYMENT
+					$this->totalRemainingPOPayment($orderNo);
+
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('created a new purchase order.', 'added purchase order ' . $orderNo . ' [PurchaseOrderID: ' . $orderID . '].', base_url('admin/view_purchase_order?orderNo='. $orderNo));
 					redirect('admin/purchase_orders');
@@ -477,7 +480,7 @@ class PurchaseOrders extends MY_Controller {
 
 					$prompt_txt =
 					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Success!</strong> Approved Purchase Order.
+					<strong>Success!</strong> Rejected Purchase Order.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);
@@ -567,12 +570,22 @@ class PurchaseOrders extends MY_Controller {
 			if ($insertBill == TRUE) {
 				$billID = $this->db->insert_id();
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Added new Bill.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				$updatePORemainingPayment = $this->totalRemainingPOPayment($purchaseOrderNo);
+				if ($updatePORemainingPayment) {
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Added Bill.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				} else {
+					$prompt_txt =
+					'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Danger!</strong> Purchase Order remaining payment not updated.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
 
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/bills'));
@@ -643,15 +656,35 @@ class PurchaseOrders extends MY_Controller {
 	{
 		if ($this->Model_Security->CheckUserRestriction('bills_delete')) {
 			$billNo = $this->input->get('bno');
-			if ($this->session->userdata('Privilege') > 1 && $billNo != NULL) {
-				$result = $this->Model_Updates->remove_bill($billNo);
+			if ($billNo != NULL) {
+				$bill = $this->Model_Selects->GetBillByBillNo($billNo);
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Removed Bill.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				$removeBill = $this->Model_Updates->remove_bill($billNo);
+				if ($removeBill) {
+					if ($bill->num_rows() > 0) {
+						$billDetails = $bill->row_array();
+
+						$updatePORemainingPayment = $this->totalRemainingPOPayment($billDetails['OrderNo']);
+						if (!$updatePORemainingPayment) {
+							$prompt_txt =
+							'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Danger!</strong> Purchase Order remaining payment not updated.
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
+						}
+					}
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Removed Bill.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('deleted bill.', 'deleted bill [No: ' . $billNo . '].', base_url('admin/bills'));
 			}
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
@@ -682,43 +715,33 @@ class PurchaseOrders extends MY_Controller {
 			$qty = $this->input->post('qty');
 			$unitCost = $this->input->post('unit-cost');
 
-			$orderDetails = $this->Model_Selects->GetPurchaseOrderByNo($purchaseOrderNo)->row_array();
-			if ($orderDetails['Status'] < 2) {
-				// Insert
-				$data = array(
-					'ManualTransactionNo' => 'MT' . strtoupper(uniqid()),
-					'OrderNo' => $purchaseOrderNo,
-					'ItemNo' => $itemNo,
-					'Description' => $description,
-					'Qty' => $qty,
-					'UnitCost' => $unitCost,
-					'Date' => date('Y-m-d H:i:s'),
-				);
-				$insertManualTransaction = $this->Model_Inserts->InsertManualTransaction($data);
-				if ($insertManualTransaction == TRUE) {
-					$mTransactionID = $this->db->insert_id();
+			// Insert
+			$data = array(
+				'ManualTransactionNo' => 'MT' . strtoupper(uniqid()),
+				'OrderNo' => $purchaseOrderNo,
+				'ItemNo' => $itemNo,
+				'Description' => $description,
+				'Qty' => $qty,
+				'UnitCost' => $unitCost,
+				'Date' => date('Y-m-d H:i:s'),
+			);
+			$insertManualTransaction = $this->Model_Inserts->InsertManualTransaction($data);
+			if ($insertManualTransaction == TRUE) {
+				$mTransactionID = $this->db->insert_id();
 
-					$prompt_txt =
-					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Success!</strong> Added new Manual Transaction.
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>';
-					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Added new Manual Transaction.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 
-					// LOGBOOK
-					$this->Model_Logbook->LogbookEntry('added a new manual purchase transaction.', 'added a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
-					redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
-				}
-				else
-				{
-					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Warning!</strong> Error uploading data. Please try again.
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>';
-					$this->session->set_flashdata('prompt_status',$prompt_txt);
-					redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
-				}
+				// UPDATE REMAINING PAYMENT
+				$this->totalRemainingPOPayment($purchaseOrderNo);
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('added a new manual purchase transaction.', 'added a new manual purchase transaction [ID: ' . $mTransactionID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/manual_transactions'));
+				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
 			}
 			else
 			{
@@ -740,18 +763,85 @@ class PurchaseOrders extends MY_Controller {
 			$manualTransactionNo = $this->input->get('mtno');
 			if ($manualTransactionNo != NULL) {
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Removed Manual Transaction.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
 
-				$result = $this->Model_Deletes->Delete_ManualTransaction($manualTransactionNo);
+				$manualTransaction = $this->Model_Selects->GetManualTransactionByManualTransactionNo($manualTransactionNo);
+
+				$removeManualTransaction = $this->Model_Deletes->Delete_ManualTransaction($manualTransactionNo);
+				if ($removeManualTransaction) {
+					if ($manualTransaction->num_rows() > 0) {
+						$manualTransactionDetails = $manualTransaction->row_array();
+
+						$updatePORemainingPayment = $this->totalRemainingPOPayment($manualTransactionDetails['OrderNo']);
+						if (!$updatePORemainingPayment) {
+							$prompt_txt =
+							'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Danger!</strong> Purchase Order remaining payment not updated.
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
+						}
+					}
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Removed Manual Transaction.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('removed manual transaction.', 'removed manual transaction' . ' [manualTransactionNo: ' . $manualTransactionNo . '].', $_SERVER['HTTP_REFERER']);
 			}
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			redirect(base_url());
 		}
+	}
+
+
+// ############################ [ PRIVATE FUNCTIONS ] ############################
+	private function totalRemainingPOPayment($purchaseOrderNo) {
+		$getPurchaseOrderByOrderNo = $this->Model_Selects->GetPurchaseOrderByNo($purchaseOrderNo);
+		$purchaseOrder = $getPurchaseOrderByOrderNo->row_array();
+		$getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($purchaseOrderNo);
+		$getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo($purchaseOrderNo);
+
+		$transactionsCostTotal = 0;
+		$transactionsManualCostTotal = 0;
+
+		if ($getTransactionsByOrderNo->num_rows() > 0) {
+			foreach ($getTransactionsByOrderNo->result_array() as $tRow) {
+				$stock = $this->Model_Selects->Check_prd_stockid($tRow['stockID']);
+				if ($stock->num_rows() > 0) {
+					$stockRetailPrice = $stock->row_array()['Retail_Price'];
+				}
+
+				$totalCost = $tRow['Amount'] * $tRow['PriceUnit'];
+				$transactionsCostTotal += $totalCost;
+			}
+		}
+		if ($getManualTransactionsByPONo->num_rows() > 0) {
+			foreach ($getManualTransactionsByPONo->result_array() as $row) {
+				$totalCost = $row['Qty'] * $row['UnitCost'];
+				$transactionsManualCostTotal += $totalCost;
+			}
+		}
+
+		$totalPrice = $transactionsCostTotal + $transactionsManualCostTotal;
+
+		$total_bill_amount = $this->Model_Selects->GetTotalBillsByPONo($purchaseOrderNo);
+		if ($total_bill_amount->num_rows()) {
+			$amount = $total_bill_amount->row_array()['Amount'];
+		} else {
+			$amount = 0;
+		}
+
+		$totalRemainingPayment = $totalPrice - $amount;
+		// Update SO Total
+		$data = array(
+			'TotalRemainingPayment' => $totalRemainingPayment,
+		);
+		return $this->Model_Updates->UpdatePurchaseOrderByOrderNo($purchaseOrderNo, $data);
 	}
 }

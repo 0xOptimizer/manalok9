@@ -145,6 +145,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('product_stocks');
 		return $result;
 	}
+	public function product_stocks_total($sku)
+	{
+		$this->db->select('SUM(Current_Stocks) total_stocks');
+		$this->db->where('Product_SKU', $sku);
+		$result = $this->db->get('product_stocks');
+		return $result;
+	}
 
 	public function GetUserLogs($userID)
 	{
@@ -303,12 +310,33 @@ class Model_Selects extends CI_Model {
 		return $result;
 	}
 
-	public function GetProductTransactionsInOrderNo($orderNos)
+	public function GetProductTransactionsInSalesOrderNo($orderNos,$status)
 	{
 		$this->db->select('Code');
 		$this->db->distinct();
+		if ($status != '') {
+			$status = ' AND sales_orders.Status = "'. $status .'"';
+		} else {
+			$status = '';
+		}
+		$this->db->where('EXISTS(SELECT ID FROM sales_orders WHERE products_transactions.OrderNo = sales_orders.OrderNo'. $status .')');
 		$this->db->where_in($orderNos);
 		$result = $this->db->get('products_transactions');
+		return $result;
+	}
+	public function GetProductTransactionsInPurchaseOrderNo($orderNos,$status)
+	{
+		$this->db->select('Code');
+		$this->db->distinct();
+		if ($status != '') {
+			$status = ' AND purchase_orders.Status = '. $status;
+		} else {
+			$status = '';
+		}
+		$this->db->where('EXISTS(SELECT ID FROM purchase_orders WHERE products_transactions.OrderNo = purchase_orders.OrderNo'. $status .')');
+		$this->db->where_in($orderNos);
+		$result = $this->db->get('products_transactions');
+		// print_r($this->db->last_query()); exit();
 		return $result;
 	}
 
@@ -318,7 +346,7 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('Status', '1');
 		$this->db->order_by('ID', 'desc');
-		$result = $this->db->get('invoices');  
+		$result = $this->db->get('invoices');
 		return $result;
 	}
 	public function GetInvoicesBySONo($orderNo)
@@ -326,7 +354,7 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('OrderNo', $orderNo);
 		$this->db->where('Status', '1');
-		$result = $this->db->get('invoices');  
+		$result = $this->db->get('invoices');
 		return $result;
 	}
 	public function GetTotalInvoicesBySONo($orderNo)
@@ -334,7 +362,15 @@ class Model_Selects extends CI_Model {
 		$this->db->select_sum('Amount');
 		$this->db->where('OrderNo', $orderNo);
 		$this->db->where('Status', '1');
-		$result = $this->db->get('invoices');  
+		$result = $this->db->get('invoices');
+		return $result;
+	}
+	public function GetInvoiceByInvoiceNo($invoiceNo)
+	{
+		$this->db->select('*');
+		$this->db->where('InvoiceNo', $invoiceNo);
+		$this->db->where('Status', '1');
+		$result = $this->db->get('invoices');
 		return $result;
 	}
 
@@ -401,6 +437,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('adtl_fees');
 		return $result;
 	}
+	public function GetAdtlFeesByAdtlFeeNo($adtlFeeNo)
+	{
+		$this->db->select('*');
+		$this->db->where('AdtlFeeNo', $adtlFeeNo);
+		$result = $this->db->get('adtl_fees');
+		return $result;
+	}
 
 	// PURCHASE
 	public function GetAllPurchaseOrders()
@@ -450,6 +493,15 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('bills');  
 		return $result;
 	}
+	public function GetBillByBillNo($billNo)
+	{
+		$this->db->select('*');
+		$this->db->where('BillNo', $billNo);
+		$this->db->where('Status', '1');
+		$result = $this->db->get('bills');
+		return $result;
+	}
+
 	// MANUAL TRANSACTIONS
 	public function GetManualTransactions()
 	{
@@ -470,6 +522,13 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('OrderNo', $orderNo);
 		$result = $this->db->get('manual_transactions');  
+		return $result;
+	}
+	public function GetManualTransactionByManualTransactionNo($manualTransactionNo)
+	{
+		$this->db->select('*');
+		$this->db->where('ManualTransactionNo', $manualTransactionNo);
+		$result = $this->db->get('manual_transactions');
 		return $result;
 	}
 

@@ -22,6 +22,12 @@
                 <span class="sku_prompt"></span>
               </div>
             </div>
+            <div class="form-group col-12 col-sm-12 col-md-5 px-3 py-1">
+              <a id="manualselect_stock" href="#" class="manualselect-btn btn btn-success" style="font-size: 12px;">
+                <i class="bi bi-plus-square"></i>
+                SELECT PRODUCT
+              </a>
+            </div>
           </div>
           <div class="form-row d-flex flex-wrap">
             <div class="form-group col-12 col-sm-12 col-md-4 px-3 py-1">

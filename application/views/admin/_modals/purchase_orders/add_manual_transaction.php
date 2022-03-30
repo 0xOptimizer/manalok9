@@ -23,7 +23,7 @@
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">UNIT COST</label>
-							<input type="number" class="form-control" name="unit-cost" min="0" placeholder="0.00" step="0.000001" required>
+							<input type="number" class="form-control" name="unit-cost" min="0" placeholder="0.00" step="0.000001" value="0" required>
 						</div>
 					</div>
 				</div>

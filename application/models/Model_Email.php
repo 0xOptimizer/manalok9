@@ -28,7 +28,7 @@ class Model_Email extends CI_Model {
 		// $this->email->set_header('Content-type', 'text/html');
 
 
-		$this->email->from('MANALOK9');
+		$this->email->from('ManaloK9 noreply');
 		$this->email->to($send_to);
 		$this->email->subject($mail_subject);
 

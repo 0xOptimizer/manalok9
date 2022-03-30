@@ -168,34 +168,34 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 										if ($getTransactionsByOrderNo->num_rows() > 0):
 											foreach ($getTransactionsByOrderNo->result_array() as $tRow): 
 												$stock = $this->Model_Selects->Check_prd_stockid($tRow['stockID']);
-												if ($stock->num_rows() > 0):
-													$sRow = $stock->row_array();
+												if ($stock->num_rows() > 0) {
+													$stockRetailPrice = $stock->row_array()['Retail_Price'];
+												}
 
-													$totalCost = $tRow['Amount'] * $tRow['PriceUnit'];
-													$transactionsCostTotal += $totalCost;
-													?>
-													<tr>
-														<td class="text-center">
-															<?=$tRow['TransactionID']?>
-														</td>
-														<td class="text-center">
-															<?=$tRow['Code']?>
-														</td>
-														<td class="text-center">
-															<?=$tRow['Amount']?>
-														</td>
-														<td class="text-center">
-															<?=number_format($tRow['PriceUnit'], 2)?>
-														</td>
-														<td class="text-center">
-															<?=number_format($sRow['Retail_Price'], 2)?>
-														</td>
-														<td class="text-center">
-															<?=number_format($totalCost, 2)?>
-														</td>
-													</tr>
-											<?php endif;
-											endforeach;
+												$totalCost = $tRow['Amount'] * $tRow['PriceUnit'];
+												$transactionsCostTotal += $totalCost;
+												?>
+												<tr>
+													<td class="text-center">
+														<?=$tRow['TransactionID']?>
+													</td>
+													<td class="text-center">
+														<?=$tRow['Code']?>
+													</td>
+													<td class="text-center">
+														<?=$tRow['Amount']?>
+													</td>
+													<td class="text-center">
+														<?=number_format($tRow['PriceUnit'], 2)?>
+													</td>
+													<td class="text-center">
+														<?=(isset($stockRetailPrice) ? number_format($stockRetailPrice, 2) : '---')?>
+													</td>
+													<td class="text-center">
+														<?=number_format($totalCost, 2)?>
+													</td>
+												</tr>
+											<?php endforeach;
 										endif; ?>
 									</tbody>
 								</table>
@@ -226,8 +226,8 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 										<th></th>
 									</thead>
 									<tbody>
-										<?php if ($getManualTransactionsByPONo->num_rows() > 0): ?>
-											<?php foreach ($getManualTransactionsByPONo->result_array() as $row): 
+										<?php if ($getManualTransactionsByPONo->num_rows() > 0):
+											foreach ($getManualTransactionsByPONo->result_array() as $row): 
 
 												$totalCost = $row['Qty'] * $row['UnitCost'];
 												$transactionsManualCostTotal += $totalCost;

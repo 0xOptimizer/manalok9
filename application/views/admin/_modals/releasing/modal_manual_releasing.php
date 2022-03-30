@@ -14,6 +14,12 @@
             <input id="inp_sku" class="form-control standard-input-pad" type="text" name="">
             <label>Product SKU</label>
           </div>
+          <div class="form-group text-end">
+            <a id="manualselect_stock" href="#" class="manualselect-btn btn btn-success" style="font-size: 12px;">
+              <i class="bi bi-plus-square"></i>
+              SELECT PRODUCT
+            </a>
+          </div>
         </div>
       </div>
       <div class="modal-footer">

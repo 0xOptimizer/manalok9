@@ -18,6 +18,10 @@
 							<input type="number" class="form-control updateAdtlFeeQty" name="qty" min="0" placeholder="---">
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
+							<label class="input-label">UNIT DISCOUNT (%)</label>
+							<input type="number" class="form-control updateAdtlFeeUnitDiscount" name="unit-discount" min="0" placeholder="0" step="0.001" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">UNIT PRICE</label>
 							<input type="number" class="form-control updateAdtlFeeUnitPrice" name="unit-price" min="0" placeholder="0.00" step="0.000001" required>
 						</div>

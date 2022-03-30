@@ -184,6 +184,10 @@
 									<td class="text-center"><input id="balancedue" class="inputManual" type="text"></td>
 								</tr>
 								<tr>
+									<td class="fw-bold" colspan="2">REMARKS</td>
+									<td colspan="4"><?=$purchaseOrder['Remarks']?></td>
+								</tr>
+								<tr>
 									<td colspan="2" class="fw-bold">PREPARED BY</td>
 									<td colspan="2" class="fw-bold">ORDERED BY</td>
 									<td colspan="2" class="fw-bold">APPROVED BY</td>

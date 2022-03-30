@@ -127,6 +127,9 @@ class Exporting extends MY_Controller {
 		$sheet->setCellValue('E'. ($sr + 2), number_format($discountVolume, 2));
 		$sheet->setCellValue('C'. ($sr + 3), 'PBD Discount ('. $salesOrder['discountPBD'] .'%)');
 		$sheet->setCellValue('E'. ($sr + 3), number_format($discountPBD, 2));
+
+		$sheet->setCellValue('A'. ($sr + 4), 'REMARKS');
+		$sheet->setCellValue('B'. ($sr + 4), $salesOrder['Remarks']);
 		$sheet->setCellValue('C'. ($sr + 4), 'Manpower Discount ('. $salesOrder['discountManpower'] .'%)');
 		$sheet->setCellValue('E'. ($sr + 4), number_format($discountManpower, 2));
 
@@ -159,7 +162,7 @@ class Exporting extends MY_Controller {
 		$sheet->mergeCells('B11:C11');
 		$sheet->mergeCells('E11:F11');
 		$sheet->mergeCells('A'. $sr .':B'. ($sr + 1));
-		$sheet->mergeCells('A'. ($sr + 2) .':B'. ($sr + 4));
+		$sheet->mergeCells('A'. ($sr + 2) .':B'. ($sr + 3));
 
 		$sheet->mergeCells('C'. $sr .':D'. $sr);
 		$sheet->mergeCells('C'. ($sr + 1) .':D'. ($sr + 1));
@@ -190,6 +193,7 @@ class Exporting extends MY_Controller {
 		$sheet->getStyle('C'. $sr .':C'. ($sr + 4))->applyFromArray($styleBold);
 		$sheet->getStyle('D'. ($sr + 5))->applyFromArray($styleBold);
 		$sheet->getStyle('A'. $sr)->applyFromArray($styleBold);
+		$sheet->getStyle('A'. ($sr + 4))->applyFromArray($styleBold);
 		$sheet->getStyle('A'. ($sr + 5))->applyFromArray($styleBold);
 
 		$sheet->getStyle('A1:F'. ($sheet->getHighestRow()))
@@ -393,12 +397,15 @@ class Exporting extends MY_Controller {
 		$sheet->setCellValue('D'. ($sr + 4), 'BALANCE DUE');
 		$sheet->setCellValue('F'. ($sr + 4), $balancedue);
 
-		$sheet->setCellValue('A'. ($sr + 5), 'PREPARED BY');
-		$sheet->setCellValue('A'. ($sr + 6), $preparedby);
-		$sheet->setCellValue('C'. ($sr + 5), 'ORDERED BY');
-		$sheet->setCellValue('C'. ($sr + 6), $orderedby);
-		$sheet->setCellValue('E'. ($sr + 5), 'APPROVED BY');
-		$sheet->setCellValue('E'. ($sr + 6), $approvedby);
+		$sheet->setCellValue('A'. ($sr + 5), 'REMARKS');
+		$sheet->setCellValue('C'. ($sr + 5), $purchaseOrder['Remarks']);
+
+		$sheet->setCellValue('A'. ($sr + 6), 'PREPARED BY');
+		$sheet->setCellValue('A'. ($sr + 7), $preparedby);
+		$sheet->setCellValue('C'. ($sr + 6), 'ORDERED BY');
+		$sheet->setCellValue('C'. ($sr + 7), $orderedby);
+		$sheet->setCellValue('E'. ($sr + 6), 'APPROVED BY');
+		$sheet->setCellValue('E'. ($sr + 7), $approvedby);
 
 		// CELL MERGE
 		$sheet->mergeCells('A1:C1');
@@ -432,11 +439,14 @@ class Exporting extends MY_Controller {
 		$sheet->mergeCells('D'. ($sr + 4) .':E'. ($sr + 4));
 
 		$sheet->mergeCells('A'. ($sr + 5) .':B'. ($sr + 5));
+		$sheet->mergeCells('C'. ($sr + 5) .':F'. ($sr + 5));
+
 		$sheet->mergeCells('A'. ($sr + 6) .':B'. ($sr + 6));
-		$sheet->mergeCells('C'. ($sr + 5) .':D'. ($sr + 5));
+		$sheet->mergeCells('A'. ($sr + 7) .':B'. ($sr + 7));
 		$sheet->mergeCells('C'. ($sr + 6) .':D'. ($sr + 6));
-		$sheet->mergeCells('E'. ($sr + 5) .':F'. ($sr + 5));
+		$sheet->mergeCells('C'. ($sr + 7) .':D'. ($sr + 7));
 		$sheet->mergeCells('E'. ($sr + 6) .':F'. ($sr + 6));
+		$sheet->mergeCells('E'. ($sr + 7) .':F'. ($sr + 7));
 
 		// NUMBER FORMAT
 		$sheet->getStyle('F'. ($sr) .':F'. ($sr + 4))->getNumberFormat()->setFormatCode('#,##0.00');
@@ -456,7 +466,8 @@ class Exporting extends MY_Controller {
 		$sheet->getStyle('A2:C2')->applyFromArray($styleBold);
 		$sheet->getStyle('A'. $sr)->applyFromArray($styleBold);
 		$sheet->getStyle('D'. ($sr) .':D'. ($sr + 4))->applyFromArray($styleBold);
-		$sheet->getStyle('A'. ($sr + 5) .':F'. ($sr + 5))->applyFromArray($styleBold);
+		$sheet->getStyle('A'. ($sr + 5) .':B'. ($sr + 5))->applyFromArray($styleBold);
+		$sheet->getStyle('A'. ($sr + 6) .':F'. ($sr + 6))->applyFromArray($styleBold);
 
 		$sheet->getStyle('A1:F'. ($sheet->getHighestRow()))
 			->getBorders()

@@ -204,6 +204,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 				$transactionsPriceTotal = 0;
 				$transactionsFreebiesTotal = 0;
 				$transactionsUnitDiscountTotal = 0;
+				$transactionsAdtlUnitDiscountTotal = 0;
 				$transactionsAdtlFeesTotal = 0;
 
 				?>
@@ -236,17 +237,17 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										<?php
 										if ($getTransactionsByOrderNo->num_rows() > 0):
 											foreach ($getTransactionsByOrderNo->result_array() as $row):
-												$price = $row['Amount'] * $row['PriceUnit'];
+												$price = $row['PriceUnit'];
 												$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
 
 												// apply discount
 												$price -= $unitDiscountPriceTotal;
 												if ($row['Freebie'] == 0) {
-													$transactionsPriceTotal += $price;
+													$transactionsPriceTotal += ($price * $row['Amount']);
+													$transactionsUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Amount']);
 												} else {
-													$transactionsFreebiesTotal += $price;
+													$transactionsFreebiesTotal += ($price * $row['Amount']);
 												}
-												$transactionsUnitDiscountTotal += $unitDiscountPriceTotal;
 												?>
 												<tr>
 													<td class="text-center">
@@ -261,14 +262,11 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 													<td class="text-center">
 														<?=$row['UnitDiscount']?>%
 													</td>
-													<?php
-													$unitPrice = $row['PriceUnit'] - ($row['PriceUnit'] * ($row['UnitDiscount']) / 100);
-													?>
 													<td class="text-center">
-														<?=number_format($unitPrice, 2)?>
+														<?=number_format($price, 2)?>
 													</td>
 													<td class="text-center">
-														<?=number_format(($row['Amount']) * $unitPrice, 2)?>
+														<?=number_format($price * $row['Amount'], 2)?>
 													</td>
 													<td class="text-center">
 														<?php if ($row['Freebie']): ?>
@@ -302,6 +300,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										<thead style="font-size: 12px;">
 											<th class="text-center">DESCRIPTION</th>
 											<th class="text-center">QTY</th>
+											<th class="text-center">UNIT DISCOUNT</th>
 											<th class="text-center">UNIT PRICE</th>
 											<th class="text-center">TOTAL</th>
 											<th class="text-center">DATE ADDED</th>
@@ -311,7 +310,13 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 											<?php
 											if ($getAdtlFeesByOrderNo->num_rows() > 0):
 												foreach ($getAdtlFeesByOrderNo->result_array() as $row):
-													$transactionsAdtlFeesTotal += $row['Qty'] * $row['UnitPrice'];
+													$price = $row['UnitPrice'];
+													$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
+
+													// apply discount
+													$price -= $unitDiscountPriceTotal;
+													$transactionsAdtlFeesTotal += ($price * $row['Qty']);
+													$transactionsAdtlUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Qty']);
 													?>
 													<tr>
 														<td class="text-center afDescription" data-val="<?=$row['Description']?>">
@@ -320,11 +325,14 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 														<td class="text-center afQty" data-val="<?=$row['Qty']?>">
 															<?=$row['Qty']?>
 														</td>
+														<td class="text-center afUnitDiscount" data-val="<?=$row['UnitDiscount']?>">
+															<?=$row['UnitDiscount']?>%
+														</td>
 														<td class="text-center afUnitPrice" data-val="<?=$row['UnitPrice']?>">
-															<?=number_format($row['UnitPrice'], 2)?>
+															<?=number_format($price, 2)?>
 														</td>
 														<td class="text-center">
-															<?=number_format($row['Qty'] * $row['UnitPrice'], 2)?>
+															<?=number_format($price * $row['Qty'], 2)?>
 														</td>
 														<td class="text-center">
 															<?=$row['Date']?>
@@ -433,14 +441,14 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 													</div>
 												</div>
 												<div class="row mt-3">
-													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> ((Total Non-Freebie Transactions) + (Total Adtl Fees)) * (Total Discounts)">
+													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Non-Freebie Transactions) * (Total Discounts)">
 														<i class="bi bi-dash-circle text-danger"></i> TOTAL CATEGORY DISCOUNTS
 													</span>
 												</div>
 												<div class="row">
 													<span style="font-size: 1.15em; color: #ebebeb;">
 														<b>
-															<?=number_format((($transactionsPriceTotal + $transactionsAdtlFeesTotal) * ($totalDiscount / 100)), 2)?>
+															<?=number_format(($transactionsPriceTotal * ($totalDiscount / 100)), 2)?>
 														</b>
 														<i>
 															( <?=$totalDiscount?>% )
@@ -455,7 +463,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									<div class="col-12">
 										<div class="card">
 											<div class="text-center p-2">
-												<div class="row">
+												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Unit Discounts) + (Total Unit Discounts Adtl)">
 													<span class="head-text fw-bold">
 														<i class="bi bi-dash-circle text-danger"></i> TOTAL UNIT DISCOUNTS
 													</span>
@@ -463,7 +471,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 												<div class="row">
 													<span style="font-size: 1.15em; color: #ebebeb;">
 														<b>
-															<?=number_format($transactionsUnitDiscountTotal, 2)?>
+															<?=number_format($transactionsUnitDiscountTotal + $transactionsAdtlUnitDiscountTotal, 2)?>
 														</b>
 													</span>
 												</div>
@@ -517,7 +525,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									<div class="col-12">
 										<div class="card">
 											<div class="text-center p-2">
-												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Undiscounted Price) - (Total Category Discounts) - (Total Unit Discounts)">
+												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Undiscounted Price) - (Total Category Discounts) - (Total Unit Discounts + Total Unit Discounts Adtl)">
 													<span class="head-text fw-bold">
 														TOTAL PRICE (DISCOUNTED)
 													</span>
@@ -529,7 +537,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 															$totalPriceDiscounted = 
 																($transactionsPriceTotal + $transactionsAdtlFeesTotal) - 
 																($transactionsPriceTotal * ($totalDiscount / 100)) - 
-																$transactionsUnitDiscountTotal;
+																($transactionsUnitDiscountTotal + $transactionsAdtlUnitDiscountTotal);
 															echo number_format($totalPriceDiscounted, 2);
 															?>
 														</b>
@@ -1251,6 +1259,7 @@ $(document).ready(function() {
 		let tr = $(this).parents('tr');
 		$('.updateAdtlFeeDescription').val(tr.find('.afDescription').data('val'));
 		$('.updateAdtlFeeQty').val(tr.find('.afQty').data('val'));
+		$('.updateAdtlFeeUnitDiscount').val(tr.find('.afUnitDiscount').data('val'));
 		$('.updateAdtlFeeUnitPrice').val(tr.find('.afUnitPrice').data('val'));
 	});
 	$(document).on('hidden.bs.modal', '#UpdateAdtlFee', function (event) {
@@ -1582,7 +1591,7 @@ $(document).ready(function() {
 			$('#AddReplacementSKUModal').data('select', true);
 		}
 	});
-	$('.select-product-row').on('click', function() {
+	$(document).on('click', '.select-product-row', function() {
 		// get product stocks
 		$.get('getProductStocks', { dataType: 'json', sku: $(this).data('sku') })
 		.done(function(data) {

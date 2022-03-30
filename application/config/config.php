@@ -599,8 +599,6 @@ $config['user_restrictions'] = array(
 
 		'return_product_view',
 		'return_product_add',
-		// 'return_product_edit',
-		// 'return_product_return_to_inventory',
 		'return_product_delete',
 
 		'replacements_view',

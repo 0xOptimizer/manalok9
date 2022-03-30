@@ -40,7 +40,7 @@ if ($sbst == NULL || $sbst == 'ALL') {
 $poNoArr = array_column($this->Model_Selects->GetAllPurchaseOrdersNo($status,$from,$to)->result_array(), 'OrderNo');
 $getPurchaseOrders = $this->Model_Selects->GetPurchaseOrdersInOrderNo($poNoArr);
 
-$poCodesArr = array_column($this->Model_Selects->GetProductTransactionsInOrderNo($poNoArr)->result_array(), 'Code');
+$poCodesArr = array_column($this->Model_Selects->GetProductTransactionsInPurchaseOrderNo($poNoArr,$status)->result_array(), 'Code');
 
 ?>
 
@@ -97,8 +97,8 @@ $poCodesArr = array_column($this->Model_Selects->GetProductTransactionsInOrderNo
 							<select id="sortSelect" name="sbst" class="form-control">
 								<option <?=($sbst == -1 ? 'selected' : '')?>>ALL</option>
 								<option value="0" <?=($sbst == 0 ? 'selected' : '')?>>REJECTED</option>
-								<option value="1" <?=($sbst == 1 ? 'selected' : '')?>>PENDING</option>
-								<option value="2" <?=($sbst == 2 ? 'selected' : '')?>>WAITING FOR PAYMENT</option>
+								<option value="1" <?=($sbst == 1 ? 'selected' : '')?>>PENDING / FOR APPROVAL</option>
+								<option value="2" <?=($sbst == 2 ? 'selected' : '')?>>RECEIVED</option>
 							</select>
 						</form>
 					</div>
