@@ -765,7 +765,7 @@ $(document).ready(function() {
 		$('.shipToBillingClient').show();
 
 		// if shipping update has been disabled after choosing two similar clients, enable it again
-		if ($('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient') {
+		if ($('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient' && $('#ShipToNo').val() != '') {
 			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
 		}
 	});
@@ -990,6 +990,8 @@ $(document).ready(function() {
 
 		$('.shipToBillingClient').hide();
 		$('.shipToSelectClient').show();
+
+		$('.shipToBillInput').change();
 	});
 	$(document).on('click', '.shipToSelectClient', function(t) {
 		$('.shipToSelectClient').hide();

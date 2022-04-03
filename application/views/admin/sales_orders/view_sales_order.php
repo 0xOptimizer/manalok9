@@ -1362,7 +1362,7 @@ $(document).ready(function() {
 					.attr({
 						class: 'excelExportInputRow',
 						type: 'hidden',
-						name: 'transactions[]'
+						name: $(this).data('type') + '[]' // to different between reg transactions and adtl fees
 					}).val($(this).data('id'))
 				);
 			});

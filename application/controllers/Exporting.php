@@ -33,8 +33,10 @@ class Exporting extends MY_Controller {
 		$clientBTDetails = $this->Model_Selects->GetClientByNo($salesOrder['BillToClientNo'])->row_array();
 		$clientSTDetails = $this->Model_Selects->GetClientByNo($salesOrder['ShipToClientNo'])->row_array();
 
-		$transactions = $this->input->post('transactions');
+		// $transactions = $this->input->post('transactions');
 
+		$regularTransactions = $this->input->post('regularTransaction');
+		$adtlTransactions = $this->input->post('adtlTransaction');
 
 		$spreadsheet = new Spreadsheet(); 
 		$sheet = $spreadsheet->getActiveSheet();
@@ -75,12 +77,44 @@ class Exporting extends MY_Controller {
 		$sheet->setCellValue('D11', 'UNIT PRICE');
 		$sheet->setCellValue('E11', 'TOTAL');
 
-		$sr = $sheet->getHighestRow();
-		$amountTotal = 0;
-		if ($transactions != NULL && sizeof($transactions) > 0) {
-			foreach ($transactions as $id) {
+		// $sr = $sheet->getHighestRow();
+		// $amountTotal = 0;
+		// if ($transactions != NULL && sizeof($transactions) > 0) {
+		// 	foreach ($transactions as $id) {
 
-				$transaction = $this->Model_Selects->GetProductTransactionByID($id);
+		// 		$transaction = $this->Model_Selects->GetProductTransactionByID($id);
+		// 		if ($transaction->num_rows() > 0) {
+		// 			$t = $transaction->row_array();
+		// 			$product = $this->Model_Selects->GetProductByCode($t['Code']);
+		// 			$pDescription = '';
+		// 			if ($product->num_rows() > 0) {
+		// 				$pDescription = $product->row_array()['Description'];
+		// 			}
+		// 			$amount = $t['Amount'] * $t['PriceUnit'];
+		// 			$amountTotal += $amount;
+
+		// 			$sr += 1;
+		// 			$sheet->insertNewRowBefore($sr);
+		// 			$sheet->mergeCells('B'. $sr .':C'. $sr);
+		// 			$sheet->mergeCells('E'. $sr .':F'. $sr);
+		// 			$sheet->getStyle('D'. $sr .':E'. $sr)->getNumberFormat()->setFormatCode('#,##0.00');
+
+		// 			$sheet->setCellValue('A'. $sr, $t['Amount']);
+		// 			$sheet->setCellValue('B'. $sr, $pDescription);
+		// 			$sheet->setCellValue('D'. $sr, $t['PriceUnit']);
+		// 			$sheet->setCellValue('E'. $sr, $amount);
+		// 		}
+		// 	}
+		// }
+
+		// $sr += 1;
+
+		$allTransactions = array();
+		if ($regularTransactions != NULL && sizeof($regularTransactions) > 0) {
+			foreach ($regularTransactions as $val) {
+				$tID = $val;
+
+				$transaction = $this->Model_Selects->GetProductTransactionByID($tID);
 				if ($transaction->num_rows() > 0) {
 					$t = $transaction->row_array();
 					$product = $this->Model_Selects->GetProductByCode($t['Code']);
@@ -88,21 +122,65 @@ class Exporting extends MY_Controller {
 					if ($product->num_rows() > 0) {
 						$pDescription = $product->row_array()['Description'];
 					}
-					$amount = $t['Amount'] * $t['PriceUnit'];
-					$amountTotal += $amount;
 
-					$sr += 1;
-					$sheet->insertNewRowBefore($sr);
-					$sheet->mergeCells('B'. $sr .':C'. $sr);
-					$sheet->mergeCells('E'. $sr .':F'. $sr);
-					$sheet->getStyle('D'. $sr .':E'. $sr)->getNumberFormat()->setFormatCode('#,##0.00');
+					if ($t['Freebie'] == 1) {
+						$priceDiscounted = 0;
+					} else {
+						$priceDiscount = $t['PriceUnit'] * ($t['UnitDiscount'] / 100);
+						$priceDiscounted = $t['PriceUnit'] - $priceDiscount;
+					}
 
-					$sheet->setCellValue('A'. $sr, $t['Amount']);
-					$sheet->setCellValue('B'. $sr, $pDescription);
-					$sheet->setCellValue('D'. $sr, $t['PriceUnit']);
-					$sheet->setCellValue('E'. $sr, $amount);
+					$row = array(
+						'Qty' => $t['Amount'],
+						'Description' => $pDescription,
+						'UnitPrice' => $priceDiscounted,
+						'Total' => $t['Amount'] * $priceDiscounted
+					);
+					array_push($allTransactions, $row);
 				}
 			}
+		}
+		if ($adtlTransactions != NULL && sizeof($adtlTransactions) > 0) {
+			foreach ($adtlTransactions as $val) {
+				$tID = $val;
+
+				$transaction = $this->Model_Selects->GetAdtlFeesByID($tID);
+				if ($transaction->num_rows() > 0) {
+					$t = $transaction->row_array();
+
+					$priceDiscount = $t['UnitPrice'] * ($t['UnitDiscount'] / 100);
+					$priceDiscounted = $t['UnitPrice'] - $priceDiscount;
+
+					$row = array(
+						'Qty' => $t['Qty'],
+						'Description' => $t['Description'],
+						'UnitPrice' => $priceDiscounted,
+						'Total' => $t['Qty'] * $priceDiscounted
+					);
+					array_push($allTransactions, $row);
+				}
+			}
+		}
+
+		$sr = $sheet->getHighestRow();
+		$amountTotal = 0;
+		if (sizeof($allTransactions) > 0) {
+			foreach ($allTransactions as $row) {
+				$amountTotal += $row['Total'];
+
+				$sr += 1;
+				$sheet->insertNewRowBefore($sr);
+				$sheet->mergeCells('B'. $sr .':C'. $sr);
+				$sheet->mergeCells('E'. $sr .':F'. $sr);
+				$sheet->getStyle('D'. $sr .':E'. $sr)->getNumberFormat()->setFormatCode('#,##0.00');
+
+				$sheet->setCellValue('A'. $sr, $row['Qty']);
+				$sheet->setCellValue('B'. $sr, $row['Description']);
+				$sheet->setCellValue('D'. $sr, $row['UnitPrice']);
+				$sheet->setCellValue('E'. $sr, $row['Total']);
+			}
+		} else {
+			exit();
 		}
 
 		$sr += 1;

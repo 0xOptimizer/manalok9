@@ -167,11 +167,11 @@ class Users extends MY_Controller {
 				}
 				$data['FullName'] = $fullName;
 				$this->session->set_userdata($data);
-				if ($loginEmail != NULL && $loginPassword != NULL) {
-					$loginData = array(
-						'LoginEmail' => $loginEmail,
-						'LoginPassword' => password_hash($loginPassword, PASSWORD_BCRYPT),
-					);
+				if ($loginEmail != NULL) {
+					$loginData['LoginEmail'] = $loginEmail;
+					if ($loginPassword != NULL) {
+						$loginData['LoginPassword'] = password_hash($loginPassword, PASSWORD_BCRYPT);
+					}
 					$updateEmployeeLogin = $this->Model_Updates->UpdateUserLogin($loginData, $userID);
 					if ($updateEmployeeLogin) {
 						redirect(base_url() . 'profile');

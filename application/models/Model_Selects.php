@@ -444,6 +444,13 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('adtl_fees');
 		return $result;
 	}
+	public function GetAdtlFeesByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('adtl_fees');
+		return $result;
+	}
 
 	// PURCHASE
 	public function GetAllPurchaseOrders()

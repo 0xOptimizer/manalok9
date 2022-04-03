@@ -559,7 +559,7 @@ $(document).ready(function() {
 		if ($('.' + ftClass).length < 1) {
 			let tRow = $(this).clone();
 			tRow.removeClass('add-formtransaction-row').addClass('poFormTransaction ' + ftClass);
-			tRow.find('.amount').before($('<td>').addClass('text-center').append($('<input>')
+			tRow.find('.amount').before($('<td>').addClass('text-center').append($('<input>') // transaction unit input change to text
 				.attr({
 					type: 'text',
 					class: 'inputManual formInputUnit'
@@ -619,7 +619,7 @@ $(document).ready(function() {
 					.attr({
 						class: 'excelExportInputRow',
 						type: 'hidden',
-						name: $(this).data('type') + '[]'
+						name: $(this).data('type') + '[]' // to different between reg transactions and custom transactions
 					}).val($(this).data('id') + '_' + $(this).find('.formInputUnit').val())
 				);
 			});

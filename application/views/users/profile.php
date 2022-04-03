@@ -131,6 +131,20 @@ if ($getLoginCredentials->num_rows() > 0) {
 													<input id="LoginEmail" type="text" class="form-control" name="loginEmail" value="<?=$email?>">
 												</div>
 											</div>
+											<div class="form-group col-sm-12">
+												<label class="input-label">
+													PASSWORD
+													<button type="button" class="newpass-btn btn btn-sm-primary">
+														<i class="bi bi-brightness-high-fill"></i> set a new password
+													</button>
+												</label>
+												<div class="input-group">
+													<div class="input-group-prepend">
+														<span class="input-group-text"><i class="bi bi-key-fill h-100 w-100" style="font-size: 16px; margin-top: 5px;"></i></span>
+													</div>
+													<input id="NewLoginPassword" type="password" class="form-control" name="loginPassword" readonly disabled>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -171,6 +185,11 @@ $(document).ready(function() {
 	$("#UpdatePFPInput").change(function() {
 		readURL(this, '#UpdatePFPInputPreview');
 		$('#UpdatepImageChecker').val('1');
+	});
+
+
+	$('.newpass-btn').on('click', function() {
+		$('#NewLoginPassword').removeAttr('readonly disabled').attr('required', true);
 	});
 });
 </script>

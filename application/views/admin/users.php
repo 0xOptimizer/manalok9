@@ -148,8 +148,8 @@ $globalHeader;
 												}
 											}
 											?>
-											<div class="col-xs-12 col-sm-6 col-md-3" style="height: 21em;">
-												<div class="card employee-standard-card employee-card-hover" data-userid="<?=$row['UserID'];?>" data-image="<?=$row['Image'];?>" data-firstname="<?=$row['FirstName'];?>" data-middlename="<?=$row['MiddleName'];?>" data-lastname="<?=$row['LastName'];?>" data-nameextension="<?=$row['NameExtension'];?>" data-dateofbirth="<?=$row['DateOfBirth'];?>" data-contactnumber="<?=$row['ContactNumber'];?>" data-address="<?=$row['Address'];?>" data-comment="<?=$row['Comment'];?>" data-privilege="<?=$row['Privilege'];?>" data-loginemail="<?=$loginEmail;?>" style="height: 19em;">
+											<div class="col-xs-12 col-sm-6 col-md-3" style="">
+												<div class="card employee-standard-card employee-card-hover" data-userid="<?=$row['UserID'];?>" data-image="<?=$row['Image'];?>" data-firstname="<?=$row['FirstName'];?>" data-middlename="<?=$row['MiddleName'];?>" data-lastname="<?=$row['LastName'];?>" data-nameextension="<?=$row['NameExtension'];?>" data-dateofbirth="<?=$row['DateOfBirth'];?>" data-contactnumber="<?=$row['ContactNumber'];?>" data-address="<?=$row['Address'];?>" data-comment="<?=$row['Comment'];?>" data-privilege="<?=$row['Privilege'];?>" data-loginemail="<?=$loginEmail;?>" style="">
 													<div class="card-body text-center">
 														<p><img class="img-fluid rounded-circle" src="<?=base_url().$row['Image'];?>" width="128" height="128" alt="card image"></p>
 														<h4 class="card-title"<?php if($isFullNameHoverable): ?> data-toggle="tooltip" data-placement="top" data-html="true" title="<?=$fullNameHover;?>"<?php endif; ?>><?=$fullName?></h4>
@@ -164,11 +164,13 @@ $globalHeader;
 														<p class="card-text info-banner-sm"><i class="bi bi-exclamation-diamond-fill"></i> No login credentials</p>
 														<?php endif; ?>
 
-														<a class="mb-3" href="<?=base_url()?>admin/user_activities?userID=<?=$row['UserID']?>">
-															<button type="button" class="btn btn-primary btn-sm userActivitiesLink">
-																<i class="bi bi-clock-fill"></i> Activities
-															</button>
-														</a>
+														<?php if ($this->session->userdata('UserRestrictions')['users_activities']): ?>
+															<a href="<?=base_url()?>admin/user_activities?userID=<?=$row['UserID']?>">
+																<button type="button" class="btn btn-primary btn-sm userActivitiesLink">
+																	<i class="bi bi-clock-fill"></i> Activities
+																</button>
+															</a>
+														<?php endif; ?>
 														<!-- <button type="button" class="btn btn-primary btn-sm mt-2">Profile</button>
 														<button type="button" class="btn btn-primary btn-sm mt-2">Role</button>
 														<button type="button" class="btn btn-primary btn-sm mt-2">Account</button> -->

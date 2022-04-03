@@ -37,7 +37,7 @@
 									$amount = $row['Amount'] * ($unitPrice - $unitDiscountAmount);
 									$amountTotal += $amount;
 									?>
-									<tr class="add-formtransaction-row" data-id="<?=$row['ID']?>">
+									<tr class="add-formtransaction-row" data-type="regularTransaction" data-id="<?=$row['ID']?>">
 										<td class="text-center">
 											<?=$row['Amount']?>
 										</td>
@@ -45,7 +45,7 @@
 											<?=$pDescription?>
 										</td>
 										<td class="text-center">
-											<?=number_format($row['PriceUnit'] - $unitDiscountAmount, 2)?> <?=($row['UnitDiscount'] > 0 ? '('. $row['UnitDiscount'] .'%)' : '')?>
+											<?=number_format($unitPrice - $unitDiscountAmount, 2)?> <?=($row['UnitDiscount'] > 0 ? '('. $row['UnitDiscount'] .'%)' : '')?>
 										</td>
 										<td class="text-center amount" colspan="2" data-amount="<?=$amount?>">
 											<?=number_format($amount, 2)?>
@@ -58,10 +58,11 @@
 							</tr>
 							<?php if ($getAdtlFeesByOrderNo->num_rows() > 0): 
 								foreach ($getAdtlFeesByOrderNo->result_array() as $row):
-									$amount = $row['Qty'] * $row['UnitPrice'];
+									$unitDiscountAmount = $row['UnitPrice'] * ($row['UnitDiscount'] / 100);
+									$amount = $row['Qty'] * ($row['UnitPrice'] - $unitDiscountAmount);
 									$amountTotal += $amount;
 									?>
-									<tr class="add-formtransaction-row" data-id="<?=$row['ID']?>">
+									<tr class="add-formtransaction-row" data-type="adtlTransaction" data-id="<?=$row['ID']?>">
 										<td class="text-center">
 											<?=$row['Qty']?>
 										</td>
@@ -69,7 +70,7 @@
 											<?=$row['Description']?>
 										</td>
 										<td class="text-center">
-											<?=number_format($row['UnitPrice'], 2)?>
+											<?=number_format($row['UnitPrice'] - $unitDiscountAmount, 2)?> <?=($row['UnitDiscount'] > 0 ? '('. $row['UnitDiscount'] .'%)' : '')?>
 										</td>
 										<td class="text-center amount" colspan="2" data-amount="<?=$amount?>">
 											<?=number_format($amount, 2)?>
