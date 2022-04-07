@@ -252,6 +252,7 @@ if ($getTransactions->num_rows() > 0) {
 								<thead style="font-size: 12px;">
 									<th class="text-center">ID</th>
 									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
 									<th></th>
 								</thead>
 								<tbody>
@@ -269,6 +270,7 @@ if ($getTransactions->num_rows() > 0) {
 								<thead style="font-size: 12px;">
 									<th class="text-center">ID</th>
 									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
 									<th></th>
 								</thead>
 								<tbody>
@@ -286,6 +288,7 @@ if ($getTransactions->num_rows() > 0) {
 								<thead style="font-size: 12px;">
 									<th class="text-center">ID</th>
 									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
 									<th></th>
 								</thead>
 								<tbody>
@@ -303,6 +306,7 @@ if ($getTransactions->num_rows() > 0) {
 								<thead style="font-size: 12px;">
 									<th class="text-center">ID</th>
 									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
 									<th></th>
 								</thead>
 								<tbody>
@@ -320,6 +324,7 @@ if ($getTransactions->num_rows() > 0) {
 								<thead style="font-size: 12px;">
 									<th class="text-center">ID</th>
 									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
 									<th></th>
 								</thead>
 								<tbody>
@@ -410,7 +415,7 @@ $(document).ready(function() {
 					.append($('<td>').attr({ class: 'total' }) 
 						.text(debitTotal.toFixed(2)))
 				);
-				totalAll();
+				totalBalanceSheet();
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log(textStatus, errorThrown);
@@ -418,7 +423,7 @@ $(document).ready(function() {
 		});
 	}
 
-	function totalAll() {
+	function totalBalanceSheet() {
 		totalCA();
 		totalNCA();
 		totalCL();
@@ -544,7 +549,7 @@ $(document).ready(function() {
 	$(document).on('click', '.remove-account-row', function() {
 		$('.' + $(this).data('row_code') + '_row_' + $(this).data('id')).remove();
 		$('.' + $(this).data('row_code') + '_accounts_row_' + $(this).data('id')).remove();
-		totalAll();
+		totalBalanceSheet();
 	});
 });
 </script>

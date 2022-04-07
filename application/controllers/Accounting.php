@@ -130,6 +130,14 @@ class Accounting extends MY_Controller {
 				if ($insertAccount == TRUE) {
 					$accountID = $this->db->insert_id();
 					$this->session->set_flashdata('highlight-id', $accountID);
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Added new Account.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('created a new account.', 'added a new account' . ($name ? ' ' . $name : '') . ' [ID: ' . $accountID . '].', base_url('admin/accounts'));
 					redirect('admin/accounts');
@@ -179,6 +187,14 @@ class Accounting extends MY_Controller {
 				$UpdateAccount = $this->Model_Updates->UpdateAccount($data, $accountDetails['ID']);
 				if ($UpdateAccount == TRUE) {
 					$this->session->set_flashdata('highlight-id', $id);
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Updated Account.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('updated account details.', 'updated account details' . ($name ? ' ' . $name : '') . ' [ID: ' . $id . '].', base_url('admin/accounts'));
 					redirect('admin/accounts');
@@ -232,6 +248,7 @@ class Accounting extends MY_Controller {
 			if (substr($order_no, 0, 2) == 'PO' && !$this->Model_Security->CheckUserRestriction('purchase_orders_accounting')) redirect(base_url());
 			if (substr($order_no, 0, 2) == 'SO' && !$this->Model_Security->CheckUserRestriction('sales_orders_accounting')) redirect(base_url());
 
+			$journalNo = 'JT' . strtoupper(uniqid());
 			$description = $this->input->post('description');
 			$date = $this->input->post('date');
 
@@ -261,9 +278,10 @@ class Accounting extends MY_Controller {
 				array_push($transactions, $data);
 			}
 
-			if ($totalCredit == $totalDebit && $totalDebit > 0 && $totalCredit > 0) {
+			if ($totalCredit == $totalDebit && ($totalDebit > 0 && $totalCredit > 0)) {
 				// Insert
 				$data = array(
+					'JournalNo' => $journalNo,
 					'Description' => $description,
 					'Date' => $date,
 					'Total' => $totalDebit,
@@ -280,6 +298,13 @@ class Accounting extends MY_Controller {
 					}
 
 					$this->session->set_flashdata('highlight-id', $journalID);
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Added new Journal.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('created a new journal.', 'added a new journal' . ' [ID: ' . $journalID . '].', base_url('admin/journals'));
 				} else {
@@ -290,6 +315,13 @@ class Accounting extends MY_Controller {
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);
 				}
+			} else {
+				$prompt_txt =
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong>'. $totalCredit .'=='. $totalDebit .'
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 			}
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
@@ -309,6 +341,15 @@ class Accounting extends MY_Controller {
 					foreach ($GetTransactionsByJournalID as $row) {
 						$this->Model_Deletes->Delete_journal_transaction($row['ID']);
 					}
+
+					$this->session->set_flashdata('highlight-id', $journalID);
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Deleted Journal.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('deleted journal.', 'deleted a journal [ID: ' . $journalID . '].', base_url('admin/journals'));
 				}

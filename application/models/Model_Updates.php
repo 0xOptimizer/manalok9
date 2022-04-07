@@ -391,4 +391,18 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+
+	// stock history
+	public function UpdateStockHistory($id,$data)
+	{
+		$this->db->where('id', $id);
+		$this->db->update('product_stock_history',$data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

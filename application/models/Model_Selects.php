@@ -120,6 +120,18 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->query($sql);
 		return $result->row_array();
 	}
+	public function C_Stocks_perMonth($c_year,$val)
+	{
+		$sql = "SELECT EXTRACT(MONTH FROM date_added) as months, EXTRACT(YEAR FROM date_added) as year,
+					COALESCE ((SELECT SUM(quantity) FROM product_stock_history WHERE status = 'restocked'), 0) -
+					COALESCE ((SELECT SUM(quantity) FROM product_stock_history WHERE status = 'released'), 0) AS total  
+				FROM product_stock_history 
+				WHERE YEAR(date_added) = '$c_year' AND MONTH(date_added) = '$val' 
+				GROUP BY months,year 
+				ORDER BY months ASC";
+		$result = $this->db->query($sql);
+		return $result->row_array();
+	}
 	public function total_product_stocks()
 	{
 		$this->db->select_sum('InStock');
@@ -1223,16 +1235,93 @@ class Model_Selects extends CI_Model {
 	}
 	public function total_restock()
 	{
-		$this->db->select_sum('Amount');
-		$this->db->where('Type',0);
-		$result = $this->db->get('products_transactions');
+		$this->db->select_sum('quantity');
+		$this->db->where('status','restocked');
+		$result = $this->db->get('product_stock_history');
 		return $result->row_array();
 	}
 	public function total_released()
 	{
-		$this->db->select_sum('Amount');
-		$this->db->where('Type',1);
-		$result = $this->db->get('products_transactions');
+		$this->db->select_sum('quantity');
+		$this->db->where('status','released');
+		$result = $this->db->get('product_stock_history');
+		return $result->row_array();
+	}
+
+
+	// stock history
+	public function GetStockHistoryRestocked($stockid,$uid,$prd_sku)
+	{
+		$this->db->select('*');
+		$this->db->where('stockid', $stockid);
+		$this->db->where('uid', $uid);
+		$this->db->where('prd_sku', $prd_sku);
+		$this->db->where('status', 'restocked');
+		$this->db->order_by('date_added','ASC');
+		$result = $this->db->get('product_stock_history');
+		return $result;
+	}
+	public function GetStockHistoryRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399);
+
+		$this->db->select('*');
+		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$result = $this->db->get('product_stock_history');
+		return $result;
+	}
+
+	public function GetStockHistoryRestockedTotalPriceRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399);
+
+		$this->db->select('SUM(total_price) AS restocked_total_price');
+		$this->db->where('status', 'restocked');
+		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$result = $this->db->get('product_stock_history');
+		return $result->row_array();
+	}
+	public function GetStockHistoryReleasedTotalPriceRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399);
+
+		$this->db->select('SUM(total_price) AS released_total_price');
+		$this->db->where('status', 'released');
+		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$result = $this->db->get('product_stock_history');
+		return $result->row_array();
+	}
+
+	public function GetStockHistoryTotalPriceRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399);
+
+		$this->db->select('
+				COALESCE ((SELECT SUM(total_price) FROM product_stock_history WHERE status = "restocked"), 0) -
+				COALESCE ((SELECT SUM(total_price) FROM product_stock_history WHERE status = "released"), 0) AS ending_inventory_total_price
+			');
+
+		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$this->db->limit('1');
+		$result = $this->db->get('product_stock_history');
+		return $result->row_array();
+	}
+	public function GetStockHistoryTotalPriceBefore($date)
+	{
+		$date = date('Y/m/d H:i:s', strtotime($date));
+
+		$this->db->select('
+				COALESCE ((SELECT SUM(total_price) FROM product_stock_history WHERE status = "restocked"), 0) -
+				COALESCE ((SELECT SUM(total_price) FROM product_stock_history WHERE status = "released"), 0) AS ending_inventory_total_price
+			');
+
+		$this->db->where('date_added < "' . $date . '"');
+		$this->db->limit('1');
+		$result = $this->db->get('product_stock_history');
 		return $result->row_array();
 	}
 }

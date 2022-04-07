@@ -3,6 +3,13 @@ $globalHeader;
 
 date_default_timezone_set('Asia/Manila');
 
+$date_from = date('M j, Y', strtotime('-1 month'));
+$date_to = date('M j, Y');
+
+$date_from_beginning_inventory = date('M j, Y', strtotime('-1 month'));
+$date_to_beginning_inventory = date('M j, Y', strtotime('-1 month +1 day'));
+
+
 // Fetch Accounts
 $getAccounts = $this->Model_Selects->GetAccounts();
 
@@ -47,9 +54,9 @@ if ($this->session->flashdata('highlight-id')) {
 							|
 						<?php endif; ?>
 						<a href="<?=base_url() . 'admin/trial_balance';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> TRIAL BALANCE</a>
-						<a href="<?=base_url() . 'admin/income_statement';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> INCOME STATEMENT</a>
-						<a href="<?=base_url() . 'admin/balance_sheet';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> BALANCE SHEET</a>
-						<a href="<?=base_url() . 'admin/cash_flow';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> CASH FLOW</a>
+						<button class="btn btn-sm-primary accountingreports-btn" style="font-size: 12px;"><i class="bi bi-circle"></i>
+							REPORTS
+						</button>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
@@ -97,6 +104,48 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="AccountingReports" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Accounting Reports</h4>
+			</div>
+			<form action="<?=base_url()?>admin/income_statement" method="GET">
+				<div class="modal-body">
+					<div class="form-row d-flex flex-wrap">
+						<h6>Accounting Period</h6>
+					</div>
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="dfr" value="<?=date('Y-m-d', strtotime($date_from))?>">
+							<label class="input-label">FROM</label>
+						</div>
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="dto" value="<?=date('Y-m-d', strtotime($date_to))?>">
+							<label class="input-label">TO</label>
+						</div>
+					</div>
+					<div class="form-row d-flex flex-wrap">
+						<h6>Beginning Inventory</h6>
+					</div>
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="dfr_bi" value="<?=date('Y-m-d', strtotime($date_from_beginning_inventory))?>">
+							<label class="input-label">FROM</label>
+						</div>
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="dto_bi" value="<?=date('Y-m-d', strtotime($date_to_beginning_inventory))?>">
+							<label class="input-label">TO</label>
+						</div>
+					</div>
+				</div>
+				<div class="feedback-form modal-footer">
+					<button type="submit" class="btn btn-success"><i class="bi bi-calendar-check-fill"></i> SORT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
@@ -126,6 +175,10 @@ $(document).ready(function() {
 	});
 	$('#tableSearch').on('keyup change', function() {
 		table.search($(this).val()).draw();
+	});
+
+	$('.accountingreports-btn').on('click', function() {
+		$('#AccountingReports').modal('toggle');
 	});
 
 	$('.newaccount-btn').on('click', function() {

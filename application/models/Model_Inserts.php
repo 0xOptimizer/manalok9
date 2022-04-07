@@ -219,9 +219,9 @@ class Model_Inserts extends CI_Model {
 			return false;
 		}
 	}
-	public function Insert_Releasedata($data)
+	public function Insert_StockHistory($data)
 	{
-		$this->db->insert('product_released', $data);
+		$this->db->insert('product_stock_history', $data);
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}

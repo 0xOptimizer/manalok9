@@ -462,24 +462,6 @@ class SalesOrders extends MY_Controller {
 							'UnitDiscount' => (($discount > 0) ? $discount : 0),
 						);
 						$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
-						if ($insertNewTransaction == true) {
-							/* INSERT RELEASE DATA TO TABLE PRODUCT RELEASED */
-							$data = array(
-								'stockid' => $stockID,
-								'transactionid' => $transactionID,
-								'uid' => $p_details['U_ID'],
-								'prd_sku' => $p_details['Code'],
-								'quantity' => $qty,
-								'retail_price' => $s_details['Retail_Price'],
-								'total_price' => $s_details['Retail_Price'] * $qty,
-								'userid' => $userID,
-								'date_added' => date('Y/m/d H:i:s'),
-								'status' => 'released',
-								'Freebie' => $freebie,
-								'UnitDiscount' => (($discount > 0) ? $discount : 0),
-							);
-							$Insert_Releasedata = $this->Model_Inserts->Insert_Releasedata($data);
-						}
 					}
 					$this->session->set_flashdata('highlight-id', $orderID);
 
@@ -521,6 +503,9 @@ class SalesOrders extends MY_Controller {
 				if ($approved == '1' && $orderDetails['Status'] == '1') { // if approved and pending
 					$transactions = array();
 
+					// total category discounts
+					$discountTotal = $orderDetails['discountOutright'] + $orderDetails['discountVolume'] + $orderDetails['discountPBD'] + $orderDetails['discountManpower'];
+
 					$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
 					foreach ($orderTransactions as $key => $t) {
 						if ($t['Status'] == 0) { // if not approved
@@ -534,7 +519,7 @@ class SalesOrders extends MY_Controller {
 									'Status' => '1',
 									'Date_Approval' => date('Y-m-d H:i:s'),
 								);
-								// RELEASE
+								// RELEASE PRODUCT
 								$NewStock = $p['InStock'] - $t['Amount'];
 								$NewRelease = $p['Released'] + $t['Amount'];
 								$dataProduct = array(
@@ -550,12 +535,41 @@ class SalesOrders extends MY_Controller {
 									'Current_Stocks' => $n_cstocks,
 									'Released_Stocks' => $n_rstocks,
 								);
+
+								// RELEASED
+								if ($t['Freebie'] == '0') {
+									$price = $t['PriceUnit'];
+
+									if ($t['UnitDiscount'] > 0) {
+										$dcTotal = $t['UnitDiscount'];
+									} else {
+										$dcTotal = $discountTotal;
+									}
+
+									$dcTotal = $price * ($dcTotal / 100);
+									$finalPrice = $price - $dcTotal;
+								} else {
+									$finalPrice = 0;
+								}
+								$dataStockHistory = array(
+									'stockid' => $t['stockID'],
+									'transactionid' => $t['TransactionID'],
+									'uid' => $p['U_ID'],
+									'prd_sku' => $p['Code'],
+									'quantity' => $t['Amount'],
+									'price' => $finalPrice,
+									'total_price' => $finalPrice * $t['Amount'],
+									'userid' => $t['UserID'],
+									'date_added' => date('Y/m/d H:i:s'),
+									'status' => 'released',
+								);
 								
 								$transactions[] = array(
 									'dataTransaction' => $dataTransaction,
 									'dataProduct' => $dataProduct,
 									'dataStocks' => $dataStocks,
 									'stockID' => $t['stockID'],
+									'dataStockHistory' => $dataStockHistory,
 								);
 							} else {
 								$prompt_txt =
@@ -573,6 +587,9 @@ class SalesOrders extends MY_Controller {
 							$this->Model_Updates->ApproveTransaction($row['dataTransaction']);
 							$this->Model_Updates->UpdateStock_product($row['dataProduct']);
 							$this->Model_Updates->UpdateProduct_stock($row['stockID'], $row['dataStocks']);
+
+							/* INSERT RELEASE DATA TO TABLE PRODUCT RELEASED */
+							$this->Model_Inserts->Insert_StockHistory($row['dataStockHistory']);
 						}
 						// update order status
 						$data = array(
@@ -620,7 +637,7 @@ class SalesOrders extends MY_Controller {
 							'TransactionID' => $t['TransactionID'],
 						);
 						$this->Model_Updates->RejectOrderTransaction($dataTransaction);
-						$this->Model_Deletes->Delete_Release($t['TransactionID']);
+						$this->Model_Deletes->Delete_StockHistory($t['TransactionID']);
 					}
 					// update order status
 					$data = array(
@@ -1432,23 +1449,36 @@ class SalesOrders extends MY_Controller {
 					);
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 					if ($insertNewTransaction == true) {
-						/* INSERT RELEASE DATA TO TABLE PRODUCT RELEASED */
+						// RELEASED
+						if ($freebie == '0') {
+							$price = $s_details['Retail_Price'];
+
+							if ($discount > 0) {
+								$dcTotal = $discount;
+							} else {
+								$dcTotal = 0;
+							}
+
+							$dcTotal = $price * ($dcTotal / 100);
+							$finalPrice = $price - $dcTotal;
+						} else {
+							$finalPrice = 0;
+						}
+						/* INSERT DATA TO STOCK HISTORY */
 						$data = array(
 							'stockid' => $stockID,
 							'transactionid' => $transactionID,
 							'uid' => $p_details['U_ID'],
 							'prd_sku' => $p_details['Code'],
 							'quantity' => $qty,
-							'retail_price' => $s_details['Retail_Price'],
-							'total_price' => $s_details['Retail_Price'] * $qty,
+							'price' => $finalPrice,
+							'total_price' => $finalPrice * $qty,
 							'userid' => $userID,
 							'date_added' => date('Y/m/d H:i:s'),
 							'status' => 'released',
-							'Freebie' => $freebie,
-							'UnitDiscount' => (($discount > 0) ? $discount : 0),
 						);
-						$Insert_Releasedata = $this->Model_Inserts->Insert_Releasedata($data);
-						if ($Insert_Releasedata == true) {
+						$Insert_StockHistory = $this->Model_Inserts->Insert_StockHistory($data);
+						if ($Insert_StockHistory == true) {
 							$replacementNo = 'RP' . strtoupper(uniqid());
 							/* INSERT REPLACEMENT */
 							$data = array(
@@ -1572,7 +1602,7 @@ class SalesOrders extends MY_Controller {
 					$this->Model_Updates->UpdateStock_product($dataProduct);
 				}
 
-				$this->Model_Deletes->Delete_Release($t['TransactionID']);
+				$this->Model_Deletes->Delete_StockHistory($t['TransactionID']);
 
 				// update replacement status
 				$data = array(
@@ -1644,7 +1674,7 @@ class SalesOrders extends MY_Controller {
 						$this->Model_Updates->UpdateStock_product($dataProduct);
 						
 
-						$this->Model_Deletes->Delete_Release($t['TransactionID']);
+						$this->Model_Deletes->Delete_StockHistory($t['TransactionID']);
 
 						// update replacement status
 						$data = array(

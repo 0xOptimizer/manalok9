@@ -126,7 +126,7 @@ class Admin extends MY_Controller {
 		);
 		$mt = array();
 		foreach ($all_months as $row => $val) {
-			$tppm = $this->Model_Selects->C_Products_perMonth($c_year,$val);
+			$tppm = $this->Model_Selects->C_Stocks_perMonth($c_year,$val);
 			if ($tppm > 0) {
 				$mt[] = $tppm['total'];
 			}
@@ -140,7 +140,7 @@ class Admin extends MY_Controller {
 		
 		// Total product stock
 		$data['tps'] = $this->Model_Selects->total_product_stocks();
-		$data['tps_m'] = $this->Model_Selects->total_product_thismonth($c_year,$c_month);
+		// $data['tps_m'] = $this->Model_Selects->total_product_thismonth($c_year,$c_month);
 
 		// TOTAL PRODUCT STOCK THIS MONTH
 		$data['totalrestock'] = $this->Model_Selects->total_restock();

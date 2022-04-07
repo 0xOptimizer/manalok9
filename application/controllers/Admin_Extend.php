@@ -136,7 +136,7 @@ class Admin_Extend extends CI_Controller {
 			}
 
 			/* CHECK EMPTY VALUES OR NULL PROMPT ERROR */
-			if (empty($uid) || empty($product_sku) || empty($quantity) || empty($retail_price) || empty($original_price) || empty($manufacturer)) {
+			if (empty($uid) || empty($product_sku) || empty($quantity) || empty($retail_price) || empty($original_price)) {
 				$data['promptsss'] = array('status' => 'empty_fields', );
 				echo json_encode($data);
 				exit();
@@ -357,6 +357,7 @@ class Admin_Extend extends CI_Controller {
 								'UserID' => $row['user_id'],
 							);
 							$Insert_toStock_tb = $this->Model_Inserts->Insert_toStock_tb($data);
+							$stockid = $this->db->insert_id();
 							if ($Insert_toStock_tb == true) {
 
 								/* UPDATE PRODUCT STOCKS */
@@ -406,6 +407,7 @@ class Admin_Extend extends CI_Controller {
 								$data = array(
 									'Code' => $code,
 									'TransactionID' => $transactionID,
+									'stockID' => $stockid,
 									'Type' => $type,
 									'Amount' => $amount,
 									'Date' => $date,
@@ -418,6 +420,21 @@ class Admin_Extend extends CI_Controller {
 								);
 								$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 								if ($insertNewTransaction == TRUE) {
+
+									/* INSERT RESTOCK DATA TO TABLE PRODUCT RESTOCKED */
+									$data = array(
+										'stockid' => $stockid,
+										'transactionid' => $transactionID,
+										'uid' => $U_ID,
+										'prd_sku' => $code,
+										'quantity' => $amount,
+										'price' => $row['retail_price'],
+										'total_price' => $row['retail_price'] * $amount,
+										'userid' => $user_id,
+										'date_added' => date('Y/m/d H:i:s'),
+										'status' => 'restocked',
+									);
+									$Insert_StockHistory = $this->Model_Inserts->Insert_StockHistory($data);
 
 									/* LOG TRANSACTIONS */
 									$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $amount . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
@@ -673,12 +690,12 @@ class Admin_Extend extends CI_Controller {
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
 			}
 			/* VARIABLES */
-			$id = $this->input->post('id');
+			$stockid = $this->input->post('id');
 			$UID = $this->input->post('uid');
 			$Product_SKU = $this->input->post('sku');
 			$Quantity = $this->input->post('quantity');
 
-			if (empty($id) || empty($UID) || empty($Product_SKU) || empty($Quantity)) {
+			if (empty($stockid) || empty($UID) || empty($Product_SKU) || empty($Quantity)) {
 
 				/* EMPTY DATA POST */
 				$prompt_txt =
@@ -699,7 +716,7 @@ class Admin_Extend extends CI_Controller {
 				
 			}
 			/* CHECK STOCK ID */
-			$Check_prd_stockid = $this->Model_Selects->Check_prd_stockid($id);
+			$Check_prd_stockid = $this->Model_Selects->Check_prd_stockid($stockid);
 			if ($Check_prd_stockid->num_rows() > 0) {
 
 				/* ID EXIST */
@@ -734,23 +751,30 @@ class Admin_Extend extends CI_Controller {
 							'Current_Stocks' => $n_cstocks,
 							'Released_Stocks' => $n_rstocks,
 						);
-						$UpdateProduct_stock = $this->Model_Updates->UpdateProduct_stock($id,$data);
+						$UpdateProduct_stock = $this->Model_Updates->UpdateProduct_stock($stockid,$data);
 						if ($UpdateProduct_stock == true) {
+							$code = $tb_SKU;
+
+							$transactionID = '';
+							$transactionID .= strtoupper($code);
+							$transactionID .= '-';
+							$transactionID .= strtoupper(uniqid());
 							/* INSERT RELEASE DATA TO TABLE PRODUCT RELEASED */
 							$nt_price = $tb_r_price * $Quantity;
 							$data = array(
-								'stockid' => $id,
+								'stockid' => $stockid,
+								'transactionid' => $transactionID,
 								'uid' => $UID,
 								'prd_sku' => $Product_SKU,
 								'quantity' => $Quantity,
-								'retail_price' => $tb_r_price,
+								'price' => $tb_r_price,
 								'total_price' => $nt_price,
 								'userid' => $_SESSION['UserID'],
 								'date_added' => date('Y/m/d H:i:s'),
 								'status' => 'released',
 							);
-							$Insert_Releasedata = $this->Model_Inserts->Insert_Releasedata($data);
-							if ($Insert_Releasedata == true) {
+							$Insert_StockHistory = $this->Model_Inserts->Insert_StockHistory($data);
+							if ($Insert_StockHistory == true) {
 								/* UPDATE STOCKS AND RELEASED IN PRODUCT TABLE */
 								$U_ID = $tb_uid;
 								$Code = $tb_SKU;
@@ -765,18 +789,12 @@ class Admin_Extend extends CI_Controller {
 								if ($UpdateTotalStocks == true) {
 									/* CREATE TRANSACTION RELEASING */
 
-									$code = $tb_SKU;
-
 									$type = 1;
-
-									$transactionID = '';
-									$transactionID .= strtoupper($code);
-									$transactionID .= '-';
-									$transactionID .= strtoupper(uniqid());
 
 									$data = array(
 										'Code' => $code,
 										'TransactionID' => $transactionID,
+										'stockID' => $stockid,
 										'Type' => $type,
 										'Amount' => $Quantity,
 										'Date' => date('Y/m/d H:i:s'),
@@ -973,7 +991,7 @@ class Admin_Extend extends CI_Controller {
 			$prd_descript = $this->input->post('up_prd_descript');
 
 			/* CHECK IF INPUT IS EMPTY */
-			if (empty($id) || empty($uids) || empty($pre_sku) || empty($radioUp) || $quantity < 0 || empty($r_price) || empty($orig_price) || empty($manufacturer) || empty($prd_descript)) {
+			if (empty($id) || empty($uids) || empty($pre_sku) || empty($radioUp) || $quantity < 0 || empty($r_price) || empty($orig_price)) {
 				$data['status'] = array('prompt' => 'null_values', );
 				echo json_encode($data);
 				exit();
@@ -989,6 +1007,7 @@ class Admin_Extend extends CI_Controller {
 					echo json_encode($data);
 					exit();
 				}
+				$product = $CheckPrd_in_tb->row_array();
 
 				/* CHECK STOCK IN TABLE  */
 				$CheckStock_ifExist = $this->Model_Selects->CheckStock_ifExist($id,$uids,$pre_sku);
@@ -1008,11 +1027,15 @@ class Admin_Extend extends CI_Controller {
 				if ($quantity == 0 || $quantity =="") {
 					$new_stock = $Stocks;
 					$new_current_stock = $Current_Stockss;
+
+					$new_product_instock = $product['InStock'];
 				} else
 				{
 					if ($radioUp == 'add_stock') {
 						$new_stock = $Stocks + $quantity;
 						$new_current_stock = $Current_Stockss + $quantity;
+
+						$new_product_instock = $product['InStock'] + $quantity;
 					}
 					elseif ($radioUp == 'deduct_stock') {
 						if ($Current_Stockss < $quantity) {
@@ -1029,6 +1052,7 @@ class Admin_Extend extends CI_Controller {
 						$new_stock = $Stocks - $quantity;
 						$new_current_stock = $Current_Stockss - $quantity;
 
+						$new_product_instock = $product['InStock'] - $quantity;
 					}
 				}
 
@@ -1037,7 +1061,7 @@ class Admin_Extend extends CI_Controller {
 					'UID' => $uids,
 					'Product_SKU' => $pre_sku,
 				);
-				$data = array(
+				$dataStock = array(
 					'Stocks' => $new_stock,
 					'Current_Stocks' => $new_current_stock,
 					'Retail_Price' => $r_price,
@@ -1047,8 +1071,82 @@ class Admin_Extend extends CI_Controller {
 					'Expiration_Date' => $expire_date,
 					'Description' => $prd_descript,
 				);
-				$Update_Stock_Details = $this->Model_Updates->Update_Stock_Details($data_where,$data);
+				$Update_Stock_Details = $this->Model_Updates->Update_Stock_Details($data_where,$dataStock);
+
+				/* ADD STOCK TO PRODUCT TOTAL STOCK */
+				$data = array(
+					'U_ID' => $uids,
+					'Code' => $pre_sku,
+					'InStock' => $new_product_instock,
+				);
+				$Update_Stock_In_Product = $this->Model_Updates->Update_Stock_In_Product($data);
 				if ($Update_Stock_Details == true) {
+					/* THERE IS QTY */
+					if ($quantity > 0) {
+						if ($radioUp == 'add_stock') { // when stock is added, add to stock history
+							$transactionID = '';
+							$transactionID .= strtoupper($pre_sku);
+							$transactionID .= '-';
+							$transactionID .= strtoupper(uniqid());
+							$dataTransaction = array(
+								'Code' => $pre_sku,
+								'TransactionID' => $transactionID,
+								'stockID' => $id,
+								'Type' => '0',
+								'Amount' => $quantity,
+								'Date' => date('Y/m/d H:i:s'),
+								'DateAdded' => date('Y-m-d H:i:s'),
+								'Status' => 1,
+								'UserID' => $_SESSION['UserID'],
+
+								'PriceUnit' => $r_price,
+								'PriceTotal' => $r_price * $quantity,
+							);
+							$this->Model_Inserts->InsertNewTransaction($dataTransaction);
+
+							/* INSERT DATA TO STOCK HISTORY */
+							$dataStockHistory = array(
+								'stockid' => $id,
+								'transactionid' => $transactionID,
+								'uid' => $uids,
+								'prd_sku' => $pre_sku,
+								'quantity' => $quantity,
+								'price' => $r_price,
+								'total_price' => $r_price * $quantity,
+								'userid' => $_SESSION['UserID'],
+								'date_added' => date('Y/m/d H:i:s'),
+								'status' => 'restocked',
+							);
+							$this->Model_Inserts->Insert_StockHistory($dataStockHistory);
+						} elseif ($radioUp == 'deduct_stock') { // this is only deduction, no release is made
+							$qty = $quantity;
+							$GetStockHistory = $this->Model_Selects->GetStockHistoryRestocked($id,$uids,$pre_sku);
+							if ($GetStockHistory->num_rows() > 0) { // checking for sufficient stock was done earlier
+								foreach ($GetStockHistory->result_array() as $row) {
+									if ($qty > $row['quantity']) {
+										// if qty is more than s_history qty
+										// delete stock history row and subtract from qty to deduct
+										$this->Model_Deletes->Delete_StockHistoryID($row['id']);
+										$qty -= $row['quantity'];
+									} elseif ($qty == $row['quantity']) {
+										// if qty is equal to s_history qty
+										// delete stock history row
+										$this->Model_Deletes->Delete_StockHistoryID($row['id']);
+										break;
+									} else {
+										$newQty = $row['quantity'] - $qty;
+										/* UPDATE DATA STOCK HISTORY */
+										$dataStockHistory = array(
+											'quantity' => $newQty,
+											'total_price' => $newQty * $row['price'],
+										);
+										$this->Model_Updates->UpdateStockHistory($row['id'],$dataStockHistory);
+										break;
+									}
+								}
+							}
+						}
+					}
 
 
 					$data['status'] = array('prompt' => 'stock_updated', );

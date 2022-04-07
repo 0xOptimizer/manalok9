@@ -319,21 +319,9 @@ class PurchaseOrders extends MY_Controller {
 								'Status' => '0',
 							);
 							$Insert_toStock_tb = $this->Model_Inserts->Insert_toStock_tb($data);
+							$stockID = $this->db->insert_id();
 							if ($Insert_toStock_tb == true) {
-								$stockID = $this->db->insert_id();
 								$data = array(
-									// 'Code' => $code,
-									// 'TransactionID' => strtoupper($code) . '' . strtoupper(uniqid()),
-									// 'OrderNo' => $orderNo,
-									// 'Type' => '1',
-									// 'Amount' => $qty,
-									// 'PriceUnit' => $p_details['Price_PerItem'],
-									// 'Date' => $date,
-									// 'DateAdded' => date('Y-m-d H:i:s'),
-									// 'Status' => 0,
-									// 'UserID' => $this->session->userdata('UserID'),
-									// 'PriceTotal' => $qty * $p_details['Price_PerItem'],
-
 									'Code' => $code,
 									'TransactionID' => $transactionID,
 									'OrderNo' => $orderNo,
@@ -428,8 +416,23 @@ class PurchaseOrders extends MY_Controller {
 								'InStock' => $NewStock,
 								'Released' => $NewRelease,
 							);
+							// STOCK HISTORY
+							$dataStockHistory = array(
+								'stockid' => $t['stockID'],
+								'transactionid' => $t['TransactionID'],
+								'uid' => $p['U_ID'],
+								'prd_sku' => $p['Code'],
+								'quantity' => $t['Amount'],
+								'price' => $t['PriceUnit'],
+								'total_price' => $t['PriceUnit'] * $t['Amount'],
+								'userid' => $t['UserID'],
+								'date_added' => date('Y/m/d H:i:s'),
+								'status' => 'restocked',
+							);
+
 							$this->Model_Updates->ApproveTransaction($dataTransaction);
 							$this->Model_Updates->UpdateStock_product($dataProduct);
+							$this->Model_Inserts->Insert_StockHistory($dataStockHistory);
 
 							// update product_stocks entry
 							$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();

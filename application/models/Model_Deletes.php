@@ -119,10 +119,22 @@ class Model_Deletes extends CI_Model {
 			return false;
 		}
 	}
-	public function Delete_Release($transactionid)
+	public function Delete_StockHistory($transactionid)
 	{
 		$this->db->where('transactionid', $transactionid);
-		$this->db->delete('product_released');
+		$this->db->delete('product_stock_history');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Delete_StockHistoryID($id)
+	{
+		$this->db->where('id', $id);
+		$this->db->delete('product_stock_history');
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}

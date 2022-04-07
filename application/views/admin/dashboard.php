@@ -100,7 +100,7 @@ $getRecentLogins = $this->Model_Selects->GetRecentLogins();
 										<div class="row ml-2">
 											<span style="font-size: 2em; color: #ebebeb;">
 												<b>
-													<?php if ($totalrestock['Amount'] < 1) { echo '0'; } else { echo $totalrestock['Amount']; } ?>
+													<?php if ($totalrestock['quantity'] < 1) { echo '0'; } else { echo $totalrestock['quantity']; } ?>
 												</b>
 											</span>
 											<i class="fas fa-user-friends fa-fw card-icon ml-auto mr-2"></i>
@@ -124,7 +124,7 @@ $getRecentLogins = $this->Model_Selects->GetRecentLogins();
 										<div class="row ml-2">
 											<span style="font-size: 2em; color: #ebebeb;">
 												<b>
-													<?php if ($total_released['Amount'] < 1) { echo '0'; } else { echo $total_released['Amount']; } ?>
+													<?php if ($total_released['quantity'] < 1) { echo '0'; } else { echo $total_released['quantity']; } ?>
 													
 												</b>
 											</span>
