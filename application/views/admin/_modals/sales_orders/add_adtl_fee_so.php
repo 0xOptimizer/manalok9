@@ -15,7 +15,7 @@
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">QTY</label>
-							<input type="number" class="form-control" name="qty" min="0" placeholder="0" value="0" required>
+							<input type="number" class="form-control" name="qty" min="0" placeholder="0" value="1" required>
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">UNIT DISCOUNT (%)</label>

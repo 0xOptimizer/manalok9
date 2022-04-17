@@ -80,7 +80,7 @@ class AJAX extends CI_Controller {
 	{
 		$sku = $this->input->get('sku');
 		if (strlen($sku) > 0) {
-			$productStocks = $this->Model_Selects->GetProductStocks($sku)->result_array();
+			$productStocks = $this->Model_Selects->GetStockedProductStocks($sku)->result_array();
 
 			echo json_encode($productStocks);
 		}

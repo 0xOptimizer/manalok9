@@ -86,7 +86,7 @@ if ($this->session->flashdata('highlight-id')) {
 								<!-- <button type="button" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> NEW</button> -->
 							</h3>
 						</div>
-						<div class="col-sm-12 col-md-10 pt-4 pb-2">
+						<div class="col-sm-12 col-md-8 pt-4 pb-2">
 							<?php if ($this->session->userdata('UserRestrictions')['products_add']): ?>
 								<button type="button" class="addproduct-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-bag-plus"></i> ADD PRODUCT</button>
 								|
@@ -94,7 +94,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<button type="button" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE REPORT</button>
 							<a href="<?=base_url() . 'admin/inventory';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-folder-symlink-fill"></i> VIEW IN INVENTORY</a>
 						</div>
-						<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
+						<div class="col-sm-12 col-md-4 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 							<div class="input-group">
 								<div class="input-group-prepend">
 									<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>

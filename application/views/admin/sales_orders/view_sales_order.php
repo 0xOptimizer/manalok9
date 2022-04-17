@@ -958,6 +958,8 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 		<?php if ($salesOrder['Status'] >= '2' && $this->session->userdata('UserRestrictions')['replacements_view']): ?>
 			<hr style="height: 4px;">
 			<?php
+			$replacementsCostTotal = 0;
+			$replacementsFreebieCostTotal = 0;
 			$replacementsPriceTotal = 0;
 			$replacementsFreebiePriceTotal = 0;
 			?>
@@ -991,9 +993,11 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									<th class="text-center">TRANSACTION ID</th>
 									<th class="text-center">PRODUCT STOCK ID</th>
 									<th class="text-center">QTY</th>
+									<th class="text-center">COST</th>
+									<th class="text-center">TOTAL COST</th>
 									<th class="text-center">UNIT DISCOUNT</th>
 									<th class="text-center">PRICE</th>
-									<th class="text-center">TOTAL</th>
+									<th class="text-center">TOTAL PRICE</th>
 									<th class="text-center">FREEBIE</th>
 									<th class="text-center">DATE ADDED</th>
 									<th class="text-center"></th>
@@ -1013,11 +1017,26 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 											<td class="text-center">
 												<?=$transactionDetails['Amount']?>
 											</td>
+											<?php
+											$totalCost = $row['Cost'] * $transactionDetails['Amount'];
+
+											if ($transactionDetails['Freebie']) {
+												$replacementsFreebieCostTotal += $totalCost;
+											} else {
+												$replacementsCostTotal += $totalCost;
+											}
+											?>
+											<td class="text-center">
+												<?=number_format($row['Cost'], 2)?>
+											</td>
+											<td class="text-center">
+												<?=number_format($totalCost, 2)?>
+											</td>
 											<td class="text-center">
 												<?=$transactionDetails['UnitDiscount']?>%
 											</td>
 											<?php
-											$unitPrice = $transactionDetails['PriceUnit'] - ($transactionDetails['PriceUnit'] * ($transactionDetails['UnitDiscount']) / 100);
+											$unitPrice = $row['Price'] - ($row['Price'] * ($transactionDetails['UnitDiscount']) / 100);
 											$totalPrice = ($transactionDetails['Amount']) * $unitPrice;
 
 											if ($transactionDetails['Freebie']) {
@@ -1061,11 +1080,18 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 								<?php endforeach;
 								endif; ?>
 									<tr style="border-color: #a7852d;">
-										<td class="text-end fw-bold">FREEBIES TOTAL</td>
-										<td class="text-center" colspan="2"><?=number_format($replacementsFreebiePriceTotal, 2)?></td>
-										<td class="text-end fw-bold" colspan="3">TOTAL</td>
+										<td class="text-end fw-bold" colspan="4">TOTAL COST</td>
+										<td class="text-center"><?=number_format($replacementsCostTotal, 2)?></td>
+										<td class="text-end fw-bold" colspan="2">TOTAL PRICE</td>
 										<td class="text-center"><?=number_format($replacementsPriceTotal, 2)?></td>
-										<td colspan="2"></td>
+										<td colspan="3"></td>
+									</tr>
+									<tr style="border-color: #a7852d;">
+										<td class="text-end fw-bold" colspan="4">TOTAL COST FREEBIE</td>
+										<td class="text-center"><?=number_format($replacementsFreebieCostTotal, 2)?></td>
+										<td class="text-end fw-bold" colspan="2">TOTAL PRICE FREEBIE</td>
+										<td class="text-center"><?=number_format($replacementsFreebiePriceTotal, 2)?></td>
+										<td colspan="3"></td>
 									</tr>
 								</tbody>
 							</table>

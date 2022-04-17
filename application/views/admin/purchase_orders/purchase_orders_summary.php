@@ -112,6 +112,7 @@ $poCodesArr = array_column($this->Model_Selects->GetProductTransactionsInPurchas
 							<th class="text-center">PURCHASE ORDER #</th>
 							<th class="text-center">STATUS</th>
 							<th class="text-center">QTY TOTAL</th>
+							<th class="text-center">REMAINING PAYMENT</th>
 							<th class="text-center">VENDOR NAME</th>
 							<?php if ($getPurchaseOrders->num_rows() > 0): 
 								foreach ($poCodesArr as $productCode): ?>
@@ -145,6 +146,9 @@ $poCodesArr = array_column($this->Model_Selects->GetProductTransactionsInPurchas
 										</td>
 										<td class="text-center">
 											<?=$totalAmount?>
+										</td>
+										<td class="text-center">
+											<?=number_format($row['TotalRemainingPayment'], 2)?>
 										</td>
 										<td class="text-center">
 											<?=$this->Model_Selects->GetVendorByNo($row['VendorNo'])->row_array()['Name']?>

@@ -6,7 +6,7 @@
 			</div>
 			<div class="modal-body">
 				<div class="row">
-					<?php $getAllProducts = $this->Model_Selects->GetAllProducts(); ?>
+					<?php $getAllProducts = $this->Model_Selects->GetAllProductsv2(); ?>
 					<div class="col-sm-0 col-md-6">
 						<label class="input-label">PRODUCTS</label>
 					</div>

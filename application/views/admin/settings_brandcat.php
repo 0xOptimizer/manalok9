@@ -240,6 +240,7 @@ $(document).ready(function() {
 	$('#add_brandvariants').click(function() {
 		var uid = $(this).attr('data-value');
 		$('#view_brandcat').modal('toggle');
+		$('#view_brandcat').data('open-modal', 'add_brandvariants');
 		
 
 		$.ajax({
@@ -248,7 +249,6 @@ $(document).ready(function() {
 			data: { uid : uid } ,
 			success: function (response) {
 				var data = $.parseJSON(response);
-				$('#add_Brandvars').modal('toggle');
 
 				$('#add_variud').val(data['Brand'].UniqueID);
 				
@@ -364,10 +364,22 @@ $(document).ready(function() {
 		var uid = $(this).attr('data-value');
 		Get_BrandSizes(uid);
 		$('#view_brandcat').modal('toggle');
-		$('#add_brandsize').modal('toggle');
+		$('#view_brandcat').data('open-modal', 'add_brandsizes');
 		$('#add_sizeiud').val(uid);
 		
 
+	});
+
+	$(document).on('hidden.bs.modal', '#view_brandcat', function (event) {
+		if ($('#view_brandcat').data('open-modal') == 'add_brandsizes') {
+			$('#add_brandsize').modal('toggle');
+			$('#view_brandcat').data('open-modal', '');
+		}
+		
+		if ($('#view_brandcat').data('open-modal') == 'add_brandvariants') {
+			$('#add_Brandvars').modal('toggle');
+			$('#view_brandcat').data('open-modal', '');
+		}
 	});
 
 	$('#modaldis_addsize').click(function() {

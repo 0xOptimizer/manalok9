@@ -115,6 +115,7 @@ $soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInSalesOr
 							<th class="text-center">SALES ORDER #</th>
 							<th class="text-center">STATUS</th>
 							<th class="text-center">QTY TOTAL</th>
+							<th class="text-center">REMAINING PAYMENT</th>
 							<th class="text-center">CLIENT NAME (BILLED)</th>
 							<?php if ($getSalesOrders->num_rows() > 0): 
 								foreach ($soCodesArr as $productCode): ?>
@@ -154,6 +155,9 @@ $soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInSalesOr
 										</td>
 										<td class="text-center">
 											<?=$totalAmount?>
+										</td>
+										<td class="text-center">
+											<?=number_format($row['TotalRemainingPayment'], 2)?>
 										</td>
 										<td class="text-center">
 											<?=$this->Model_Selects->GetClientByNo($row['BillToClientNo'])->row_array()['Name']?>

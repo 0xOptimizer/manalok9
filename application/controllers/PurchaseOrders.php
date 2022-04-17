@@ -288,55 +288,57 @@ class PurchaseOrders extends MY_Controller {
 				if ($insertNewPurchaseOrder == TRUE) {
 					$orderID = $this->db->insert_id();
 					// create new restock transactions
-					for ($i = 0; $i < $productCount; $i++) {
-						$code = trim($this->input->post('productCodeInput_' . $i));
-						$qty = trim($this->input->post('productQtyInput_' . $i));
-						$cost = trim($this->input->post('productCostInput_' . $i));
-						$price = trim($this->input->post('productPriceInput_' . $i));
-						$expiration = trim($this->input->post('productExpirationInput_' . $i));
-						$p_details = $this->Model_Selects->GetProductByCode($code)->row_array();
+					if ($productCount > 0) {
+						for ($i = 0; $i < $productCount; $i++) {
+							$code = trim($this->input->post('productCodeInput_' . $i));
+							$qty = trim($this->input->post('productQtyInput_' . $i));
+							$cost = trim($this->input->post('productCostInput_' . $i));
+							$price = trim($this->input->post('productPriceInput_' . $i));
+							$expiration = trim($this->input->post('productExpirationInput_' . $i));
+							$p_details = $this->Model_Selects->GetProductByCode($code)->row_array();
 
-						$transactionID = '';
-						$transactionID .= strtoupper($code);
-						$transactionID .= '-';
-						$transactionID .= strtoupper(uniqid());
+							$transactionID = '';
+							$transactionID .= strtoupper($code);
+							$transactionID .= '-';
+							$transactionID .= strtoupper(uniqid());
 
-						if ($qty > 0) {
-							$data = array(
-								'UID' => $p_details['U_ID'],
-								'Product_SKU' => $p_details['Code'],
-								'Stocks' => $qty,
-								'Current_Stocks' => $qty,
-								'Released_Stocks' => 0,
-								'Retail_Price' => $price,
-								'Price_PerItem' => $cost,
-								'Total_Price' => $cost * $qty,
-								// 'Manufactured_By' => $p_details['manufacturer'],
-								// 'Description' => $p_details['description'],
-								'Expiration_Date' => $expiration,
-								'Date_Added' => date('Y-m-d H:i:s'),
-								'UserID' => $userID,
-								'Status' => '0',
-							);
-							$Insert_toStock_tb = $this->Model_Inserts->Insert_toStock_tb($data);
-							$stockID = $this->db->insert_id();
-							if ($Insert_toStock_tb == true) {
+							if ($qty > 0) {
 								$data = array(
-									'Code' => $code,
-									'TransactionID' => $transactionID,
-									'OrderNo' => $orderNo,
-									'stockID' => $stockID,
-									'Type' => '0',
-									'Amount' => $qty,
-									'Date' => $date,
-									'DateAdded' => date('Y-m-d H:i:s'),
-									'Status' => 0,
+									'UID' => $p_details['U_ID'],
+									'Product_SKU' => $p_details['Code'],
+									'Stocks' => $qty,
+									'Current_Stocks' => $qty,
+									'Released_Stocks' => 0,
+									'Retail_Price' => $price,
+									'Price_PerItem' => $cost,
+									'Total_Price' => $cost * $qty,
+									// 'Manufactured_By' => $p_details['manufacturer'],
+									// 'Description' => $p_details['description'],
+									'Expiration_Date' => $expiration,
+									'Date_Added' => date('Y-m-d H:i:s'),
 									'UserID' => $userID,
-
-									'PriceUnit' => $cost,
-									'PriceTotal' => $cost * $qty,
+									'Status' => '0',
 								);
-								$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+								$Insert_toStock_tb = $this->Model_Inserts->Insert_toStock_tb($data);
+								$stockID = $this->db->insert_id();
+								if ($Insert_toStock_tb == true) {
+									$data = array(
+										'Code' => $code,
+										'TransactionID' => $transactionID,
+										'OrderNo' => $orderNo,
+										'stockID' => $stockID,
+										'Type' => '0',
+										'Amount' => $qty,
+										'Date' => $date,
+										'DateAdded' => date('Y-m-d H:i:s'),
+										'Status' => 0,
+										'UserID' => $userID,
+
+										'PriceUnit' => $cost,
+										'PriceTotal' => $cost * $qty,
+									);
+									$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
+								}
 							}
 						}
 					}

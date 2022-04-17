@@ -45,7 +45,12 @@ date_default_timezone_set('Asia/Manila');
 								<i class="bi bi-card-list"></i> Restocking
 							</h3>
 						</div>
-						<div class="col-12 col-md-12 pt-4 pb-2">
+						<div class="col-12">
+							<p class="text-subtitle text-muted">
+								List of Product Stocks
+							</p>
+						</div>
+						<div class="col-12 col-md-8 pt-4 pb-2">
 							<?php if ($this->session->userdata('UserRestrictions')['restocking_scan_add_stock']): ?>
 								<a id="scan_barcode_stocking" href="#" class="scnrestock-btn btn btn-sm-success" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#add_stock_restocking">
 									<i class="bi bi-plus-square"></i>
@@ -53,7 +58,7 @@ date_default_timezone_set('Asia/Manila');
 								</a>
 							<?php endif; ?>
 							<?php if ($this->session->userdata('UserRestrictions')['restocking_manual_add_stock']): ?>
-								<a id="add_stock" href="#" class="scnrestock-btn btn btn-sm-success" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#add_stock_restocking_manual">
+								<a id="add_stock" href="#" class="btn btn-sm-success" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#add_stock_restocking_manual">
 									<i class="bi bi-plus-square"></i>
 									ADD STOCK
 								</a>
@@ -61,21 +66,24 @@ date_default_timezone_set('Asia/Manila');
 							<?php if ($this->session->userdata('UserRestrictions')['restocking_scan_add_stock'] || $this->session->userdata('UserRestrictions')['restocking_manual_add_stock']): ?>
 								|
 							<?php endif; ?>
-							<a href="#" class="scnrestock-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cloud-download"></i> GENERATE REPORT</a>
+							<a href="#" class="generatereport-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cloud-download"></i> GENERATE REPORT</a>
 							<?php if ($this->session->userdata('UserRestrictions')['restocking_scan_add_stock'] || $this->session->userdata('UserRestrictions')['restocking_manual_add_stock']): ?>
 								|
-								<a href="#" class="scnrestock-btn btn btn-sm-secondary" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#restocking_cart_modal"><i class="bi bi-cart"></i> CART</a>
+								<a href="#" class="btn btn-sm-secondary" style="font-size: 12px;" data-bs-toggle="modal" data-bs-target="#restocking_cart_modal"><i class="bi bi-cart"></i> CART</a>
 							<?php endif; ?>
+						</div>
+						<div class="col-sm-12 col-md-4 mr-auto pt-4 pb-2" style="margin-top: -15px;">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+								</div>
+								<input type="text" id="tableStocksSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+							</div>
 						</div>
 					</div>
 				</div>
 
 				<section class="section">
-					<div class="col-12">
-						<p class="text-subtitle text-muted">
-							List of Product Stocks
-						</p>
-					</div>
 					<div class="table-responsive">
 						<table id="list_release" class="table">
 							<thead>
@@ -172,21 +180,23 @@ date_default_timezone_set('Asia/Manila');
 
 	<?php $this->load->view('admin/_modals/restocking/modal_manual_restock_product_selection.php'); ?>
 
+	<?php $this->load->view('admin/_modals/generate_report')?>
 
 	<script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 	<script src="<?=base_url()?>/assets/js/jquery.js"></script>
 	<?php $this->load->view('main/globals/scripts.php'); ?>
 
-	<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/dataTables.bootstrap4.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.10.20_dataTables.bootstrap4.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_dataTables.buttons.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.print.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/1.6.1_buttons.html5.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.js"></script>
 	<script>
 			$('.sidebar-admin-restock_productv2').addClass('active');
 		$(document).ready(function() {
 
-
-			$('#list_release').DataTable();
 
 			var tableProducts = $('#selectproductsTable').DataTable( {
 				sDom: 'lrtip',
@@ -195,6 +205,66 @@ date_default_timezone_set('Asia/Manila');
 			});
 			$('#tableProductsSearch').on('keyup change', function(){
 				tableProducts.search($(this).val()).draw();
+			});
+
+			var table = $('#list_release').DataTable( {
+				sDom: 'lrtip',
+				'bLengthChange': false,
+				'order': [[ 0, 'desc' ]],
+				buttons: [
+				{
+					extend: 'print',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6, 7 ]
+					},
+					customize: function ( doc ) {
+						$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
+						$(doc.document.body).find('h1').css('font-size', '24px');
+						$(doc.document.body).find('h1').css('text-align', 'center'); 
+					}
+				},
+				{
+					extend: 'copyHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6, 7 ]
+					}
+				},
+				{
+					extend: 'excelHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6, 7 ]
+					}
+				},
+				{
+					extend: 'csvHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6, 7 ]
+					}
+				},
+				{
+					extend: 'pdfHtml5',
+					exportOptions: {
+						columns: [ 1, 2, 3, 4, 5, 6, 7 ]
+					}
+				}
+				]});
+			$('body').on('click', '#generateReport-Print', function () {
+				table.button('0').trigger();
+			});
+			$('body').on('click', '#generateReport-Copy', function () {
+				table.button('1').trigger();
+			});
+			$('body').on('click', '#generateReport-Excel', function () {
+				table.button('2').trigger();
+			});
+			$('body').on('click', '#generateReport-CSV', function () {
+				table.button('3').trigger();
+			});
+			$('body').on('click', '#generateReport-PDF', function () {
+				table.button('4').trigger();
+			});
+			$('#tableStocksSearch').on('keyup change', function(){
+				table.search($(this).val()).draw();
 			});
 
 			$(document).on('click', '.manualselect-btn', function() {

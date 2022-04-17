@@ -221,7 +221,7 @@ class Model_Inserts extends CI_Model {
 	}
 	public function Insert_StockHistory($data)
 	{
-		$this->db->insert('product_stock_history', $data);
+		$this->db->insert('sales_history', $data);
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}

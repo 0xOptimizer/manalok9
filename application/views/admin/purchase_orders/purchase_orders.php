@@ -109,7 +109,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<th class="text-center">SO #</th>
 							<th class="text-center">DATE</th>
 							<th class="text-center">ITEMS</th>
-							<th class="text-center">TOTAL PRICE</th>
+							<th class="text-center">REMAINING PAYMENT</th>
 							<th class="text-center">STATUS</th>
 						</thead>
 						<tbody>
@@ -550,30 +550,36 @@ $(document).ready(function() {
 		let qty = 0;
 		let cost = 0;
 		let price = 0;
-		// check product added inputs
-		$.each($('.orderProduct'), function(i, val) {
-			if (typeof $(this).find('.inpSKU').attr('name') !== typeof undefined && $(this).find('.inpSKU').attr('name') !== false) {
-				qty = $(this).find('.inpQty').val();
-				cost = $(this).find('.inpCost').val();
-				price = $(this).find('.inpPrice').val();
 
-				if (qty <= 0 || cost <= 0 || price <= 0) {
-					return false;
+		if ($('.orderProduct').length > 0) {
+			// check product added inputs
+			$.each($('.orderProduct'), function(i, val) {
+				if (typeof $(this).find('.inpSKU').attr('name') !== typeof undefined && $(this).find('.inpSKU').attr('name') !== false) {
+					qty = $(this).find('.inpQty').val();
+					cost = $(this).find('.inpCost').val();
+					price = $(this).find('.inpPrice').val();
+
+					if (qty <= 0 || cost <= 0 || price <= 0) {
+						return false;
+					}
 				}
+			});
+			
+			if (qty <= 0 || cost <= 0 || price <= 0) {
+				showAlert('warning', 'Product/s dont have valid qty/cost/price!');
+				t.preventDefault();
 			}
-		});
+		}
 
 		if ($('#PurchaseFromNo').val().length < 1) {
 			showAlert('warning', 'No vendor selected!');
 			$('#AddPurchaseOrderModal').animate({ scrollTop: 0 }, 1000);
 			t.preventDefault();
-		} else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
-			showAlert('warning', 'Product list is empty!');
-			t.preventDefault();
-		} else if (qty <= 0 || cost <= 0 || price <= 0) {
-			showAlert('warning', 'Product/s dont have valid qty/cost/price!');
-			t.preventDefault();
 		}
+		//  else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
+		// 	showAlert('warning', 'Product list is empty!');
+		// 	t.preventDefault();
+		// }
 	});
 });
 </script>

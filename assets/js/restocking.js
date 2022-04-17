@@ -46,6 +46,8 @@ $(document).ready(function () {
 
 						$('#uids').val(data.prd_details.U_ID);
 						$('#pre_sku').val(data.prd_details.Code);
+						$('#r_price').val(data.prd_details.Price_PerItem);
+						$('#orig_price').val(data.prd_details.Cost_PerItem);
 
 						Quagga.stop();
 					}

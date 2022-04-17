@@ -501,96 +501,6 @@ class SalesOrders extends MY_Controller {
 				$approved = $this->input->post('approved');
 
 				if ($approved == '1' && $orderDetails['Status'] == '1') { // if approved and pending
-					$transactions = array();
-
-					// total category discounts
-					$discountTotal = $orderDetails['discountOutright'] + $orderDetails['discountVolume'] + $orderDetails['discountPBD'] + $orderDetails['discountManpower'];
-
-					$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
-					foreach ($orderTransactions as $key => $t) {
-						if ($t['Status'] == 0) { // if not approved
-							// check if stock is enough
-							$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
-							// IF NOT ENOUGH STOCK FOR APPROVAL, REDIRECT
-							if ($t['Amount'] <= $p['InStock']) {
-								// TRANSACTION
-								$dataTransaction = array(
-									'TransactionID' => $t['TransactionID'],
-									'Status' => '1',
-									'Date_Approval' => date('Y-m-d H:i:s'),
-								);
-								// RELEASE PRODUCT
-								$NewStock = $p['InStock'] - $t['Amount'];
-								$NewRelease = $p['Released'] + $t['Amount'];
-								$dataProduct = array(
-									'Code' => $t['Code'],
-									'InStock' => $NewStock,
-									'Released' => $NewRelease,
-								);
-								// STOCKS
-								$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
-								$n_cstocks = $s['Current_Stocks'] - $t['Amount'];
-								$n_rstocks = $s['Released_Stocks'] + $t['Amount'];
-								$dataStocks = array(
-									'Current_Stocks' => $n_cstocks,
-									'Released_Stocks' => $n_rstocks,
-								);
-
-								// RELEASED
-								if ($t['Freebie'] == '0') {
-									$price = $t['PriceUnit'];
-
-									if ($t['UnitDiscount'] > 0) {
-										$dcTotal = $t['UnitDiscount'];
-									} else {
-										$dcTotal = $discountTotal;
-									}
-
-									$dcTotal = $price * ($dcTotal / 100);
-									$finalPrice = $price - $dcTotal;
-								} else {
-									$finalPrice = 0;
-								}
-								$dataStockHistory = array(
-									'stockid' => $t['stockID'],
-									'transactionid' => $t['TransactionID'],
-									'uid' => $p['U_ID'],
-									'prd_sku' => $p['Code'],
-									'quantity' => $t['Amount'],
-									'price' => $finalPrice,
-									'total_price' => $finalPrice * $t['Amount'],
-									'userid' => $t['UserID'],
-									'date_added' => date('Y/m/d H:i:s'),
-									'status' => 'released',
-								);
-								
-								$transactions[] = array(
-									'dataTransaction' => $dataTransaction,
-									'dataProduct' => $dataProduct,
-									'dataStocks' => $dataStocks,
-									'stockID' => $t['stockID'],
-									'dataStockHistory' => $dataStockHistory,
-								);
-							} else {
-								$prompt_txt =
-								'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-								<strong>Warning!</strong> Approval aborted, not enough stock for ' . $t['TransactionID'] . '!
-								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-								</div>';
-								$this->session->set_flashdata('prompt_status',$prompt_txt);
-							}
-						}
-					}
-
-					if (!isset($prompt_txt) || $prompt_txt == NULL) {
-						foreach ($transactions as $row) { // update transactions/products with enough stock
-							$this->Model_Updates->ApproveTransaction($row['dataTransaction']);
-							$this->Model_Updates->UpdateStock_product($row['dataProduct']);
-							$this->Model_Updates->UpdateProduct_stock($row['stockID'], $row['dataStocks']);
-
-							/* INSERT RELEASE DATA TO TABLE PRODUCT RELEASED */
-							$this->Model_Inserts->Insert_StockHistory($row['dataStockHistory']);
-						}
 						// update order status
 						$data = array(
 							'Status' => '2',
@@ -617,7 +527,6 @@ class SalesOrders extends MY_Controller {
 								'Your sales order [Order No ' . $orderDetails['OrderNo'] . '] has been approved and marked for invoicing.'
 							);
 						}
-					}
 				} elseif ($approved == '0' && $orderDetails['Status'] == '1') { // if rejected and pending
 					$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
 					foreach ($orderTransactions as $key => $t) {
@@ -720,39 +629,161 @@ class SalesOrders extends MY_Controller {
 	public function FORM_markDelivered()
 	{
 		if ($this->Model_Security->CheckUserRestriction('sales_orders_mark_as_delivered')) {
-			$salesOrderNo = $this->input->post('order-no');
+			$orderNo = $this->input->post('order-no');
+			$orderDetails = $this->Model_Selects->GetSalesOrderByNo($orderNo)->row_array();
 
-			// Update
-			$data = array(
-				'Status' => '4',
-				'MarkDateDelivered' => date('Y-m-d H:i:s'),
-			);
-			$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
-			if ($UpdateSalesOrder == TRUE) {
+			$transactions = array();
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Marked as Delivered.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
+			// total category discounts
+			$discountTotal = $orderDetails['discountOutright'] + $orderDetails['discountVolume'] + $orderDetails['discountPBD'] + $orderDetails['discountManpower'];
 
-				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('marked SO as delivered.', 'sales order marked as delivered [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
-				redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
-
-				$order = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
-				if ($order->num_rows() > 0) {
-					$orderDetails = $order->row_array();
-					// EMAIL CLIENT
-					$client = $this->Model_Selects->GetClientByNo($orderDetails['BillToClientNo']);
-					if ($client->num_rows() > 0) {
-						$this->Model_Email->sendEmail(
-							$client->row_array()['Email'],
-							'Your Order Has Been Delivered',
-							'Your sales order [Order No ' . $orderDetails['OrderNo'] . '] has been successfully delivered.'
+			$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
+			foreach ($orderTransactions as $key => $t) {
+				if ($t['Status'] == 0) { // if not approved
+					// check if stock is enough
+					$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+					// IF NOT ENOUGH STOCK FOR APPROVAL, REDIRECT
+					if ($t['Amount'] <= $p['InStock']) {
+						// TRANSACTION
+						$dataTransaction = array(
+							'TransactionID' => $t['TransactionID'],
+							'Status' => '1',
+							'Date_Approval' => date('Y-m-d H:i:s'),
 						);
+						// RELEASE PRODUCT
+						$NewStock = $p['InStock'] - $t['Amount'];
+						$NewRelease = $p['Released'] + $t['Amount'];
+						$dataProduct = array(
+							'Code' => $t['Code'],
+							'InStock' => $NewStock,
+							'Released' => $NewRelease,
+						);
+						// STOCKS
+						$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+						$n_cstocks = $s['Current_Stocks'] - $t['Amount'];
+						$n_rstocks = $s['Released_Stocks'] + $t['Amount'];
+						$dataStocks = array(
+							'Current_Stocks' => $n_cstocks,
+							'Released_Stocks' => $n_rstocks,
+						);
+
+						// RELEASED HISTORY
+						$price = $t['PriceUnit'];
+						if ($t['Freebie'] == '0') {
+							if ($t['UnitDiscount'] > 0) {
+								$dcTotal = $t['UnitDiscount'];
+							} else {
+								$dcTotal = $discountTotal;
+							}
+
+							$dcTotal = $price * ($dcTotal / 100);
+							$finalPrice = $price - $dcTotal;
+
+							$finalDiscount = $dcTotal;
+						} else {
+							$finalPrice = 0;
+
+							$finalDiscount = $price;
+						}
+						$dataStockHistory = array(
+							'stockid' => $t['stockID'],
+							'transactionid' => $t['TransactionID'],
+							'uid' => $p['U_ID'],
+							'prd_sku' => $p['Code'],
+							'quantity' => $t['Amount'],
+							'price' => $finalPrice,
+							'total_price' => $finalPrice * $t['Amount'],
+							'userid' => $t['UserID'],
+							'date_added' => date('Y/m/d H:i:s'),
+							'status' => 'released',
+						);
+						/* DISCOUNT DATA TO STOCK HISTORY */
+						$dataStockHistoryDiscount = array(
+							'stockid' => $t['stockID'],
+							'transactionid' => $t['TransactionID'],
+							'uid' => $p['U_ID'],
+							'prd_sku' => $p['Code'],
+							'quantity' => $t['Amount'],
+							'price' => $finalDiscount,
+							'total_price' => $finalDiscount * $t['Amount'],
+							'userid' => $t['UserID'],
+							'date_added' => date('Y/m/d H:i:s'),
+							'status' => 'discount',
+						);
+						
+						$transactions[] = array(
+							'dataTransaction' => $dataTransaction,
+							'dataProduct' => $dataProduct,
+							'dataStocks' => $dataStocks,
+							'stockID' => $t['stockID'],
+							'dataStockHistory' => $dataStockHistory,
+							'dataStockHistoryDiscount' => $dataStockHistoryDiscount,
+						);
+					} else {
+						$prompt_txt =
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Approval aborted, not enough stock for ' . $t['TransactionID'] . '!
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
 					}
+				}
+			}
+
+			if (!isset($prompt_txt) || $prompt_txt == NULL) {
+				foreach ($transactions as $row) { // update transactions/products with enough stock
+					$this->Model_Updates->ApproveTransaction($row['dataTransaction']);
+					$this->Model_Updates->UpdateStock_product($row['dataProduct']);
+					$this->Model_Updates->UpdateProduct_stock($row['stockID'], $row['dataStocks']);
+
+					/* INSERT STOCK DATA TO STOCK HISTORY */
+					$this->Model_Inserts->Insert_StockHistory($row['dataStockHistory']);
+					$this->Model_Inserts->Insert_StockHistory($row['dataStockHistoryDiscount']);
+				}
+
+				// Update
+				$data = array(
+					'Status' => '4',
+					'MarkDateDelivered' => date('Y-m-d H:i:s'),
+				);
+				$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($orderNo, $data);
+				if ($UpdateSalesOrder == TRUE) {
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Marked as Delivered.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+					// LOGBOOK
+					$this->Model_Logbook->LogbookEntry('marked SO as delivered.', 'sales order marked as delivered [No: ' . $orderNo . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
+
+					$order = $this->Model_Selects->GetSalesOrderByNo($orderNo);
+					if ($order->num_rows() > 0) {
+						$orderDetails = $order->row_array();
+						// EMAIL CLIENT
+						$client = $this->Model_Selects->GetClientByNo($orderDetails['BillToClientNo']);
+						if ($client->num_rows() > 0) {
+							$this->Model_Email->sendEmail(
+								$client->row_array()['Email'],
+								'Your Order Has Been Delivered',
+								'Your sales order [Order No ' . $orderDetails['OrderNo'] . '] has been successfully delivered.'
+							);
+						}
+					}
+					redirect('admin/view_sales_order?orderNo=' . $orderNo);
+				}
+				else
+				{
+					// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+					$prompt_txt =
+					'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>DANGER!</strong> Something has gone wrong. Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+					redirect('admin/view_sales_order?orderNo=' . $orderNo);
 				}
 			}
 			else
@@ -764,7 +795,7 @@ class SalesOrders extends MY_Controller {
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
-				redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
+				redirect('admin/view_sales_order?orderNo=' . $orderNo);
 			}
 		} else {
 			redirect(base_url());
@@ -792,7 +823,6 @@ class SalesOrders extends MY_Controller {
 
 				// LOGBOOK
 				$this->Model_Logbook->LogbookEntry('marked SO as received.', 'sales order marked as received [No: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo=' . $salesOrderNo));
-				redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 
 				$order = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
 				if ($order->num_rows() > 0) {
@@ -807,6 +837,7 @@ class SalesOrders extends MY_Controller {
 						);
 					}
 				}
+				redirect('admin/view_sales_order?orderNo=' . $salesOrderNo);
 			}
 			else
 			{
@@ -889,6 +920,20 @@ class SalesOrders extends MY_Controller {
 				$insertAdtlFee = $this->Model_Inserts->InsertAdtlFee($data);
 				if ($insertAdtlFee == TRUE) {
 					$adtlFeeID = $this->db->insert_id();
+
+					/* INSERT DISCOUNT DATA TO STOCK HISTORY */
+					$finalPrice = $unitPrice - ($unitPrice * ($unitDiscount / 100));
+					$data = array(
+						'stockid' => $adtlFeeID,
+						'transactionid' => $adtlFeeNo,
+						'quantity' => $qty,
+						'price' => $finalPrice,
+						'total_price' => $finalPrice * $qty,
+						'userid' => $userID,
+						'date_added' => date('Y/m/d H:i:s'),
+						'status' => 'discount',
+					);
+					$Insert_StockHistory = $this->Model_Inserts->Insert_StockHistory($data);
 
 					$prompt_txt =
 					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
@@ -1000,6 +1045,8 @@ class SalesOrders extends MY_Controller {
 							$this->session->set_flashdata('prompt_status',$prompt_txt);
 						}
 					}
+
+					$this->Model_Deletes->Delete_StockHistory($adtlFeeNo);
 
 					$prompt_txt =
 					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
@@ -1449,57 +1496,28 @@ class SalesOrders extends MY_Controller {
 					);
 					$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 					if ($insertNewTransaction == true) {
-						// RELEASED
-						if ($freebie == '0') {
-							$price = $s_details['Retail_Price'];
-
-							if ($discount > 0) {
-								$dcTotal = $discount;
-							} else {
-								$dcTotal = 0;
-							}
-
-							$dcTotal = $price * ($dcTotal / 100);
-							$finalPrice = $price - $dcTotal;
-						} else {
-							$finalPrice = 0;
-						}
-						/* INSERT DATA TO STOCK HISTORY */
+						$replacementNo = 'RP' . strtoupper(uniqid());
+						/* INSERT REPLACEMENT */
 						$data = array(
-							'stockid' => $stockID,
-							'transactionid' => $transactionID,
-							'uid' => $p_details['U_ID'],
-							'prd_sku' => $p_details['Code'],
-							'quantity' => $qty,
-							'price' => $finalPrice,
-							'total_price' => $finalPrice * $qty,
-							'userid' => $userID,
-							'date_added' => date('Y/m/d H:i:s'),
-							'status' => 'released',
+							'ReplacementNo' => $replacementNo,
+							'TransactionID' => $transactionID,
+							'DateAdded' => date('Y/m/d H:i:s'),
+							'Cost' => $s_details['Price_PerItem'],
+							'Price' => $s_details['Retail_Price'],
+							'OrderNo' => $salesOrderNo,
+							'Status' => '1',
 						);
-						$Insert_StockHistory = $this->Model_Inserts->Insert_StockHistory($data);
-						if ($Insert_StockHistory == true) {
-							$replacementNo = 'RP' . strtoupper(uniqid());
-							/* INSERT REPLACEMENT */
-							$data = array(
-								'ReplacementNo' => $replacementNo,
-								'TransactionID' => $transactionID,
-								'DateAdded' => date('Y/m/d H:i:s'),
-								'OrderNo' => $salesOrderNo,
-								'Status' => '1',
-							);
-							$InsertNewReplacement = $this->Model_Inserts->InsertNewReplacement($data);
+						$InsertNewReplacement = $this->Model_Inserts->InsertNewReplacement($data);
 
-							$prompt_txt =
-							'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-							<strong>Success!</strong> Added Replacement.
-							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-							</div>';
-							$this->session->set_flashdata('prompt_status',$prompt_txt);
+						$prompt_txt =
+						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Success!</strong> Added Replacement.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
 
-							$this->Model_Logbook->LogbookEntry('added new replacement.', 'added replacement ' . $replacementNo . ' to sales order [SalesOrderNo: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo='. $salesOrderNo));
-							redirect($_SERVER['HTTP_REFERER']);
-						}
+						$this->Model_Logbook->LogbookEntry('added new replacement.', 'added replacement ' . $replacementNo . ' to sales order [SalesOrderNo: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo='. $salesOrderNo));
+						redirect($_SERVER['HTTP_REFERER']);
 					}
 				}
 			}
@@ -1514,6 +1532,8 @@ class SalesOrders extends MY_Controller {
 	public function FORM_approveReplacement()
 	{
 		if ($this->Model_Security->CheckUserRestriction('replacements_approve')) {
+			$userID = $_SESSION['UserID'];
+
 			$orderNo = $this->input->post('sales-order-no');
 			$replacementNo = $this->input->post('replacement-no');
 
@@ -1549,10 +1569,57 @@ class SalesOrders extends MY_Controller {
 						'Current_Stocks' => $n_cstocks,
 						'Released_Stocks' => $n_rstocks,
 					);
+					// RELEASED
+					$discount = $t['UnitDiscount'];
+					$price = $s['Retail_Price'];
+					if ($t['Freebie'] == '0') {
+						if ($discount > 0) {
+							$dcTotal = $discount;
+						} else {
+							$dcTotal = 0;
+						}
+
+						$dcTotal = $price * ($dcTotal / 100);
+						$finalPrice = $price - $dcTotal;
+
+						$finalDiscount = $dcTotal;
+					} else {
+						$finalPrice = 0;
+
+						$finalDiscount = $price;
+					}
+					/* INSERT DATA TO STOCK HISTORY */
+					$dataStockHistory = array(
+						'stockid' => $t['stockID'],
+						'transactionid' => $replacementDetails['TransactionID'],
+						'uid' => $p['U_ID'],
+						'prd_sku' => $p['Code'],
+						'quantity' => $t['Amount'],
+						'price' => $finalPrice,
+						'total_price' => $finalPrice * $t['Amount'],
+						'userid' => $userID,
+						'date_added' => date('Y/m/d H:i:s'),
+						'status' => 'released',
+					);
+					/* INSERT DISCOUNT DATA TO STOCK HISTORY */
+					$dataStockHistoryDiscount = array(
+						'stockid' => $t['stockID'],
+						'transactionid' => $replacementDetails['TransactionID'],
+						'uid' => $p['U_ID'],
+						'prd_sku' => $p['Code'],
+						'quantity' => $t['Amount'],
+						'price' => $finalDiscount,
+						'total_price' => $finalDiscount * $t['Amount'],
+						'userid' => $userID,
+						'date_added' => date('Y/m/d H:i:s'),
+						'status' => 'discount',
+					);
 
 					$this->Model_Updates->ApproveTransaction($dataTransaction);
 					$this->Model_Updates->UpdateStock_product($dataProduct);
 					$this->Model_Updates->UpdateProduct_stock($t['stockID'], $dataStocks);
+					$this->Model_Inserts->Insert_StockHistory($dataStockHistory);
+					$this->Model_Inserts->Insert_StockHistory($dataStockHistoryDiscount);
 
 					$prompt_txt =
 					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
