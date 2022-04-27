@@ -79,7 +79,7 @@ class Accounting extends MY_Controller {
 		if ($this->Model_Security->CheckUserRestriction('accounts_view')) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
-			$header['pageTitle'] = 'income_statement';
+			$header['pageTitle'] = 'Accounting Reports';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 			$this->load->view('admin/accounting/income_statement', $data);
 		} else {

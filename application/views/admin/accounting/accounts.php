@@ -56,7 +56,7 @@ if ($this->session->flashdata('highlight-id')) {
 						<a href="<?=base_url() . 'admin/trial_balance';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> TRIAL BALANCE</a>
 						<button class="btn btn-sm-primary accountingreports-btn" style="font-size: 12px;"><i class="bi bi-circle"></i>
 							REPORTS
-						<!-- </button> -->
+						</button>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
