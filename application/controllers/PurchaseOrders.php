@@ -404,6 +404,7 @@ class PurchaseOrders extends MY_Controller {
 					foreach ($orderTransactions as $key => $t) {
 						if ($t['Status'] == 0) { // if not approved
 							$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+							$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
 							// approve transaction
 							$dataTransaction = array(
 								'TransactionID' => $t['TransactionID'],
@@ -425,6 +426,8 @@ class PurchaseOrders extends MY_Controller {
 								'uid' => $p['U_ID'],
 								'prd_sku' => $p['Code'],
 								'quantity' => $t['Amount'],
+								'cost' => $t['Price_PerItem'],
+								'total_cost' => $t['Price_PerItem'] * $t['Amount'],
 								'price' => $t['PriceUnit'],
 								'total_price' => $t['PriceUnit'] * $t['Amount'],
 								'userid' => $t['UserID'],

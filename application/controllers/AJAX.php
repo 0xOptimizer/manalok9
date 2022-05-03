@@ -666,4 +666,23 @@ class AJAX extends CI_Controller {
 			exit();
 		}
 	}
+
+	public function Get_SODetails() {
+		$sales_order_no = $this->input->get('sales_order_no');
+		if (strlen($sales_order_no) > 0) {
+			$getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($sales_order_no)->result_array();
+			$getAdtlFeesByOrderNo = $this->Model_Selects->GetAdtlFeesByOrderNo($sales_order_no)->result_array();
+
+			echo json_encode(array('transactions'=>$getTransactionsByOrderNo, 'adtlfees'=>$getAdtlFeesByOrderNo));
+		}
+	}
+	// public function Get_SOAdtlFee() {
+	// 	$sales_order_no = $this->input->get('sales_order_no');
+	// 	if (strlen($sales_order_no) > 0) {
+	// 		$getAdtlFeesByOrderNo = $this->Model_Selects->GetAdtlFeesByOrderNo($sales_order_no);
+
+	// 		echo json_encode($getAdtlFeesByOrderNo->result_array());
+	// 	}
+	// }
+
 }

@@ -116,6 +116,7 @@ $soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInSalesOr
 							<th class="text-center">STATUS</th>
 							<th class="text-center">QTY TOTAL</th>
 							<th class="text-center">REMAINING PAYMENT</th>
+							<th class="text-center">LAST PAYMENT</th>
 							<th class="text-center">CLIENT NAME (BILLED)</th>
 							<?php if ($getSalesOrders->num_rows() > 0): 
 								foreach ($soCodesArr as $productCode): ?>
@@ -127,7 +128,7 @@ $soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInSalesOr
 							<?php
 							if ($getSalesOrders->num_rows() > 0):
 								foreach ($getSalesOrders->result_array() as $row): ?>
-									<tr>
+									<tr class="view-sales-transactions" data-orderno="<?=$row['OrderNo']?>" data-totalcategory="<?=$row['discountOutright'] + $row['discountVolume'] + $row['discountPBD'] + $row['discountManpower']?>">
 										<?php
 										$soTransactions = $this->Model_Selects->GetTransactionsByOrderNo($row['OrderNo'])->result_array();
 										$totalAmount = array_sum(array_column($soTransactions, 'Amount'));
@@ -160,6 +161,18 @@ $soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInSalesOr
 											<?=number_format($row['TotalRemainingPayment'], 2)?>
 										</td>
 										<td class="text-center">
+											<?php
+											$lastInvoice = $this->Model_Selects->GetLastInvoiceBySONo($row['OrderNo']);
+											if ($lastInvoice->num_rows() > 0) {
+												if ($lastInvoice->row_array()['date'] != '') {
+													echo $lastInvoice->row_array()['date'];
+												} else {
+													echo 'N/A';
+												}
+											}
+											?>
+										</td>
+										<td class="text-center">
 											<?=$this->Model_Selects->GetClientByNo($row['BillToClientNo'])->row_array()['Name']?>
 										</td>
 										<?php
@@ -170,7 +183,7 @@ $soCodesArr = array_column($this->Model_Selects->GetProductTransactionsInSalesOr
 													$qty += $row['Amount'];
 												}
 											} ?>
-											<td class="text-center">
+											<td class="text-center product_qty" product_code>
 												<?=$qty?>
 											</td>
 										<?php endforeach; ?>
@@ -277,6 +290,8 @@ if ($from == NULL && $to == NULL) {
 	</div>
 </div>
 
+<?php $this->load->view('admin/_modals/sales_orders/sales_order_summary_view'); ?>
+
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
 <script src="<?=base_url()?>/assets/js/jquery.js"></script>
@@ -359,6 +374,121 @@ $(document).ready(function() {
     $('body').on('click', '#generateReport-PDF', function () {
         table.button('4').trigger();
     });
+
+
+	function moneyFormat(value) {
+		return value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+	}
+
+	$(document).on('click', '.view-sales-transactions', function(e) {
+		let orderno = $(this).data('orderno');
+		let totalCategory = $(this).data('totalcategory');
+
+		let totalPrice = 0;
+		let totalPriceAdtlFee = 0;
+		let totalFreebiesPrice = 0;
+		let totalUnitDiscount = 0;
+		$('#sales_order_no').html(orderno);
+		if (orderno.length > 0) {
+			$.ajax({
+				url: 'getSODetails',
+				type: 'GET',
+				dataType: 'JSON',
+				data: { sales_order_no : orderno } ,
+				success: function (response) {
+					if (response.transactions.length > 0) {
+						$('#transactionsTable tbody').html('');
+						$.each(response.transactions, function(index, val) {
+							let price = val.PriceUnit;
+							let unitDiscountPriceTotal = price * (val.UnitDiscount / 100);
+
+							// apply discount
+							price -= unitDiscountPriceTotal;
+
+							if (val.Freebie == 0) {
+								totalPrice += (price * val.Amount);
+								totalUnitDiscount += (unitDiscountPriceTotal * val.Amount);
+							} else {
+								totalFreebiesPrice += (price * val.Amount);
+							}
+							$('#transactionsTable tbody').append(
+									'<tr>\
+										<td class="text-center">'+
+											val.TransactionID+
+										'</td>\
+										<td class="text-center">\
+											<span class="db-identifier" style="font-style: italic; font-size: 12px;">'+
+												val.stockID+
+										'</span>\
+										</td>\
+										<td class="text-center">'+
+											val.Amount+
+										'</td>\
+										<td class="text-center">'+
+											val.UnitDiscount+'%\
+										</td>\
+										<td class="text-center">'+
+											moneyFormat(price)+
+										'</td>\
+										<td class="text-center">'+
+											moneyFormat(price * val.Amount)+
+										'</td>\
+										<td class="text-center">'+
+											(val.Freebie == 1 ?
+												'<i class="bi bi-check-circle text-success"></i>'
+											:
+												'<i class="bi bi-x-circle text-danger"></i>'
+											)+
+										'</td>\
+									</tr>'
+								);
+						});
+					}
+					if (response.adtlfees.length > 0) {
+						$('#adtlfeesTable tbody').html('');
+						$.each(response.adtlfees, function(index, val) {
+							let price = val.UnitPrice;
+							let unitDiscountPriceTotal = price * (val.UnitDiscount / 100);
+
+							// apply discount
+							price -= unitDiscountPriceTotal;
+							totalPriceAdtlFee += (price * val.Qty);
+							totalUnitDiscount += (unitDiscountPriceTotal * val.Qty);
+							$('#adtlfeesTable tbody').append(
+									'<tr>\
+										<td class="text-center">'+
+											val.Description+
+										'</td>\
+										</td>\
+										<td class="text-center">'+
+											val.Qty+
+										'</td>\
+										<td class="text-center">'+
+											val.UnitDiscount+'%\
+										</td>\
+										<td class="text-center">'+
+											moneyFormat(price)+
+										'</td>\
+										<td class="text-center">'+
+											moneyFormat(price * val.Qty)+
+										'</td>\
+									</tr>'
+								);
+						});
+					}
+					$('#totalpriceundiscounted').html(moneyFormat(totalPrice + totalPriceAdtlFee));
+					$('#totalpricediscounted').html(moneyFormat((totalPrice + totalPriceAdtlFee) - (totalUnitDiscount + (totalPrice * (totalCategory / 100)))));
+					$('#totalfreebieprice').html(moneyFormat(totalFreebiesPrice));
+
+					$('#btn-viewSO').attr('href', '<?=base_url()?>admin/view_sales_order?orderNo='+ orderno);
+					$('#SalesOrderViewModal').modal('toggle');
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(textStatus, errorThrown);
+				}
+			});
+		}
+	});
 });
 </script>
 

@@ -151,7 +151,7 @@ date_default_timezone_set('Asia/Manila');
 													<i class="bi bi-pencil-square"></i>
 												</a>
 											<?php endif; ?>
-											<?php if ($this->session->userdata('UserRestrictions')['restocking_delete_stock']): ?>
+											<?php if ($this->session->userdata('UserRestrictions')['restocking_delete_stock'] && 0): ?>
 												<a class="modal_delete mx-2 text-danger" href="#" data-id="<?php echo $row['ID']; ?>">
 													<i class="bi bi-trash"></i>
 												</a>

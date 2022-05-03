@@ -6,9 +6,6 @@ date_default_timezone_set('Asia/Manila');
 $date_from = date('M j, Y', strtotime('-1 month'));
 $date_to = date('M j, Y');
 
-$date_from_beginning_inventory = date('M j, Y', strtotime('-1 month'));
-$date_to_beginning_inventory = date('M j, Y', strtotime('-1 month +1 day'));
-
 if ($this->input->get('dfr')) {
 	$date_from = $this->input->get('dfr');
 	$date_from = date('M j, Y', strtotime($date_from));
@@ -16,14 +13,6 @@ if ($this->input->get('dfr')) {
 if ($this->input->get('dto')) {
 	$date_to = $this->input->get('dto');
 	$date_to = date('M j, Y', strtotime($date_to));
-}
-if ($this->input->get('dfr_bi')) {
-	$date_from_beginning_inventory = $this->input->get('dfr_bi');
-	$date_from_beginning_inventory = date('M j, Y', strtotime($date_from_beginning_inventory));
-}
-if ($this->input->get('dto_bi')) {
-	$date_to_beginning_inventory = $this->input->get('dto_bi');
-	$date_to_beginning_inventory = date('M j, Y', strtotime($date_to_beginning_inventory));
 }
 
 
@@ -72,34 +61,48 @@ if ($getTransactions->num_rows() > 0) { // use sql for faster exection
 		}
 	}
 }
-// foreach ($trialAccounts as $row) {
-// 	echo "<br><br>";
-// 	print_r($row);
+
+
+$beginning_inventory = $this->Model_Selects->GetStockHistoryTotalCostBefore($date_from);
+
+$purchases_restocks = $this->Model_Selects->GetStockHistoryTotalCostRange($date_from, $date_to);
+
+$inventory_end = $this->Model_Selects->GetStockHistoryTotalPriceRange($date_from, $date_to); // BS-Inventories
+
+$sales_discounts = $this->Model_Selects->GetDiscountsTotalRange($date_from, $date_to);
+$sales_returns = $this->Model_Selects->GetReturnsTotalRange($date_from, $date_to);
+// print_r($beginning_inventory); echo "<br>";
+// print_r($purchases_restocks); echo "<br>";
+// print_r($sales_discounts); echo "<br>";
+
+// exit();
+
+
+
+// $getStockHistoryTotalPriceBefore = $this->Model_Selects->GetStockHistoryTotalPriceBefore($date_from);
+// if ($getStockHistoryTotalPriceBefore) {
+// 	$previous_ending_inventory_total = $GetStockHistoryTotalPriceBefore['ending_inventory_total_price'];
 // }
-// print_r(''); exit();
+
+// $beginning_inventory_restocks_total = $this->Model_Selects->GetStockHistoryRestockedTotalPriceRange($date_from_beginning_inventory, $date_to_beginning_inventory)['restocked_total_price'];
+// // BEGINNING INVENTORY
+// // $beginning_inventory_total = $previous_ending_inventory_total + $beginning_inventory_restocks_total;
+// $beginning_inventory_total = $beginning_inventory_restocks_total;
+
+// // PURCHASES -restocks // TOTAL ACCOUNTING PERIOD RESTOCKS AND SUBTRACT BEGINING INVENTORY RESTOCKS
+// $accounting_inventory_restocks_total = $this->Model_Selects->GetStockHistoryRestockedTotalPriceRange($date_from, $date_to)['restocked_total_price'] - $beginning_inventory_restocks_total;
+
+// // ENDING INVENTORY
+// // $accounting_ending_inventory_total = $this->Model_Selects->GetStockHistoryTotalPriceRange($date_from, $date_to)['ending_inventory_total_price'];
 
 
-
-$previous_ending_inventory_total = $this->Model_Selects->GetStockHistoryTotalPriceBefore($date_from)['ending_inventory_total_price'];
-$beginning_inventory_restocks_total = $this->Model_Selects->GetStockHistoryRestockedTotalPriceRange($date_from_beginning_inventory, $date_to_beginning_inventory)['restocked_total_price'];
-// BEGINNING INVENTORY
-// $beginning_inventory_total = $previous_ending_inventory_total + $beginning_inventory_restocks_total;
-$beginning_inventory_total = $beginning_inventory_restocks_total;
-
-// PURCHASES -restocks // TOTAL ACCOUNTING PERIOD RESTOCKS AND SUBTRACT BEGINING INVENTORY RESTOCKS
-$accounting_inventory_restocks_total = $this->Model_Selects->GetStockHistoryRestockedTotalPriceRange($date_from, $date_to)['restocked_total_price'] - $beginning_inventory_restocks_total;
-
-// ENDING INVENTORY
-// $accounting_ending_inventory_total = $this->Model_Selects->GetStockHistoryTotalPriceRange($date_from, $date_to)['ending_inventory_total_price'];
+// // SALES - releases
+// $accounting_inventory_releases_total = $this->Model_Selects->GetStockHistoryReleasedTotalPriceRange($date_from, $date_to)['released_total_price'];
 
 
-// SALES - releases
-$accounting_inventory_releases_total = $this->Model_Selects->GetStockHistoryReleasedTotalPriceRange($date_from, $date_to)['released_total_price'];
-
-
-$beginning_inventory_total = ($beginning_inventory_total != '' ? $beginning_inventory_total : 0);
-$accounting_inventory_restocks_total = ($accounting_inventory_restocks_total != '' ? $accounting_inventory_restocks_total : 0);
-$previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $previous_ending_inventory_total : 0);
+// $beginning_inventory_total = ($beginning_inventory_total != '' ? $beginning_inventory_total : 0);
+// $accounting_inventory_restocks_total = ($accounting_inventory_restocks_total != '' ? $accounting_inventory_restocks_total : 0);
+// $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $previous_ending_inventory_total : 0);
 
 ?>
 <style>
@@ -115,6 +118,9 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 	}
 	.button-default {
 		display: none !important;
+	}
+	.add-accounts-row {
+		background-color: rgba(100, 100, 100, 0.15);
 	}
 </style>
 </head>
@@ -229,7 +235,7 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 							</tr>
 							<tr>
 								<td>INVENTORIES</td>
-								<td class="inventories" data-inventories="0">0.00</td>
+								<td class="inventories" data-inventories="<?=(!empty($inventory_end) ? $inventory_end : 0)?>"><?=number_format($inventory_end, 2)?></h6>
 							</tr>
 							<tr class="add-accounts-row add-current_assets-row export-exclude">
 								<td colspan="2"><i class="bi bi-plus"></i> Add/Remove Current Assets Accounts</td>
@@ -326,18 +332,40 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 							</tr>
 							<tr><td colspan="2">&nbsp;</td></tr>
 
+							<!-- ================ OPERATING ================ -->
 							<tr>
-								<td style="color: #a7852d;" colspan="2">Cash Flow - Operating</td>
+								<td style="color: #a7852d;" colspan="2">Cash Inflow - Operating</td>
 							</tr>
-							<tr class="add-accounts-row add-cashflowoperating-row export-exclude">
+							<tr class="add-accounts-row add-cashinflowoperating-row export-exclude">
 								<td colspan="2"><i class="bi bi-plus"></i> Add/Remove Accounts</td>
 							</tr>
 							<tr class="total-row" style="border-top-width: 2px; border-style: solid; border-color: #a7852d;">
-								<td style="color: #a7852d;">TOTAL CASH FLOW - OPERATING</td>
-								<td id="totalCashFlowOperating" data-totalcashflowoperating="0">0.00</td>
+								<td style="color: #a7852d;">TOTAL CASH INFLOW - OPERATING</td>
+								<td id="totalCashInflowOperating" data-totalcashinflowoperating="0">0.00</td>
+							</tr>
+							<tr>
+								<td style="color: #a7852d;" colspan="2">Cash Outflow - Operating</td>
+							</tr>
+							<tr class="add-accounts-row add-cashoutflowoperating-row export-exclude">
+								<td colspan="2"><i class="bi bi-plus"></i> Add/Remove Accounts</td>
+							</tr>
+							<tr class="total-row" style="border-top-width: 2px; border-style: solid; border-color: #a7852d;">
+								<td style="color: #a7852d;">TOTAL CASH OUTFLOW - OPERATING</td>
+								<td id="totalCashOutflowOperating" data-totalcashoutflowoperating="0">0.00</td>
 							</tr>
 							<tr><td colspan="2">&nbsp;</td></tr>
 
+							<!-- ================ INVESTING ================ -->
+							<tr>
+								<td style="color: #a7852d;" colspan="2">Cash Inflow - Investing</td>
+							</tr>
+							<tr class="add-accounts-row add-cashinflowinvesting-row export-exclude">
+								<td colspan="2"><i class="bi bi-plus"></i> Add/Remove Accounts</td>
+							</tr>
+							<tr class="total-row" style="border-top-width: 2px; border-style: solid; border-color: #a7852d;">
+								<td style="color: #a7852d;">TOTAL CASH INFLOW - INVESTING</td>
+								<td id="totalCashInflowInvesting" data-totalcashinflowinvesting="0">0.00</td>
+							</tr>
 							<tr>
 								<td style="color: #a7852d;" colspan="2">Cash Outflow - Investing</td>
 							</tr>
@@ -350,6 +378,17 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 							</tr>
 							<tr><td colspan="2">&nbsp;</td></tr>
 
+							<!-- ================ FINANCING ================ -->
+							<tr>
+								<td style="color: #a7852d;" colspan="2">Cash Inflow - Financing</td>
+							</tr>
+							<tr class="add-accounts-row add-cashinflowfinancing-row export-exclude">
+								<td colspan="2"><i class="bi bi-plus"></i> Add/Remove Accounts</td>
+							</tr>
+							<tr class="total-row" style="border-top-width: 2px; border-style: solid; border-color: #a7852d;">
+								<td style="color: #a7852d;">TOTAL CASH INFLOW - FINANCING</td>
+								<td id="totalCashInflowFinancing" data-totalcashinflowfinancing="0">0.00</td>
+							</tr>
 							<tr>
 								<td style="color: #a7852d;" colspan="2">Cash Outflow - Financing</td>
 							</tr>
@@ -443,7 +482,7 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 							<h3>COST OF SALES EXPENSES</h3>
 						</div>
 						<div class="col-sm-12 table-responsive mb-3">
-							<table id="cosExpensesTable" class="standard-table table">
+							<table id="cosAdtlCostsTable" class="standard-table table">
 								<thead style="font-size: 12px;">
 									<th class="text-center">ID</th>
 									<th class="text-center">ACCOUNT</th>
@@ -565,13 +604,49 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 						</div>
 					</div>
 
-					<div id="container_cashflowoperating" class="account_container" style="display: none;">
+					<div id="container_cashinflowoperating" class="account_container" style="display: none;">
 						<hr class="my-3">
 						<div class="col-sm-12">
-							<h3>CASH FLOW OPERATING</h3>
+							<h3>CASH INFLOW - OPERATING</h3>
 						</div>
 						<div class="col-sm-12 table-responsive mb-3">
-							<table id="cashflowoperatingTable" class="standard-table table">
+							<table id="cashinflowoperatingTable" class="standard-table table">
+								<thead style="font-size: 12px;">
+									<th class="text-center">ID</th>
+									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
+									<th></th>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div id="container_cashoutflowoperating" class="account_container" style="display: none;">
+						<hr class="my-3">
+						<div class="col-sm-12">
+							<h3>CASH OUTFLOW - OPERATING</h3>
+						</div>
+						<div class="col-sm-12 table-responsive mb-3">
+							<table id="cashoutflowoperatingTable" class="standard-table table">
+								<thead style="font-size: 12px;">
+									<th class="text-center">ID</th>
+									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
+									<th></th>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div id="container_cashinflowinvesting" class="account_container" style="display: none;">
+						<hr class="my-3">
+						<div class="col-sm-12">
+							<h3>CASH INFLOW - INVESTING</h3>
+						</div>
+						<div class="col-sm-12 table-responsive mb-3">
+							<table id="cashinflowinvestingTable" class="standard-table table">
 								<thead style="font-size: 12px;">
 									<th class="text-center">ID</th>
 									<th class="text-center">ACCOUNT</th>
@@ -586,7 +661,7 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 					<div id="container_cashoutflowinvesting" class="account_container" style="display: none;">
 						<hr class="my-3">
 						<div class="col-sm-12">
-							<h3>CASHOUT FLOW INVESTING</h3>
+							<h3>CASH OUTFLOW - INVESTING</h3>
 						</div>
 						<div class="col-sm-12 table-responsive mb-3">
 							<table id="cashoutflowinvestingTable" class="standard-table table">
@@ -601,10 +676,28 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 							</table>
 						</div>
 					</div>
+					<div id="container_cashinflowfinancing" class="account_container" style="display: none;">
+						<hr class="my-3">
+						<div class="col-sm-12">
+							<h3>CASH INFLOW - FINANCING</h3>
+						</div>
+						<div class="col-sm-12 table-responsive mb-3">
+							<table id="cashinflowfinancingTable" class="standard-table table">
+								<thead style="font-size: 12px;">
+									<th class="text-center">ID</th>
+									<th class="text-center">ACCOUNT</th>
+									<th class="text-center">TOTAL</th>
+									<th></th>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
 					<div id="container_cashoutflowfinancing" class="account_container" style="display: none;">
 						<hr class="my-3">
 						<div class="col-sm-12">
-							<h3>CASHOUT FLOW FINANCING</h3>
+							<h3>CASH OUTFLOW - FINANCING</h3>
 						</div>
 						<div class="col-sm-12 table-responsive mb-3">
 							<table id="cashoutflowfinancingTable" class="standard-table table">
@@ -632,48 +725,36 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 			</div>
 			<div class="modal-body">
 				<div class="row mb-3">
-					<!-- <div class="col-6 text-end">
-						<label>Previous Inventory</label>
-					</div>
-					<div class="col-3 text-end">
-						<?=number_format($previous_ending_inventory_total, 2)?>
-					</div> -->
-					<div class="col-6 text-end">
-						<label>Initial Restocks</label>
-					</div>
-					<div class="col-3 text-end">
-						<?=number_format($beginning_inventory_restocks_total, 2)?>
-					</div>
 					<div class="col-6">
 						<h6 class="text-end">Beginning Inventory</h6>
 					</div>
 					<div class="col-3">
-						<h6 class="text-end cosBeginningInventory" data-cosbeginninginventory="<?=(!empty($beginning_inventory_total) ? $beginning_inventory_total : 0)?>"><?=number_format($beginning_inventory_total, 2)?></h6>
+						<h6 class="text-end cosBeginningInventory" data-cosbeginninginventory="<?=(!empty($beginning_inventory) ? $beginning_inventory : 0)?>"><?=number_format($beginning_inventory, 2)?></h6>
 					</div>
 				</div>
 				<div class="row text-center mb-3">
 					<div class="col-6 text-end">
 						<label>Restocks</label>
 					</div>
-					<div class="col-3 text-end cosRestocks" data-cosrestocks="<?=(!empty($accounting_inventory_restocks_total) ? $accounting_inventory_restocks_total : 0)?>">
-						<?=number_format($accounting_inventory_restocks_total, 2)?>
+					<div class="col-3 text-end cosRestocks" data-cosrestocks="<?=(!empty($purchases_restocks) ? $purchases_restocks : 0)?>">
+						<?=number_format($purchases_restocks, 2)?>
 					</div>
 					<div class="col-6 text-end">
-						<label>Expenses</label>
+						<label>Adtl Costs</label>
 					</div>
-					<div class="col-3 text-end cosExpenses" data-cosexpenses="0">
+					<div class="col-3 text-end cosAdtlCosts" data-cosadtlcosts="0">
 						0.00
 					</div>
 					<div class="col-3">
-						<button type="button" class="cosexpenses-btn btn btn-sm-success" style="font-size: 12px;">
-							<i class="bi bi-cash"></i> EXPENSES
+						<button type="button" class="cosadtlcosts-btn btn btn-sm-success" style="font-size: 12px;">
+							<i class="bi bi-cash"></i> ADTL COSTS
 						</button>
 					</div>
 					<div class="col-6">
-						<h6 class="text-end">ADD: Purchases</h6>
+						<h6 class="text-end">Purchases</h6>
 					</div>
 					<div class="col-3">
-						<h6 class="text-end cosPurchases" data-cospurchases="<?=(!empty($accounting_inventory_restocks_total) ? $accounting_inventory_restocks_total : 0)?>"><?=number_format($accounting_inventory_restocks_total, 2)?></h6>
+						<h6 class="text-end cosPurchases" data-cospurchases="<?=(!empty($purchases_restocks) ? $purchases_restocks : 0)?>"><?=number_format($purchases_restocks, 2)?></h6>
 					</div>
 				</div>
 				<div class="row text-center mb-2">
@@ -681,7 +762,7 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 						<h6 class="text-end">LESS: Inventory End</h6>
 					</div>
 					<div class="col-3">
-						<h6 class="text-end cosEndInventory" data-cosendinventory="<?=(!empty($previous_ending_inventory_total) ? $previous_ending_inventory_total : 0)?>"><?=number_format($previous_ending_inventory_total, 2)?></h6>
+						<h6 class="text-end cosEndInventory" data-cosendinventory="<?=(!empty($inventory_end) ? $inventory_end : 0)?>"><?=number_format($inventory_end, 2)?></h6>
 					</div>
 				</div>
 				<hr class="my-1">
@@ -706,13 +787,7 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 			<div class="modal-body">
 				<div class="row text-center mb-3">
 					<div class="col-6 text-end">
-						<label>Releases</label>
-					</div>
-					<div class="col-3 text-end slsReleases" data-slsreleases="<?=(!empty($accounting_inventory_releases_total) ? $accounting_inventory_releases_total : 0)?>">
-						<?=number_format($accounting_inventory_releases_total, 2)?>
-					</div>
-					<div class="col-6 text-end">
-						<label>Sales</label>
+						<h6>Revenue/Sales</h6>
 					</div>
 					<div class="col-3 text-end slsSales" data-slssales="0">
 						0.00
@@ -722,6 +797,25 @@ $previous_ending_inventory_total = ($previous_ending_inventory_total != '' ? $pr
 							<i class="bi bi-cash"></i> SALES
 						</button>
 					</div>
+				</div>
+				<div class="row text-center mb-2">
+					<div class="col-6 text-end">
+						<h6>LESS: Discounts</h6>
+					</div>
+					<div class="col-3 text-end slsDiscounts" data-slsdiscounts="<?=(!empty($sales_discounts) ? $sales_discounts : 0)?>">
+						<?=number_format($sales_discounts, 2)?>
+					</div>
+				</div>
+				<div class="row text-center mb-2">
+					<div class="col-6 text-end">
+						<h6>LESS: Returns</h6>
+					</div>
+					<div class="col-3 text-end slsReturns" data-slsreturns="<?=(!empty($sales_returns) ? $sales_returns : 0)?>">
+						<?=number_format($sales_returns, 2)?>
+					</div>
+				</div>
+				<hr class="my-1">
+				<div class="row text-center my-2">
 					<div class="col-6">
 						<h6 class="text-end">SALES:</h6>
 					</div>
@@ -823,7 +917,7 @@ $(document).ready(function() {
 	});
 
 // COST OF SALES
-	$('.cosexpenses-btn').on('click', function() {
+	$('.cosadtlcosts-btn').on('click', function() {
 		$('#CostOfSalesModal').modal('toggle');
 		$('.account_container').hide();
 
@@ -842,21 +936,39 @@ $(document).ready(function() {
 
 
 // CASH FLOW
-	$('.add-cashflowoperating-row').on('click', function() {
+	$('.add-cashinflowoperating-row').on('click', function() {
 		$('#tableAccountsSearch').val('ASSETS');
 		table.search('ASSETS').draw();
-		$('#container_cashflowoperating').show();
-		$('#accountsTable').data('account_add', 'cashflowoperating');
+		$('#container_cashinflowoperating').show();
+		$('#accountsTable').data('account_add', 'cashinflowoperating');
+	});
+	$('.add-cashoutflowoperating-row').on('click', function() {
+		$('#tableAccountsSearch').val('EXPENSES');
+		table.search('EXPENSES').draw();
+		$('#container_cashoutflowoperating').show();
+		$('#accountsTable').data('account_add', 'cashoutflowoperating');
+	});
+	$('.add-cashinflowinvesting-row').on('click', function() {
+		$('#tableAccountsSearch').val('ASSETS');
+		table.search('ASSETS').draw();
+		$('#container_cashinflowinvesting').show();
+		$('#accountsTable').data('account_add', 'cashinflowinvesting');
 	});
 	$('.add-cashoutflowinvesting-row').on('click', function() {
-		$('#tableAccountsSearch').val('ASSETS');
-		table.search('ASSETS').draw();
+		$('#tableAccountsSearch').val('EXPENSES');
+		table.search('EXPENSES').draw();
 		$('#container_cashoutflowinvesting').show();
 		$('#accountsTable').data('account_add', 'cashoutflowinvesting');
 	});
-	$('.add-cashoutflowfinancing-row').on('click', function() {
+	$('.add-cashinflowfinancing-row').on('click', function() {
 		$('#tableAccountsSearch').val('ASSETS');
 		table.search('ASSETS').draw();
+		$('#container_cashinflowfinancing').show();
+		$('#accountsTable').data('account_add', 'cashinflowfinancing');
+	});
+	$('.add-cashoutflowfinancing-row').on('click', function() {
+		$('#tableAccountsSearch').val('EXPENSES');
+		table.search('EXPENSES').draw();
 		$('#container_cashoutflowfinancing').show();
 		$('#accountsTable').data('account_add', 'cashoutflowfinancing');
 	});
@@ -977,7 +1089,7 @@ $(document).ready(function() {
 				rowCode = 'sls';
 				break;
 			case 'cos_expenses':
-				tableID = 'cosExpensesTable';
+				tableID = 'cosAdtlCostsTable';
 				rowClass = 'cos_expenses';
 				rowCode = 'cose';
 				break;
@@ -1010,20 +1122,37 @@ $(document).ready(function() {
 				break;
 
 		// BALANCE SHEET
-			case 'cashflowoperating':
-				tableID = 'cashflowoperatingTable';
-				rowClass = 'cashflowoperating';
-				rowCode = 'cfo';
+			case 'cashinflowoperating':
+				tableID = 'cashinflowoperatingTable';
+				rowClass = 'cashinflowoperating';
+				rowCode = 'cifo';
+				break;
+			case 'cashoutflowoperating':
+				tableID = 'cashoutflowoperatingTable';
+				rowClass = 'cashoutflowoperating';
+				rowCode = 'cofo';
+				break;
+
+			case 'cashinflowinvesting':
+				tableID = 'cashinflowinvestingTable';
+				rowClass = 'cashinflowinvesting';
+				rowCode = 'cifi';
 				break;
 			case 'cashoutflowinvesting':
 				tableID = 'cashoutflowinvestingTable';
 				rowClass = 'cashoutflowinvesting';
-				rowCode = 'coi';
+				rowCode = 'cofi';
+				break;
+
+			case 'cashinflowfinancing':
+				tableID = 'cashinflowfinancingTable';
+				rowClass = 'cashinflowfinancing';
+				rowCode = 'ciff';
 				break;
 			case 'cashoutflowfinancing':
 				tableID = 'cashoutflowfinancingTable';
 				rowClass = 'cashoutflowfinancing';
-				rowCode = 'cof';
+				rowCode = 'coff';
 				break;
 		}
 
@@ -1081,11 +1210,9 @@ $(document).ready(function() {
 			totSLSS += parseFloat($(this).data('total'));
 		});
 		$('.slsSales').text(moneyFormat(totSLSS)).data('slssales', totSLSS);
-		let totSales = parseFloat($('.slsReleases').data('slsreleases')) + totSLSS;
+		let totSales = totSLSS
+						- (parseFloat($('.slsDiscounts').data('slsdiscounts')) + parseFloat($('.slsReturns').data('slsreturns')));
 		$('.totalSales').text(moneyFormat(totSales)).data('totalsales', totSales);
-
-		console.log(totSLSS);
-		console.log(totSales);
 	}
 
 	function totalCOSE() {
@@ -1093,7 +1220,7 @@ $(document).ready(function() {
 		$.each($('.cos_expenses_accounts_row'), function(i, val) {
 			totCOSE += parseFloat($(this).data('total'));
 		});
-		$('.cosExpenses').text(moneyFormat(totCOSE)).data('cosexpenses', totCOSE);
+		$('.cosAdtlCosts').text(moneyFormat(totCOSE)).data('cosadtlcosts', totCOSE);
 		let totPurchases = parseFloat($('.cosRestocks').data('cosrestocks')) + totCOSE;
 		$('.cosPurchases').text(moneyFormat(totPurchases)).data('cospurchases', totPurchases);
 	}
@@ -1102,7 +1229,6 @@ $(document).ready(function() {
 							 parseFloat($('.cosPurchases').data('cospurchases')) -
 							 parseFloat($('.cosEndInventory').data('cosendinventory'));
 		$('.totalCostOfSales').text(moneyFormat(totCostOfSales)).data('totalcostofsales', totCostOfSales);
-		$('.inventories').text(moneyFormat(totCostOfSales)).data('inventories', totCostOfSales);
 	}
 
 	function totalGP() { // GROSS PROFIT
@@ -1201,34 +1327,60 @@ $(document).ready(function() {
 
 // CASH FLOW
 	function totalCashFlow() {
-		totalCFO();
-		totalCOI();
-		totalCOF();
+		totalCIFO();
+		totalCOFO();
+
+		totalCIFI();
+		totalCOFI();
+
+		totalCIFF();
+		totalCOFF();
 
 		totalCFI();
 	}
 	totalCashFlow();
 
-	function totalCFO() {
-		let totCFO = 0;
-		$.each($('.cashflowoperating_accounts_row'), function(i, val) {
-			totCFO += parseFloat($(this).data('total'));
+	function totalCIFO() { // cashinflowoperating
+		let totCIFO = 0;
+		$.each($('.cashinflowoperating_accounts_row'), function(i, val) {
+			totCIFO += parseFloat($(this).data('total'));
 		});
-		$('#totalCashFlowOperating').text(moneyFormat(totCFO)).data('totalcashflowoperating', totCFO);
+		$('#totalCashInflowOperating').text(moneyFormat(totCIFO)).data('totalcashinflowoperating', totCIFO);
 	}
-	function totalCOI() {
-		let totCOI = 0;
+	function totalCOFO() { // cashoutflowoperating
+		let totCOFO = 0;
+		$.each($('.cashoutflowoperating_accounts_row'), function(i, val) {
+			totCOFO += parseFloat($(this).data('total'));
+		});
+		$('#totalCashOutflowOperating').text(moneyFormat(totCOFO)).data('totalcashoutflowoperating', totCOFO);
+	}
+	function totalCIFI() { // cashinflowinvesting
+		let totCIFI = 0;
+		$.each($('.cashinflowinvesting_accounts_row'), function(i, val) {
+			totCIFI += parseFloat($(this).data('total'));
+		});
+		$('#totalCashInflowInvesting').text(moneyFormat(totCIFI)).data('totalcashinflowinvesting', totCIFI);
+	}
+	function totalCOFI() { // cashoutflowinvesting
+		let totCOFI = 0;
 		$.each($('.cashoutflowinvesting_accounts_row'), function(i, val) {
-			totCOI += parseFloat($(this).data('total'));
+			totCOFI += parseFloat($(this).data('total'));
 		});
-		$('#totalCashOutflowInvesting').text(moneyFormat(totCOI)).data('totalcashoutflowinvesting', totCOI);
+		$('#totalCashOutflowInvesting').text(moneyFormat(totCOFI)).data('totalcashoutflowinvesting', totCOFI);
 	}
-	function totalCOF() {
-		let totCOF = 0;
-		$.each($('.cashoutflowfinancing_accounts_row'), function(i, val) {
-			totCOF += parseFloat($(this).data('total'));
+	function totalCIFF() { // cashinflowfinancing
+		let totCIFF = 0;
+		$.each($('.cashinflowfinancing_accounts_row'), function(i, val) {
+			totCIFF += parseFloat($(this).data('total'));
 		});
-		$('#totalCashOutflowFinancing').text(moneyFormat(totCOF)).data('totalcashoutflowfinancing', totCOF);
+		$('#totalCashInflowFinancing').text(moneyFormat(totCIFF)).data('totalcashinflowfinancing', totCIFF);
+	}
+	function totalCOFF() { // cashoutflowfinancing
+		let totCOFF = 0;
+		$.each($('.cashoutflowfinancing_accounts_row'), function(i, val) {
+			totCOFF += parseFloat($(this).data('total'));
+		});
+		$('#totalCashOutflowFinancing').text(moneyFormat(totCOFF)).data('totalcashoutflowfinancing', totCOFF);
 	}
 
 
@@ -1236,11 +1388,16 @@ $(document).ready(function() {
 		let totCB = parseFloat($('#totalCashBeginning').val());
 		let totNI = parseFloat($('.netIncome').data('netincome'));
 
-		let totCFO = parseFloat($('#totalCashFlowOperating').data('totalcashflowoperating'));
-		let totCOI = parseFloat($('#totalCashOutflowInvesting').data('totalcashoutflowinvesting'));
-		let totCOF = parseFloat($('#totalCashOutflowFinancing').data('totalcashoutflowfinancing'));
+		let totCIFO = parseFloat($('#totalCashInflowOperating').data('totalcashinflowoperating'));
+		let totCOFO = parseFloat($('#totalCashOutflowOperating').data('totalcashoutflowoperating'));
+		let totCIFI = parseFloat($('#totalCashInflowInvesting').data('totalcashinflowinvesting'));
+		let totCOFI = parseFloat($('#totalCashOutflowInvesting').data('totalcashoutflowinvesting'));
+		let totCIFF = parseFloat($('#totalCashInflowFinancing').data('totalcashinflowfinancing'));
+		let totCOFF = parseFloat($('#totalCashOutflowFinancing').data('totalcashoutflowfinancing'));
 
-		let totCFI = parseFloat(totCB) + parseFloat(totNI) - parseFloat(totCFO) - parseFloat(totCOI) - parseFloat(totCOF);
+		let totCFI = parseFloat(totCB) + parseFloat(totNI)
+						 + (parseFloat(totCIFO) + parseFloat(totCIFI) + parseFloat(totCIFF))
+						 - (parseFloat(totCOFO) + parseFloat(totCOFI) + parseFloat(totCOFF));
 		$('#totalCashFlowIncrease').text(moneyFormat(totCFI)).data('totalcashflowincrease', totCFI);
 	}
 

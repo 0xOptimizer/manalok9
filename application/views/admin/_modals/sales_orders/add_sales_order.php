@@ -149,11 +149,12 @@
 							<table class="table" id="salesOrderProducts">
 								<thead>
 									<tr>
-										<th class="text-center">FREEBIE</th>
+										<th class="text-center" style="width: 1rem;">FREEBIE</th>
 										<th class="text-center">DISCOUNT (%)</th>
 										<th class="text-center">SKU</th>
 										<th class="text-center">DATE ADDED</th>
 										<th class="text-center">QTY</th>
+										<th class="text-center">STOCK</th>
 										<th class="text-center">UNIT PRICE</th>
 										<th class="text-center">TOTAL</th>
 										<th></th>
@@ -161,20 +162,20 @@
 								</thead>
 								<tbody>
 									<tr class="newProduct">
-										<td class="font-weight-bold add-product-row" colspan="8" style="cursor: pointer;">
+										<td class="font-weight-bold add-product-row" colspan="9" style="cursor: pointer;">
 											<i class="bi bi-plus"></i> New Product
 										</td>
 									</tr>
 									<tr class="productsTotal" style="border-color: #a7852d;">
 										<td class="font-weight-bold text-center" style="color: #a7852d;">FREEBIES TOTAL</td>
 										<td class="totalFreebies text-center">0.00</td>
-										<td colspan="2"></td>
+										<td colspan="3"></td>
 										<td class="font-weight-bold text-center" colspan="2" style="color: #a7852d;">SUBTOTAL</td>
 										<td class="subTotal text-center">0.00</td>
 										<td></td>
 									</tr>
 									<tr style="border-color: #a7852d;">
-										<td class="text-center" rowspan="4" colspan="3">
+										<td class="text-center" rowspan="4" colspan="4">
 											<span class="footerHead">
 												CATEGORY OF ACCOUNT:
 											</span><br>
@@ -238,6 +239,7 @@
 										<td class="totalProductDiscounts text-center">0.00</td>
 										<td class="font-weight-bold text-center" style="color: #a7852d;">TOTAL CATEGORY DISCOUNT</td>
 										<td class="totalCategoryDiscount text-center">0.00</td>
+										<td></td>
 										<td class="font-weight-bold text-center" colspan="2" style="color: #a7852d;">TOTAL</td>
 										<td class="text-center total">0.00</td>
 										<td></td>

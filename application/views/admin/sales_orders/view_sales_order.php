@@ -21,8 +21,11 @@ $getSOInvoices = $this->Model_Selects->GetInvoicesBySONo($orderNo);
 $getAccounts = $this->Model_Selects->GetAccountSelection();
 
 
-$returnDetails = $this->Model_Selects->GetReturnBySalesNo($salesOrder['OrderNo'])->row_array();
-$returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetails['ReturnNo']);
+$return = $this->Model_Selects->GetReturnBySalesNo($salesOrder['OrderNo']);
+if ($return->num_rows() > 0) {
+	$returnDetails = $return->row_array();
+	$returnProducts = $this->Model_Selects->GetReturnProductsByReturnNo($returnDetails['ReturnNo']);
+}
 
 $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['OrderNo']);
 
@@ -240,14 +243,14 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 												$price = $row['PriceUnit'];
 												$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
 
-												// apply discount
-												$price -= $unitDiscountPriceTotal;
 												if ($row['Freebie'] == 0) {
 													$transactionsPriceTotal += ($price * $row['Amount']);
 													$transactionsUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Amount']);
 												} else {
 													$transactionsFreebiesTotal += ($price * $row['Amount']);
 												}
+												// apply discount
+												$price -= $unitDiscountPriceTotal;
 												?>
 												<tr>
 													<td class="text-center">
@@ -313,10 +316,10 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 													$price = $row['UnitPrice'];
 													$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
 
-													// apply discount
-													$price -= $unitDiscountPriceTotal;
 													$transactionsAdtlFeesTotal += ($price * $row['Qty']);
 													$transactionsAdtlUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Qty']);
+													// apply discount
+													$price -= $unitDiscountPriceTotal;
 													?>
 													<tr>
 														<td class="text-center afDescription" data-val="<?=$row['Description']?>">
@@ -720,7 +723,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 			</div>
 		<?php endif; ?>
 
-		<?php if ($returnProducts->num_rows() > 0):
+		<?php if (isset($returnProducts) && $returnProducts->num_rows() > 0):
 
 			$returnItemsQtyTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
 			$returnItemsPriceTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
@@ -1433,7 +1436,7 @@ $(document).ready(function() {
 	});
 
 
-	var accounts_list = <?=json_encode($getAccounts->result_array())?>;
+	var accounts_list = <?=json_encode((isset($getAccounts) && $getAccounts->num_rows() > 0 ? $getAccounts->result_array() : array()))?>;
 	var account_types = ['REVENUES', 'ASSETS', 'LIABILITIES', 'EXPENSES', 'EQUITY'];
 
 	function updTransactionCount() {

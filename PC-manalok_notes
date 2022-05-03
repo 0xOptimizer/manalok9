@@ -1,0 +1,74 @@
+ALTER TABLE `sales_history` ADD `cost` VARCHAR(255) NULL AFTER `quantity`, ADD `total_cost` VARCHAR(255) NULL AFTER `cost`;
+
+UPDATE `sales_history` SH SET `cost`=(SELECT Price_PerItem FROM product_stocks WHERE ID=SH.stockid),`total_cost`=(SELECT Price_PerItem FROM product_stocks WHERE ID=SH.stockid) * quantity, `price`=(SELECT Retail_Price FROM product_stocks WHERE ID=SH.stockid),`total_price`=(SELECT Retail_Price FROM product_stocks WHERE ID=SH.stockid) * quantity WHERE 1;
+
+
+
+./ADD FUNCTION TO RECORD cost AND total_cost
+./UPDATE FUNCTIONS TO RECORD GROSS AND SEPARATE RETURNS AND DISCOUNTS
+
+
+REPLACEMENTS ARE COUNTED AS RELEASES
+WHERE TO PUT adtl_fees, manual_transactions, invoices, bills
+
+USED selling price on return details, ACCOUNTING
+
+./Allow adding freebie when same product has already been added
+
+
+
+./Show order summary details, list of products
+./UPDATE SALES HISTORY WHEN STOCK PRICE UPDATES
+
+
+IS
+
+./Sales, Revenues/Sales
+	./Less Discounts
+	./Less Returns
+
+./Beginning inventory, remaining stocks * purchase_price previous period
+
+./Purchases, Restocks * purchase price
+      Rename expenses to Additional costs
+
+./Inventory end, remaining stocks * purchase_price, end of period
+
+
+
+BS
+
+./Inventories, inventory end, remaining stocks * purchase price, end of period
+
+
+
+CF
+
+./IF add to cash
+./OF deduct to cash
+
+./Operating, Investing, Financing
+
+
+
+
+
+EXPENSES TAB
+Quickbooks
+
+
+ACCOUNTS SUMMARY, totals
+
+
+
+
+
+
+
+
+./PO summary, amount paid
+./SO summary, last payment date
+
+
+
+

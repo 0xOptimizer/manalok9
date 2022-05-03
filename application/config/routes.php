@@ -296,6 +296,8 @@ $route['admin/getProductStocks'] = 'AJAX/getProductStocks';
 $route['admin/getClientSalesOrders'] = 'AJAX/getClientSalesOrders';
 $route['admin/getClientSalesOrderProducts'] = 'AJAX/getClientSalesOrderProducts';
 
+$route['admin/getSODetails'] = 'AJAX/Get_SODetails';
+// $route['admin/getSOAdtlFee'] = 'AJAX/Get_SOAdtlFee';
 
 $route['admin/getReturnTransactionDetails'] = 'AJAX/getReturnTransactionDetails';
 

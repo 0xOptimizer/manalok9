@@ -677,11 +677,11 @@ class SalesOrders extends MY_Controller {
 							}
 
 							$dcTotal = $price * ($dcTotal / 100);
-							$finalPrice = $price - $dcTotal;
+							$finalPrice = $price;
 
 							$finalDiscount = $dcTotal;
 						} else {
-							$finalPrice = 0;
+							$finalPrice = $price;
 
 							$finalDiscount = $price;
 						}
@@ -691,6 +691,8 @@ class SalesOrders extends MY_Controller {
 							'uid' => $p['U_ID'],
 							'prd_sku' => $p['Code'],
 							'quantity' => $t['Amount'],
+							'cost' => $s['Price_PerItem'],
+							'total_cost' => $s['Price_PerItem'] * $t['Amount'],
 							'price' => $finalPrice,
 							'total_price' => $finalPrice * $t['Amount'],
 							'userid' => $t['UserID'],
@@ -704,8 +706,10 @@ class SalesOrders extends MY_Controller {
 							'uid' => $p['U_ID'],
 							'prd_sku' => $p['Code'],
 							'quantity' => $t['Amount'],
-							'price' => $finalDiscount,
-							'total_price' => $finalDiscount * $t['Amount'],
+							'cost' => $finalDiscount,
+							'total_cost' => $finalDiscount * $t['Amount'],
+							'price' => 0,
+							'total_price' => 0,
 							'userid' => $t['UserID'],
 							'date_added' => date('Y/m/d H:i:s'),
 							'status' => 'discount',
@@ -927,6 +931,8 @@ class SalesOrders extends MY_Controller {
 						'stockid' => $adtlFeeID,
 						'transactionid' => $adtlFeeNo,
 						'quantity' => $qty,
+						'cost' => NULL,
+						'total_cost' => NULL,
 						'price' => $finalPrice,
 						'total_price' => $finalPrice * $qty,
 						'userid' => $userID,
@@ -1580,11 +1586,11 @@ class SalesOrders extends MY_Controller {
 						}
 
 						$dcTotal = $price * ($dcTotal / 100);
-						$finalPrice = $price - $dcTotal;
+						$finalPrice = $price;
 
 						$finalDiscount = $dcTotal;
 					} else {
-						$finalPrice = 0;
+						$finalPrice = $price;
 
 						$finalDiscount = $price;
 					}
@@ -1595,6 +1601,8 @@ class SalesOrders extends MY_Controller {
 						'uid' => $p['U_ID'],
 						'prd_sku' => $p['Code'],
 						'quantity' => $t['Amount'],
+						'cost' => $s['Price_PerItem'],
+						'total_cost' => $s['Price_PerItem'] * $t['Amount'],
 						'price' => $finalPrice,
 						'total_price' => $finalPrice * $t['Amount'],
 						'userid' => $userID,
@@ -1608,6 +1616,8 @@ class SalesOrders extends MY_Controller {
 						'uid' => $p['U_ID'],
 						'prd_sku' => $p['Code'],
 						'quantity' => $t['Amount'],
+						'cost' => $s['Price_PerItem'],
+						'total_cost' => $s['Price_PerItem'] * $t['Amount'],
 						'price' => $finalDiscount,
 						'total_price' => $finalDiscount * $t['Amount'],
 						'userid' => $userID,

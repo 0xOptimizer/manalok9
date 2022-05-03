@@ -428,6 +428,8 @@ class Admin_Extend extends CI_Controller {
 										'uid' => $U_ID,
 										'prd_sku' => $code,
 										'quantity' => $amount,
+										'cost' => $row['original_price'],
+										'total_cost' => $row['original_price'] * $amount,
 										'price' => $row['retail_price'],
 										'total_price' => $row['retail_price'] * $amount,
 										'userid' => $user_id,
@@ -728,6 +730,7 @@ class Admin_Extend extends CI_Controller {
 				$tb_c_stocks = $prd['Current_Stocks'];
 				$tb_r_stocks = $prd['Released_Stocks'];
 				$tb_r_price = $prd['Retail_Price'];
+				$tb_r_cost = $prd['Price_PerItem'];
 
 
 				/* COMPARE UID AND PRODUCT SKU */
@@ -767,6 +770,8 @@ class Admin_Extend extends CI_Controller {
 								'uid' => $UID,
 								'prd_sku' => $Product_SKU,
 								'quantity' => $Quantity,
+								'cost' => $tb_r_cost,
+								'total_cost' => $tb_r_cost * $Quantity,
 								'price' => $tb_r_price,
 								'total_price' => $nt_price,
 								'userid' => $_SESSION['UserID'],
@@ -1081,6 +1086,9 @@ class Admin_Extend extends CI_Controller {
 				);
 				$Update_Stock_In_Product = $this->Model_Updates->Update_Stock_In_Product($data);
 				if ($Update_Stock_Details == true) {
+					/* UPDATE SALES HISTORY COST AND PRICE */
+					$this->Model_Updates->UpdateStockHistoryCostPriceByStockID($stock['ID']);
+
 					/* THERE IS QTY */
 					if ($quantity > 0) {
 						if ($radioUp == 'add_stock') { // when stock is added, add to stock history
@@ -1111,6 +1119,8 @@ class Admin_Extend extends CI_Controller {
 								'uid' => $uids,
 								'prd_sku' => $pre_sku,
 								'quantity' => $quantity,
+								'cost' => $orig_price,
+								'total_cost' => $orig_price * $quantity,
 								'price' => $r_price,
 								'total_price' => $r_price * $quantity,
 								'userid' => $_SESSION['UserID'],

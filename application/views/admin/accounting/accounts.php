@@ -125,19 +125,6 @@ if ($this->session->flashdata('highlight-id')) {
 							<label class="input-label">TO</label>
 						</div>
 					</div>
-					<div class="form-row d-flex flex-wrap">
-						<h6>Beginning Inventory</h6>
-					</div>
-					<div class="form-row d-flex flex-wrap justify-content-center">
-						<div class="form-group col-6 mb-2">
-							<input class="form-control" type="date" name="dfr_bi" value="<?=date('Y-m-d', strtotime($date_from_beginning_inventory))?>">
-							<label class="input-label">FROM</label>
-						</div>
-						<div class="form-group col-6 mb-2">
-							<input class="form-control" type="date" name="dto_bi" value="<?=date('Y-m-d', strtotime($date_to_beginning_inventory))?>">
-							<label class="input-label">TO</label>
-						</div>
-					</div>
 				</div>
 				<div class="feedback-form modal-footer">
 					<button type="submit" class="btn btn-success"><i class="bi bi-calendar-check-fill"></i> SORT</button>

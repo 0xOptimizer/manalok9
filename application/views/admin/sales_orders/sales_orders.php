@@ -470,6 +470,9 @@ $(document).ready(function() {
 					required: ''
 				})))
 			.append($('<td>').attr({
+				class: 'productStockCurrent text-center'
+			}))
+			.append($('<td>').attr({
 				class: 'productPrice text-center'
 			})
 				.append($('<span>').attr({
@@ -549,7 +552,7 @@ $(document).ready(function() {
 
 	$(document).on('click', '.select-stock-row', function() {
 		let productstockID = $(this).data('productstockID');
-		if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length < 1) {
+		// if ($('#salesOrderProducts').find("[data-stockid='"+ productstockID +"']").length < 1) {
 			let productClass = '.' + $('#rowProductSelection').val();
 			$(productClass).attr('data-stockid', productstockID);
 			$(productClass + ' .select-product-btn').html($(this).data('sku'));
@@ -561,13 +564,14 @@ $(document).ready(function() {
 			$(productClass + ' .inpQty').attr({
 				'max': $(this).children('.stockCurrentStocks').html()
 			}).val(0);
+			$(productClass + ' .productStockCurrent').html($(this).children('.stockCurrentStocks').html());
 
 			$('#SelectProductStockModal').modal('toggle');
 			tableStocks.clear();
 			updProductCount();
-		} else {
-			showAlert('warning', 'Product is already added!');
-		}
+		// } else {
+		// 	showAlert('warning', 'Product is already added!');
+		// }
 	});
 	$(document).on('hidden.bs.modal', '#SelectProductStockModal', function (event) {
 		$('#AddSalesOrderModal').modal('toggle');
@@ -942,12 +946,25 @@ $(document).ready(function() {
 	});
 	$(document).on('submit', '#formAddSalesOrder', function(t) { // check inputs before submitting
 		let qty = 0;
+		var productTotals = [];
 		// check product added inputs
 		$.each($('.orderProduct'), function(i, val) {
 			if (typeof $(this).attr('data-stockid') !== typeof undefined && $(this).attr('data-stockid') !== false) {
 				qty = $(this).find('.inpQty').val();
-
 				if (qty <= 0) {
+					return false;
+				}
+
+				let stockid = $(this).attr('data-stockid');
+				if (typeof productTotals[stockid] !== typeof undefined) {
+					productTotals[stockid] = parseInt(productTotals[stockid]) + parseInt(qty);
+				} else {
+					productTotals[stockid] = parseInt(qty);
+				}
+				
+				let currentStock = parseInt($(this).find('.productStockCurrent').html());
+				if (currentStock < productTotals[stockid]) {
+					productTotals = null;
 					return false;
 				}
 			}
@@ -969,6 +986,9 @@ $(document).ready(function() {
 			t.preventDefault();
 		} else if (parseFloat($('.total').html()) <= 0) {
 			showAlert('warning', 'Ordered Products Total must be more than 0!');
+			t.preventDefault();
+		} else if (productTotals == null) {
+			showAlert('warning', 'One or more products have exceeded current stock!');
 			t.preventDefault();
 		}
 	});

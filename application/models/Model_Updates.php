@@ -405,4 +405,19 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+	public function UpdateStockHistoryCostPriceByStockID($stockid)
+	{
+		$this->db->where('stockid', $stockid);
+		$sql = 'UPDATE
+				    sales_history SH,
+				    product_stocks PS
+				SET
+				    SH.cost = PS.Price_PerItem,
+				    SH.total_cost = PS.Price_PerItem * SH.quantity,
+				    SH.price = PS.Retail_Price,
+				    SH.total_price = PS.Retail_Price * SH.quantity
+				WHERE
+				    SH.stockid = PS.ID;';
+		$this->db->query($sql);
+	}
 }

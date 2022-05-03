@@ -46,21 +46,13 @@ $returnItemsPriceTotal = array('GOOD' => 0, 'DAMAGED' => 0,'RETURNED' => 0);
 			</div>
 			<section class="section mt-1">
 				<div class="row">
-					<div class="col-12 col-sm-6 col-md-8">
+					<div class="col-12">
 						<?php if ($this->session->userdata('UserRestrictions')['return_product_add']): ?>
 							<button type="button" class="newreturn-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-reply"></i> NEW RETURN ITEM</button>
 						<?php endif; ?>
 					</div>
-					<div class="col-12 col-sm-6 col-md-4" style="margin-top: -15px;">
-						<div class="input-group">
-							<div class="input-group-prepend">
-								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
-							</div>
-							<input type="text" id="tableReturnsSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
-						</div>
-					</div>
 					<div class="col-sm-12 table-responsive">
-						<table id="salesOrderProductsTable" class="standard-table table">
+						<table id="returnProductsTable" class="standard-table table">
 							<thead style="font-size: 12px;">
 								<th class="text-center">TRANSACTION ID</th>
 								<th class="text-center">STOCK ID</th>
@@ -320,22 +312,22 @@ $(document).ready(function() {
 				}))
 		);
 	}
-	var tableReturns = $('#returnsTable').DataTable( {
-		sDom: 'lrtip',
-		"bLengthChange": false,
-    	"order": [[ 0, "desc" ]],
-	});
-	$('#tableReturnsSearch').on('keyup change', function() {
-		tableReturns.search($(this).val()).draw();
-	});
-	// var tableSalesOrderProducts = $('#salesOrderProductsTable').DataTable( {
+	// var tableReturns = $('#returnsTable').DataTable( {
 	// 	sDom: 'lrtip',
 	// 	"bLengthChange": false,
  //    	"order": [[ 0, "desc" ]],
 	// });
-	// $('#tableSalesOrderProductsSearch').on('keyup change', function() {
-	// 	tableSalesOrderProducts.search($(this).val()).draw();
+	// $('#tableReturnsSearch').on('keyup change', function() {
+	// 	tableReturns.search($(this).val()).draw();
 	// });
+	var tableSalesOrderProducts = $('#salesOrderProductsTable').DataTable( {
+		sDom: 'lrtip',
+		"bLengthChange": false,
+    	"order": [[ 0, "desc" ]],
+	});
+	$('#tableSalesOrderProductsSearch').on('keyup change', function() {
+		tableSalesOrderProducts.search($(this).val()).draw();
+	});
 
 	$('.newreturn-btn').on('click', function() {
 		$('#AddReturnProduct').modal('toggle');
@@ -345,6 +337,8 @@ $(document).ready(function() {
 		if ($('#addReturnNo').val().length < 1) {
 			showAlert('warning', 'No Return #!');
 		} else {
+			$('#tableSalesOrderProductsSearch').val('');
+			tableSalesOrderProducts.search('').draw();
 			$('#AddReturnProduct').data('openModal', 'salesorderproducts');
 			$('#AddReturnProduct').modal('toggle');
 		}

@@ -394,6 +394,15 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('invoices');
 		return $result;
 	}
+	public function GetLastInvoiceBySONo($orderNo)
+	{
+		$this->db->select('MAX(Date) as date');
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->where('Status', '1');
+		$this->db->limit('1');
+		$result = $this->db->get('invoices');
+		return $result;
+	}
 
 	public function GetAllReleases()
 	{
@@ -1247,6 +1256,8 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select_sum('quantity');
 		$this->db->where('status','restocked');
+		$this->db->where('EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)');
+		$this->db->where('EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)');
 		$result = $this->db->get('sales_history');
 		return $result->row_array();
 	}
@@ -1254,6 +1265,8 @@ class Model_Selects extends CI_Model {
 	{
 		$this->db->select_sum('quantity');
 		$this->db->where('status','released');
+		$this->db->where('EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)');
+		$this->db->where('EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)');
 		$result = $this->db->get('sales_history');
 		return $result->row_array();
 	}
@@ -1268,6 +1281,8 @@ class Model_Selects extends CI_Model {
 		$this->db->where('prd_sku', $prd_sku);
 		$this->db->where('status', 'restocked');
 		$this->db->order_by('date_added','ASC');
+		$this->db->where('EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)');
+		$this->db->where('EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)');
 		$result = $this->db->get('sales_history');
 		return $result;
 	}
@@ -1278,6 +1293,8 @@ class Model_Selects extends CI_Model {
 
 		$this->db->select('*');
 		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$this->db->where('EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)');
+		$this->db->where('EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)');
 		$result = $this->db->get('sales_history');
 		return $result;
 	}
@@ -1290,6 +1307,8 @@ class Model_Selects extends CI_Model {
 		$this->db->select('SUM(total_price) AS restocked_total_price');
 		$this->db->where('status', 'restocked');
 		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$this->db->where('EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)');
+		$this->db->where('EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)');
 		$result = $this->db->get('sales_history');
 		return $result->row_array();
 	}
@@ -1301,6 +1320,8 @@ class Model_Selects extends CI_Model {
 		$this->db->select('SUM(total_price) AS released_total_price');
 		$this->db->where('status', 'released');
 		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$this->db->where('EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)');
+		$this->db->where('EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)');
 		$result = $this->db->get('sales_history');
 		return $result->row_array();
 	}
@@ -1310,28 +1331,180 @@ class Model_Selects extends CI_Model {
 		$from = date('Y/m/d H:i:s', strtotime($from));
 		$to = date('Y/m/d H:i:s', strtotime($to) + 86399);
 
+		$where_date = 'date_added >= "' . $from . '" AND date_added <= "' . $to . '"';
+		$where_stocks = 'EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)';
+		$where_product = 'EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)';
+
 		$this->db->select('
-				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "restocked"), 0) -
-				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "released"), 0) AS ending_inventory_total_price
+				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "restocked" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) -
+				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "released" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) AS ending_inventory_total_price
 			');
 
-		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$this->db->where($where_date);
 		$this->db->limit('1');
+		$this->db->where($where_stocks);
+		$this->db->where($where_product);
 		$result = $this->db->get('sales_history');
-		return $result->row_array();
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['ending_inventory_total_price'];
+		} else {
+			return NULL;
+		}
 	}
 	public function GetStockHistoryTotalPriceBefore($date)
 	{
 		$date = date('Y/m/d H:i:s', strtotime($date));
 
+		$where_date = 'date_added < "' . $date . '"';
+		$where_stocks = 'EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)';
+		$where_product = 'EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)';
+
 		$this->db->select('
-				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "restocked"), 0) -
-				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "released"), 0) AS ending_inventory_total_price
+				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "restocked" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) -
+				COALESCE ((SELECT SUM(total_price) FROM sales_history WHERE status = "released" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) AS ending_inventory_total_price
 			');
 
-		$this->db->where('date_added < "' . $date . '"');
+		$this->db->where($where_date);
 		$this->db->limit('1');
+		$this->db->where($where_stocks);
+		$this->db->where($where_product);
 		$result = $this->db->get('sales_history');
-		return $result->row_array();
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['ending_inventory_total_price'];
+		} else {
+			return NULL;
+		}
+	}
+	public function GetStockHistoryTotalCostRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399); // add 1day-1sec
+
+		$where_date = 'date_added >= "' . $from . '" AND date_added <= "' . $to . '"';
+		$where_stocks = 'EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)';
+		$where_product = 'EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)';
+
+		$this->db->select('
+				COALESCE ((SELECT SUM(total_cost) FROM sales_history WHERE status = "restocked" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) -
+				COALESCE ((SELECT SUM(total_cost) FROM sales_history WHERE status = "released" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) AS ending_inventory_total_cost
+			');
+
+		$this->db->where($where_date);
+		$this->db->limit('1');
+		$this->db->where($where_stocks);
+		$this->db->where($where_product);
+		$result = $this->db->get('sales_history');
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['ending_inventory_total_cost'];
+		} else {
+			return NULL;
+		}
+	}
+	public function GetStockHistoryTotalCostBefore($date)
+	{
+		$date = date('Y/m/d H:i:s', strtotime($date));
+
+		$where_date = 'date_added < "' . $date . '"';
+		$where_stocks = 'EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)';
+		$where_product = 'EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)';
+
+		$this->db->select('
+				COALESCE ((SELECT SUM(total_cost) FROM sales_history WHERE status = "restocked" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) -
+				COALESCE ((SELECT SUM(total_cost) FROM sales_history WHERE status = "released" 
+					AND '. $where_date .' AND '. $where_stocks .' AND '. $where_product .'), 0) AS ending_inventory_total_cost
+			');
+
+		$this->db->where($where_date);
+		$this->db->limit('1');
+		$this->db->where($where_stocks);
+		$this->db->where($where_product);
+		$result = $this->db->get('sales_history');
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['ending_inventory_total_cost'];
+		} else {
+			return NULL;
+		}
+	}
+	// DISCOUNT
+	public function GetDiscountsTotalRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399); // add 1day-1sec
+
+		$where_date = 'date_added >= "' . $from . '" AND date_added <= "' . $to . '"';
+		$where_stocks = 'EXISTS(SELECT ID, Status FROM product_stocks WHERE sales_history.stockid = product_stocks.ID AND Status = 1)';
+		$where_product = 'EXISTS(SELECT U_ID, Status FROM products WHERE sales_history.uid = products.U_ID AND Status = 1)';
+
+		$this->db->select('SUM(total_cost) AS total');
+
+		$this->db->where($where_date);
+		$this->db->limit('1');
+		$this->db->where($where_stocks);
+		$this->db->where($where_product);
+		$this->db->where('status', 'discount');
+		$result = $this->db->get('sales_history');
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['total'];
+		} else {
+			return NULL;
+		}
+	}
+
+	public function GetReturnsTotalRange($from,$to)
+	{
+		$from = date('Y-m-d H:i:s', strtotime($from));
+		$to = date('Y-m-d H:i:s', strtotime($to) + 86399); // add 1day-1sec
+
+		$where_stocks = 'EXISTS(SELECT ID, Status FROM product_stocks WHERE product_returned.stockid = product_stocks.ID AND Status = 1)';
+		$where_product = 'EXISTS(SELECT U_ID, Status FROM products WHERE product_returned.prd_sku = products.Code AND Status = 1)';
+
+		$this->db->select('SUM(quantity * (SELECT Retail_Price FROM product_stocks WHERE product_stocks.ID = product_returned.stockid)) AS total');
+		$this->db->where('date_added >= "' . $from . '" AND date_added <= "' . $to . '"');
+		$this->db->limit('1');
+		$this->db->where($where_stocks);
+		$this->db->where($where_product);
+		$result = $this->db->get('product_returned');
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['total'];
+		} else {
+			return NULL;
+		}
+	}
+	public function GetAdtlFeesTotalRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399); // add 1day-1sec
+
+		$this->db->select('SUM(Qty * UnitCost) AS total');
+		$this->db->where('Date >= "' . $from . '" AND Date <= "' . $to . '"');
+		$this->db->limit('1');
+		$result = $this->db->get('adtl_fees');
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['total'];
+		} else {
+			return NULL;
+		}
+	}
+	public function GetManualTransactionsTotalRange($from,$to)
+	{
+		$from = date('Y/m/d H:i:s', strtotime($from));
+		$to = date('Y/m/d H:i:s', strtotime($to) + 86399); // add 1day-1sec
+
+		$this->db->select('SUM(Qty * UnitCost) AS total');
+		$this->db->where('Date >= "' . $from . '" AND Date <= "' . $to . '"');
+		$this->db->limit('1');
+		$result = $this->db->get('manual_transactions');
+		if ($result->num_rows() > 0) {
+			return $result->row_array()['total'];
+		} else {
+			return NULL;
+		}
 	}
 }
