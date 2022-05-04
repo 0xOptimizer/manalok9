@@ -35,7 +35,7 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="bi bi-x-circle-fill text-danger h-100 w-100 billNameIcon"></i></span>
 										</div>
-										<input type="text" class="form-control clientBillNameSearch billName shipToBillInput" name="bill-name" placeholder="John Doe" autocomplete="off" data-toggle="dropdown" required>
+										<input type="text" class="form-control clientBillNameSearch billName shipToBillInput important" name="bill-name" placeholder="*John Doe" autocomplete="off" data-toggle="dropdown" required>
 										<div class="dropdown-menu dropdown-menu-left clientBillNameDropdown"></div>
 									</div>
 								</div>
@@ -45,7 +45,7 @@
 								</div>
 								<div class="form-group col-sm-12">
 									<label class="input-label">ADDRESS</label>
-									<input type="text" class="form-control viewonly billAddress newBillInput shipToBillInput" name="bill-address" placeholder="M. Santos St." readonly>
+									<input type="text" class="form-control viewonly billAddress newBillInput shipToBillInput important" name="bill-address" placeholder="*M. Santos St." readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CITY, STATE/PROVINCE, ZIP</label>
@@ -57,7 +57,7 @@
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CONTACT NUMBER</label>
-									<input type="text" class="form-control viewonly billContact newBillInput shipToBillInput" name="bill-contact-num" placeholder="09123456789" readonly>
+									<input type="text" class="form-control viewonly billContact newBillInput shipToBillInput important" name="bill-contact-num" placeholder="*09123456789" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CATEGORY</label>
@@ -95,7 +95,7 @@
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="bi bi-x-circle-fill text-danger h-100 w-100 shipNameIcon"></i></span>
 										</div>
-										<input type="text" class="form-control clientShipNameSearch shipName" name="ship-name" placeholder="John Doe" autocomplete="off" data-toggle="dropdown" required>
+										<input type="text" class="form-control clientShipNameSearch shipName important" name="ship-name" placeholder="*John Doe" autocomplete="off" data-toggle="dropdown" required>
 										<div class="dropdown-menu dropdown-menu-left clientShipNameDropdown"></div>
 									</div>
 								</div>
@@ -105,7 +105,7 @@
 								</div>
 								<div class="form-group col-sm-12">
 									<label class="input-label">ADDRESS</label>
-									<input type="text" class="form-control viewonly shipAddress newShipInput" name="ship-address" placeholder="M. Santos St." readonly>
+									<input type="text" class="form-control viewonly shipAddress newShipInput important" name="ship-address" placeholder="*M. Santos St." readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CITY, STATE/PROVINCE, ZIP</label>
@@ -117,7 +117,7 @@
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CONTACT NUMBER</label>
-									<input type="text" class="form-control viewonly shipContact newShipInput" name="ship-contact-num" placeholder="09123456789" readonly>
+									<input type="text" class="form-control viewonly shipContact newShipInput important" name="ship-contact-num" placeholder="*09123456789" readonly>
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">CATEGORY</label>

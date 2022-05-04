@@ -710,7 +710,8 @@ $(document).ready(function() {
 						$('.billNameIcon').removeClass('bi-backspace-fill text-light');
 					}
 
-					$('.newBillInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+					$('.newBillInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+					$('.newBillInput.important').attr('required', '');
 
 					$('.billName').val(response.Name);
 					$('.billNo').val(response.ClientNo);
@@ -736,7 +737,8 @@ $(document).ready(function() {
 
 					// if shipping update has been disabled after choosing two similar clients, enable it again
 					if ($('#BillToNo').val() != $('#ShipToNo').val() && $('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient' && $('#ShipToNo').val() != '') {
-						$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+						$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+						$('.newShipInput.important').attr('required', '');
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
@@ -747,7 +749,8 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.newBillClient', function(t) { // on clicking the new client button on dropdown
-		$('.newBillInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+		$('.newBillInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+		$('.newBillInput.important').attr('required', '');
 		// clear inputs
 		$('.billName').val('');
 		$('.newBillInput').val('');
@@ -770,7 +773,8 @@ $(document).ready(function() {
 
 		// if shipping update has been disabled after choosing two similar clients, enable it again
 		if ($('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient' && $('#ShipToNo').val() != '') {
-			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+			$('.newShipInput.important').attr('required', '');
 		}
 	});
 	$(document).on('click', '.billNameIcon', function(t) { // onclick of backspace icon
@@ -793,7 +797,8 @@ $(document).ready(function() {
 		$('.shipToBillingClient').hide();
 		$('.shipToSelectClient').hide();
 		if ($('#ShipToNo').val() == 'shipToBillingClient') {
-			$('.shipName').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+			$('.shipName').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+			$('.shipName.important').attr('required', '');
 			// clear inputs
 			$('.shipName').val('');
 			$('.newShipInput').val('');
@@ -809,7 +814,8 @@ $(document).ready(function() {
 
 		// if shipping update has been disabled after choosing two similar clients, enable it again
 		if ($('#ShipToNo').val() != 'shipToBillingClient' && $('#ShipToNo').val() != 'newShipClient' && $('#ShipToNo').val() != '') {
-			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+			$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+			$('.newShipInput.important').attr('required', '');
 		}
 	});
 
@@ -896,7 +902,8 @@ $(document).ready(function() {
 					hideShipNameDropdown();
 
 					if ($('#ShipToNo').val() != $('#BillToNo').val()) {
-						$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+						$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+						$('.newShipInput.important').attr('required', '');
 					} else {
 						$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
 						// showAlert('info', 'Updating on shipping client details is disabled since shipping and billing clients are the same.');
@@ -910,7 +917,8 @@ $(document).ready(function() {
 	});
 
 	$(document).on('click', '.newShipClient', function(t) { // on clicking the new client button on dropdown
-		$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+		$('.newShipInput').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+		$('.newShipInput.important').attr('required', '');
 		// clear inputs
 		$('.shipName').val('');
 		$('.newShipInput').val('');
@@ -1018,7 +1026,8 @@ $(document).ready(function() {
 		if ($('#ShipToNo').val() == 'shipToBillingClient') {
 			$('.shipToBillingClient').show();
 		}
-		$('.shipName').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled').attr('required', '');
+		$('.shipName').removeClass('viewonly').removeAttr('readonly').removeAttr('disabled');
+		$('.shipName.important').attr('required', '');
 		$('.newShipInput').addClass('viewonly').attr('readonly', '').attr('disabled', '').removeAttr('required');
 		// clear inputs
 		$('.shipName').val('');
