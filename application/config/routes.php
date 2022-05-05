@@ -184,6 +184,10 @@ $route['FORM_markDelivered'] = 'SalesOrders/FORM_markDelivered';
 $route['FORM_markReceived'] = 'SalesOrders/FORM_markReceived';
 $route['FORM_updateSORemarks'] = 'SalesOrders/FORM_updateRemarks';
 
+$route['FORM_deleteSalesOrder'] = 'SalesOrders/FORM_deleteSalesOrder';
+$route['FORM_addNewSOTransaction'] = 'SalesOrders/FORM_addNewSOTransaction';
+$route['FORM_removeSOTransaction'] = 'SalesOrders/FORM_removeSOTransaction';
+
 $route['admin/xlsSalesOrder'] = 'Exporting/xlsSalesOrder';
 
 // INVOICES

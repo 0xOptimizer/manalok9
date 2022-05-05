@@ -14,33 +14,33 @@
 							<label class="input-label" for="upd-client-no">CLIENT #</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
-							<input id="upd-name" type="text" class="form-control standard-input-pad m_name" name="upd-name" placeholder="John Doe" required>
+							<input id="upd-name" type="text" class="form-control standard-input-pad m_name" name="upd-name" placeholder="*John Doe" required>
 							<label class="input-label" for="upd-name">NAME</label>
 						</div>
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="upd-tin" type="text" class="form-control standard-input-pad m_tin" name="upd-tin" placeholder="123 456 789 000" required>
+							<input id="upd-tin" type="text" class="form-control standard-input-pad m_tin" name="upd-tin" placeholder="123 456 789 000">
 							<label class="input-label" for="upd-tin">TIN</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
-							<input id="upd-address" type="text" class="form-control standard-input-pad m_address" name="upd-address" placeholder="M. Santos St." required>
+							<input id="upd-address" type="text" class="form-control standard-input-pad m_address" name="upd-address" placeholder="*M. Santos St.">
 							<label class="input-label" for="upd-address">ADDRESS</label>
 						</div>
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="upd-city-state-province-zip" type="text" class="form-control standard-input-pad m_citystateprovincezip" name="upd-city-state-province-zip" placeholder="Antipolo, Rizal, 1870" required>
+							<input id="upd-city-state-province-zip" type="text" class="form-control standard-input-pad m_citystateprovincezip" name="upd-city-state-province-zip" placeholder="Antipolo, Rizal, 1870">
 							<label class="input-label" for="upd-city-state-province-zip">CITY, STATE/PROVINCE, ZIP</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
-							<input id="upd-country" type="text" class="form-control standard-input-pad m_country" name="upd-country" placeholder="Philippines" required>
+							<input id="upd-country" type="text" class="form-control standard-input-pad m_country" name="upd-country" placeholder="Philippines">
 							<label class="input-label" for="upd-country">COUNTRY</label>
 						</div>
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="upd-contact-num" type="text" class="form-control standard-input-pad m_contactnum" name="upd-contact-num" placeholder="09123456789" required>
+							<input id="upd-contact-num" type="text" class="form-control standard-input-pad m_contactnum" name="upd-contact-num" placeholder="*09123456789">
 							<label class="input-label" for="upd-contact-num">CONTACT #</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
@@ -55,11 +55,11 @@
 					</div>
 					<div class="form-row d-flex flex-wrap justify-content-center">
 						<div class="form-group col-12 col-sm-12 col-md-5 mb-3">
-							<input id="upd-territory-manager" type="text" class="form-control standard-input-pad m_territorymanager" name="upd-territory-manager" placeholder="Jane Doe" required>
+							<input id="upd-territory-manager" type="text" class="form-control standard-input-pad m_territorymanager" name="upd-territory-manager" placeholder="Jane Doe">
 							<label class="input-label" for="upd-territory-manager">TERRITORY MANAGER</label>
 						</div>
 						<div class="form-group col-12 col-sm-12 col-md-5 offset-md-1 mb-3">
-							<input id="upd-email" type="email" class="form-control standard-input-pad m_email" name="upd-email" placeholder="john@email.com" required>
+							<input id="upd-email" type="email" class="form-control standard-input-pad m_email" name="upd-email" placeholder="john@email.com">
 							<label class="input-label" for="upd-email">EMAIL</label>
 						</div>
 					</div>

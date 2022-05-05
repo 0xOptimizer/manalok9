@@ -420,4 +420,22 @@ class Model_Updates extends CI_Model {
 				    SH.stockid = PS.ID;';
 		$this->db->query($sql);
 	}
+
+
+	public function UpdateStockReleaseRevert($stockid,$amount)
+	{
+		$sql = "UPDATE `product_stocks` 
+				SET `Current_Stocks` = (CAST((SELECT Current_Stocks FROM product_stocks WHERE ID = '$stockid') AS int) + CAST('$amount' AS int)), 
+					`Released_Stocks` = (CAST((SELECT Released_Stocks FROM product_stocks WHERE ID = '$stockid') AS int) - CAST('$amount' AS int)) 
+				WHERE `ID` = '$stockid';";
+		$this->db->query($sql);
+	}
+	public function UpdateProductReleaseRevert($code,$amount)
+	{
+		$sql = "UPDATE `products` 
+				SET `InStock` = (CAST((SELECT InStock FROM products WHERE Code = '$code') AS int) + CAST('$amount' AS int)), 
+					`Released` = (CAST((SELECT Released FROM products WHERE Code = '$code') AS int) + CAST('$amount' AS int)) 
+				WHERE `Code`='$code';";
+		$this->db->query($sql);
+	}
 }

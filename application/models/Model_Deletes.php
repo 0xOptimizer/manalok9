@@ -198,4 +198,92 @@ class Model_Deletes extends CI_Model {
 			return false;
 		}
 	}
+
+
+
+	public function Delete_Transaction($transactionID)
+	{
+		$this->db->where('TransactionID', $transactionID);
+		$this->db->delete('products_transactions');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Delete_ReturnProductTID($transactionID)
+	{
+		$this->db->where('transactionid', $transactionID);
+		$this->db->delete('product_returned');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public function Delete_InvoiceON($orderNo)
+	{
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->delete('invoices');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Delete_AdtlFeesON($orderNo)
+	{
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->delete('adtl_fees');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Delete_ReplacementON($orderNo)
+	{
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->delete('replacements');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Delete_ReturnON($orderNo)
+	{
+		$this->db->where('SalesOrderNo', $orderNo);
+		$this->db->delete('returns');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function Delete_SalesOrderON($orderNo)
+	{
+		$this->db->where('OrderNo', $orderNo);
+		$this->db->delete('sales_orders');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

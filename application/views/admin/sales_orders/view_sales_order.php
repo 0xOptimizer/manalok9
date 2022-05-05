@@ -9,6 +9,10 @@ if ($this->input->get('orderNo')) {
 	redirect('admin/sales_orders');
 }
 $getSalesOrderByOrderNo = $this->Model_Selects->GetSalesOrderByNo($orderNo);
+if ($getSalesOrderByOrderNo->num_rows() < 1) {
+	redirect('admin/sales_orders');
+}
+
 $salesOrder = $getSalesOrderByOrderNo->row_array();
 $getTransactionsByOrderNo = $this->Model_Selects->GetTransactionsByOrderNo($orderNo);
 $getAdtlFeesByOrderNo = $this->Model_Selects->GetAdtlFeesByOrderNo($orderNo);
@@ -84,7 +88,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 		<div class="page-heading">
 			<div class="page-title">
 				<div class="row">
-					<div class="col-12 col-md-6">
+					<div class="col-9">
 						<h3><i class="bi bi-receipt"></i> <?=$salesOrder['OrderNo']?>
 							<?php if ($salesOrder['Status'] == '1'): ?>
 								<span class="info-banner-sm"><i class="bi bi-asterisk" style="color:#E4B55B;"></i> Pending</span>
@@ -101,7 +105,13 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 							<?php endif; ?>
 						</h3>
 					</div>
-					<div class="col-12">
+					<div class="col-3 text-end">
+						<form id="formDeleteSalesOrder" action="<?php echo base_url() . 'FORM_deleteSalesOrder';?>" method="POST">
+							<input type="hidden" name="order-no" value="<?=$salesOrder['OrderNo']?>">
+							<button type="button" class="btn btn-danger deleteOrder"><i class="bi bi-trash-fill"></i> DELETE</button>
+						</form>
+					</div>
+					<div class="col-8">
 						<button type="button" class="generateform-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-file-earmark-arrow-down"></i> GENERATE SO FORM</button>
 						|
 						<?php if ($this->session->userdata('UserRestrictions')['sales_orders_accounting']): ?>
@@ -222,6 +232,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										<i class="bi bi-list-ul"></i> <?=$getTransactionsByOrderNo->num_rows()?> TOTAL
 									</span>
 								</h4>
+								<button type="button" class="transaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW TRANSACTION</button>
 							</div>
 						</div>
 						<div class="row">
@@ -235,6 +246,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										<th class="text-center">PRICE</th>
 										<th class="text-center">TOTAL</th>
 										<th class="text-center">FREEBIE</th>
+										<th class="text-center"></th>
 									</thead>
 									<tbody>
 										<?php
@@ -276,6 +288,13 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 															<i class="bi bi-check-circle text-success"></i>
 														<?php else: ?>
 															<i class="bi bi-x-circle text-danger"></i>
+														<?php endif; ?>
+													</td>
+													<td class="text-center">
+														<?php if ($this->session->userdata('UserRestrictions')['sales_orders_update']): ?>
+															<a href="<?=base_url()?>FORM_removeSOTransaction?tid=<?=$row['TransactionID']?>">
+																<button type="button" class="btn removeTransaction"><i class="bi bi-trash text-danger"></i></button>
+															</a>
 														<?php endif; ?>
 													</td>
 												</tr>
@@ -1126,6 +1145,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 <?php $this->load->view('admin/_modals/mails/add_mail.php'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/sales_orders/approve_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
+<?php $this->load->view('admin/_modals/sales_orders/add_transaction_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -1610,7 +1630,7 @@ $(document).ready(function() {
 	$('.salesreplacements-btn').on('click', function() {
 		$('#AddReplacementModal').modal('toggle');
 	});
-	$('.newReplacementSKU-btn').on('click', function() {
+	$('.newReplacementSKU-btn').parents('.btn').on('click', function() {
 		$('#AddReplacementModal').data('select', true).modal('toggle');
 	});
 	$(document).on('hidden.bs.modal', '#AddReplacementModal', function (event) {
@@ -1699,6 +1719,156 @@ $(document).ready(function() {
 			event.preventDefault();
 		}
 	});
+
+
+
+	$(document).on('click', '.deleteOrder', function() {
+		if (!confirm('Delete Sales Order? (This action cannot be undone)')) {
+			event.preventDefault();
+		} else {
+			$('#formDeleteSalesOrder').submit();
+		}
+	});
+	$(document).on('click', '.removeTransaction', function() {
+		if (!confirm('Remove Transaction?')) {
+			event.preventDefault();
+		}
+	});
+
+	// TRANSACTIONS
+	var tableProductsTransaction = $('#selectproductsTransactionTable').DataTable( {
+		sDom: 'lrtip',
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+	});
+	$('#tableProductsTransactionSearch').on('keyup change', function(){
+		tableProductsTransaction.search($(this).val()).draw();
+	});
+	var tableStocksTransaction = $('#selectstocksTransactionTable').DataTable( {
+		sDom: 'lrtip',
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]],
+		'createdRow': function(row, data, dataIndex) {
+			let productstockID = data[1] + '_' + data[0];
+			$(row).addClass('productStocks select-stock-transaction-row').data('sku', data[1]).data('productstockID', productstockID);
+		},
+		'columnDefs': [ {
+				'targets': 0,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockID text-center').html($('<span>').addClass('db-identifier').css({ 'font-style': 'italic', 'font-size': '12px' }).html(cellData)).data('stockID',cellData);
+				}
+			}, {
+				'targets': 1,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockSKU text-center');
+				}
+			}, {
+				'targets': 2,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockCurrentStocks text-center');
+				}
+			}, {
+				'targets': 3,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockPrice text-center').html(parseFloat(cellData).toFixed(2)).data('retailPrice', cellData);
+				}
+			}, {
+				'targets': 4,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockDateAdded text-center');
+				}
+			}, {
+				'targets': 5,
+				'createdCell': function (td, cellData, rowData, row, col) {
+					$(td).addClass('stockExpirationDate text-center');
+				}
+			}
+		]
+	});
+	$('#tableStocksTransactionSearch').on('keyup change', function(){
+		tableStocksTransaction.search($(this).val()).draw();
+	});
+	$('.transaction-btn').on('click', function() {
+		$('#AddTransactionModal').modal('toggle');
+	});
+	$('.newTransactionSKU-btn').parents('.btn').on('click', function() {
+		$('#AddTransactionModal').data('select', true).modal('toggle');
+	});
+	$(document).on('hidden.bs.modal', '#AddTransactionModal', function (event) {
+		if ($('#AddTransactionModal').data('select')) {
+			$('#AddTransactionSKUModal').modal('toggle');
+			$('#AddTransactionModal').data('select', false);
+			$('#AddTransactionSKUModal').data('select', true);
+		}
+	});
+	$(document).on('click', '.select-product-transaction-row', function() {
+		// get product stocks
+		$.get('getProductStocks', { dataType: 'json', sku: $(this).data('sku') })
+		.done(function(data) {
+			tableStocksTransaction.clear();
+			let productStocks = $.parseJSON(data);
+			$.each(productStocks, function(index, val) {
+				tableStocksTransaction.row.add([
+					val.ID,
+					val.Product_SKU,
+					val.Current_Stocks,
+					val.Retail_Price,
+					val.Date_Added,
+					val.Expiration_Date
+				]);
+			});
+			tableStocksTransaction.draw();
+		});
+
+		$('#AddTransactionSKUModal').data('select', true).modal('toggle');
+	});
+	$(document).on('hidden.bs.modal', '#AddTransactionSKUModal', function (event) {
+		if ($('#AddTransactionSKUModal').data('select')) {
+			$('#AddTransactionStockModal').modal('toggle');
+			$('#AddTransactionSKUModal').data('select', false);
+		}
+	});
+
+	$(document).on('click', '.select-stock-transaction-row', function() {
+		let productSKU = $(this).data('sku');
+		let stockID = $(this).children('.stockID').data('stockID');
+		let stockPrice = $(this).children('.stockPrice').html();
+				
+		$('.newTransactionSKU').val(productSKU);
+		$('.newTransactionSKU-btn').text(productSKU);
+		$('.newTransactionStockID').val(stockID);
+		$('.newTransactionStockID-text').text('#'+ stockID);
+		$('.newTransactionQty').attr('max', $(this).children('.stockCurrentStocks').html());
+		$('.newTransactionCost').data('unitCost', stockPrice).text(stockPrice);
+
+
+		$('#AddTransactionStockModal').modal('toggle');
+		tableStocksTransaction.clear();
+		updProductCount();
+	});
+	$(document).on('hidden.bs.modal', '#AddTransactionStockModal', function (event) {
+		$('#AddTransactionModal').modal('toggle');
+	});
+
+	$(document).on('focus keyup change', '.newTransactionQty, .newTransactionDiscount, .newTransactionFreebie', function() {
+		updProductCount();
+	});
+	function updProductCount() {
+		if ($('.newTransactionSKU').val().length > 0) {
+			let totalCostUndiscounted = parseInt($('.newTransactionQty').val()) * parseFloat($('.newTransactionCost').data('unitCost'));
+			let totalCostDiscounted = totalCostUndiscounted - (totalCostUndiscounted * (parseInt($('.newTransactionDiscount').val()) / 100));
+
+			if (parseFloat(totalCostDiscounted) < 0) {
+				showAlert('danger', 'Total Price for product is below zero!');
+			}
+
+			if ($('.newTransactionFreebie').prop('checked')) {
+				$('.newTransactionTotalCost').text('0.00');
+			} else {
+				$('.newTransactionTotalCost').text(moneyFormat(totalCostDiscounted));
+			}
+		}
+	}
 });
 </script>
 

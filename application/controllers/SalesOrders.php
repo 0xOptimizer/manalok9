@@ -253,6 +253,249 @@ class SalesOrders extends MY_Controller {
 		}
 	}
 
+	public function FORM_addNewSOTransaction()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_update')) {	
+			if (isset($_SESSION['UserID'])) {
+				$userID = $_SESSION['UserID'];
+
+				$salesOrderNo = $this->input->post('sales-order-no');
+				$code = $this->input->post('product-sku');
+				$stockID = $this->input->post('product-stock-id');
+				$freebie = (($this->input->post('freebie') == 'on') ? '1' : '0');
+				$discount = $this->input->post('discount');
+				$qty = $this->input->post('qty');
+
+				$so = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
+				if ($so->num_rows() > 0) {
+					$soDetails = $so->row_array();
+
+					$p = $this->Model_Selects->GetProductByCode($code)->row_array();
+					$s = $this->Model_Selects->Check_prd_stockid($stockID)->row_array();
+
+					$transactionID = '';
+					$transactionID .= strtoupper($code);
+					$transactionID .= '-';
+					$transactionID .= strtoupper(uniqid());
+
+					$t = array(
+						'Code' => $code,
+						'TransactionID' => $transactionID,
+						'OrderNo' => $salesOrderNo,
+						'stockID' => $stockID,
+						'Type' => '1',
+						'Amount' => $qty,
+						'Date' => date('Y/m/d H:i:s'),
+						'DateAdded' => date('Y-m-d H:i:s'),
+						'Status' => 0,
+						'UserID' => $userID,
+
+						'PriceUnit' => $s['Retail_Price'],
+						'PriceTotal' => $s['Retail_Price'] * $qty,
+						'Freebie' => $freebie,
+						'UnitDiscount' => (($discount > 0) ? $discount : 0),
+					);
+
+					if ($t['Amount'] <= $p['InStock']) { // check if stock is enough
+						$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($t);
+
+						if ($insertNewTransaction && $soDetails['Status'] >= 4) { // if sales ordered delivered
+							// TRANSACTION
+							$dataTransaction = array(
+								'TransactionID' => $t['TransactionID'],
+								'Status' => '1',
+								'Date_Approval' => date('Y-m-d H:i:s'),
+							);
+							// RELEASE
+							$NewStock = $p['InStock'] - $t['Amount'];
+							$NewRelease = $p['Released'] + $t['Amount'];
+							$dataProduct = array(
+								'Code' => $t['Code'],
+								'InStock' => $NewStock,
+								'Released' => $NewRelease,
+							);
+							// STOCKS
+							$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+							$n_cstocks = $s['Current_Stocks'] - $t['Amount'];
+							$n_rstocks = $s['Released_Stocks'] + $t['Amount'];
+							$dataStocks = array(
+								'Current_Stocks' => $n_cstocks,
+								'Released_Stocks' => $n_rstocks,
+							);
+							// RELEASED
+							$discount = $t['UnitDiscount'];
+							$price = $s['Retail_Price'];
+							if ($t['Freebie'] == '0') {
+								if ($discount > 0) {
+									$dcTotal = $discount;
+								} else {
+									$dcTotal = 0;
+								}
+
+								$dcTotal = $price * ($dcTotal / 100);
+								$finalPrice = $price;
+
+								$finalDiscount = $dcTotal;
+							} else {
+								$finalPrice = $price;
+
+								$finalDiscount = $price;
+							}
+							/* INSERT DATA TO STOCK HISTORY */
+							$dataStockHistory = array(
+								'stockid' => $t['stockID'],
+								'transactionid' => $replacementDetails['TransactionID'],
+								'uid' => $p['U_ID'],
+								'prd_sku' => $p['Code'],
+								'quantity' => $t['Amount'],
+								'cost' => $s['Price_PerItem'],
+								'total_cost' => $s['Price_PerItem'] * $t['Amount'],
+								'price' => $finalPrice,
+								'total_price' => $finalPrice * $t['Amount'],
+								'userid' => $userID,
+								'date_added' => date('Y/m/d H:i:s'),
+								'status' => 'released',
+							);
+							/* INSERT DISCOUNT DATA TO STOCK HISTORY */
+							$dataStockHistoryDiscount = array(
+								'stockid' => $t['stockID'],
+								'transactionid' => $replacementDetails['TransactionID'],
+								'uid' => $p['U_ID'],
+								'prd_sku' => $p['Code'],
+								'quantity' => $t['Amount'],
+								'cost' => $s['Price_PerItem'],
+								'total_cost' => $s['Price_PerItem'] * $t['Amount'],
+								'price' => $finalDiscount,
+								'total_price' => $finalDiscount * $t['Amount'],
+								'userid' => $userID,
+								'date_added' => date('Y/m/d H:i:s'),
+								'status' => 'discount',
+							);
+
+							$this->Model_Updates->ApproveTransaction($dataTransaction);
+							$this->Model_Updates->UpdateStock_product($dataProduct);
+							$this->Model_Updates->UpdateProduct_stock($t['stockID'], $dataStocks);
+							$this->Model_Inserts->Insert_StockHistory($dataStockHistory);
+							$this->Model_Inserts->Insert_StockHistory($dataStockHistoryDiscount);
+						}
+
+						if ($insertNewTransaction == true) {
+
+							$prompt_txt =
+							'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+							<strong>Success!</strong> Added SO Transaction.
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+							</div>';
+							$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+							$this->Model_Logbook->LogbookEntry('added new transaction.', 'added transaction ' . $transactionID . ' to sales order [SalesOrderNo: ' . $salesOrderNo . '].', base_url('admin/view_sales_order?orderNo='. $salesOrderNo));
+							redirect($_SERVER['HTTP_REFERER']);
+						}
+					} else {
+						$prompt_txt =
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Approval aborted, not enough stock for ' . $t['TransactionID'] . '!
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+					}
+				} else {
+					$prompt_txt =
+					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> Error uploading data. Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_removeSOTransaction()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_update')) {
+			$transactionID = $this->input->get('tid');
+
+			if ($transactionID != NULL) {
+				$transaction = $this->Model_Selects->GetTransactionsByTID($transactionID);
+				if ($transaction->num_rows() < 1) {
+					$prompt_txt =
+					'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Danger!</strong> Something went wrong.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				} else {
+					$t = $this->Model_Selects->CheckIFApproved($transactionID);
+					$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+					// if transaction approved, revert stocks
+					if ($t['Status'] == 1) {
+						$this->Model_Updates->UpdateStockReleaseRevert($t['stockID'],$t['Amount']);
+						$this->Model_Updates->UpdateProductReleaseRevert($t['Code'],$t['Amount']);
+					}
+					$this->Model_Deletes->Delete_Transaction($t['TransactionID']);
+					$this->Model_Deletes->Delete_StockHistory($t['TransactionID']);
+					$this->Model_Deletes->Delete_ReturnProductTID($t['TransactionID']);
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Removed Transaction.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+					// LOGBOOK
+					$this->Model_Logbook->LogbookEntry('deleted SO transaction.', 'deleted SO transaction ' . $transactionID . ' [SalesOrderNo: ' . $t['OrderNo'] . '].', base_url('admin/view_sales_order?orderNo=' . $t['OrderNo']));
+				}
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url());
+		}
+	}
+
+	public function FORM_deleteSalesOrder()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_delete')) {
+			if (isset($_SESSION['UserID'])) {
+				$orderNo = $this->input->post('order-no');
+				$orderDetails = $this->Model_Selects->GetSalesOrderByNo($orderNo)->row_array();
+
+				$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($orderNo)->result_array();
+				foreach ($orderTransactions as $key => $t) {
+					$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+
+					$this->Model_Deletes->Delete_Transaction($t['TransactionID']);
+					$this->Model_Deletes->Delete_StockHistory($t['TransactionID']);
+					$this->Model_Deletes->Delete_ReturnProductTID($t['TransactionID']);
+
+					$this->Model_Updates->UpdateStockReleaseRevert($t['stockID'],$t['Amount']);
+					$this->Model_Updates->UpdateProductReleaseRevert($t['Code'],$t['Amount']);
+				}
+
+				$this->Model_Deletes->Delete_InvoiceON($orderNo);
+				$this->Model_Deletes->Delete_AdtlFeesON($orderNo);
+				$this->Model_Deletes->Delete_ReplacementON($orderNo);
+				$this->Model_Deletes->Delete_ReturnON($orderNo);
+
+				$this->Model_Deletes->Delete_SalesOrderON($orderNo);
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Deleted Sales Order '. $orderNo .'.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('deleted Sales Order.', 'sales order deleted [No: ' . $orderNo . '].', base_url('admin/view_sales_order'));
+
+				redirect('admin/sales_orders');
+			}
+		}
+	}
 	public function FORM_addSalesOrder()
 	{
 		if ($this->Model_Security->CheckUserRestriction('sales_orders_add')) {

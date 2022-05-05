@@ -56,7 +56,6 @@ CF
 EXPENSES TAB
 Quickbooks
 
-
 ACCOUNTS SUMMARY, totals
 
 
@@ -68,6 +67,120 @@ ACCOUNTS SUMMARY, totals
 
 ./PO summary, amount paid
 ./SO summary, last payment date
+
+
+MAY4
+
+ngupdate rin po ako ng price  pero kapag naclick ko napo sa sales order ung old price prin po ang ngaappear
+	=confirm if price update is done on products list or restocks
+
+./important client details - name , contact # , address - important details
+	./-kung pwede po kahit ito nlng po ang required na fillupan posa pagenter ng new clients
+distri tarp and dealers tarp -add to freebies
+flyers
+	-:manual freebies
+
+./not required : tin, e mail add., country  since hindi  complete details lahat and merong walang e mail
+	./-ito po  khit hindi napo required para magproceed po sa   sales order po
+
+
+
+
+
+
+
+
+
+
+
+sana po my option sa sales order na delete po  para less hassle po sa part ntin  pareho
+
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'SDN001DFPRMORIG5KG-625D04AF6CDC8';
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'SDS002DSPRMORIG150 G-625D04AF72533';
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'SCB003DSPRMSCB150G-625D04AF72D1E';
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'MS022MERCHTSMSBRM-625D04AF73449';
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'SDN001DFPRMORIG5KG-6271EEC8E994B';
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'SDN001DFPRMORIG5KG-6271F204734A0';
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'SDN001DFPRMORIG5KG-6271F4E35DB33';
+DELETE FROM `products_transactions` WHERE `TransactionID` = 'SDN001DFPRMORIG5KG-62735EB0630CC';
+
+DELETE FROM `sales_history` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-625D04AF6CDC8';
+DELETE FROM `sales_history` WHERE `transactionid` = 'SDS002DSPRMORIG150 G-625D04AF72533';
+DELETE FROM `sales_history` WHERE `transactionid` = 'SCB003DSPRMSCB150G-625D04AF72D1E';
+DELETE FROM `sales_history` WHERE `transactionid` = 'MS022MERCHTSMSBRM-625D04AF73449';
+DELETE FROM `sales_history` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-6271EEC8E994B';
+DELETE FROM `sales_history` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-6271F204734A0';
+DELETE FROM `sales_history` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-6271F4E35DB33';
+DELETE FROM `sales_history` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-62735EB0630CC';
+
+DELETE FROM `product_returned` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-625D04AF6CDC8';
+DELETE FROM `product_returned` WHERE `transactionid` = 'SDS002DSPRMORIG150 G-625D04AF72533';
+DELETE FROM `product_returned` WHERE `transactionid` = 'SCB003DSPRMSCB150G-625D04AF72D1E';
+DELETE FROM `product_returned` WHERE `transactionid` = 'MS022MERCHTSMSBRM-625D04AF73449';
+DELETE FROM `product_returned` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-6271EEC8E994B';
+DELETE FROM `product_returned` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-6271F204734A0';
+DELETE FROM `product_returned` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-6271F4E35DB33';
+DELETE FROM `product_returned` WHERE `transactionid` = 'SDN001DFPRMORIG5KG-62735EB0630CC';
+
+UPDATE `product_stocks` SET `Current_Stocks`=(CAST((SELECT Current_Stocks FROM product_stocks WHERE ID = 8) AS int)+50),`Released_Stocks`=(CAST((SELECT Released_Stocks FROM product_stocks WHERE ID = 8) AS int)-50) WHERE `ID`=8;
+UPDATE `product_stocks` SET `Current_Stocks`=(CAST((SELECT Current_Stocks FROM product_stocks WHERE ID = 5) AS int)+60),`Released_Stocks`=(CAST((SELECT Released_Stocks FROM product_stocks WHERE ID = 5) AS int)-60) WHERE `ID`=5;
+UPDATE `product_stocks` SET `Current_Stocks`=(CAST((SELECT Current_Stocks FROM product_stocks WHERE ID = 11) AS int)+5),`Released_Stocks`=(CAST((SELECT Released_Stocks FROM product_stocks WHERE ID = 11) AS int)-5) WHERE `ID`=11;
+UPDATE `product_stocks` SET `Current_Stocks`=(CAST((SELECT Current_Stocks FROM product_stocks WHERE ID = 15) AS int)+1),`Released_Stocks`=(CAST((SELECT Released_Stocks FROM product_stocks WHERE ID = 15) AS int)-1) WHERE `ID`=15;
+
+UPDATE `products` SET `InStock`=(CAST((SELECT InStock FROM products WHERE Code = 'SDN001DFPRMORIG5KG') AS int)+50),`Released`=(CAST((SELECT Released FROM products WHERE Code = 'SDN001DFPRMORIG5KG') AS int)+50) WHERE `Code`='SDN001DFPRMORIG5KG';
+UPDATE `products` SET `InStock`=(CAST((SELECT InStock FROM products WHERE Code = 'SDS002DSPRMORIG150 G') AS int)+60),`Released`=(CAST((SELECT Released FROM products WHERE Code = 'SDS002DSPRMORIG150 G') AS int)+60) WHERE `Code`='SDS002DSPRMORIG150 G';
+UPDATE `products` SET `InStock`=(CAST((SELECT InStock FROM products WHERE Code = 'SCB003DSPRMSCB150G') AS int)+5),`Released`=(CAST((SELECT Released FROM products WHERE Code = 'SCB003DSPRMSCB150G') AS int)+5) WHERE `Code`='SCB003DSPRMSCB150G';
+UPDATE `products` SET `InStock`=(CAST((SELECT InStock FROM products WHERE Code = 'MS022MERCHTSMSBRM') AS int)+1),`Released`=(CAST((SELECT Released FROM products WHERE Code = 'MS022MERCHTSMSBRM') AS int)+1) WHERE `Code`='MS022MERCHTSMSBRM';
+
+DELETE FROM `invoices` WHERE `OrderNo` = 'SO625D04AF6B9D2';
+DELETE FROM `invoices` WHERE `OrderNo` = 'SO6271EEC8E802A';
+DELETE FROM `invoices` WHERE `OrderNo` = 'SO6271F20460081';
+DELETE FROM `invoices` WHERE `OrderNo` = 'SO6271F4E35C431';
+DELETE FROM `invoices` WHERE `OrderNo` = 'SO62735EB061FF6';
+
+DELETE FROM `adtl_fees` WHERE `OrderNo` = 'SO625D04AF6B9D2';
+DELETE FROM `adtl_fees` WHERE `OrderNo` = 'SO6271EEC8E802A';
+DELETE FROM `adtl_fees` WHERE `OrderNo` = 'SO6271F20460081';
+DELETE FROM `adtl_fees` WHERE `OrderNo` = 'SO6271F4E35C431';
+DELETE FROM `adtl_fees` WHERE `OrderNo` = 'SO62735EB061FF6';
+
+DELETE FROM `replacements` WHERE `OrderNo` = 'SO625D04AF6B9D2';
+DELETE FROM `replacements` WHERE `OrderNo` = 'SO6271EEC8E802A';
+DELETE FROM `replacements` WHERE `OrderNo` = 'SO6271F20460081';
+DELETE FROM `replacements` WHERE `OrderNo` = 'SO6271F4E35C431';
+DELETE FROM `replacements` WHERE `OrderNo` = 'SO62735EB061FF6';
+
+DELETE FROM `returns` WHERE `SalesOrderNo` = 'SO625D04AF6B9D2';
+DELETE FROM `returns` WHERE `SalesOrderNo` = 'SO6271EEC8E802A';
+DELETE FROM `returns` WHERE `SalesOrderNo` = 'SO6271F20460081';
+DELETE FROM `returns` WHERE `SalesOrderNo` = 'SO6271F4E35C431';
+DELETE FROM `returns` WHERE `SalesOrderNo` = 'SO62735EB061FF6';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

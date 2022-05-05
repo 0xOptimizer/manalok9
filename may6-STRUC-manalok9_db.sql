@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 03, 2022 at 06:14 PM
+-- Generation Time: May 05, 2022 at 06:57 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.0.17
 
@@ -658,6 +658,8 @@ CREATE TABLE `user_restrictions` (
   `sales_orders_accounting` tinyint(1) DEFAULT 0,
   `sales_orders_remarks` tinyint(1) DEFAULT 0,
   `sales_orders_adtl_fees` tinyint(1) DEFAULT 0,
+  `sales_orders_update` tinyint(1) DEFAULT 0,
+  `sales_orders_delete` tinyint(1) DEFAULT 0,
   `invoice_view` tinyint(1) DEFAULT 0,
   `invoice_add` tinyint(1) DEFAULT 0,
   `invoice_delete` tinyint(1) DEFAULT 0,

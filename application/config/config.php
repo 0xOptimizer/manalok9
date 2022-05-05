@@ -589,6 +589,8 @@ $config['user_restrictions'] = array(
 		'sales_orders_accounting',
 		'sales_orders_remarks',
 		'sales_orders_adtl_fees',
+		'sales_orders_update',
+		'sales_orders_delete',
 
 		'invoice_view',
 		'invoice_add',
