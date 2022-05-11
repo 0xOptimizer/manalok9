@@ -83,26 +83,7 @@ if ($getTransactions->num_rows() > 0) {
 			<div class="page-title mb-4">
 				<div class="row">
 					<div class="col-12">
-						<h3>Trial Balance
-						</h3>
-					</div>
-					<div class="col-sm-12 pb-2">
-						<form action="" method="GET">
-							<div class="row justify-content-left">
-								<div class="col-4 col-md-3">
-									<input class="form-control" type="date" name="dfr" value="<?=date('Y-m-d', strtotime($date_from))?>">
-								</div>
-								<div class="col-1 col-md-1 text-center">
-									TO
-								</div>
-								<div class="col-4 col-md-3">
-									<input class="form-control" type="date" name="dto" value="<?=date('Y-m-d', strtotime($date_to))?>">
-								</div>
-								<div class="col-1 col-md-3 text-center">
-									<button type="submit" class="btn btn-success"><i class="bi bi-calendar-check-fill"></i> SORT</button>
-								</div>
-							</div>
-						</form>
+						<h3>Trial Balance</h3>
 					</div>
 				</div>
 			</div>

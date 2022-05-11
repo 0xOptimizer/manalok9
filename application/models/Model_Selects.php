@@ -1507,4 +1507,35 @@ class Model_Selects extends CI_Model {
 			return NULL;
 		}
 	}
+
+	public function GetAccountsTotalRange($from,$to,$accType='')
+	{
+		$from = date('Y-m-d', strtotime($from));
+		$to = date('Y-m-d', strtotime($to)); // add 1day-1sec
+
+		if ($from == $to) {
+			$date_query = 'AND journals.Date = "' . $from . '"';
+		} else {
+			$date_query = 'AND journals.Date >= "' . $from . '" AND journals.Date <= "' . $to . '"';
+		}
+
+		$this->db->select('ID, JournalID, AccountID, SUM(Debit) AS totalDebit, SUM(Credit) AS totalCredit');
+		$this->db->where('EXISTS(
+								SELECT ID, Date FROM journals 
+								WHERE journals.ID = journal_transactions.JournalID 
+								'. $date_query .'
+							)');
+
+		if ($accType != '') {
+			$this->db->where('EXISTS(
+									SELECT ID, Type FROM accounts 
+									WHERE accounts.ID = journal_transactions.AccountID 
+									AND Type = "'. $accType .'"
+								)');
+		}
+
+		$this->db->group_by('AccountID');
+		$result = $this->db->get('journal_transactions');
+		return $result;
+	}
 }

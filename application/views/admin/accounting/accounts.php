@@ -53,9 +53,14 @@ if ($this->session->flashdata('highlight-id')) {
 							<button type="button" class="newaccount-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-list-ul"></i> NEW ACCOUNT</button>
 							|
 						<?php endif; ?>
-						<a href="<?=base_url() . 'admin/trial_balance';?>" class="btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-circle"></i> TRIAL BALANCE</a>
+						<button class="btn btn-sm-primary trialbalance-btn" style="font-size: 12px;"><i class="bi bi-circle"></i>
+							TRIAL BALANCE
+						</button>
 						<button class="btn btn-sm-primary accountingreports-btn" style="font-size: 12px;"><i class="bi bi-circle"></i>
 							REPORTS
+						</button>
+						<button class="btn btn-sm-primary accountssummary-btn" style="font-size: 12px;"><i class="bi bi-list"></i>
+							ACCOUNTS SUMMARY
 						</button>
 					</div>
 					<div class="col-sm-12 col-md-2 mr-auto pt-4 pb-2" style="margin-top: -15px;">
@@ -104,13 +109,13 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
-<div class="modal fade" id="AccountingReports" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
+<div class="modal fade" id="TrialBalance" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-md" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Accounting Reports</h4>
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Trial Balance</h4>
 			</div>
-			<form action="<?=base_url()?>admin/income_statement" method="GET">
+			<form action="<?=base_url()?>admin/trial_balance" method="GET">
 				<div class="modal-body">
 					<div class="form-row d-flex flex-wrap">
 						<h6>Accounting Period</h6>
@@ -122,6 +127,61 @@ if ($this->session->flashdata('highlight-id')) {
 						</div>
 						<div class="form-group col-6 mb-2">
 							<input class="form-control" type="date" name="dto" value="<?=date('Y-m-d', strtotime($date_to))?>">
+							<label class="input-label">TO</label>
+						</div>
+					</div>
+				</div>
+				<div class="feedback-form modal-footer">
+					<button type="submit" class="btn btn-success"><i class="bi bi-calendar-check-fill"></i> SORT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="AccountingReports" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-md" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Accounting Reports</h4>
+			</div>
+			<form action="<?=base_url()?>admin/accounting_reports" method="GET">
+				<div class="modal-body">
+					<div class="form-row d-flex flex-wrap">
+						<h6>Accounting Period</h6>
+					</div>
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="dfr" value="<?=date('Y-m-d', strtotime($date_from))?>">
+							<label class="input-label">FROM</label>
+						</div>
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="dto" value="<?=date('Y-m-d', strtotime($date_to))?>">
+							<label class="input-label">TO</label>
+						</div>
+					</div>
+				</div>
+				<div class="feedback-form modal-footer">
+					<button type="submit" class="btn btn-success"><i class="bi bi-calendar-check-fill"></i> SORT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="AccountsSummary" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-md" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Accounts Summary</h4>
+			</div>
+			<form action="<?=base_url()?>admin/accounts_summary" method="GET">
+				<div class="modal-body">
+					<div class="form-row d-flex flex-wrap justify-content-center">
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="sbdf" value="<?=date('Y-m-d', strtotime($date_from))?>">
+							<label class="input-label">FROM</label>
+						</div>
+						<div class="form-group col-6 mb-2">
+							<input class="form-control" type="date" name="sbdt" value="<?=date('Y-m-d', strtotime($date_to))?>">
 							<label class="input-label">TO</label>
 						</div>
 					</div>
@@ -164,8 +224,14 @@ $(document).ready(function() {
 		table.search($(this).val()).draw();
 	});
 
+	$('.trialbalance-btn').on('click', function() {
+		$('#TrialBalance').modal('toggle');
+	});
 	$('.accountingreports-btn').on('click', function() {
 		$('#AccountingReports').modal('toggle');
+	});
+	$('.accountssummary-btn').on('click', function() {
+		$('#AccountsSummary').modal('toggle');
 	});
 
 	$('.newaccount-btn').on('click', function() {

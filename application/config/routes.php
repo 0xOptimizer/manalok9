@@ -216,8 +216,9 @@ $route['admin/FORM_removeReplacement'] = 'SalesOrders/FORM_removeReplacement';
 
 // ACCOUNTS
 $route['admin/accounts'] = 'Accounting/accounts';
+$route['admin/accounts_summary'] = 'Accounting/accounts_summary';
 $route['admin/trial_balance'] = 'Accounting/trial_balance';
-$route['admin/income_statement'] = 'Accounting/income_statement';
+$route['admin/accounting_reports'] = 'Accounting/accounting_reports';
 $route['admin/balance_sheet'] = 'Accounting/balance_sheet';
 $route['admin/cash_flow'] = 'Accounting/cash_flow';
 

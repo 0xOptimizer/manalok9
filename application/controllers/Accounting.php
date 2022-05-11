@@ -67,45 +67,33 @@ class Accounting extends MY_Controller {
 		if ($this->Model_Security->CheckUserRestriction('accounts_view')) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
-			$header['pageTitle'] = 'trial_balance';
+			$header['pageTitle'] = 'Trial Balance';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
 			$this->load->view('admin/accounting/trial_balance', $data);
 		} else {
 			redirect(base_url());
 		}
 	}
-	public function income_statement() // PAGE DISPLAY
+	public function accounting_reports() // PAGE DISPLAY
 	{
 		if ($this->Model_Security->CheckUserRestriction('accounts_view')) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
 			$header['pageTitle'] = 'Accounting Reports';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-			$this->load->view('admin/accounting/income_statement', $data);
+			$this->load->view('admin/accounting/accounting_reports', $data);
 		} else {
 			redirect(base_url());
 		}
 	}
-	public function balance_sheet() // PAGE DISPLAY
+	public function accounts_summary() // PAGE DISPLAY
 	{
 		if ($this->Model_Security->CheckUserRestriction('accounts_view')) {
 			$data = [];
 			$data = array_merge($data, $this->globalData);
-			$header['pageTitle'] = 'balance_sheet';
+			$header['pageTitle'] = 'Accounts Summary';
 			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-			$this->load->view('admin/accounting/balance_sheet', $data);
-		} else {
-			redirect(base_url());
-		}
-	}
-	public function cash_flow() // PAGE DISPLAY
-	{
-		if ($this->Model_Security->CheckUserRestriction('accounts_view')) {
-			$data = [];
-			$data = array_merge($data, $this->globalData);
-			$header['pageTitle'] = 'cash_flow';
-			$data['globalHeader'] = $this->load->view('main/globals/header', $header);
-			$this->load->view('admin/accounting/cash_flow', $data);
+			$this->load->view('admin/accounting/accounts_summary', $data);
 		} else {
 			redirect(base_url());
 		}
