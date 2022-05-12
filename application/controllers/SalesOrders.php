@@ -381,6 +381,9 @@ class SalesOrders extends MY_Controller {
 
 						if ($insertNewTransaction == true) {
 
+							// update remaining payment
+							$this->totalRemainingSOPayment($t['OrderNo']);
+
 							$prompt_txt =
 							'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Success!</strong> Added SO Transaction.
@@ -439,6 +442,9 @@ class SalesOrders extends MY_Controller {
 					$this->Model_Deletes->Delete_StockHistory($t['TransactionID']);
 					$this->Model_Deletes->Delete_ReturnProductTID($t['TransactionID']);
 
+					// update remaining payment
+					$this->totalRemainingSOPayment($t['OrderNo']);
+
 					$prompt_txt =
 					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Success!</strong> Removed Transaction.
@@ -471,8 +477,11 @@ class SalesOrders extends MY_Controller {
 					$this->Model_Deletes->Delete_StockHistory($t['TransactionID']);
 					$this->Model_Deletes->Delete_ReturnProductTID($t['TransactionID']);
 
-					$this->Model_Updates->UpdateStockReleaseRevert($t['stockID'],$t['Amount']);
-					$this->Model_Updates->UpdateProductReleaseRevert($t['Code'],$t['Amount']);
+					// if transaction approved, revert stocks
+					if ($t['Status'] == 1) {
+						$this->Model_Updates->UpdateStockReleaseRevert($t['stockID'],$t['Amount']);
+						$this->Model_Updates->UpdateProductReleaseRevert($t['Code'],$t['Amount']);
+					}
 				}
 
 				$this->Model_Deletes->Delete_InvoiceON($orderNo);
@@ -1180,7 +1189,7 @@ class SalesOrders extends MY_Controller {
 						'total_price' => $finalPrice * $qty,
 						'userid' => $userID,
 						'date_added' => date('Y/m/d H:i:s'),
-						'status' => 'discount',
+						'status' => 'adtl_fee',
 					);
 					$Insert_StockHistory = $this->Model_Inserts->Insert_StockHistory($data);
 
@@ -2041,14 +2050,14 @@ class SalesOrders extends MY_Controller {
 				$price = $row['PriceUnit'];
 				$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
 
-				// apply discount
-				$price -= $unitDiscountPriceTotal;
 				if ($row['Freebie'] == 0) {
 					$transactionsPriceTotal += ($price * $row['Amount']);
 					$transactionsUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Amount']);
 				} else {
 					$transactionsFreebiesTotal += ($price * $row['Amount']);
 				}
+				// apply discount
+				$price -= $unitDiscountPriceTotal;
 			}
 		}
 
@@ -2057,10 +2066,10 @@ class SalesOrders extends MY_Controller {
 				$price = $row['UnitPrice'];
 				$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
 
-				// apply discount
-				$price -= $unitDiscountPriceTotal;
 				$transactionsAdtlFeesTotal += ($price * $row['Qty']);
 				$transactionsAdtlUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Qty']);
+				// apply discount
+				$price -= $unitDiscountPriceTotal;
 			}
 		}
 
