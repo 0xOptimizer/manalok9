@@ -511,7 +511,7 @@ class SalesOrders extends MY_Controller {
 			if (isset($_SESSION['UserID'])) {
 				$userID = $_SESSION['UserID'];
 
-				$orderNo = 'SO' . strtoupper(uniqid());
+				$orderNo = 'MK9-'. date('y') .'-'. str_pad($this->db->count_all('sales_orders') + 1, 7, '0', STR_PAD_LEFT);
 				$date = $this->input->post('date');
 				$time = $this->input->post('time');
 				$billToNo = $this->input->post('billToNo');

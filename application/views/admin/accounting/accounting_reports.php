@@ -77,6 +77,10 @@ $sales_returns = $this->Model_Selects->GetReturnsTotalRange($date_from, $date_to
 
 // exit();
 
+$billExpenses = $this->Model_Selects->GetBillsRange($date_from, $date_to);
+
+// print_r($billExpenses->result_array()); exit();
+
 
 
 // $getStockHistoryTotalPriceBefore = $this->Model_Selects->GetStockHistoryTotalPriceBefore($date_from);
@@ -422,6 +426,10 @@ $sales_returns = $this->Model_Selects->GetReturnsTotalRange($date_from, $date_to
 			</div>
 			<div class="modal-body">
 				<div class="row">
+				<!-- ACCOUNTS LIST -->
+					<div class="col-sm-12 col-md-6 pt-4 pb-2">
+						<h4>ACCOUNTS</h4>
+					</div>
 					<div class="col-sm-12 col-md-6 pt-4 pb-2" style="margin-top: -15px;">
 						<div class="input-group">
 							<div class="input-group-prepend">
@@ -450,6 +458,57 @@ $sales_returns = $this->Model_Selects->GetReturnsTotalRange($date_from, $date_to
 											</td>
 											<td class="text-center">
 												<?=$accountTypes[$row['Type']]?>
+											</td>
+										</tr>
+								<?php endforeach;
+								endif; ?>
+							</tbody>
+						</table>
+					</div>
+				<!-- BILL EXPENSES LIST -->
+					<div class="col-sm-12 col-md-6 pt-4 pb-2">
+						<h4>BILL EXPENSES</h4>
+					</div>
+					<div class="col-sm-12 col-md-6 pt-4 pb-2" style="margin-top: -15px;">
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+							</div>
+							<input type="text" id="tableBillExpensesSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+						</div>
+					</div>
+					<div class="col-sm-12 table-responsive">
+						<table id="billExpensesTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">DATE</th>
+								<th class="text-center">DESCRIPTION</th>
+								<th class="text-center">TYPE</th>
+								<th class="text-center">PAYEE</th>
+								<th class="text-center">CATEGORY</th>
+								<th class="text-center">AMOUNT</th>
+							</thead>
+							<tbody>
+								<?php
+								if ($billExpenses->num_rows() > 0):
+									foreach ($billExpenses->result_array() as $row): ?>
+										<tr>
+											<td class="text-center">
+												<?=$row['Date']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Description']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Type']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Payee']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Category']?>
+											</td>
+											<td class="text-center">
+												<?=number_format($row['Amount'], 2)?>
 											</td>
 										</tr>
 								<?php endforeach;
@@ -846,6 +905,14 @@ $(document).ready(function() {
     });
 	$('#tableAccountsSearch').on('keyup change', function(){
 		table.search($(this).val()).draw();
+	});
+	var tableBillExpenses = $('#billExpensesTable').DataTable({
+		sDom: 'lrtip',
+		'bLengthChange': false,
+		'order': [[ 0, 'desc' ]]
+    });
+	$('#tableBillExpensesSearch').on('keyup change', function(){
+		tableBillExpenses.search($(this).val()).draw();
 	});
 
 	$('.toggle_report_section').on('click', function() {

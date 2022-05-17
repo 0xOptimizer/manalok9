@@ -619,7 +619,10 @@ class PurchaseOrders extends MY_Controller {
 		if ($this->Model_Security->CheckUserRestriction('bills_add')) {
 			$description = $this->input->post('description');
 			$amount = $this->input->post('amount');
-			$modeOfPayment = $this->input->post('mode-payment');
+			// $modeOfPayment = $this->input->post('mode-payment');
+			$type = $this->input->post('type');
+			$payee = $this->input->post('payee');
+			$category = $this->input->post('category');
 			$date = $this->input->post('date');
 			$time = $this->input->post('time');
 
@@ -628,7 +631,10 @@ class PurchaseOrders extends MY_Controller {
 				'BillNo' => 'B' . strtoupper(uniqid()),
 				'Description' => $description,
 				'Amount' => $amount,
-				'ModeOfPayment' => $modeOfPayment,
+				// 'ModeOfPayment' => $modeOfPayment,
+				'Type' => $type,
+				'Payee' => $payee,
+				'Category' => $category,
 				'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
 			);
 			$insertBill = $this->Model_Inserts->InsertBill($data);

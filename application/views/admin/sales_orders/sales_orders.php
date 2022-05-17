@@ -106,7 +106,6 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="table-responsive">
 					<table id="salesTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th class="text-center">ID</th>
 							<th class="text-center">SO #</th>
 							<th class="text-center">DATE</th>
 							<th class="text-center">ITEMS</th>
@@ -118,9 +117,6 @@ if ($this->session->flashdata('highlight-id')) {
 							if ($getAllSalesOrders->num_rows() > 0):
 								foreach ($getAllSalesOrders->result_array() as $row): ?>
 									<tr data-urlredirect="<?=base_url() . 'admin/view_sales_order?orderNo=' . $row['OrderNo'];?>">
-										<td class="text-center">
-											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
-										</td>
 										<td class="text-center">
 											<?=$row['OrderNo']?>
 										</td>

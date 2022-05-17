@@ -109,7 +109,7 @@ if ($this->session->flashdata('highlight-id')) {
 							<th class="text-center">SO #</th>
 							<th class="text-center">DATE</th>
 							<th class="text-center">ITEMS</th>
-							<th class="text-center">REMAINING PAYMENT</th>
+							<th class="text-center">TOTAL</th>
 							<th class="text-center">STATUS</th>
 						</thead>
 						<tbody>

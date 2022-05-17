@@ -11,6 +11,13 @@ $highlightID = 'N/A';
 if ($this->session->flashdata('highlight-id')) {
 	$highlightID = $this->session->flashdata('highlight-id');
 }
+
+
+$getAllBillType = $this->Model_Selects->GetAllBillType();
+$getAllBillPayee = $this->Model_Selects->GetAllBillPayee();
+$getAllBillCategory = $this->Model_Selects->GetAllBillCategory();
+
+
 ?>
 
 </head>
@@ -28,7 +35,7 @@ if ($this->session->flashdata('highlight-id')) {
 			<div class="page-title">
 				<div class="row">
 					<div class="col-12 col-md-8">
-						<h3><i class="bi bi-cash"></i> Bills
+						<h3><i class="bi bi-cash"></i> Bill Expenses
 							<span class="text-center success-banner-sm">
 								<i class="bi bi-cash"></i> <?=$getBills->num_rows();?> TOTAL
 							</span>
@@ -58,13 +65,15 @@ if ($this->session->flashdata('highlight-id')) {
 				<div class="table-responsive">
 					<table id="billsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th class="text-center">ID</th>
-							<th class="text-center">BILL NO</th>
-							<th class="text-center">DESCRIPTION</th>
 							<th class="text-center">DATE</th>
+							<!-- <th class="text-center">BILL NO</th> -->
+							<th class="text-center">DESCRIPTION</th>
+							<th class="text-center">TYPE</th>
+							<th class="text-center">PAYEE</th>
+							<th class="text-center">CATEGORY</th>
 							<th class="text-center">AMOUNT</th>
-							<th class="text-center">MODE OF PAYMENT</th>
-							<th class="text-center">ORDER NO</th>
+							<!-- <th class="text-center">MODE OF PAYMENT</th> -->
+							<!-- <th class="text-center">ORDER NO</th> -->
 							<th class="text-center"></th>
 						</thead>
 						<tbody>
@@ -72,11 +81,11 @@ if ($this->session->flashdata('highlight-id')) {
 								foreach ($getBills->result_array() as $row): ?>
 									<tr>
 										<td class="text-center">
-											<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['ID']?></span>
+											<?=$row['Date']?>
 										</td>
-										<td class="text-center">
+										<!-- <td class="text-center">
 											<?=$row['BillNo']?>
-										</td>
+										</td> -->
 										<td class="text-center">
 											<?php if ($row['Description'] != NULL): ?>
 												<?=$row['Description']?>
@@ -85,15 +94,33 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php endif; ?>
 										</td>
 										<td class="text-center">
-											<?=$row['Date']?>
+											<?php if ($row['Type'] != NULL): ?>
+												<?=$row['Type']?>
+											<?php else: ?>
+												---
+											<?php endif; ?>
+										</td>
+										<td class="text-center">
+											<?php if ($row['Payee'] != NULL): ?>
+												<?=$row['Payee']?>
+											<?php else: ?>
+												---
+											<?php endif; ?>
+										</td>
+										<td class="text-center">
+											<?php if ($row['Category'] != NULL): ?>
+												<?=$row['Category']?>
+											<?php else: ?>
+												---
+											<?php endif; ?>
 										</td>
 										<td class="text-center">
 											<?=number_format($row['Amount'], 2)?>
 										</td>
-										<td class="text-center">
+										<!-- <td class="text-center">
 											<?=$row['ModeOfPayment']?>
-										</td>
-										<td class="text-center">
+										</td> -->
+										<!-- <td class="text-center">
 											<?php if ($row['OrderNo'] != NULL): ?>
 												<a href="<?=base_url() . 'admin/view_purchase_order?orderNo='. $row["OrderNo"]?>">
 													<i class="bi bi-eye"></i> <?=$row['OrderNo']?>
@@ -101,7 +128,7 @@ if ($this->session->flashdata('highlight-id')) {
 											<?php else: ?>
 												N/A
 											<?php endif; ?>
-										</td>
+										</td> -->
 										<td>
 											<?php if ($this->session->userdata('UserRestrictions')['bills_delete']): ?>
 												<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
@@ -119,6 +146,30 @@ if ($this->session->flashdata('highlight-id')) {
 		</div>
 	</div>
 </div>
+<datalist id="types">
+	<?php if ($getAllBillType->num_rows() > 0): ?>
+		<?php foreach ($getAllBillType->result_array() as $row): ?>
+			<option value="<?=$row['Type']?>">
+		<?php endforeach; ?>
+	<?php endif; ?>
+</datalist>
+<datalist id="payees">
+	<?php if ($getAllBillPayee->num_rows() > 0): ?>
+		<?php foreach ($getAllBillPayee->result_array() as $row): ?>
+			<option value="<?=$row['Payee']?>">
+		<?php endforeach; ?>
+	<?php endif; ?>
+</datalist>
+<datalist id="categories">
+	<?php if ($getAllBillCategory->num_rows() > 0): ?>
+		<?php foreach ($getAllBillCategory->result_array() as $row): ?>
+			<option value="<?=$row['Category']?>">
+		<?php endforeach; ?>
+	<?php endif; ?>
+</datalist>
+
+
+
 <?php $this->load->view('admin/_modals/bills/add_bill'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>

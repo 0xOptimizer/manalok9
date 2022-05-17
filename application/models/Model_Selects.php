@@ -1538,4 +1538,51 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('journal_transactions');
 		return $result;
 	}
+
+
+
+	public function GetBillsRange($from,$to)
+	{
+		$from = date('Y-m-d H:i:s', strtotime($from));
+		$to = date('Y-m-d H:i:s', strtotime($to) + 86399); // add 1day-1sec
+
+		if ($from == $to) {
+			$date_query = 'Date = "' . $from . '"';
+		} else {
+			$date_query = 'Date >= "' . $from . '" AND Date <= "' . $to . '"';
+		}
+
+		$this->db->select('*');
+		$this->db->where($date_query);
+		$this->db->where('Status', '1');
+
+		$result = $this->db->get('bills');
+		return $result;
+	}
+
+
+	public function GetAllBillType()
+	{
+		$this->db->distinct();
+		$this->db->select('Type');
+		$this->db->order_by('Type', 'desc');
+		$result = $this->db->get('bills'); 
+		return $result;
+	}
+	public function GetAllBillPayee()
+	{
+		$this->db->distinct();
+		$this->db->select('Payee');
+		$this->db->order_by('Payee', 'desc');
+		$result = $this->db->get('bills'); 
+		return $result;
+	}
+	public function GetAllBillCategory()
+	{
+		$this->db->distinct();
+		$this->db->select('Category');
+		$this->db->order_by('Category', 'desc');
+		$result = $this->db->get('bills'); 
+		return $result;
+	}
 }

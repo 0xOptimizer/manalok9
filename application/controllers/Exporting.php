@@ -116,7 +116,7 @@ class Exporting extends MY_Controller {
 					$product = $this->Model_Selects->GetProductByCode($t['Code']);
 					$pDescription = '';
 					if ($product->num_rows() > 0) {
-						$pDescription = $product->row_array()['Description'];
+						$pDescription = $product->row_array()['Product_Name'];
 					}
 
 					if ($t['Freebie'] == 1) {
@@ -396,7 +396,7 @@ class Exporting extends MY_Controller {
 					$product = $this->Model_Selects->GetProductByCode($t['Code']);
 					$pDescription = '';
 					if ($product->num_rows() > 0) {
-						$pDescription = $product->row_array()['Description'];
+						$pDescription = $product->row_array()['Product_Name'];
 					}
 
 					$row = array(

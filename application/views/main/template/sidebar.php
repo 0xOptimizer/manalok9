@@ -83,14 +83,6 @@
 					</li>
 				<?php endif; ?>
 				
-				<?php if ($this->session->userdata('UserRestrictions')['bills_view']): ?>
-					<li class="sidebar-item sidebar-admin-bills">
-						<a href="<?=base_url().'admin/bills'?>" class='sidebar-link'>
-							<i class="bi bi-cash"></i>
-							<span>Bills</span>
-						</a>
-					</li>
-				<?php endif; ?>
 				<?php if ($this->session->userdata('UserRestrictions')['manual_purchases_view']): ?>
 					<li class="sidebar-item sidebar-admin-manual-purchases">
 						<a href="<?=base_url().'admin/manual_purchases'?>" class='sidebar-link'>
@@ -162,6 +154,15 @@
 						<a href="<?=base_url().'admin/journals'?>" class='sidebar-link'>
 							<i class="bi bi-pen"></i>
 							<span>Journal Transactions</span>
+						</a>
+					</li>
+				<?php endif; ?>
+				
+				<?php if ($this->session->userdata('UserRestrictions')['bills_view']): ?>
+					<li class="sidebar-item sidebar-admin-bills">
+						<a href="<?=base_url().'admin/bills'?>" class='sidebar-link'>
+							<i class="bi bi-cash"></i>
+							<span>Bill Expenses</span>
 						</a>
 					</li>
 				<?php endif; ?>

@@ -16,15 +16,27 @@
 							<label class="input-label">AMOUNT</label>
 							<input type="number" class="form-control" name="amount" placeholder="0.00" step="0.000001" required>
 						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
+						<!-- <div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label" name="mode-payment">MODE OF PAYMENT</label>
 							<input type="text" class="form-control" name="mode-payment" placeholder="Cash" required>
+						</div> -->
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
+							<label class="input-label" name="type">TYPE</label>
+							<input type="text" class="form-control" name="type" placeholder="Type" list="types" required>
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
+							<label class="input-label" name="payee">PAYEE</label>
+							<input type="text" class="form-control" name="payee" placeholder="Payee" list="payees" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
+							<label class="input-label" name="category">CATEGORY</label>
+							<input type="text" class="form-control" name="category" placeholder="Category" list="categories" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-4 ms-auto">
 							<label class="input-label">DATE</label>
 							<input type="date" class="form-control" name="date" value="<?=date("Y-m-d");?>" required>
 						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
+						<div class="form-group col-sm-12 col-md-4 me-auto">
 							<label class="input-label">TIME</label>
 							<input type="time" class="form-control" name="time" value="<?=date("H:i");?>" required>
 						</div>

@@ -332,7 +332,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 			</section>
 		</div>
 
-		<hr style="height: 4px;">
+		<!-- <hr style="height: 4px;">
 
 		<div class="page-heading">
 			<div class="page-title">
@@ -415,7 +415,7 @@ $getManualTransactionsByPONo = $this->Model_Selects->GetManualTransactionsByPONo
 					</div>
 				</div>
 			</section>
-		</div>
+		</div> -->
 	</div>
 </div>
 <div class="prompts">

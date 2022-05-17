@@ -24,7 +24,7 @@
 									$pDescription = '';
 									if ($product->num_rows() > 0) {
 										$pDetails = $product->row_array();
-										$pDescription = $pDetails['Description'];
+										$pDescription = $pDetails['Product_Name'];
 									}
 
 									if ($row['Freebie'] != '1') {
