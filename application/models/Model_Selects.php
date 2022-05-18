@@ -1585,4 +1585,14 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('bills'); 
 		return $result;
 	}
+
+
+
+
+	public function GetLatestSalesOrderNo()
+	{
+		$this->db->select_max('OrderNo');
+		$result = $this->db->get('sales_orders');  
+		return $result->row_array()['OrderNo'];
+	}
 }
