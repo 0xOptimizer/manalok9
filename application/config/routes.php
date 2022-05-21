@@ -154,6 +154,7 @@ $route['admin/bills'] = 'PurchaseOrders/bills';
 $route['FORM_addPOBill'] = 'PurchaseOrders/FORM_addPOBill';
 $route['FORM_addBill'] = 'PurchaseOrders/FORM_addBill';
 $route['admin/FORM_removeBill'] = 'PurchaseOrders/FORM_removeBill';
+$route['FORM_updateBill'] = 'PurchaseOrders/FORM_updateBill';
 
 // MANUAL TRANSACTION
 $route['admin/manual_purchases'] = 'PurchaseOrders/manual_purchases';

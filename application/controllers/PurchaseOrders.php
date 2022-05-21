@@ -617,25 +617,39 @@ class PurchaseOrders extends MY_Controller {
 	public function FORM_addBill()
 	{
 		if ($this->Model_Security->CheckUserRestriction('bills_add')) {
-			$description = $this->input->post('description');
-			$amount = $this->input->post('amount');
+			// $description = $this->input->post('description');
 			// $modeOfPayment = $this->input->post('mode-payment');
-			$type = $this->input->post('type');
-			$payee = $this->input->post('payee');
-			$category = $this->input->post('category');
+			// $type = $this->input->post('type');
+			// $payee = $this->input->post('payee');
+			// $category = $this->input->post('category');
+			// $time = $this->input->post('time');
 			$date = $this->input->post('date');
-			$time = $this->input->post('time');
+			$name = $this->input->post('name');
+			$tinvat = $this->input->post('tinvat');
+			$tinnon = $this->input->post('tinnon');
+			$address = $this->input->post('address');
+			$particulars = $this->input->post('particulars');
+			$amount = $this->input->post('amount');
+			$sinorn = $this->input->post('sinorn');
+			$remarks = $this->input->post('remarks');
 
 			// Insert
 			$data = array(
 				'BillNo' => 'B' . strtoupper(uniqid()),
-				'Description' => $description,
-				'Amount' => $amount,
+				// 'Description' => $description,
 				// 'ModeOfPayment' => $modeOfPayment,
-				'Type' => $type,
-				'Payee' => $payee,
-				'Category' => $category,
-				'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+				// 'Type' => $type,
+				// 'Payee' => $payee,
+				// 'Category' => $category,
+				'Date' => date('Y-m-d', strtotime($date)),
+				'Name' => $name,
+				'TINVAT' => $tinvat,
+				'TINNON' => $tinnon,
+				'Address' => $address,
+				'Particulars' => $particulars,
+				'Amount' => $amount,
+				'SINORN' => $sinorn,
+				'Remarks' => $remarks,
 			);
 			$insertBill = $this->Model_Inserts->InsertBill($data);
 			if ($insertBill == TRUE) {
@@ -701,6 +715,98 @@ class PurchaseOrders extends MY_Controller {
 				$this->Model_Logbook->LogbookEntry('deleted bill.', 'deleted bill [No: ' . $billNo . '].', base_url('admin/bills'));
 			}
 			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_updateBill()
+	{
+		if ($this->Model_Security->CheckUserRestriction('bills_add')) {
+			// $description = $this->input->post('description');
+			// $modeOfPayment = $this->input->post('mode-payment');
+			// $type = $this->input->post('type');
+			// $payee = $this->input->post('payee');
+			// $category = $this->input->post('category');
+			// $time = $this->input->post('time');
+
+			$billID = $this->input->post('bill_id');
+
+			$date = $this->input->post('date');
+			$name = $this->input->post('name');
+			$tinvat = $this->input->post('tinvat');
+			$tinnon = $this->input->post('tinnon');
+			$address = $this->input->post('address');
+			$particulars = $this->input->post('particulars');
+			$amount = $this->input->post('amount');
+			$sinorn = $this->input->post('sinorn');
+			$remarks = $this->input->post('remarks');
+
+
+			if ($billID != NULL) {
+				$bill = $this->Model_Selects->GetBillByID($billID);
+
+				if ($bill->num_rows() > 0) {
+					// UPDATE
+					$data = array(
+						// 'BillNo' => 'B' . strtoupper(uniqid()),
+						// 'Description' => $description,
+						// 'ModeOfPayment' => $modeOfPayment,
+						// 'Type' => $type,
+						// 'Payee' => $payee,
+						// 'Category' => $category,
+						'Date' => date('Y-m-d', strtotime($date)),
+						'Name' => $name,
+						'TINVAT' => $tinvat,
+						'TINNON' => $tinnon,
+						'Address' => $address,
+						'Particulars' => $particulars,
+						'Amount' => $amount,
+						'SINORN' => $sinorn,
+						'Remarks' => $remarks,
+					);
+
+					$updateBill = $this->Model_Updates->UpdateBill($billID, $data);
+					if ($updateBill == TRUE) {
+
+						$prompt_txt =
+						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Success!</strong> Updated Bill.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+						// LOGBOOK
+						$this->Model_Logbook->LogbookEntry('updated bill.', 'updated bill [ID: ' . $billID . '].', base_url('admin/bills'));
+						redirect('admin/bills');
+					}
+					else
+					{
+						$prompt_txt =
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Error uploading data. Please try again.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+						redirect('admin/bills');
+					}
+				} else {
+					$prompt_txt =
+					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> Error uploading data. Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+					redirect('admin/bills');
+				}
+			} else {
+				$prompt_txt =
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/bills');
+			}
 		} else {
 			redirect(base_url());
 		}

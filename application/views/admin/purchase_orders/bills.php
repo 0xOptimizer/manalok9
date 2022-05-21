@@ -65,51 +65,63 @@ $getAllBillCategory = $this->Model_Selects->GetAllBillCategory();
 				<div class="table-responsive">
 					<table id="billsTable" class="standard-table table">
 						<thead style="font-size: 12px;">
-							<th class="text-center">DATE</th>
 							<!-- <th class="text-center">BILL NO</th> -->
-							<th class="text-center">DESCRIPTION</th>
+							<!-- <th class="text-center">DESCRIPTION</th>
 							<th class="text-center">TYPE</th>
 							<th class="text-center">PAYEE</th>
 							<th class="text-center">CATEGORY</th>
-							<th class="text-center">AMOUNT</th>
+							<th class="text-center">AMOUNT</th> -->
 							<!-- <th class="text-center">MODE OF PAYMENT</th> -->
 							<!-- <th class="text-center">ORDER NO</th> -->
+							<th class="text-center">DATE</th>
+							<th class="text-center">NAME</th>
+							<th class="text-center">TIN # VAT</th>
+							<th class="text-center">TIN # NON</th>
+							<th class="text-center">ADDRESS</th>
+							<th class="text-center">PARTICULARS</th>
+							<th class="text-center">AMOUNT</th>
+							<th class="text-center">SI# OR#</th>
+							<th class="text-center">REMARKS</th>
 							<th class="text-center"></th>
 						</thead>
 						<tbody>
 							<?php if ($getBills->num_rows() > 0):
 								foreach ($getBills->result_array() as $row): ?>
-									<tr>
+									<tr data-bill_id="<?=$row['ID']?>" data-bill_date="<?=$row['Date']?>" data-bill_name="<?=$row['Name']?>" data-bill_tinvat="<?=$row['TINVAT']?>" data-bill_tinnon="<?=$row['TINNON']?>" data-bill_address="<?=$row['Address']?>" data-bill_particulars="<?=$row['Particulars']?>" data-bill_amount="<?=$row['Amount']?>" data-bill_sinorn="<?=$row['SINORN']?>" data-bill_remarks="<?=$row['Remarks']?>">
 										<td class="text-center">
 											<?=$row['Date']?>
 										</td>
-										<!-- <td class="text-center">
-											<?=$row['BillNo']?>
-										</td> -->
 										<td class="text-center">
-											<?php if ($row['Description'] != NULL): ?>
-												<?=$row['Description']?>
+											<?php if ($row['Name'] != NULL): ?>
+												<?=$row['Name']?>
 											<?php else: ?>
 												---
 											<?php endif; ?>
 										</td>
 										<td class="text-center">
-											<?php if ($row['Type'] != NULL): ?>
-												<?=$row['Type']?>
+											<?php if ($row['TINVAT'] != NULL): ?>
+												<?=$row['TINVAT']?>
 											<?php else: ?>
 												---
 											<?php endif; ?>
 										</td>
 										<td class="text-center">
-											<?php if ($row['Payee'] != NULL): ?>
-												<?=$row['Payee']?>
+											<?php if ($row['TINNON'] != NULL): ?>
+												<?=$row['TINNON']?>
 											<?php else: ?>
 												---
 											<?php endif; ?>
 										</td>
 										<td class="text-center">
-											<?php if ($row['Category'] != NULL): ?>
-												<?=$row['Category']?>
+											<?php if ($row['Address'] != NULL): ?>
+												<?=$row['Address']?>
+											<?php else: ?>
+												---
+											<?php endif; ?>
+										</td>
+										<td class="text-center">
+											<?php if ($row['Particulars'] != NULL): ?>
+												<?=$row['Particulars']?>
 											<?php else: ?>
 												---
 											<?php endif; ?>
@@ -117,19 +129,24 @@ $getAllBillCategory = $this->Model_Selects->GetAllBillCategory();
 										<td class="text-center">
 											<?=number_format($row['Amount'], 2)?>
 										</td>
-										<!-- <td class="text-center">
-											<?=$row['ModeOfPayment']?>
-										</td> -->
-										<!-- <td class="text-center">
-											<?php if ($row['OrderNo'] != NULL): ?>
-												<a href="<?=base_url() . 'admin/view_purchase_order?orderNo='. $row["OrderNo"]?>">
-													<i class="bi bi-eye"></i> <?=$row['OrderNo']?>
-												</a>
+										<td class="text-center">
+											<?php if ($row['SINORN'] != NULL): ?>
+												<?=$row['SINORN']?>
 											<?php else: ?>
-												N/A
+												---
 											<?php endif; ?>
-										</td> -->
+										</td>
+										<td class="text-center">
+											<?php if ($row['Remarks'] != NULL): ?>
+												<?=$row['Remarks']?>
+											<?php else: ?>
+												---
+											<?php endif; ?>
+										</td>
 										<td>
+											<?php if ($this->session->userdata('UserRestrictions')['bills_delete']): ?>
+												<button type="button" class="btn updbill-btn"><i class="bi bi-pencil text-warning"></i></button>
+											<?php endif; ?>
 											<?php if ($this->session->userdata('UserRestrictions')['bills_delete']): ?>
 												<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
 													<button type="button" class="btn removeBill"><i class="bi bi-trash text-danger"></i></button>
@@ -171,6 +188,7 @@ $getAllBillCategory = $this->Model_Selects->GetAllBillCategory();
 
 
 <?php $this->load->view('admin/_modals/bills/add_bill'); ?>
+<?php $this->load->view('admin/_modals/bills/update_bill'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
@@ -206,6 +224,23 @@ $(document).ready(function() {
 		if (!confirm('Remove Bill?')) {
 			event.preventDefault();
 		}
+	});
+
+	$('.updbill-btn').on('click', function() {
+		$('#updBillModal').modal('toggle');
+		let tr = $(this).parents('tr');
+
+		$('#bill_id').val(tr.attr('data-bill_id'));
+
+		$('#bill_date').val(tr.attr('data-bill_date'));
+		$('#bill_name').val(tr.attr('data-bill_name'));
+		$('#bill_tinvat').val(tr.attr('data-bill_tinvat'));
+		$('#bill_tinnon').val(tr.attr('data-bill_tinnon'));
+		$('#bill_address').val(tr.attr('data-bill_address'));
+		$('#bill_particulars').val(tr.attr('data-bill_particulars'));
+		$('#bill_amount').val(tr.attr('data-bill_amount'));
+		$('#bill_sinorn').val(tr.attr('data-bill_sinorn'));
+		$('#bill_remarks').val(tr.attr('data-bill_remarks'));
 	});
 });
 </script>

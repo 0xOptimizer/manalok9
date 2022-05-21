@@ -419,7 +419,7 @@ $billExpenses = $this->Model_Selects->GetBillsRange($date_from, $date_to);
 	</div>
 </div>
 <div class="modal fade" id="AddAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
-	<div class="modal-dialog modal-lg" role="document">
+	<div class="modal-dialog modal-xl" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Add/Remove Accounts</h4>
@@ -481,31 +481,55 @@ $billExpenses = $this->Model_Selects->GetBillsRange($date_from, $date_to);
 						<table id="billExpensesTable" class="standard-table table">
 							<thead style="font-size: 12px;">
 								<th class="text-center">DATE</th>
-								<th class="text-center">DESCRIPTION</th>
-								<th class="text-center">TYPE</th>
-								<th class="text-center">PAYEE</th>
-								<th class="text-center">CATEGORY</th>
+								<th class="text-center">NAME</th>
+								<th class="text-center">TIN # VAT</th>
+								<th class="text-center">TIN # NON</th>
+								<th class="text-center">ADDRESS</th>
+								<th class="text-center">PARTICULARS</th>
 								<th class="text-center">AMOUNT</th>
 							</thead>
 							<tbody>
 								<?php
 								if ($billExpenses->num_rows() > 0):
 									foreach ($billExpenses->result_array() as $row): ?>
-										<tr>
+										<tr class="add-billexpenses-row" data-id="<?=$row['ID']?>" data-amount="<?=$row['Amount']?>">
 											<td class="text-center">
 												<?=$row['Date']?>
 											</td>
-											<td class="text-center">
-												<?=$row['Description']?>
+											<td class="text-center name" data-val="<?=$row['Name']?>">
+												<?php if ($row['Name'] != NULL): ?>
+													<?=$row['Name']?>
+												<?php else: ?>
+													---
+												<?php endif; ?>
 											</td>
 											<td class="text-center">
-												<?=$row['Type']?>
+												<?php if ($row['TINVAT'] != NULL): ?>
+													<?=$row['TINVAT']?>
+												<?php else: ?>
+													---
+												<?php endif; ?>
 											</td>
 											<td class="text-center">
-												<?=$row['Payee']?>
+												<?php if ($row['TINNON'] != NULL): ?>
+													<?=$row['TINNON']?>
+												<?php else: ?>
+													---
+												<?php endif; ?>
 											</td>
 											<td class="text-center">
-												<?=$row['Category']?>
+												<?php if ($row['Address'] != NULL): ?>
+													<?=$row['Address']?>
+												<?php else: ?>
+													---
+												<?php endif; ?>
+											</td>
+											<td class="text-center">
+												<?php if ($row['Particulars'] != NULL): ?>
+													<?=$row['Particulars']?>
+												<?php else: ?>
+													---
+												<?php endif; ?>
 											</td>
 											<td class="text-center">
 												<?=number_format($row['Amount'], 2)?>
@@ -948,7 +972,7 @@ $(document).ready(function() {
 		$('#tableAccountsSearch').val('EXPENSES');
 		table.search('EXPENSES').draw();
 		$('#container_operating_expenses').show();
-		$('#accountsTable').data('account_add', 'operating_expense');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'operating_expense');
 	});
 
 // BALANCE SHEET
@@ -956,31 +980,31 @@ $(document).ready(function() {
 		$('#tableAccountsSearch').val('ASSETS');
 		table.search('ASSETS').draw();
 		$('#container_current_assets').show();
-		$('#accountsTable').data('account_add', 'current_assets');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'current_assets');
 	});
 	$('.add-noncurrent_assets-row').on('click', function() {
 		$('#tableAccountsSearch').val('ASSETS');
 		table.search('ASSETS').draw();
 		$('#container_noncurrent_assets').show();
-		$('#accountsTable').data('account_add', 'noncurrent_assets');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'noncurrent_assets');
 	});
 	$('.add-current_liabilities-row').on('click', function() {
 		$('#tableAccountsSearch').val('LIABILITIES');
 		table.search('LIABILITIES').draw();
 		$('#container_current_liabilities').show();
-		$('#accountsTable').data('account_add', 'current_liabilities');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'current_liabilities');
 	});
 	$('.add-noncurrent_liabilities-row').on('click', function() {
 		$('#tableAccountsSearch').val('LIABILITIES');
 		table.search('LIABILITIES').draw();
 		$('#container_noncurrent_liabilities').show();
-		$('#accountsTable').data('account_add', 'noncurrent_liabilities');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'noncurrent_liabilities');
 	});
 	$('.add-equities-row').on('click', function() {
 		$('#tableAccountsSearch').val('EQUITIES');
 		table.search('EQUITIES').draw();
 		$('#container_equities').show();
-		$('#accountsTable').data('account_add', 'equities');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'equities');
 	});
 
 // COST OF SALES
@@ -992,7 +1016,7 @@ $(document).ready(function() {
 		table.search('EXPENSES').draw();
 
 		$('#container_cos_expenses').show();
-		$('#accountsTable').data('account_add', 'cos_expenses');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'cos_expenses');
 	});
 	$(document).on('hidden.bs.modal', '#CostOfSalesModal', function (event) {
 		if ($('#accountsTable').data('account_add') == 'cos_expenses') {
@@ -1007,37 +1031,37 @@ $(document).ready(function() {
 		$('#tableAccountsSearch').val('ASSETS');
 		table.search('ASSETS').draw();
 		$('#container_cashinflowoperating').show();
-		$('#accountsTable').data('account_add', 'cashinflowoperating');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'cashinflowoperating');
 	});
 	$('.add-cashoutflowoperating-row').on('click', function() {
 		$('#tableAccountsSearch').val('EXPENSES');
 		table.search('EXPENSES').draw();
 		$('#container_cashoutflowoperating').show();
-		$('#accountsTable').data('account_add', 'cashoutflowoperating');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'cashoutflowoperating');
 	});
 	$('.add-cashinflowinvesting-row').on('click', function() {
 		$('#tableAccountsSearch').val('ASSETS');
 		table.search('ASSETS').draw();
 		$('#container_cashinflowinvesting').show();
-		$('#accountsTable').data('account_add', 'cashinflowinvesting');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'cashinflowinvesting');
 	});
 	$('.add-cashoutflowinvesting-row').on('click', function() {
 		$('#tableAccountsSearch').val('EXPENSES');
 		table.search('EXPENSES').draw();
 		$('#container_cashoutflowinvesting').show();
-		$('#accountsTable').data('account_add', 'cashoutflowinvesting');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'cashoutflowinvesting');
 	});
 	$('.add-cashinflowfinancing-row').on('click', function() {
 		$('#tableAccountsSearch').val('ASSETS');
 		table.search('ASSETS').draw();
 		$('#container_cashinflowfinancing').show();
-		$('#accountsTable').data('account_add', 'cashinflowfinancing');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'cashinflowfinancing');
 	});
 	$('.add-cashoutflowfinancing-row').on('click', function() {
 		$('#tableAccountsSearch').val('EXPENSES');
 		table.search('EXPENSES').draw();
 		$('#container_cashoutflowfinancing').show();
-		$('#accountsTable').data('account_add', 'cashoutflowfinancing');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'cashoutflowfinancing');
 	});
 
 // SALES
@@ -1049,7 +1073,7 @@ $(document).ready(function() {
 		table.search('REVENUES').draw();
 
 		$('#container_sls_sales').show();
-		$('#accountsTable').data('account_add', 'sls_sales');
+		$('#accountsTable, #billExpensesTable').data('account_add', 'sls_sales');
 	});
 	$(document).on('hidden.bs.modal', '#SalesModal', function (event) {
 		if ($('#accountsTable').data('account_add') == 'sls_sales') {
@@ -1061,11 +1085,11 @@ $(document).ready(function() {
 	$(document).on('hidden.bs.modal', '#AddAccountModal', function (event) {
 		if ($('#accountsTable').data('account_add') == 'sls_sales') {
 			$('#SalesModal').modal('toggle');
-			$('#accountsTable').data('account_add', '');
+			$('#accountsTable, #billExpensesTable').data('account_add', '');
 		}
 		if ($('#accountsTable').data('account_add') == 'cos_expenses') {
 			$('#CostOfSalesModal').modal('toggle');
-			$('#accountsTable').data('account_add', '');
+			$('#accountsTable, #billExpensesTable').data('account_add', '');
 		}
 	});
 
@@ -1276,6 +1300,9 @@ $(document).ready(function() {
 		$.each($('.sls_sales_accounts_row'), function(i, val) {
 			totSLSS += parseFloat($(this).data('total'));
 		});
+		$.each($('.sls_sales_billexpenses_row'), function(i, val) {
+			totSLSS += parseFloat($(this).data('total'));
+		});
 		$('.slsSales').text(moneyFormat(totSLSS)).data('slssales', totSLSS);
 		let totSales = totSLSS
 						- (parseFloat($('.slsDiscounts').data('slsdiscounts')) + parseFloat($('.slsReturns').data('slsreturns')));
@@ -1285,6 +1312,9 @@ $(document).ready(function() {
 	function totalCOSE() {
 		let totCOSE = 0;
 		$.each($('.cos_expenses_accounts_row'), function(i, val) {
+			totCOSE += parseFloat($(this).data('total'));
+		});
+		$.each($('.cos_expenses_billexpenses_row'), function(i, val) {
 			totCOSE += parseFloat($(this).data('total'));
 		});
 		$('.cosAdtlCosts').text(moneyFormat(totCOSE)).data('cosadtlcosts', totCOSE);
@@ -1307,6 +1337,9 @@ $(document).ready(function() {
 	function totalOE() { // OPERATING EXPENSES
 		let totOE = 0;
 		$.each($('.operating_expense_accounts_row'), function(i, val) {
+			totOE += parseFloat($(this).data('total'));
+		});
+		$.each($('.operating_expense_billexpenses_row'), function(i, val) {
 			totOE += parseFloat($(this).data('total'));
 		});
 		$('#totalOperatingExpenses').text(moneyFormat(totOE)).data('totaloperatingexpenses', totOE);
@@ -1345,11 +1378,17 @@ $(document).ready(function() {
 		$.each($('.current_assets_accounts_row'), function(i, val) {
 			totCA += parseFloat($(this).data('total'));
 		});
+		$.each($('.current_assets_billexpenses_row'), function(i, val) {
+			totCA += parseFloat($(this).data('total'));
+		});
 		$('#totalCurrentAssets').text(moneyFormat(totCA)).data('totalcurrentassets', totCA);
 	}
 	function totalNCA() { // NONCURRENT ASSETS
 		let totNCA = 0;
 		$.each($('.noncurrent_assets_accounts_row'), function(i, val) {
+			totNCA += parseFloat($(this).data('total'));
+		});
+		$.each($('.noncurrent_assets_billexpenses_row'), function(i, val) {
 			totNCA += parseFloat($(this).data('total'));
 		});
 		$('#totalNoncurrentAssets').text(moneyFormat(totNCA)).data('totalnoncurrentassets', totNCA);
@@ -1359,11 +1398,17 @@ $(document).ready(function() {
 		$.each($('.current_liabilities_accounts_row'), function(i, val) {
 			totCL += parseFloat($(this).data('total'));
 		});
+		$.each($('.current_liabilities_billexpenses_row'), function(i, val) {
+			totCL += parseFloat($(this).data('total'));
+		});
 		$('#totalCurrentLiabilities').text(moneyFormat(totCL)).data('totalcurrentliabilities', totCL);
 	}
 	function totalNCL() { // NONCURRENT LIABILITIES
 		let totNCL = 0;
 		$.each($('.noncurrent_liabilities_accounts_row'), function(i, val) {
+			totNCL += parseFloat($(this).data('total'));
+		});
+		$.each($('.noncurrent_liabilities_billexpenses_row'), function(i, val) {
 			totNCL += parseFloat($(this).data('total'));
 		});
 		$('#totalNoncurrentLiabilities').text(moneyFormat(totNCL)).data('totalnoncurrentliabilities', totNCL);
@@ -1384,6 +1429,9 @@ $(document).ready(function() {
 		let totEQ = 0;
 		totEQ += parseFloat($('.netIncome').data('netincome'));
 		$.each($('.equities_accounts_row'), function(i, val) {
+			totEQ += parseFloat($(this).data('total'));
+		});
+		$.each($('.equities_billexpenses_row'), function(i, val) {
 			totEQ += parseFloat($(this).data('total'));
 		});
 
@@ -1412,11 +1460,17 @@ $(document).ready(function() {
 		$.each($('.cashinflowoperating_accounts_row'), function(i, val) {
 			totCIFO += parseFloat($(this).data('total'));
 		});
+		$.each($('.cashinflowoperating_billexpenses_row'), function(i, val) {
+			totCIFO += parseFloat($(this).data('total'));
+		});
 		$('#totalCashInflowOperating').text(moneyFormat(totCIFO)).data('totalcashinflowoperating', totCIFO);
 	}
 	function totalCOFO() { // cashoutflowoperating
 		let totCOFO = 0;
 		$.each($('.cashoutflowoperating_accounts_row'), function(i, val) {
+			totCOFO += parseFloat($(this).data('total'));
+		});
+		$.each($('.cashoutflowoperating_billexpenses_row'), function(i, val) {
 			totCOFO += parseFloat($(this).data('total'));
 		});
 		$('#totalCashOutflowOperating').text(moneyFormat(totCOFO)).data('totalcashoutflowoperating', totCOFO);
@@ -1426,11 +1480,17 @@ $(document).ready(function() {
 		$.each($('.cashinflowinvesting_accounts_row'), function(i, val) {
 			totCIFI += parseFloat($(this).data('total'));
 		});
+		$.each($('.cashinflowinvesting_billexpenses_row'), function(i, val) {
+			totCIFI += parseFloat($(this).data('total'));
+		});
 		$('#totalCashInflowInvesting').text(moneyFormat(totCIFI)).data('totalcashinflowinvesting', totCIFI);
 	}
 	function totalCOFI() { // cashoutflowinvesting
 		let totCOFI = 0;
 		$.each($('.cashoutflowinvesting_accounts_row'), function(i, val) {
+			totCOFI += parseFloat($(this).data('total'));
+		});
+		$.each($('.cashoutflowinvesting_billexpenses_row'), function(i, val) {
 			totCOFI += parseFloat($(this).data('total'));
 		});
 		$('#totalCashOutflowInvesting').text(moneyFormat(totCOFI)).data('totalcashoutflowinvesting', totCOFI);
@@ -1440,6 +1500,9 @@ $(document).ready(function() {
 		$.each($('.cashinflowfinancing_accounts_row'), function(i, val) {
 			totCIFF += parseFloat($(this).data('total'));
 		});
+		$.each($('.cashinflowfinancing_billexpenses_row'), function(i, val) {
+			totCIFF += parseFloat($(this).data('total'));
+		});
 		$('#totalCashInflowFinancing').text(moneyFormat(totCIFF)).data('totalcashinflowfinancing', totCIFF);
 	}
 	function totalCOFF() { // cashoutflowfinancing
@@ -1447,6 +1510,9 @@ $(document).ready(function() {
 		$.each($('.cashoutflowfinancing_accounts_row'), function(i, val) {
 			totCOFF += parseFloat($(this).data('total'));
 		});
+		$.each($('.cashoutflowfinancing_billexpenses_row'), function(i, val) {
+		totCOFF += parseFloat($(this).data('total'));
+	});
 		$('#totalCashOutflowFinancing').text(moneyFormat(totCOFF)).data('totalcashoutflowfinancing', totCOFF);
 	}
 
@@ -1524,6 +1590,144 @@ $(document).ready(function() {
 				});
 			});
 		});
+	});
+
+
+
+
+
+
+
+	$(document).on('click', '.add-billexpenses-row', function() {
+
+		let beID = $(this).data('id');
+		let beName = $(this).find('.name').data('val');
+		let beAmount = $(this).data('amount');
+
+
+		let tableID = 'be_';
+		let rowClass = 'be_';
+		let rowCode = 'be_';
+
+		switch ($('#billExpensesTable').data('account_add')) {
+		// INCOME STATEMENT
+			case 'operating_expense':
+				tableID = 'operatingExpensesTable';
+				rowClass = 'operating_expense';
+				rowCode = 'oe';
+				break;
+			case 'sls_sales':
+				tableID = 'slsSalesTable';
+				rowClass = 'sls_sales';
+				rowCode = 'sls';
+				break;
+			case 'cos_expenses':
+				tableID = 'cosAdtlCostsTable';
+				rowClass = 'cos_expenses';
+				rowCode = 'cose';
+				break;
+
+		// BALANCE SHEET
+			case 'current_assets':
+				tableID = 'currentAssetsTable';
+				rowClass = 'current_assets';
+				rowCode = 'ca';
+				break;
+			case 'noncurrent_assets':
+				tableID = 'noncurrentAssetsTable';
+				rowClass = 'noncurrent_assets';
+				rowCode = 'nca';
+				break;
+			case 'current_liabilities':
+				tableID = 'currentLiabilitiesTable';
+				rowClass = 'current_liabilities';
+				rowCode = 'cl';
+				break;
+			case 'noncurrent_liabilities':
+				tableID = 'noncurrentLiabilitiesTable';
+				rowClass = 'noncurrent_liabilities';
+				rowCode = 'ncl';
+				break;
+			case 'equities':
+				tableID = 'equitiesTable';
+				rowClass = 'equities';
+				rowCode = 'eq';
+				break;
+
+		// BALANCE SHEET
+			case 'cashinflowoperating':
+				tableID = 'cashinflowoperatingTable';
+				rowClass = 'cashinflowoperating';
+				rowCode = 'cifo';
+				break;
+			case 'cashoutflowoperating':
+				tableID = 'cashoutflowoperatingTable';
+				rowClass = 'cashoutflowoperating';
+				rowCode = 'cofo';
+				break;
+
+			case 'cashinflowinvesting':
+				tableID = 'cashinflowinvestingTable';
+				rowClass = 'cashinflowinvesting';
+				rowCode = 'cifi';
+				break;
+			case 'cashoutflowinvesting':
+				tableID = 'cashoutflowinvestingTable';
+				rowClass = 'cashoutflowinvesting';
+				rowCode = 'cofi';
+				break;
+
+			case 'cashinflowfinancing':
+				tableID = 'cashinflowfinancingTable';
+				rowClass = 'cashinflowfinancing';
+				rowCode = 'ciff';
+				break;
+			case 'cashoutflowfinancing':
+				tableID = 'cashoutflowfinancingTable';
+				rowClass = 'cashoutflowfinancing';
+				rowCode = 'coff';
+				break;
+		}
+
+
+		if ($('.' + rowCode + '_billexpenses_row_' + $(this).data('id')).length < 1) {
+			$('#' + tableID).append($('<tr>').data('total', beAmount)
+				.attr({ class: rowClass + '_billexpenses_row ' + rowCode + '_billexpenses_row_' + beID })
+				.append($('<td>').attr({ class: 'text-center' })
+					.append($('<i>').attr({ class: 'text-center' })
+						.text('BILL EXPENSES')))
+				.append($('<td>').attr({ class: 'text-center' })
+					.text(beName))
+				.append($('<td>').attr({ class: 'text-center' })
+					.text(moneyFormat(beAmount)))
+				.append($('<td>').attr({ class: 'text-center' })
+					.append($('<button>').attr({
+						type: 'button',
+						class: 'btn remove-billexpenses-row'
+					}).data('id', beID).data('row_code', rowCode)
+						.append($('<i>').attr({ class: 'bi bi-x-square' }).css('color', '#a7852d'))))
+			);
+
+			if ($('.add-' + rowClass + '-row').length > 0) {
+				$('.add-' + rowClass + '-row').before($('<tr>').attr({ class: rowClass + '_row ' + rowCode + '_row_' + beID })
+					.append($('<td>').text(beName))
+					.append($('<td>').attr({ class: 'total' }) 
+						.text(beAmount.toFixed(2)))
+				);
+			}
+			totalIncomeStatement();
+			totalBalanceSheet();
+			totalCashFlow();
+		}
+
+	});
+
+	$(document).on('click', '.remove-billexpenses-row', function() {
+		$('.' + $(this).data('row_code') + '_row_' + $(this).data('id')).remove();
+		$('.' + $(this).data('row_code') + '_billexpenses_row_' + $(this).data('id')).remove();
+		totalIncomeStatement();
+		totalBalanceSheet();
+		totalCashFlow();
 	});
 });
 </script>

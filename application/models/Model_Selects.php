@@ -539,6 +539,14 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('bills');
 		return $result;
 	}
+	public function GetBillByID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$this->db->where('Status', '1');
+		$result = $this->db->get('bills');
+		return $result;
+	}
 
 	// MANUAL TRANSACTIONS
 	public function GetManualTransactions()

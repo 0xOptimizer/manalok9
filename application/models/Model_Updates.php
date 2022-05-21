@@ -196,6 +196,12 @@ class Model_Updates extends CI_Model {
 		return $result;
 	}
 
+	public function UpdateBill($id,$data)
+	{
+		$this->db->where('ID', $id);
+		$result = $this->db->update('bills', $data);
+		return $result;
+	}
 	public function remove_bill($billNo)
 	{
 		$this->db->where('BillNo', $billNo);
