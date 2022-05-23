@@ -23,6 +23,12 @@
 
           </div>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <input id="inp_released_to" class="form-control standard-input-pad" type="text" name="released_to">
+            <label>Released To</label>
+          </div>
+        </div>
 
       </div>
       <div class="modal-footer">

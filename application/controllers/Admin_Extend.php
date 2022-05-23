@@ -697,6 +697,8 @@ class Admin_Extend extends CI_Controller {
 			$Product_SKU = $this->input->post('sku');
 			$Quantity = $this->input->post('quantity');
 
+			$released_to = $this->input->post('released_to');
+
 			if (empty($stockid) || empty($UID) || empty($Product_SKU) || empty($Quantity)) {
 
 				/* EMPTY DATA POST */
@@ -812,6 +814,18 @@ class Admin_Extend extends CI_Controller {
 									);
 									$insertNewTransaction = $this->Model_Inserts->InsertNewTransaction($data);
 									if ($insertNewTransaction == TRUE) {
+
+										// RELEASES TABLE
+										$data = array(
+											'TransactionID' => $transactionID,
+											'StockID' => $stockid,
+											'Code' => $code,
+											'Qty' => $Quantity,
+											'ReleasedTo' => $released_to,
+											'Date' => date('Y/m/d H:i:s'),
+											'UserID' => $_SESSION['UserID'],
+										);
+										$Insert_Release = $this->Model_Inserts->Insert_Release($data);
 
 										/* LOG TRANSACTIONS */
 										$this->Model_Logbook->LogbookEntry('added new transaction.', ($type == '0' ? 'restocked ' : 'released ') . $Quantity . ' for ' . ($code ? ' ' . $code : '') . ' [TransactionID: ' . $transactionID . '].', base_url('admin/viewproduct?code=' . $code));
@@ -1169,6 +1183,105 @@ class Admin_Extend extends CI_Controller {
 					echo json_encode($data);
 					exit();
 				}
+			}
+		} else {
+			redirect(base_url());
+		}
+	}
+
+	// RELEASES TABLE
+	public function Delete_release() /* WIP */
+	{
+		if ($this->Model_Security->CheckUserRestriction('releasing_delete')) {
+			/* VARIABLES */
+			$id = $this->input->get('id');
+			if (!empty($id)) {
+
+				/* CHECK ID IF EXIST */
+				$GetReleaseID = $this->Model_Selects->GetReleaseID($id);
+				if ($GetReleaseID->num_rows() > 0) {
+					$transactionID = $GetReleaseID->row_array()['TransactionID'];
+					/* DELETE RELEASE ITEM BY ID */
+					$Delete_ReleaseID = $this->Model_Deletes->Delete_ReleaseID($id);
+					if ($Delete_ReleaseID == true) {
+						$this->Model_Deletes->Delete_StockHistory($transactionID);
+						$this->Model_Deletes->Delete_Transaction($transactionID);
+
+						/**** ADD UPDATE STOCKS AND PRODUCT ****/
+
+						$prompt_txt =
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+					}
+					else
+					{
+						$prompt_txt =
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+					}
+				}
+				else
+				{
+					$prompt_txt =
+					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				}
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+			}
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_updateRelease()
+	{
+		if ($this->Model_Security->CheckUserRestriction('releasing_edit')) {
+			$release_id = $this->input->post('release_id');
+			$release_to = $this->input->post('release_to');
+
+			// Update
+			$data = array(
+				'ReleasedTo' => $release_to,
+			);
+			$UpdateReleaseDetails = $this->Model_Updates->Update_Release_Details($release_id,$data);
+			if ($UpdateReleaseDetails == TRUE) {
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Updated release.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('updated release.', 'updated release [ID: ' . $release_id . '].', base_url('admin/product_releasingv2'));
+				redirect('admin/product_releasingv2');
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/product_releasingv2');
 			}
 		} else {
 			redirect(base_url());

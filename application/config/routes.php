@@ -117,6 +117,9 @@ $route['admin/Get_Stock_UsingID'] = 'Admin_Extend/Get_Stock_UsingID';
 $route['admin/Delete_Stock_row'] = 'Admin_Extend/Delete_Stock_row';
 $route['admin/Update_stockdetails'] = 'Admin_Extend/Update_stockdetails';
 
+$route['admin/Delete_release'] = 'Admin_Extend/Delete_release';
+$route['admin/FORM_updateRelease'] = 'Admin_Extend/FORM_updateRelease';
+
 // INVENTORY
 $route['admin/inventory'] = 'Admin/inventory';
 

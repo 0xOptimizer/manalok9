@@ -3,6 +3,10 @@ $globalHeader;
 
 date_default_timezone_set('Asia/Manila');
 
+
+// Fetch products
+$getAllReleases = $this->Model_Selects->GetAllReleases();
+
 ?>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css"/>
 
@@ -151,6 +155,78 @@ date_default_timezone_set('Asia/Manila');
 							</dl>
 						</div>
 					</div>
+
+					<hr class="my-5">
+
+					<div class="row">
+						<div class="col-12 col-md-12">
+							<h3>
+								<i class="bi bi-card-checklist"></i> Releases
+							</h3>
+						</div>
+						<div class="col-sm-12 col-md-4 ms-auto pt-4 pb-2" style="margin-top: -15px;">
+							<div class="input-group">
+								<div class="input-group-prepend">
+									<span class="input-group-text" style="font-size: 14px;"><i class="bi bi-search h-100 w-100" style="margin-top: 5px;"></i></span>
+								</div>
+								<input type="text" id="tableReleasesSearch" class="form-control" placeholder="Search" style="font-size: 14px;">
+							</div>
+						</div>
+					</div>
+					<div class="table-responsive">
+						<table id="releasesTable" class="standard-table table">
+							<thead style="font-size: 12px;">
+								<th class="text-center">DATE</th>
+								<th class="text-center">CODE</th>
+								<th class="text-center">QTY</th>
+								<th class="text-center">RELEASED TO</th>
+								<th class="text-center">STOCK ID</th>
+								<th class="text-center">RELEASED BY</th>
+								<th class="text-center"></th>
+							</thead>
+							<tbody>
+								<?php
+								if ($getAllReleases->num_rows() > 0):
+									foreach ($getAllReleases->result_array() as $row): 
+										$user = $this->Model_Selects->GetUserDetails($userID)->row_array();
+										?>
+										<tr>
+											<td class="text-center">
+												<?=$row['Date']?>
+											</td>
+											<td class="text-center">
+												<?=$row['TransactionID']?>
+											</td>
+											<td class="text-center">
+												<?=$row['Qty']?>
+											</td>
+											<td class="text-center">
+												<?=(strlen($row['ReleasedTo']) > 0 ? $row['ReleasedTo'] : '---')?>
+											</td>
+											<td class="text-center">
+												<span class="db-identifier" style="font-style: italic; font-size: 12px;"><?=$row['StockID']?></span>
+											</td>
+											<td class="text-center">
+												<?=$user['LastName'] .', '. $user['FirstName']?>
+											</td>
+											<td class="text-center">
+												<?php if (0): ?>
+													<a class="text-danger" href="admin/Delete_release?id=<?=$row['ID']?>">
+														<i class="bi bi-trash"></i>
+													</a>
+												<?php endif; ?>
+												<?php if ($this->session->userdata('UserRestrictions')['releasing_edit']): ?>
+													<a class="update-product-btn text-warning" href="#" data-id="<?=$row['ID']?>" data-releasedto="<?=$row['ReleasedTo']?>">
+														<i class="bi bi-pencil"></i>
+													</a>
+												<?php endif; ?>
+											</td>
+										</tr>
+									<?php endforeach;
+								endif; ?>
+							</tbody>
+						</table>
+					</div>
 				</section>
 
 			</div>
@@ -164,6 +240,7 @@ date_default_timezone_set('Asia/Manila');
 	<?php $this->load->view('admin/_modals/releasing/modal_manual_releasing.php'); ?>
 	<?php $this->load->view('admin/_modals/releasing/modal_release_quantity.php'); ?>
 	<?php $this->load->view('admin/_modals/releasing/modal_stock_selection.php'); ?>
+	<?php $this->load->view('admin/_modals/releasing/modal_release_update.php'); ?>
 
 	<?php $this->load->view('admin/_modals/releasing/modal_manual_release_product_selection.php'); ?>
 
@@ -253,6 +330,24 @@ date_default_timezone_set('Asia/Manila');
 			$('#inp_sku').change();
 
 			$('#SelectProductSKUModal').modal('toggle');
+		});
+
+
+		// RELEASES TABLE
+		var tableReleases = $('#releasesTable').DataTable( {
+			sDom: 'lrtip',
+			'bLengthChange': false,
+			'order': [[ 0, 'desc' ]],
+		});
+		$('#tableReleasesSearch').on('keyup change', function(){
+			tableReleases.search($(this).val()).draw();
+		});
+
+		$(document).on('click', '.update-product-btn', function() {
+			$('#releaseID').val($(this).data('id'));
+			$('#released_to').val($(this).data('releasedto'));
+
+			$('#UpdateReleaseModal').modal('toggle');
 		});
 	</script>
 	<script type="text/javascript" src="<?=base_url()?>assets/js/releasing.js"></script>

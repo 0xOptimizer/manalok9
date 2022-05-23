@@ -444,4 +444,18 @@ class Model_Updates extends CI_Model {
 				WHERE `Code`='$code';";
 		$this->db->query($sql);
 	}
+
+	// RELEASES TABLES
+	public function Update_Release_Details($id,$data)
+	{
+		$this->db->where('ID', $id);
+	   $this->db->update('releases',$data);
+	   if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

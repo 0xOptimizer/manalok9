@@ -230,4 +230,16 @@ class Model_Inserts extends CI_Model {
 			return false;
 		}
 	}
+	// RELEASES TABLE
+	public function Insert_Release($data)
+	{
+		$this->db->insert('releases', $data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }

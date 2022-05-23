@@ -404,14 +404,6 @@ class Model_Selects extends CI_Model {
 		return $result;
 	}
 
-	public function GetAllReleases()
-	{
-		$this->db->select('*');
-		$this->db->where('Type', '1');
-		$this->db->order_by('DateAdded', 'desc');
-		$result = $this->db->get('products_transactions');  
-		return $result;
-	}
 	public function GetTransactionsByTID($id)
 	{
 		$this->db->select('*');
@@ -1602,5 +1594,23 @@ class Model_Selects extends CI_Model {
 		$this->db->select_max('OrderNo');
 		$result = $this->db->get('sales_orders');  
 		return $result->row_array()['OrderNo'];
+	}
+
+
+
+	// RELEASES TABLE
+	public function GetAllReleases()
+	{
+		$this->db->select('*');
+		$this->db->order_by('Date', 'desc');
+		$result = $this->db->get('releases');  
+		return $result;
+	}
+	public function GetReleaseID($id)
+	{
+		$this->db->select('*');
+		$this->db->where('ID', $id);
+		$result = $this->db->get('releases');  
+		return $result;
 	}
 }

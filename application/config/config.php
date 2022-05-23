@@ -538,6 +538,8 @@ $config['user_restrictions'] = array(
 		'releasing_view',
 		'releasing_scan_add_stock',
 		'releasing_manual_add_stock',
+		// 'releasing_delete',
+		'releasing_edit',
 
 		'restocking_view',
 		'restocking_scan_add_stock',

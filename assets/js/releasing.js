@@ -337,11 +337,12 @@ $(document).ready(function () {
 		var uid = $(this).data('uid');
 		var sku = $(this).data('sku');
 		var quantity = $('#inp_quantity').val();
+		var released_to = $('#inp_released_to').val();
 
 		$.ajax({
 			url: "submit_releasestockss",
 			type: "POST",
-			data: { id : id , uid : uid , sku : sku , quantity : quantity , },
+			data: { id : id , uid : uid , sku : sku , quantity : quantity , released_to : released_to , },
 			success : function (response) {
 				window.location = 'product_releasingv2';
 			}

@@ -286,4 +286,17 @@ class Model_Deletes extends CI_Model {
 			return false;
 		}
 	}
+	// RELEASES TABLE
+	public function Delete_ReleaseID($id)
+	{
+		$this->db->where('ID', $id);
+		$this->db->delete('releases');
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
