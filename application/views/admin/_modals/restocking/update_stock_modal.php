@@ -56,7 +56,7 @@
             </div>
             <br>
             <div class="form-group col-12 col-sm-12 col-md-12 px-3 py-1 mx-auto">
-              <input id="up_quantity" class="form-control standard-input-pad text-center" type="number" name="">
+              <input id="up_quantity" class="form-control standard-input-pad text-center" type="number" name="" value="0">
               <label class="input-label">
                 QUANTITY
               </label>

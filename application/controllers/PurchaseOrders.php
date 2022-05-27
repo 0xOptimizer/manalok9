@@ -632,6 +632,7 @@ class PurchaseOrders extends MY_Controller {
 			$amount = $this->input->post('amount');
 			$sinorn = $this->input->post('sinorn');
 			$remarks = $this->input->post('remarks');
+			$department = $this->input->post('department');
 
 			// Insert
 			$data = array(
@@ -650,6 +651,7 @@ class PurchaseOrders extends MY_Controller {
 				'Amount' => $amount,
 				'SINORN' => $sinorn,
 				'Remarks' => $remarks,
+				'Department' => $department,
 			);
 			$insertBill = $this->Model_Inserts->InsertBill($data);
 			if ($insertBill == TRUE) {
@@ -740,6 +742,7 @@ class PurchaseOrders extends MY_Controller {
 			$amount = $this->input->post('amount');
 			$sinorn = $this->input->post('sinorn');
 			$remarks = $this->input->post('remarks');
+			$department = $this->input->post('department');
 
 
 			if ($billID != NULL) {
@@ -763,6 +766,7 @@ class PurchaseOrders extends MY_Controller {
 						'Amount' => $amount,
 						'SINORN' => $sinorn,
 						'Remarks' => $remarks,
+						'Department' => $department,
 					);
 
 					$updateBill = $this->Model_Updates->UpdateBill($billID, $data);

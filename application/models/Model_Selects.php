@@ -1541,19 +1541,20 @@ class Model_Selects extends CI_Model {
 
 
 
-	public function GetBillsRange($from,$to)
+	public function GetBillsRange($from=NULL,$to=NULL)
 	{
-		$from = date('Y-m-d H:i:s', strtotime($from));
-		$to = date('Y-m-d H:i:s', strtotime($to) + 86399); // add 1day-1sec
-
-		if ($from == $to) {
-			$date_query = 'Date = "' . $from . '"';
-		} else {
-			$date_query = 'Date >= "' . $from . '" AND Date <= "' . $to . '"';
-		}
-
 		$this->db->select('*');
-		$this->db->where($date_query);
+		if ($from != NULL && $to != NULL) {
+			$from = date('Y-m-d', strtotime($from));
+			$to = date('Y-m-d', strtotime($to));
+
+			if ($from == $to) {
+				$date_query = 'Date = "' . $from . '"';
+			} else {
+				$date_query = 'Date >= "' . $from . '" AND Date <= "' . $to . '"';
+			}
+			$this->db->where($date_query);
+		}
 		$this->db->where('Status', '1');
 
 		$result = $this->db->get('bills');
@@ -1582,6 +1583,14 @@ class Model_Selects extends CI_Model {
 		$this->db->distinct();
 		$this->db->select('Category');
 		$this->db->order_by('Category', 'desc');
+		$result = $this->db->get('bills'); 
+		return $result;
+	}
+	public function GetAllBillDepartment()
+	{
+		$this->db->distinct();
+		$this->db->select('Department');
+		$this->db->order_by('Department', 'desc');
 		$result = $this->db->get('bills'); 
 		return $result;
 	}

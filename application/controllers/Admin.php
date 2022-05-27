@@ -1958,7 +1958,7 @@ class Admin extends MY_Controller {
 				// NULL VALUE
 				$prompt_txt =
 				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Empty value detected. Please try again.
+				<strong>Warning!</strong> Empty value detected. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
@@ -1992,7 +1992,7 @@ class Admin extends MY_Controller {
 					{
 						$prompt_txt =
 						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-						<strong>Success!</strong> Something\'s wrong while updating.
+						<strong>Warning!</strong> Something\'s wrong while updating.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
 						$this->session->set_flashdata('prompt_status',$prompt_txt);
@@ -2005,7 +2005,7 @@ class Admin extends MY_Controller {
 					// ID DOESNT EXIST
 					$prompt_txt =
 					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Success!</strong> This product doesn\'t exist.
+					<strong>Warning!</strong> This product doesn\'t exist.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
 					$this->session->set_flashdata('prompt_status',$prompt_txt);

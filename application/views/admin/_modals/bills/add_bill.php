@@ -38,11 +38,11 @@
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">TIN # VAT</label>
-							<input type="text" class="form-control" name="tinvat" placeholder="TIN # VAT" required>
+							<input type="text" class="form-control" name="tinvat" placeholder="TIN # VAT">
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">TIN # NON</label>
-							<input type="text" class="form-control" name="tinnon" placeholder="TIN # NON" required>
+							<input type="text" class="form-control" name="tinnon" placeholder="TIN # NON">
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">ADDRESS</label>
@@ -63,6 +63,10 @@
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">REMARKS</label>
 							<input type="text" class="form-control" name="remarks" placeholder="Remarks" required>
+						</div>
+						<div class="form-group col-sm-12 col-md-9 mx-auto">
+							<label class="input-label">DEPARTMENT</label>
+							<input type="text" class="form-control" name="department" placeholder="Department" list="departments" required>
 						</div>
 					</div>
 				</div>
