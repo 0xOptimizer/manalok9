@@ -292,6 +292,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 													</td>
 													<td class="text-center">
 														<?php if ($this->session->userdata('UserRestrictions')['sales_orders_update']): ?>
+															<i class="bi bi-pencil text-success updateSOTransaction" data-tid="<?=$row['TransactionID']?>" data-qty="<?=$row['Amount']?>"></i>
 															<a href="<?=base_url()?>FORM_removeSOTransaction?tid=<?=$row['TransactionID']?>">
 																<button type="button" class="btn removeTransaction"><i class="bi bi-trash text-danger"></i></button>
 															</a>
@@ -1146,6 +1147,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 <?php $this->load->view('admin/_modals/sales_orders/add_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/sales_orders/approve_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_transaction_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
+<?php $this->load->view('admin/_modals/sales_orders/update_transaction_so'); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -1453,6 +1455,14 @@ $(document).ready(function() {
 	});
 	$(document).on('hidden.bs.modal', '#AddJournalTransactionModal', function (event) {
 		$('#AccountingModal').modal('toggle');
+	});
+
+
+	$('.updateSOTransaction').on('click', function() {
+		$('#sales_order_transaction_id').val($(this).data('tid'));
+		$('#sales_order_transaction_label').html($(this).data('tid'));
+		$('#sales_order_transaction_qty').val($(this).data('qty'));
+		$('#UpdateTransactionModal').modal('toggle');
 	});
 
 

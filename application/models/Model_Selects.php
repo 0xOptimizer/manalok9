@@ -1622,4 +1622,24 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('releases');  
 		return $result;
 	}
+
+
+
+	// GET SALES HISTORY
+	public function GetStockHistoryReleasedTransactionID($tid)
+	{
+		$this->db->select('*');
+		$this->db->where('transactionid', $tid);
+		$this->db->where('status', 'released');
+		$result = $this->db->get('sales_history');
+		return $result;
+	}
+	public function GetStockHistoryDiscountTransactionID($tid)
+	{
+		$this->db->select('*');
+		$this->db->where('transactionid', $tid);
+		$this->db->where('status', 'discount');
+		$result = $this->db->get('sales_history');
+		return $result;
+	}
 }

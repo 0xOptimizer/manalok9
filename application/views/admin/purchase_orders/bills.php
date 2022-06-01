@@ -345,7 +345,7 @@ $(document).ready(function() {
 		{
 			extend: 'print',
 			exportOptions: {
-				columns: [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+				columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
 			},
 			customize: function ( doc ) {
 				$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
@@ -356,25 +356,25 @@ $(document).ready(function() {
 		{
 			extend: 'copyHtml5',
 			exportOptions: {
-				columns: [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+				columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
 			}
 		},
 		{
 			extend: 'excelHtml5',
 			exportOptions: {
-				columns: [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+				columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
 			}
 		},
 		{
 			extend: 'csvHtml5',
 			exportOptions: {
-				columns: [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+				columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
 			}
 		},
 		{
 			extend: 'pdfHtml5',
 			exportOptions: {
-				columns: [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+				columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
 			}
 		}
 		]});

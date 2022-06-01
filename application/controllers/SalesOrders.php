@@ -344,7 +344,7 @@ class SalesOrders extends MY_Controller {
 							/* INSERT DATA TO STOCK HISTORY */
 							$dataStockHistory = array(
 								'stockid' => $t['stockID'],
-								'transactionid' => $replacementDetails['TransactionID'],
+								'transactionid' => $t['TransactionID'],
 								'uid' => $p['U_ID'],
 								'prd_sku' => $p['Code'],
 								'quantity' => $t['Amount'],
@@ -359,7 +359,7 @@ class SalesOrders extends MY_Controller {
 							/* INSERT DISCOUNT DATA TO STOCK HISTORY */
 							$dataStockHistoryDiscount = array(
 								'stockid' => $t['stockID'],
-								'transactionid' => $replacementDetails['TransactionID'],
+								'transactionid' => $t['TransactionID'],
 								'uid' => $p['U_ID'],
 								'prd_sku' => $p['Code'],
 								'quantity' => $t['Amount'],
@@ -455,6 +455,115 @@ class SalesOrders extends MY_Controller {
 					// LOGBOOK
 					$this->Model_Logbook->LogbookEntry('deleted SO transaction.', 'deleted SO transaction ' . $transactionID . ' [SalesOrderNo: ' . $t['OrderNo'] . '].', base_url('admin/view_sales_order?orderNo=' . $t['OrderNo']));
 				}
+			}
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_updateSOTransaction()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_update')) {
+			$transactionID = $this->input->post('tid');
+			$qty = $this->input->post('qty');
+
+			if ($transactionID != NULL && $qty != NULL && $qty > 0) {
+				$transaction = $this->Model_Selects->GetTransactionsByTID($transactionID);
+				if ($transaction->num_rows() < 1) {
+					$prompt_txt =
+					'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Danger!</strong> Something went wrong.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+				} else {
+					$t = $this->Model_Selects->CheckIFApproved($transactionID);
+					$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+
+					if (($qty - $t['Amount']) <= $p['InStock']) {
+						// UPDATE MULTIPLE DETAILS
+						// TRANSACTION
+						$dataTransaction = array(
+							'Amount' => $qty,
+							'PriceTotal' => $t['PriceUnit'] * $qty,
+						);
+						$this->Model_Updates->UpdateProductTransaction($t['ID'], $dataTransaction);
+
+						if ($t['Status'] == 1) {
+							// PRODUCT
+							$NewStock = $p['InStock'] - ($qty - $t['Amount']);
+							$NewRelease = $p['Released'] + ($qty - $t['Amount']);
+							$dataProduct = array(
+								'Code' => $t['Code'],
+								'InStock' => $NewStock,
+								'Released' => $NewRelease,
+							);
+							// STOCKS
+							$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+							$n_cstocks = $s['Current_Stocks'] - ($qty - $t['Amount']);
+							$n_rstocks = $s['Released_Stocks'] + ($qty - $t['Amount']);
+							$dataStocks = array(
+								'Current_Stocks' => $n_cstocks,
+								'Released_Stocks' => $n_rstocks,
+							);
+							/* UPDATE DATA TO STOCK HISTORY */
+							$shr = $this->Model_Selects->GetStockHistoryReleasedTransactionID($t['TransactionID']);
+							if ($shr->num_rows() > 0) {
+								$shr = $shr->row_array();
+								$dataStockHistoryReleased = array(
+									'quantity' => $qty,
+									'total_cost' => $shr['cost'] * $qty,
+									'total_price' => $shr['price'] * $qty,
+								);
+								$this->Model_Updates->UpdateStockHistoryReleasedTransactionID($t['TransactionID'], $dataStockHistoryReleased);
+							}
+							/* UPDATE DISCOUNT DATA TO STOCK HISTORY */
+							$shd = $this->Model_Selects->GetStockHistoryDiscountTransactionID($t['TransactionID']);
+							if ($shd->num_rows() > 0) {
+								$shd = $shd->row_array();
+								$dataStockHistoryDiscount = array(
+									'quantity' => $qty,
+									'total_cost' => $shd['cost'] * $qty,
+									'total_price' => $shd['price'] * $qty,
+								);
+								$this->Model_Updates->UpdateStockHistoryDiscountTransactionID($t['TransactionID'], $dataStockHistoryDiscount);
+							}
+
+							$this->Model_Updates->UpdateStock_product($dataProduct);
+							$this->Model_Updates->UpdateProduct_stock($t['stockID'], $dataStocks);
+						}
+
+
+
+						// update remaining payment
+						$this->totalRemainingSOPayment($t['OrderNo']);
+
+						$prompt_txt =
+						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Success!</strong> Updated Transaction.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+						// LOGBOOK
+						$this->Model_Logbook->LogbookEntry('updated SO transaction.', 'updated SO transaction ' . $transactionID . ' [SalesOrderNo: ' . $t['OrderNo'] . '].', base_url('admin/view_sales_order?orderNo=' . $t['OrderNo']));
+					} else {
+						$prompt_txt =
+						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Warning!</strong> Not enough quantity. ('. ($qty - $t['Amount']) .' < '. $p['InStock'] .')
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+					}
+
+				}
+			} else {
+				$prompt_txt =
+				'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Danger!</strong> Something went wrong.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
 			}
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {

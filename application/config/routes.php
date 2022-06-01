@@ -190,6 +190,7 @@ $route['FORM_updateSORemarks'] = 'SalesOrders/FORM_updateRemarks';
 
 $route['FORM_deleteSalesOrder'] = 'SalesOrders/FORM_deleteSalesOrder';
 $route['FORM_addNewSOTransaction'] = 'SalesOrders/FORM_addNewSOTransaction';
+$route['FORM_updateSOTransaction'] = 'SalesOrders/FORM_updateSOTransaction';
 $route['FORM_removeSOTransaction'] = 'SalesOrders/FORM_removeSOTransaction';
 
 $route['admin/xlsSalesOrder'] = 'Exporting/xlsSalesOrder';
