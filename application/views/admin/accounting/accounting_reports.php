@@ -65,12 +65,19 @@ if ($getTransactions->num_rows() > 0) { // use sql for faster exection
 
 $beginning_inventory = $this->Model_Selects->GetStockHistoryTotalCostBefore($date_from);
 
-$purchases_restocks = $this->Model_Selects->GetStockHistoryTotalCostRange($date_from, $date_to);
+$purchases_restocks = $this->Model_Selects->GetStockHistoryRestockedTotalCostRange($date_from, $date_to)['restocked_total_cost'];
 
-$inventory_end = $this->Model_Selects->GetStockHistoryTotalPriceRange($date_from, $date_to); // BS-Inventories
+$inventory_end = $this->Model_Selects->GetStockHistoryTotalCostRange($date_from, $date_to); // BALANCESHEET-Inventories
 
 $sales_discounts = $this->Model_Selects->GetDiscountsTotalRange($date_from, $date_to);
 $sales_returns = $this->Model_Selects->GetReturnsTotalRange($date_from, $date_to);
+
+$sales_freebies = $this->Model_Selects->GetFreebiesTotalRange($date_from, $date_to);
+
+$invoices_total = $this->Model_Selects->GetInvoicesTotalRange($date_from, $date_to);
+
+// print_r($invoices_total); exit();
+
 // print_r($beginning_inventory); echo "<br>";
 // print_r($purchases_restocks); echo "<br>";
 // print_r($sales_discounts); echo "<br>";
@@ -842,6 +849,14 @@ $billExpenses = $this->Model_Selects->GetBillsRange($date_from, $date_to);
 				</div>
 				<div class="row text-center mb-2">
 					<div class="col-6">
+						<h6 class="text-end">Freebies</h6>
+					</div>
+					<div class="col-3">
+						<h6 class="text-end cosFreebies" data-cosfreebies="<?=(!empty($sales_freebies) ? $sales_freebies : 0)?>"><?=number_format($sales_freebies, 2)?></h6>
+					</div>
+				</div>
+				<div class="row text-center mb-2">
+					<div class="col-6">
 						<h6 class="text-end">LESS: Inventory End</h6>
 					</div>
 					<div class="col-3">
@@ -869,6 +884,12 @@ $billExpenses = $this->Model_Selects->GetBillsRange($date_from, $date_to);
 			</div>
 			<div class="modal-body">
 				<div class="row text-center mb-3">
+					<div class="col-6 text-end">
+						<label>Invoices</label>
+					</div>
+					<div class="col-3 text-end slsInvoices" data-slsinvoices="<?=(!empty($invoices_total) ? $invoices_total : 0)?>">
+						<?=number_format($invoices_total, 2)?>
+					</div>
 					<div class="col-6 text-end">
 						<h6>Revenue/Sales</h6>
 					</div>
@@ -1297,6 +1318,10 @@ $(document).ready(function() {
 
 	function totalSLS() {
 		let totSLSS = 0;
+
+		let totInvoices = parseFloat($('.slsInvoices').data('slsinvoices'));
+		$('.cosInvoices').text(moneyFormat(totInvoices)).data('cosinvoices', totInvoices);
+
 		$.each($('.sls_sales_accounts_row'), function(i, val) {
 			totSLSS += parseFloat($(this).data('total'));
 		});
@@ -1305,7 +1330,8 @@ $(document).ready(function() {
 		});
 		$('.slsSales').text(moneyFormat(totSLSS)).data('slssales', totSLSS);
 		let totSales = totSLSS
-						- (parseFloat($('.slsDiscounts').data('slsdiscounts')) + parseFloat($('.slsReturns').data('slsreturns')));
+						- (parseFloat($('.slsDiscounts').data('slsdiscounts')) + parseFloat($('.slsReturns').data('slsreturns')))
+						+ totInvoices;
 		$('.totalSales').text(moneyFormat(totSales)).data('totalsales', totSales);
 	}
 
@@ -1323,8 +1349,10 @@ $(document).ready(function() {
 	}
 	function totalCOS() {
 		let totCostOfSales = parseFloat($('.cosBeginningInventory').data('cosbeginninginventory')) + 
-							 parseFloat($('.cosPurchases').data('cospurchases')) -
-							 parseFloat($('.cosEndInventory').data('cosendinventory'));
+							 parseFloat($('.cosPurchases').data('cospurchases')) + 
+							 parseFloat($('.cosFreebies').data('cosfreebies')) -
+							 parseFloat($('.cosEndInventory').data('cosendinventory')
+							 	);
 		$('.totalCostOfSales').text(moneyFormat(totCostOfSales)).data('totalcostofsales', totCostOfSales);
 	}
 

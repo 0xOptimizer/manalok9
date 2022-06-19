@@ -65,7 +65,7 @@
 							<div class="row">
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">SHIP VIA</label>
-									<input type="text" class="form-control" name="shipVia" placeholder="Ship" required>
+									<input type="text" class="form-control" name="shipVia" placeholder="Ship">
 								</div>
 								<div class="form-group col-sm-12 col-md-6">
 									<label class="input-label">DELIVERY DATE</label>
@@ -107,7 +107,7 @@
 					</div>
 				</div>
 				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Purchase Order</button>
+					<button id="submitPO" type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Purchase Order</button>
 				</div>
 			</div>
 		</form>

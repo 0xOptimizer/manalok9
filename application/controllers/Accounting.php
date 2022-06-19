@@ -134,7 +134,7 @@ class Accounting extends MY_Controller {
 				{
 					// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -143,7 +143,7 @@ class Accounting extends MY_Controller {
 				}
 			} else {
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Account with the same name already exists. ['. $name .']
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -191,7 +191,7 @@ class Accounting extends MY_Controller {
 				{
 					// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -201,7 +201,7 @@ class Accounting extends MY_Controller {
 			} else {
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Account with the same name already exists. ['. $name .']');
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Account with the same name already exists. ['. $name .']
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -297,7 +297,7 @@ class Accounting extends MY_Controller {
 					$this->Model_Logbook->LogbookEntry('created a new journal.', 'added a new journal' . ' [ID: ' . $journalID . '].', base_url('admin/journals'));
 				} else {
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading journal data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -305,7 +305,7 @@ class Accounting extends MY_Controller {
 				}
 			} else {
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong>'. $totalCredit .'=='. $totalDebit .'
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -345,7 +345,7 @@ class Accounting extends MY_Controller {
 				{
 					// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';

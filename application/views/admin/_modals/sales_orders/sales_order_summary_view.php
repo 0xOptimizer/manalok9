@@ -39,7 +39,7 @@
 				</div>
 				<div class="row">
 					<div class="col-7">
-						<h5 class="text-end">Total Price (Undiscounted):</h5>
+						<h5 class="text-end">Gross Sales:</h5>
 					</div>
 					<div id="totalpriceundiscounted" class="col-5 pl-1">0.00</div>
 				</div>

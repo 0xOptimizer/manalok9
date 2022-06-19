@@ -530,7 +530,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 											<div class="text-center p-2">
 												<div class="row">
 													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Non-Freebie Transactions) + (Total Adtl Fees)">
-														TOTAL PRICE (UNDISCOUNTED)
+														GROSS SALES
 													</span>
 												</div>
 												<div class="row">
@@ -725,15 +725,15 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									$total_invoice_amount = $this->Model_Selects->GetTotalInvoicesBySONo($salesOrder['OrderNo'])->row_array()['Amount'];
 									?>
 									<tr>
-										<td class="text-center fw-bold" colspan="3">TOTAL</td>
+										<td class="text-center fw-bold" colspan="2">TOTAL</td>
 										<td class="text-center"><?=number_format($total_invoice_amount, 2)?></td>
-										<td colspan="3"></td>
+										<td colspan="4"></td>
 									</tr>
 									<tr style="border-color: #a7852d;">
-										<td class="text-center fw-bold" colspan="3">REMAINING PAYMENT (DISCOUNTED)</td>
+										<td class="text-center fw-bold" colspan="2">REMAINING PAYMENT (DISCOUNTED)</td>
 										<td class="text-center">
 											<?=number_format($totalPriceDiscounted - $total_invoice_amount, 2);?></td>
-										<td colspan="3"></td>
+										<td colspan="4"></td>
 									</tr>
 								</tbody>
 							</table>

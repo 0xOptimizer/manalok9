@@ -506,7 +506,9 @@ $(document).ready(function() {
 		}
 	});
 	$(document).on('click', '.newVendor', function(t) { // on clicking the new vendor button on dropdown
-		$('.newVendorInput').removeClass('viewonly').removeAttr('readonly').attr('required', '');
+		$('.newVendorInput').removeClass('viewonly').removeAttr('readonly');
+
+		$('.purchaseName').attr('required', '');
 		// clear inputs
 		$('.purchaseName').val('');
 		$('.purchaseTIN').val('');
@@ -529,7 +531,9 @@ $(document).ready(function() {
 	});
 	$(document).on('click', '.purchaseNameIcon', function(t) { // onclick of backspace icon
 		if ($('.purchaseNameIcon').hasClass('bi-backspace-fill')) {
-			$('.newVendorInput').addClass('viewonly').attr('readonly', '').removeAttr('required');
+			$('.newVendorInput').addClass('viewonly').attr('readonly', '');
+
+			$('.purchaseName').removeAttr('required');
 			// clear inputs
 			$('.purchaseName').val('');
 			$('.purchaseTIN').val('');
@@ -576,11 +580,17 @@ $(document).ready(function() {
 			$('#AddPurchaseOrderModal').animate({ scrollTop: 0 }, 1000);
 			t.preventDefault();
 		}
-		//  else if (parseInt($('#ProductsCount').val()) < 1 || $('#ProductsCount').val().length < 1) {
+		//  else if (parseInt($('#ProductsCount').val(#)) < 1 || $('#ProductsCount').val().length < 1) {
 		// 	showAlert('warning', 'Product list is empty!');
 		// 	t.preventDefault();
 		// }
+		
+		$('#submitPO').attr('disabled', '');
 	});
+
+	// $(document).on('click', , function() {
+	// 	$('#submitPO').attr('disabled', '');
+	// });
 });
 </script>
 

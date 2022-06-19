@@ -325,9 +325,6 @@ $(document).ready(function() {
 		buttons: [
             {
 	            extend: 'print',
-	            exportOptions: {
-	                columns: [ 0, 1, 2, 3, 4 ]
-	            },
 	            customize: function ( doc ) {
 	            	$(doc.document.body).find('h1').prepend('<img src="<?=base_url()?>assets/images/manalok9_logo.png" width="200px" height="55px" />');
 					$(doc.document.body).find('h1').css('font-size', '24px');
@@ -336,27 +333,15 @@ $(document).ready(function() {
 	        },
 	        {
 	            extend: 'copyHtml5',
-	            exportOptions: {
-	                columns: [ 0, 1, 2, 3, 4 ]
-	            }
 	        },
 	        {
 	            extend: 'excelHtml5',
-	            exportOptions: {
-	                columns: [ 0, 1, 2, 3, 4 ]
-	            }
 	        },
 	        {
 	            extend: 'csvHtml5',
-	            exportOptions: {
-	                columns: [ 0, 1, 2, 3, 4 ]
-	            }
 	        },
 	        {
 	            extend: 'pdfHtml5',
-	            exportOptions: {
-	                columns: [ 0, 1, 2, 3, 4 ]
-	            }
 	        }
     ]});
     $('body').on('click', '#generateReport-Print', function () {

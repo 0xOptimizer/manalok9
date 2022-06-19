@@ -112,7 +112,7 @@ class SalesOrders extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -167,7 +167,7 @@ class SalesOrders extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -202,7 +202,7 @@ class SalesOrders extends MY_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -396,7 +396,7 @@ class SalesOrders extends MY_Controller {
 						}
 					} else {
 						$prompt_txt =
-						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> Approval aborted, not enough stock for ' . $t['TransactionID'] . '!
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -404,7 +404,7 @@ class SalesOrders extends MY_Controller {
 					}
 				} else {
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -549,7 +549,7 @@ class SalesOrders extends MY_Controller {
 						$this->Model_Logbook->LogbookEntry('updated SO transaction.', 'updated SO transaction ' . $transactionID . ' [SalesOrderNo: ' . $t['OrderNo'] . '].', base_url('admin/view_sales_order?orderNo=' . $t['OrderNo']));
 					} else {
 						$prompt_txt =
-						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> Not enough quantity. ('. ($qty - $t['Amount']) .' < '. $p['InStock'] .')
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -980,7 +980,7 @@ class SalesOrders extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1090,7 +1090,7 @@ class SalesOrders extends MY_Controller {
 						);
 					} else {
 						$prompt_txt =
-						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> Approval aborted, not enough stock for ' . $t['TransactionID'] . '!
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1157,12 +1157,12 @@ class SalesOrders extends MY_Controller {
 			}
 			else
 			{
-				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
-				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Warning!</strong> Error uploading data. Please try again.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
+				// $error_txt = $prompt_txt;
+				// $prompt_txt =
+				// '<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				// <strong>Warning!</strong> <span class="text-dark">Error uploading data. Please try again. ['. $error_txt .']</span>
+				// <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				// </div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
 				redirect('admin/view_sales_order?orderNo=' . $orderNo);
 			}
@@ -1212,7 +1212,7 @@ class SalesOrders extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1250,7 +1250,7 @@ class SalesOrders extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1323,7 +1323,7 @@ class SalesOrders extends MY_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Error uploading data. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1334,7 +1334,7 @@ class SalesOrders extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1383,7 +1383,7 @@ class SalesOrders extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1500,7 +1500,7 @@ class SalesOrders extends MY_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1547,7 +1547,7 @@ class SalesOrders extends MY_Controller {
 			{
 				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1709,7 +1709,7 @@ class SalesOrders extends MY_Controller {
 
 				if ($qty == NULL || $qty < 1) {
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Invalid Qty.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1787,7 +1787,7 @@ class SalesOrders extends MY_Controller {
 
 					if ($rProductDetails['remarks'] == 'RETURNED') {
 						$prompt_txt =
-						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> Returned to inventory cannot be deleted.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -2007,7 +2007,7 @@ class SalesOrders extends MY_Controller {
 					$this->Model_Logbook->LogbookEntry('approved replacement.', 'approved replacement ' . $replacementNo . ' [SalesOrderNo: ' . $orderDetails['ID'] . '].', base_url('admin/view_sales_order?orderNo=' . $orderNo));
 				} else {
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Approval aborted, not enough stock for ' . $t['TransactionID'] . '!
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';

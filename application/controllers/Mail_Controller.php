@@ -76,7 +76,7 @@ class Mail_Controller extends CI_Controller {
 			if (empty($send_to) || empty($mail_subject) || empty($mail_message)) {
 
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> All fields are required. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';

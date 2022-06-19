@@ -371,7 +371,7 @@ class Admin_Extend extends CI_Controller {
 								$prd_update_stocks = $this->Model_Updates->prd_update_stocks($U_ID,$Code,$data);
 								if ($prd_update_stocks != true) {
 									$prompt_txt =
-									'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+									'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 									<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
 									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 									</div>';
@@ -385,7 +385,7 @@ class Admin_Extend extends CI_Controller {
 								$cart_update_status = $this->Model_Updates->cart_update_status($Cart_ID,$status);
 								if ($cart_update_status != true) {
 									$prompt_txt =
-									'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+									'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 									<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
 									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 									</div>';
@@ -452,7 +452,7 @@ class Admin_Extend extends CI_Controller {
 								else
 								{
 									$prompt_txt =
-									'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+									'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 									<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
 									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 									</div>';
@@ -463,7 +463,7 @@ class Admin_Extend extends CI_Controller {
 							else
 							{
 								$prompt_txt =
-								'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+								'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 								<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
 								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 								</div>';
@@ -474,7 +474,7 @@ class Admin_Extend extends CI_Controller {
 						else
 						{
 							$prompt_txt =
-							'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+							'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Warning!</strong> Something\'s wrong while restocking. Please try again.
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 							</div>';
@@ -490,7 +490,7 @@ class Admin_Extend extends CI_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Cart is empty!</strong> Add stock before restocking.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -685,7 +685,7 @@ class Admin_Extend extends CI_Controller {
 		if ($this->Model_Security->CheckUserRestriction('releasing_scan_add_stock') || $this->Model_Security->CheckUserRestriction('releasing_manual_add_stock')) {
 			if (!isset($_SESSION['UserID'])) {
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> You need to login. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -703,7 +703,7 @@ class Admin_Extend extends CI_Controller {
 
 				/* EMPTY DATA POST */
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Submitted quantity is empty. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -712,7 +712,7 @@ class Admin_Extend extends CI_Controller {
 
 			if (!is_numeric($Quantity)) {
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Quantity should always be a number. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -739,7 +739,7 @@ class Admin_Extend extends CI_Controller {
 				if ($UID == $tb_uid AND $Product_SKU == $tb_SKU) {
 					if ($Quantity > $tb_c_stocks ) {
 						$prompt_txt =
-						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> Product stock is less than quantity. Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -841,7 +841,7 @@ class Admin_Extend extends CI_Controller {
 									else
 									{
 										$prompt_txt =
-										'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+										'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 										<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 										<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 										</div>';
@@ -852,7 +852,7 @@ class Admin_Extend extends CI_Controller {
 								else
 								{
 									$prompt_txt =
-									'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+									'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 									<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 									</div>';
@@ -864,7 +864,7 @@ class Admin_Extend extends CI_Controller {
 							else
 							{
 								$prompt_txt =
-								'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+								'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 								<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 								</div>';
@@ -875,7 +875,7 @@ class Admin_Extend extends CI_Controller {
 						else
 						{
 							$prompt_txt =
-							'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+							'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 							</div>';
@@ -887,7 +887,7 @@ class Admin_Extend extends CI_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -900,7 +900,7 @@ class Admin_Extend extends CI_Controller {
 
 				/* ID NOT EXIST */
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1210,7 +1210,7 @@ class Admin_Extend extends CI_Controller {
 						/**** ADD UPDATE STOCKS AND PRODUCT ****/
 
 						$prompt_txt =
-						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1219,7 +1219,7 @@ class Admin_Extend extends CI_Controller {
 					else
 					{
 						$prompt_txt =
-						'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 						</div>';
@@ -1229,7 +1229,7 @@ class Admin_Extend extends CI_Controller {
 				else
 				{
 					$prompt_txt =
-					'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 					</div>';
@@ -1239,7 +1239,7 @@ class Admin_Extend extends CI_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Something\'s wrong while releasing. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
@@ -1276,7 +1276,7 @@ class Admin_Extend extends CI_Controller {
 			else
 			{
 				$prompt_txt =
-				'<div class="alert alert-warning position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
