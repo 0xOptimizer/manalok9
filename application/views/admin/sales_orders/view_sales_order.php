@@ -220,6 +220,9 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 				$transactionsAdtlUnitDiscountTotal = 0;
 				$transactionsAdtlFeesTotal = 0;
 
+
+				$transactionsPromoDiscountTotal = 0;
+
 				?>
 
 				<div class="row">
@@ -233,6 +236,9 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									</span>
 								</h4>
 								<button type="button" class="transaction-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-plus-square"></i> NEW TRANSACTION</button>
+								<button type="button" class="updateSOPromoDiscount-btn btn btn-sm-success text-info" data-promodiscount="<?=$salesOrder['discountPromotional']?>" style="font-size: 12px;">
+									PROMOTIONAL DISCOUNT: <?=$salesOrder['discountPromotional']?>%
+								</button>
 							</div>
 						</div>
 						<div class="row">
@@ -242,8 +248,8 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										<th class="text-center">TRANSACTION ID</th>
 										<th class="text-center">PRODUCT STOCK ID</th>
 										<th class="text-center">QTY</th>
-										<th class="text-center">UNIT DISCOUNT</th>
 										<th class="text-center">PRICE</th>
+										<th class="text-center">UNIT DISCOUNT</th>
 										<th class="text-center">TOTAL</th>
 										<th class="text-center">FREEBIE</th>
 										<th class="text-center"></th>
@@ -253,16 +259,29 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										if ($getTransactionsByOrderNo->num_rows() > 0):
 											foreach ($getTransactionsByOrderNo->result_array() as $row):
 												$price = $row['PriceUnit'];
-												$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
 
-												if ($row['Freebie'] == 0) {
+
+
+												// TOTAL PROMO DISCOUNT FIRST THEN TOTAL UNIT DISCOUNT
+
+												$promoDiscountPriceTotal = $price * ($salesOrder['discountPromotional'] / 100);
+
+												$unitDiscountPriceTotal = ($price - $promoDiscountPriceTotal) * ($row['UnitDiscount'] / 100);
+
+
+
+
+												if ($row['Freebie'] == 0) { //not freebie
 													$transactionsPriceTotal += ($price * $row['Amount']);
 													$transactionsUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Amount']);
+
+													$transactionsPromoDiscountTotal += ($promoDiscountPriceTotal * $row['Amount']);
 												} else {
 													$transactionsFreebiesTotal += ($price * $row['Amount']);
 												}
-												// apply discount
-												$price -= $unitDiscountPriceTotal;
+												// apply discounts
+												$price -= $promoDiscountPriceTotal;
+
 												?>
 												<tr>
 													<td class="text-center">
@@ -275,12 +294,18 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 														<?=$row['Amount']?>
 													</td>
 													<td class="text-center">
-														<?=$row['UnitDiscount']?>%
-													</td>
-													<td class="text-center">
 														<?=number_format($price, 2)?>
 													</td>
 													<td class="text-center">
+														<?=$row['UnitDiscount']?>%
+													</td>
+													<td class="text-center">
+														<?php
+
+														// DEDUCT UNIT DISCOUNT
+														$price -= $unitDiscountPriceTotal;
+
+														?>
 														<?=number_format($price * $row['Amount'], 2)?>
 													</td>
 													<td class="text-center">
@@ -506,6 +531,26 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									<div class="col-12">
 										<div class="card">
 											<div class="text-center p-2">
+												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Promotional Discounts)">
+													<span class="head-text fw-bold">
+														<i class="bi bi-dash-circle text-danger"></i> TOTAL PROMOTIONAL DISCOUNTS
+													</span>
+												</div>
+												<div class="row">
+													<span style="font-size: 1.15em; color: #ebebeb;">
+														<b>
+															<?=number_format($transactionsPromoDiscountTotal, 2)?>
+														</b>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-12">
+										<div class="card">
+											<div class="text-center p-2">
 												<div class="row">
 													<span class="head-text fw-bold">
 														<i class="bi bi-plus-circle text-success"></i> TOTAL ADTL FEES
@@ -548,7 +593,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									<div class="col-12">
 										<div class="card">
 											<div class="text-center p-2">
-												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Gross Price + Total Adtl Fees) - (Total Category Discounts) - (Total Unit Discounts + Total Unit Discounts Adtl)">
+												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Gross Price + Total Adtl Fees) - (Total Category Discounts) - (Total Unit Discounts + Total Unit Discounts Adtl + Total Promotional Discounts)">
 													<span class="head-text fw-bold">
 														TOTAL PRICE (DISCOUNTED)
 													</span>
@@ -560,7 +605,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 															$totalPriceDiscounted = 
 																($transactionsPriceTotal + $transactionsAdtlFeesTotal) - 
 																($transactionsPriceTotal * ($totalDiscount / 100)) - 
-																($transactionsUnitDiscountTotal + $transactionsAdtlUnitDiscountTotal);
+																($transactionsUnitDiscountTotal + $transactionsAdtlUnitDiscountTotal + $transactionsPromoDiscountTotal);
 															echo number_format($totalPriceDiscounted, 2);
 															?>
 														</b>
@@ -1139,7 +1184,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_accounting'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_logs'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_adtl_fee_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
-<?php $this->load->view('admin/_modals/sales_orders/update_adtl_fee_so'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/update_adtl_fee_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/sales_orders/schedule_delivery_sales_order'); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_invoice_so', array('salesOrder' => $salesOrder)); ?>
 <?php $this->load->view('admin/_modals/sales_orders/sales_order_remarks', array('salesOrder' => $salesOrder)); ?>
@@ -1147,7 +1192,9 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 <?php $this->load->view('admin/_modals/sales_orders/add_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/sales_orders/approve_replacement_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 <?php $this->load->view('admin/_modals/sales_orders/add_transaction_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
-<?php $this->load->view('admin/_modals/sales_orders/update_transaction_so'); ?>
+<?php $this->load->view('admin/_modals/sales_orders/update_transaction_so', array('salesOrder' => $salesOrder)); ?>
+
+<?php $this->load->view('admin/_modals/sales_orders/update_promotional_discount_so', array('salesOrderNo' => $salesOrder['OrderNo'])); ?>
 
 <script src="<?=base_url()?>/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="<?=base_url()?>/assets/js/bootstrap.bundle.min.js"></script>
@@ -1879,6 +1926,28 @@ $(document).ready(function() {
 			}
 		}
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// PROMOTIONAL DISCOUNT
+	$('.updateSOPromoDiscount-btn').on('click', function() {
+		$('#sales_order_promotional_discount').val($(this).data('promodiscount'));
+		$('#SOPromoDiscount').modal('toggle');
+	});
 });
 </script>
 

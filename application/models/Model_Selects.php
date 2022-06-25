@@ -1750,6 +1750,16 @@ class Model_Selects extends CI_Model {
 		$this->db->select('*');
 		$this->db->where('transactionid', $tid);
 		$this->db->where('status', 'discount');
+		$this->db->where('discount_type', NULL);
+		$result = $this->db->get('sales_history');
+		return $result;
+	}
+	public function GetStockHistoryDiscountPromoTransactionID($tid)
+	{
+		$this->db->select('*');
+		$this->db->where('transactionid', $tid);
+		$this->db->where('status', 'discount');
+		$this->db->where('discount_type', 'promo');
 		$result = $this->db->get('sales_history');
 		return $result;
 	}

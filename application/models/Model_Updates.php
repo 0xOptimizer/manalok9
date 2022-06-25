@@ -428,6 +428,21 @@ class Model_Updates extends CI_Model {
 	{
 		$this->db->where('transactionid', $tid);
 		$this->db->where('status', 'discount');
+		$this->db->where('discount_type', NULL);
+		$this->db->update('sales_history',$data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function UpdateStockHistoryDiscountPromoTransactionID($tid,$data)
+	{
+		$this->db->where('transactionid', $tid);
+		$this->db->where('status', 'discount');
+		$this->db->where('discount_type', 'promo');
 		$this->db->update('sales_history',$data);
 		if ($this->db->affected_rows() > 0) {
 			return true;

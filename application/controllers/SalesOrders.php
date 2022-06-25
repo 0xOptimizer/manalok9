@@ -384,6 +384,9 @@ class SalesOrders extends MY_Controller {
 							// update remaining payment
 							$this->totalRemainingSOPayment($t['OrderNo']);
 
+							$salesOrder = $this->Model_Selects->GetSalesOrderByNo($t['OrderNo'])->row_array();
+							$this->updateSOPromoDiscount($t['OrderNo'],$salesOrder['discountPromotional']);
+
 							$prompt_txt =
 							'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 							<strong>Success!</strong> Added SO Transaction.
@@ -444,6 +447,10 @@ class SalesOrders extends MY_Controller {
 
 					// update remaining payment
 					$this->totalRemainingSOPayment($t['OrderNo']);
+
+					$salesOrder = $this->Model_Selects->GetSalesOrderByNo($t['OrderNo'])->row_array();
+					$this->updateSOPromoDiscount($t['OrderNo'],$salesOrder['discountPromotional']);
+
 
 					$prompt_txt =
 					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
@@ -538,6 +545,10 @@ class SalesOrders extends MY_Controller {
 						// update remaining payment
 						$this->totalRemainingSOPayment($t['OrderNo']);
 
+						$salesOrder = $this->Model_Selects->GetSalesOrderByNo($t['OrderNo'])->row_array();
+						$this->updateSOPromoDiscount($t['OrderNo'],$salesOrder['discountPromotional']);
+
+
 						$prompt_txt =
 						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 						<strong>Success!</strong> Updated Transaction.
@@ -565,6 +576,20 @@ class SalesOrders extends MY_Controller {
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
 			}
+			redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_updateSOPromoDiscount()
+	{
+		if ($this->Model_Security->CheckUserRestriction('sales_orders_update')) {
+			
+			$salesOrderNo = $this->input->post('sales-order-no');
+			$discountPromotional = $this->input->post('promotional_discount');
+
+			$this->updateSOPromoDiscount($salesOrderNo,$discountPromotional);
+
 			redirect($_SERVER['HTTP_REFERER']);
 		} else {
 			redirect(base_url());
@@ -1118,6 +1143,9 @@ class SalesOrders extends MY_Controller {
 				$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($orderNo, $data);
 				if ($UpdateSalesOrder == TRUE) {
 
+					$salesOrder = $this->Model_Selects->GetSalesOrderByNo($t['OrderNo'])->row_array();
+					$this->updateSOPromoDiscount($t['OrderNo'],$salesOrder['discountPromotional']);
+					
 					$prompt_txt =
 					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 					<strong>Success!</strong> Marked as Delivered.
@@ -1349,6 +1377,7 @@ class SalesOrders extends MY_Controller {
 	{
 		if ($this->Model_Security->CheckUserRestriction('clients_edit')) {
 			// Fetch data
+			$salesOrderNo = $this->input->post('sales-order-no');
 			$adtlFeeNo = $this->input->post('adtl-fee-no');
 			$description = $this->input->post('description');
 			$qty = $this->input->post('qty');
@@ -2158,18 +2187,35 @@ class SalesOrders extends MY_Controller {
 		$transactionsAdtlUnitDiscountTotal = 0;
 		$transactionsAdtlFeesTotal = 0;
 
+
+		$transactionsPromoDiscountTotal = 0;
+
+
 		if ($getTransactionsByOrderNo->num_rows() > 0) {
 			foreach ($getTransactionsByOrderNo->result_array() as $row) {
 				$price = $row['PriceUnit'];
-				$unitDiscountPriceTotal = $price * ($row['UnitDiscount'] / 100);
 
-				if ($row['Freebie'] == 0) {
+
+
+				// TOTAL PROMO DISCOUNT FIRST THEN TOTAL UNIT DISCOUNT
+
+				$promoDiscountPriceTotal = $price * ($salesOrder['discountPromotional'] / 100);
+
+				$unitDiscountPriceTotal = ($price - $promoDiscountPriceTotal) * ($row['UnitDiscount'] / 100);
+
+
+
+
+				if ($row['Freebie'] == 0) { //not freebie
 					$transactionsPriceTotal += ($price * $row['Amount']);
 					$transactionsUnitDiscountTotal += ($unitDiscountPriceTotal * $row['Amount']);
+
+					$transactionsPromoDiscountTotal += ($promoDiscountPriceTotal * $row['Amount']);
 				} else {
 					$transactionsFreebiesTotal += ($price * $row['Amount']);
 				}
-				// apply discount
+				// apply discounts
+				$price -= $promoDiscountPriceTotal;
 				$price -= $unitDiscountPriceTotal;
 			}
 		}
@@ -2189,7 +2235,7 @@ class SalesOrders extends MY_Controller {
 		$totalPriceDiscounted = 
 			($transactionsPriceTotal + $transactionsAdtlFeesTotal) - 
 			($transactionsPriceTotal * ($totalDiscount / 100)) - 
-			($transactionsUnitDiscountTotal + $transactionsAdtlUnitDiscountTotal);
+			($transactionsUnitDiscountTotal + $transactionsAdtlUnitDiscountTotal + $transactionsPromoDiscountTotal);
 
 		$total_invoice_amount = $this->Model_Selects->GetTotalInvoicesBySONo($salesOrderNo);
 		if ($total_invoice_amount->num_rows()) {
@@ -2204,5 +2250,110 @@ class SalesOrders extends MY_Controller {
 			'TotalRemainingPayment' => $totalRemainingPayment,
 		);
 		return $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+	}
+
+
+	private function updateSOPromoDiscount($salesOrderNo,$discountPromotional) {
+
+		$so = $this->Model_Selects->GetSalesOrderByNo($salesOrderNo);
+		if ($so->num_rows() > 0) {
+			$userID = $_SESSION['UserID'];
+
+			// Update
+			$data = array(
+				'discountPromotional' => $discountPromotional,
+			);
+			$UpdateSalesOrder = $this->Model_Updates->UpdateSalesOrderByOrderNo($salesOrderNo, $data);
+			if ($UpdateSalesOrder == TRUE) {
+
+				$orderTransactions = $this->Model_Selects->GetTransactionsByOrderNo($salesOrderNo)->result_array();
+				foreach ($orderTransactions as $key => $t) {
+					$transaction = $this->Model_Selects->GetTransactionsByTID($t['TransactionID']);
+					if ($transaction->num_rows() > 0) {
+						$t = $this->Model_Selects->CheckIFApproved($t['TransactionID']);
+						$p = $this->Model_Selects->CheckStocksByCode($t['Code']);
+
+						// UPDATE MULTIPLE DETAILS
+						if ($t['Status'] == 1) {
+							/* UPDATE DATA TO STOCK HISTORY */
+							$shr = $this->Model_Selects->GetStockHistoryReleasedTransactionID($t['TransactionID']);
+							if ($shr->num_rows() > 0) {
+								$shr = $shr->row_array();
+
+
+								/*
+
+								UPDATE PROMO DISCOUNT BEFORE UPDATING UNIT DISCOUNT
+
+								USE PROMO DISCOUNTED PRICE WHEN COMPUTING UNIT DISCOUNT
+
+								*/
+
+								$promoDiscountPriceTotal = $shr['price'] * ($discountPromotional / 100);
+								$unitDiscountPriceTotal = ($shr['price'] - $promoDiscountPriceTotal) * ($t['UnitDiscount'] / 100);
+
+								//Y?
+								$promoDiscountCostTotal = $shr['cost'] * ($discountPromotional / 100);
+								$unitDiscountCostTotal = ($shr['cost'] - $promoDiscountCostTotal) * ($t['UnitDiscount'] / 100);
+
+
+								/* UPDATE DISCOUNT PROMO DATA TO STOCK HISTORY */
+								$shdp = $this->Model_Selects->GetStockHistoryDiscountPromoTransactionID($t['TransactionID']);
+								if ($shdp->num_rows() > 0) {
+									$shdp = $shdp->row_array();
+									$dataStockHistoryDiscountPromo = array(
+										'cost' => $promoDiscountCostTotal,
+										'total_cost' => $promoDiscountCostTotal * $t['Amount'],
+										'price' => $promoDiscountPriceTotal,
+										'total_price' => $promoDiscountPriceTotal * $t['Amount'],
+									);
+									$this->Model_Updates->UpdateStockHistoryDiscountPromoTransactionID($t['TransactionID'], $dataStockHistoryDiscountPromo);
+								} else {
+									$s = $this->Model_Selects->Check_prd_stockid($t['stockID'])->row_array();
+
+									/* INSERT DISCOUNT PROMO DATA TO STOCK HISTORY */
+									$dataStockHistoryDiscount = array(
+										'stockid' => $t['stockID'],
+										'transactionid' => $t['TransactionID'],
+										'uid' => $p['U_ID'],
+										'prd_sku' => $p['Code'],
+										'quantity' => $t['Amount'],
+										'cost' => $promoDiscountCostTotal,
+										'total_cost' => $promoDiscountCostTotal * $t['Amount'],
+										'price' => $promoDiscountPriceTotal,
+										'total_price' => $promoDiscountPriceTotal * $t['Amount'],
+										'userid' => $userID,
+										'date_added' => date('Y/m/d H:i:s'),
+										'status' => 'discount',
+										'discount_type' => 'promo',
+									);
+
+									$this->Model_Inserts->Insert_StockHistory($dataStockHistoryDiscount);
+								}
+
+								/* UPDATE DISCOUNT DATA TO STOCK HISTORY */
+								$shd = $this->Model_Selects->GetStockHistoryDiscountTransactionID($t['TransactionID']);
+								if ($shd->num_rows() > 0) {
+									$shd = $shd->row_array();
+									$dataStockHistoryDiscount = array(
+										'cost' => $unitDiscountCostTotal,
+										'total_cost' => $unitDiscountCostTotal * $t['Amount'],
+										'price' => $unitDiscountPriceTotal,
+										'total_price' => $unitDiscountPriceTotal * $t['Amount'],
+									);
+									$this->Model_Updates->UpdateStockHistoryDiscountTransactionID($t['TransactionID'], $dataStockHistoryDiscount);
+								}
+
+							}
+						}
+					}
+				}
+
+				// update remaining payment
+				$this->totalRemainingSOPayment($salesOrderNo); //update this function
+
+				// add promo discount insert to sales history function on sales history state update
+			}
+		}
 	}
 }

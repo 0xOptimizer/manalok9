@@ -7,6 +7,7 @@
 					<h4 class="modal-title" style="margin: 0 auto;"><i class="bi bi-plus-square" style="font-size: 24px;"></i> Update Additional Fee</h4>
 				</div>
 				<div class="modal-body">
+					<input type="hidden" name="sales-order-no" value="<?=$salesOrderNo?>" required>
 					<input type="hidden" id="UpdateAdtlFeeNo" name="adtl-fee-no" required>
 					<div class="row">
 						<div class="form-group col-sm-12 col-md-9 mx-auto">

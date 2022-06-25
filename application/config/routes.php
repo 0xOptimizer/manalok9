@@ -195,6 +195,10 @@ $route['FORM_addNewSOTransaction'] = 'SalesOrders/FORM_addNewSOTransaction';
 $route['FORM_updateSOTransaction'] = 'SalesOrders/FORM_updateSOTransaction';
 $route['FORM_removeSOTransaction'] = 'SalesOrders/FORM_removeSOTransaction';
 
+
+$route['FORM_updateSOPromoDiscount'] = 'SalesOrders/FORM_updateSOPromoDiscount';
+
+
 $route['admin/xlsSalesOrder'] = 'Exporting/xlsSalesOrder';
 
 // INVOICES
