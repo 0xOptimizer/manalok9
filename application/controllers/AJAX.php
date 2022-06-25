@@ -685,4 +685,18 @@ class AJAX extends CI_Controller {
 	// 	}
 	// }
 
+
+
+
+
+	// BILL EXPENSE SEARCH
+	public function searchBillExpenses()
+	{
+		$search = $this->input->post('search');
+		if (strlen($search) > 0) {
+			$searchResult = $this->Model_Selects->FindBillExpenses($search)->result_array();
+
+			echo json_encode($searchResult);
+		}
+	}
 }

@@ -1753,4 +1753,35 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('sales_history');
 		return $result;
 	}
+
+
+
+
+	// SEARCH BILL EXPENSES
+	public function FindBillExpenses($search)
+	{
+		$this->db->select('ID, Date, Name, TINVAT, TINNON, Address, Particulars, Amount, SINORN, Remarks, Department');
+
+		$this->db->like('Date', $search);
+		$this->db->or_like('Name', $search);
+		$this->db->or_like('TINVAT', $search);
+		$this->db->or_like('TINNON', $search);
+		$this->db->or_like('Address', $search);
+		$this->db->or_like('Particulars', $search);
+		$this->db->or_like('SINORN', $search);
+		$this->db->or_like('Remarks', $search);
+		$this->db->or_like('Department', $search);
+
+		$this->db->order_by('Name', 'desc');
+		$this->db->limit('3');
+		$result = $this->db->get('bills');  
+		return $result;
+	}
+	public function GetBillExpensesGroupNo($gno)
+	{
+		$this->db->select('*');
+		$this->db->where('GroupNo', $gno);
+		$result = $this->db->get('bills');  
+		return $result;
+	}
 }

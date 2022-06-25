@@ -83,6 +83,7 @@ $getAllBillDepartment = $this->Model_Selects->GetAllBillDepartment();
 					<div class="col-sm-12 col-md-10 pt-4 pb-2">
 						<?php if ($this->session->userdata('UserRestrictions')['bills_add']): ?>
 							<button type="button" class="newbill-btn btn btn-sm-success" style="font-size: 12px;"><i class="bi bi-cash"></i> NEW BILL</button>
+							<!-- <button type="button" class="groupbill-btn btn btn-sm-primary" style="font-size: 12px;"><i class="bi bi-cash"></i> GROUP BILL</button> -->
 							|
 						<?php endif; ?>
 
@@ -198,8 +199,9 @@ $getAllBillDepartment = $this->Model_Selects->GetAllBillDepartment();
 											<?php endif; ?>
 										</td>
 										<td>
-											<?php if ($this->session->userdata('UserRestrictions')['bills_delete']): ?>
+											<?php if ($this->session->userdata('UserRestrictions')['bills_add']): ?>
 												<button type="button" class="btn updbill-btn"><i class="bi bi-pencil text-warning"></i></button>
+												<!-- <button type="button" class="btn updbillgroup-btn"><i class="bi bi-collection text-success"></i></button> -->
 											<?php endif; ?>
 											<?php if ($this->session->userdata('UserRestrictions')['bills_delete']): ?>
 												<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
@@ -235,6 +237,7 @@ if ($from == NULL && $to == NULL) {
 ?>
 <?php $this->load->view('admin/_modals/bills/add_bill'); ?>
 <?php $this->load->view('admin/_modals/bills/update_bill'); ?>
+<?php $this->load->view('admin/_modals/bills/group_bill'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
@@ -422,6 +425,67 @@ $(document).ready(function() {
 		$('#bill_sinorn').val(tr.attr('data-bill_sinorn'));
 		$('#bill_remarks').val(tr.attr('data-bill_remarks'));
 		$('#bill_department').val(tr.attr('data-bill_department'));
+	});
+
+	// BILL GROUPING
+	$(document).on('click', '.groupbill-btn', function(e) {
+		$('#grpBillModal').modal('toggle');
+	});
+
+	$(document).on('click', '.groupbilladd-row', function() {
+		// console.log($('.groupbilladd-row-' + $(this).data('groupbilladd-id')).length);
+		if ($('.groupbilladded-row-' + $(this).data('groupbilladd-id')).length < 1) {
+			let tr_added = $('<tr>').attr('class', 'groupbilladded-row-' + $(this).data('groupbilladd-id'))
+				.append($('<td>').html($(this).find('.td_Date').html()))
+				.append($('<td>').html($(this).find('.td_Name').html()))
+				.append($('<td>').html($(this).find('.td_TINVAT').html()))
+				.append($('<td>').html($(this).find('.td_TINNON').html()))
+				.append($('<td>').html($(this).find('.td_Address').html()))
+				.append($('<td>').html($(this).find('.td_Particulars').html()))
+				.append($('<td>').html($(this).find('.td_Amount').html()))
+				.append($('<td>').html($(this).find('.td_SINORN').html()))
+				.append($('<td>').html($(this).find('.td_Remarks').html()))
+				.append($('<td>').html($(this).find('.td_Department').html()))
+				.append($('<td>')
+					.append($('<button>').attr('class', 'btn btn-danger groupbilladded-remove').attr('type', 'button').html('X').data('groupbilladded-id', $(this).data('groupbilladd-id'))));
+			$('#grpBillsTableAdd tbody').append(tr_added);
+
+			$('#formGroupBill').append($('<input>').attr('class', 'groupbilladded-input-' + $(this).data('groupbilladd-id')).attr('type', 'hidden').attr('name', 'group_bills[]').val($(this).data('groupbilladd-id')));
+		}
+	});
+	$(document).on('click', '.groupbilladded-remove', function() {
+		$('.groupbilladded-input-' + $(this).data('groupbilladded-id')).remove();
+		$(this).parents('tr').remove();
+	});
+
+	$('#groupbill_search').on('keyup change', function(){
+		if ($(this).val().length > 0) {
+			$.ajax({
+				url: "searchBillExpenses",
+				type: "POST",
+				data: { search: $(this).val() },
+				success: function(response) {
+					var data = $.parseJSON(response);
+
+					$('#grpBillsTable tbody').html('');
+					$.each(data, function(index, val) {
+						$('#grpBillsTable tbody').append(
+							$('<tr>').attr('class', 'groupbilladd-row').data('groupbilladd-id', val.ID)
+							.append($('<td>').attr('class', 'td_Date').html(val.Date))
+							.append($('<td>').attr('class', 'td_Name').html(val.Name))
+							.append($('<td>').attr('class', 'td_TINVAT').html(val.TINVAT))
+							.append($('<td>').attr('class', 'td_TINNON').html(val.TINNON))
+							.append($('<td>').attr('class', 'td_Address').html(val.Address))
+							.append($('<td>').attr('class', 'td_Particulars').html(val.Particulars))
+							.append($('<td>').attr('class', 'td_Amount').html(val.Amount))
+							.append($('<td>').attr('class', 'td_SINORN').html(val.SINORN))
+							.append($('<td>').attr('class', 'td_Remarks').html(val.Remarks))
+							.append($('<td>').attr('class', 'td_Department').html(val.Department))
+						);
+					});
+				}
+			});
+		}
 	});
 });
 </script>

@@ -159,6 +159,8 @@ $route['FORM_addBill'] = 'PurchaseOrders/FORM_addBill';
 $route['admin/FORM_removeBill'] = 'PurchaseOrders/FORM_removeBill';
 $route['FORM_updateBill'] = 'PurchaseOrders/FORM_updateBill';
 
+$route['FORM_groupBill'] = 'PurchaseOrders/FORM_groupBill';
+
 // MANUAL TRANSACTION
 $route['admin/manual_purchases'] = 'PurchaseOrders/manual_purchases';
 
@@ -282,6 +284,8 @@ $route['admin/searchVendorDetails'] = 'AJAX/searchVendorDetails';
 $route['admin/getClientDetails'] = 'AJAX/getClientDetails';
 $route['admin/searchClientName'] = 'AJAX/searchClientName';
 $route['admin/searchClientDetails'] = 'AJAX/searchClientDetails';
+
+$route['admin/searchBillExpenses'] = 'AJAX/searchBillExpenses';
 
 $route['admin/getUserLogs'] = 'AJAX/getUserLogs';
 

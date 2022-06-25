@@ -815,6 +815,50 @@ class PurchaseOrders extends MY_Controller {
 			redirect(base_url());
 		}
 	}
+	public function FORM_groupBill()
+	{
+		print_r($this->input->post('group_bills'));exit();
+		if ($this->Model_Security->CheckUserRestriction('bills_add')) {
+			$group_bills = $this->input->post('group_bills');
+
+			if (!empty($group_bills) && sizeof($group_bills) > 0) {
+
+				do {
+					$grpNo = uniqid('B');
+				} while ($this->Model_Selects->GetBillExpensesGroupNo($grpNo)->num_rows() > 0);
+
+				foreach ($group_bills as $b_id) {
+					$bill = $this->Model_Selects->GetBillByID($b_id);
+
+					if ($bill->num_rows() > 0) {
+						// UPDATE
+						$data = array(
+							'GroupNo' => $grpNo,
+						);
+
+						$updateBill = $this->Model_Updates->UpdateBill($b_id, $data);
+					}
+				}
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Successfully grouped bills.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/bills');
+			} else {
+				$prompt_txt =
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> No bills selected.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/bills');
+			}
+		} else {
+			redirect(base_url());
+		}
+	}
 
 // ############################ [ MANUAL PURCHASES ] ############################
 	public function manual_purchases() // PAGE DISPLAY

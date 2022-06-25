@@ -529,14 +529,14 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 										<div class="card">
 											<div class="text-center p-2">
 												<div class="row">
-													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Non-Freebie Transactions) + (Total Adtl Fees)">
+													<span class="head-text fw-bold" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Non-Freebie Transactions)">
 														GROSS SALES
 													</span>
 												</div>
 												<div class="row">
 													<span style="font-size: 1.5em; color: #ebebeb;">
 														<b>
-															<?=number_format($transactionsPriceTotal + $transactionsAdtlFeesTotal, 2)?>
+															<?=number_format($transactionsPriceTotal, 2)?>
 														</b>
 													</span>
 												</div>
@@ -548,7 +548,7 @@ $getReplacements = $this->Model_Selects->GetReplacementsByOrderNo($salesOrder['O
 									<div class="col-12">
 										<div class="card">
 											<div class="text-center p-2">
-												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Undiscounted Price) - (Total Category Discounts) - (Total Unit Discounts + Total Unit Discounts Adtl)">
+												<div class="row" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" title="<span class='text-info'>Info:<br></span> (Total Gross Price + Total Adtl Fees) - (Total Category Discounts) - (Total Unit Discounts + Total Unit Discounts Adtl)">
 													<span class="head-text fw-bold">
 														TOTAL PRICE (DISCOUNTED)
 													</span>
