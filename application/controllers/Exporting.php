@@ -106,6 +106,7 @@ class Exporting extends MY_Controller {
 		// $sr += 1;
 
 		$allTransactions = array();
+		$promoDiscountTotal = 0;
 		if ($regularTransactions != NULL && sizeof($regularTransactions) > 0) {
 			foreach ($regularTransactions as $val) {
 				$tID = $val;
@@ -124,6 +125,10 @@ class Exporting extends MY_Controller {
 					} else {
 						$priceDiscount = $t['PriceUnit'] * ($t['UnitDiscount'] / 100);
 						$priceDiscounted = $t['PriceUnit'] - $priceDiscount;
+
+
+
+						$promoDiscountTotal += (($t['PriceUnit'] - $priceDiscount) * ($t['PromoDiscount'] / 100) * $t['Amount']);
 					}
 
 					$row = array(
@@ -182,35 +187,41 @@ class Exporting extends MY_Controller {
 		$sr += 1;
 
 		$accountCategories = array('CONFIRMED DISTRIBUTOR', 'DISTRIBUTOR ON PROBATION', 'DIRECT DEALER', 'DIRECT END USER');
-		$discountOutright = $amountTotal * ($salesOrder['discountOutright'] * 0.01);
-		$discountVolume = $amountTotal * ($salesOrder['discountVolume'] * 0.01);
-		$discountPBD = $amountTotal * ($salesOrder['discountPBD'] * 0.01);
-		$discountManpower = $amountTotal * ($salesOrder['discountManpower'] * 0.01);
+		$discountOutright = ($amountTotal - $promoDiscountTotal) * ($salesOrder['discountOutright'] * 0.01);
+		$discountVolume = ($amountTotal - $promoDiscountTotal) * ($salesOrder['discountVolume'] * 0.01);
+		$discountPBD = ($amountTotal - $promoDiscountTotal) * ($salesOrder['discountPBD'] * 0.01);
+		$discountManpower = ($amountTotal - $promoDiscountTotal) * ($salesOrder['discountManpower'] * 0.01);
 
-		$total = $amountTotal - ($discountOutright + $discountVolume + $discountPBD + $discountManpower);
+		$total = ($amountTotal - $promoDiscountTotal) - ($discountOutright + $discountVolume + $discountPBD + $discountManpower);
 
 		// BELOW PRODUCTS
 		$sheet->setCellValue('A'. $sr, 'CATEGORY OF ACCOUNT:');
 		$sheet->setCellValue('A'. ($sr + 2), $accountCategories[$clientBTDetails['Category']]);
 		$sheet->setCellValue('C'. $sr, 'SUB-TOTAL PHP');
 		$sheet->setCellValue('E'. $sr, $amountTotal);
+		$sheet->setCellValue('C'. $sr + 1, 'Promotional Discount');
+		$sheet->setCellValue('E'. $sr + 1, $promoDiscountTotal);
 
-		$sheet->setCellValue('C'. ($sr + 1), 'Outright Discount ('. $salesOrder['discountOutright'] .'%)');
-		$sheet->setCellValue('E'. ($sr + 1), number_format($discountOutright, 2));
-		$sheet->setCellValue('C'. ($sr + 2), 'Volume Discount ('. $salesOrder['discountVolume'] .'%)');
-		$sheet->setCellValue('E'. ($sr + 2), number_format($discountVolume, 2));
-		$sheet->setCellValue('C'. ($sr + 3), 'PBD Discount ('. $salesOrder['discountPBD'] .'%)');
-		$sheet->setCellValue('E'. ($sr + 3), number_format($discountPBD, 2));
 
-		$sheet->setCellValue('A'. ($sr + 4), 'REMARKS');
-		$sheet->setCellValue('B'. ($sr + 4), $salesOrder['Remarks']);
-		$sheet->setCellValue('C'. ($sr + 4), 'Manpower Discount ('. $salesOrder['discountManpower'] .'%)');
-		$sheet->setCellValue('E'. ($sr + 4), number_format($discountManpower, 2));
+		$sheet->setCellValue('C'. $sr + 2, 'SUB-TOTAL PHP');
+		$sheet->setCellValue('E'. $sr + 2, $amountTotal - $promoDiscountTotal);
 
-		$sheet->setCellValue('A'. ($sr + 5), 'PREPARED BY');
-		$sheet->setCellValue('B'. ($sr + 5), $preparedBy);
-		$sheet->setCellValue('D'. ($sr + 5), 'TOTAL');
-		$sheet->setCellValue('E'. ($sr + 5), $total);
+		$sheet->setCellValue('C'. ($sr + 3), 'Outright Discount ('. $salesOrder['discountOutright'] .'%)');
+		$sheet->setCellValue('E'. ($sr + 3), $discountOutright);
+		$sheet->setCellValue('C'. ($sr + 4), 'Volume Discount ('. $salesOrder['discountVolume'] .'%)');
+		$sheet->setCellValue('E'. ($sr + 4), $discountVolume);
+		$sheet->setCellValue('C'. ($sr + 5), 'PBD Discount ('. $salesOrder['discountPBD'] .'%)');
+		$sheet->setCellValue('E'. ($sr + 5), $discountPBD);
+
+		$sheet->setCellValue('A'. ($sr + 6), 'REMARKS');
+		$sheet->setCellValue('B'. ($sr + 6), $salesOrder['Remarks']);
+		$sheet->setCellValue('C'. ($sr + 6), 'Manpower Discount ('. $salesOrder['discountManpower'] .'%)');
+		$sheet->setCellValue('E'. ($sr + 6), $discountManpower);
+
+		$sheet->setCellValue('A'. ($sr + 7), 'PREPARED BY');
+		$sheet->setCellValue('B'. ($sr + 7), $preparedBy);
+		$sheet->setCellValue('D'. ($sr + 7), 'TOTAL');
+		$sheet->setCellValue('E'. ($sr + 7), $total);
 
 		// CELL MERGE
 		$sheet->mergeCells('A1:C3');
@@ -236,24 +247,29 @@ class Exporting extends MY_Controller {
 		$sheet->mergeCells('B11:C11');
 		$sheet->mergeCells('E11:F11');
 		$sheet->mergeCells('A'. $sr .':B'. ($sr + 1));
-		$sheet->mergeCells('A'. ($sr + 2) .':B'. ($sr + 3));
+		$sheet->mergeCells('A'. ($sr + 2) .':B'. ($sr + 5));
 
 		$sheet->mergeCells('C'. $sr .':D'. $sr);
 		$sheet->mergeCells('C'. ($sr + 1) .':D'. ($sr + 1));
 		$sheet->mergeCells('C'. ($sr + 2) .':D'. ($sr + 2));
 		$sheet->mergeCells('C'. ($sr + 3) .':D'. ($sr + 3));
 		$sheet->mergeCells('C'. ($sr + 4) .':D'. ($sr + 4));
+		$sheet->mergeCells('C'. ($sr + 5) .':D'. ($sr + 5));
+		$sheet->mergeCells('C'. ($sr + 6) .':D'. ($sr + 6));
 
 		$sheet->mergeCells('E'. $sr .':F'. $sr);
 		$sheet->mergeCells('E'. ($sr + 1) .':F'. ($sr + 1));
 		$sheet->mergeCells('E'. ($sr + 2) .':F'. ($sr + 2));
 		$sheet->mergeCells('E'. ($sr + 3) .':F'. ($sr + 3));
 		$sheet->mergeCells('E'. ($sr + 4) .':F'. ($sr + 4));
-		$sheet->mergeCells('B'. ($sr + 5) .':C'. ($sr + 5));
 		$sheet->mergeCells('E'. ($sr + 5) .':F'. ($sr + 5));
+		$sheet->mergeCells('E'. ($sr + 6) .':F'. ($sr + 6));
+
+		$sheet->mergeCells('B'. ($sr + 7) .':C'. ($sr + 7));
+		$sheet->mergeCells('E'. ($sr + 7) .':F'. ($sr + 7));
 
 		// NUMBER FORMAT
-		$sheet->getStyle('E'. ($sr) .':E'. ($sr + 5))->getNumberFormat()->setFormatCode('#,##0.00');
+		$sheet->getStyle('E'. ($sr) .':E'. ($sr + 7))->getNumberFormat()->setFormatCode('#,##0.00');
 		
 		// STYLING
 		$styleBold = array(
@@ -264,11 +280,11 @@ class Exporting extends MY_Controller {
 		$sheet->getStyle('D1:D3')->applyFromArray($styleBold);
 		$sheet->getStyle('A4:F4')->applyFromArray($styleBold);
 		$sheet->getStyle('A11:F11')->applyFromArray($styleBold);
-		$sheet->getStyle('C'. $sr .':C'. ($sr + 4))->applyFromArray($styleBold);
-		$sheet->getStyle('D'. ($sr + 5))->applyFromArray($styleBold);
+		$sheet->getStyle('C'. $sr .':C'. ($sr + 6))->applyFromArray($styleBold);
+		$sheet->getStyle('D'. ($sr + 7))->applyFromArray($styleBold);
 		$sheet->getStyle('A'. $sr)->applyFromArray($styleBold);
-		$sheet->getStyle('A'. ($sr + 4))->applyFromArray($styleBold);
-		$sheet->getStyle('A'. ($sr + 5))->applyFromArray($styleBold);
+		$sheet->getStyle('A'. ($sr + 6))->applyFromArray($styleBold);
+		$sheet->getStyle('A'. ($sr + 7))->applyFromArray($styleBold);
 
 		$sheet->getStyle('A1:F'. ($sheet->getHighestRow()))
 			->getBorders()
@@ -284,7 +300,7 @@ class Exporting extends MY_Controller {
 		$sheet->getColumnDimension('F')->setAutoSize(true);
 
 		$sheet->getRowDimension('1')->setRowHeight(40);
-		$sheet->getRowDimension($sr + 5)->setRowHeight(30);
+		$sheet->getRowDimension($sr + 7)->setRowHeight(30);
 
 		if ($sheet->getColumnDimension('B')->getWidth() < 12) {
 			$sheet->getColumnDimension('B')->setAutoSize(false);

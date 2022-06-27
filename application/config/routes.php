@@ -196,7 +196,7 @@ $route['FORM_updateSOTransaction'] = 'SalesOrders/FORM_updateSOTransaction';
 $route['FORM_removeSOTransaction'] = 'SalesOrders/FORM_removeSOTransaction';
 
 
-$route['FORM_updateSOPromoDiscount'] = 'SalesOrders/FORM_updateSOPromoDiscount';
+$route['FORM_updateSOPromoTransactionDiscount'] = 'SalesOrders/FORM_updateSOPromoTransactionDiscount';
 
 
 $route['admin/xlsSalesOrder'] = 'Exporting/xlsSalesOrder';

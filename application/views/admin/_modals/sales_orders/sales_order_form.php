@@ -34,10 +34,18 @@
 									}
 
 									$unitDiscountAmount = $unitPrice * ($row['UnitDiscount'] / 100);
-									$amount = $row['Amount'] * ($unitPrice - $unitDiscountAmount);
+
+									
+									$promoDiscountAmount = ($unitPrice - $unitDiscountAmount) * ($row['PromoDiscount'] / 100);
+
+
+									$amount = ($row['Amount'] * ($unitPrice - $unitDiscountAmount
+									 // - $promoDiscountAmount
+									));
 									$amountTotal += $amount;
+
 									?>
-									<tr class="add-formtransaction-row" data-type="regularTransaction" data-id="<?=$row['ID']?>">
+									<tr class="add-formtransaction-row" data-type="regularTransaction" data-id="<?=$row['ID']?>" data-promodiscount="<?=$row['Amount'] * $promoDiscountAmount?>">
 										<td class="text-center">
 											<?=$row['Amount']?>
 										</td>
@@ -150,9 +158,17 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan="2" rowspan="2" class="fw-bold text-center">CATEGORY OF ACCOUNT:</td>
+									<td colspan="2" rowspan="4" class="fw-bold text-center">CATEGORY OF ACCOUNT:</td>
 									<td class="text-end fw-bold" colspan="2">Sub-total <b>PHP </b></td>
 									<td colspan="2" class="text-center" id="subTotal">0.00</td>
+								</tr>
+								<tr>
+									<td class="fw-bold" colspan="2">Promotional Discount</td>
+									<td colspan="2" class="text-center" id="dcPromotional" data-discount="">0.00</td>
+								</tr>
+								<tr>
+									<td class="text-end fw-bold" colspan="2">Sub-total <b>PHP </b></td>
+									<td colspan="2" class="text-center" id="subTotalPromotional">0.00</td>
 								</tr>
 								<tr>
 									<td colspan="2" class="fw-bold">Outright Discount (<?=$salesOrder['discountOutright']?>%)</td>

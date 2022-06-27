@@ -452,6 +452,20 @@ class Model_Updates extends CI_Model {
 			return false;
 		}
 	}
+	public function UpdateStockHistoryDiscountCategoryTransactionID($tid,$data)
+	{
+		$this->db->where('transactionid', $tid);
+		$this->db->where('status', 'discount');
+		$this->db->where('discount_type', 'category');
+		$this->db->update('sales_history',$data);
+		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	public function UpdateStockHistoryCostPriceByStockID($stockid)
 	{
 		$this->db->where('stockid', $stockid);
@@ -508,6 +522,17 @@ class Model_Updates extends CI_Model {
 		$this->db->where('ID', $id);
 		$this->db->update('products_transactions',$data);
 		if ($this->db->affected_rows() > 0) {
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	public function UpdateProductTransactionTID($tid,$data)
+	{
+		$this->db->where('TransactionID', $tid);
+		if ($this->db->update('products_transactions',$data)) {
 			return true;
 		}
 		else
