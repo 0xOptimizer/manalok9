@@ -1671,6 +1671,37 @@ class Model_Selects extends CI_Model {
 		$result = $this->db->get('bills');
 		return $result;
 	}
+	public function GetBillsGroupHeadRange($from=NULL,$to=NULL)
+	{
+		$this->db->select('*');
+		if ($from != NULL && $to != NULL) {
+			$from = date('Y-m-d', strtotime($from));
+			$to = date('Y-m-d', strtotime($to));
+
+			if ($from == $to) {
+				$date_query = 'Date = "' . $from . '"';
+			} else {
+				$date_query = 'Date >= "' . $from . '" AND Date <= "' . $to . '"';
+			}
+			$this->db->where($date_query);
+		}
+		$this->db->where('Status', '1');
+		$this->db->where('GroupHead', '1');
+
+		$result = $this->db->get('bills');
+		return $result;
+	}
+	public function GetGroupBills($groupNo)
+	{
+		$this->db->distinct();
+		$this->db->select('*');
+		$this->db->where('GroupNo', $groupNo);
+		$this->db->where('GroupHead', '0');
+		$this->db->where('Status', '1');
+		$this->db->order_by('ID', 'asc');
+		$result = $this->db->get('bills'); 
+		return $result;
+	}
 
 
 	public function GetAllBillType()

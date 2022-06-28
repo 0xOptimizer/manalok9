@@ -31,14 +31,6 @@
 							<input type="text" class="form-control" id="bill_address" name="address" placeholder="Address" required>
 						</div>
 						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label">PARTICULARS</label>
-							<input type="text" class="form-control" id="bill_particulars" name="particulars" placeholder="Particulars" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
-							<label class="input-label">AMOUNT</label>
-							<input type="number" class="form-control" id="bill_amount" name="amount" placeholder="0.00" step="0.000001" required>
-						</div>
-						<div class="form-group col-sm-12 col-md-9 mx-auto">
 							<label class="input-label">SI# OR#</label>
 							<input type="text" class="form-control" id="bill_sinorn" name="sinorn" placeholder="SI# OR#" required>
 						</div>
@@ -53,7 +45,7 @@
 					</div>
 				</div>
 				<div class="feedback-form modal-footer">
-					<button type="submit" class="btn btn-success"><i class="bi bi-plus-square"></i> Add Bill</button>
+					<button type="submit" class="btn btn-success"><i class="bi bi-pencil-square"></i> Update Bill</button>
 				</div>
 			</div>
 		</form>

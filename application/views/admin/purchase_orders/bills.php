@@ -40,7 +40,7 @@ if ($sbst == NULL || $sbst == 'ALL') {
 
 
 // Fetch bills
-$getBills = $this->Model_Selects->GetBillsRange($from, $to);
+$getBills = $this->Model_Selects->GetBillsGroupHeadRange($from, $to);
 
 // Highlighting new recorded entry
 $highlightID = 'N/A';
@@ -125,8 +125,6 @@ $getAllBillDepartment = $this->Model_Selects->GetAllBillDepartment();
 							<th class="text-center">TIN # VAT</th>
 							<th class="text-center">TIN # NON</th>
 							<th class="text-center">ADDRESS</th>
-							<th class="text-center">PARTICULARS</th>
-							<th class="text-center">AMOUNT</th>
 							<th class="text-center">SI# OR#</th>
 							<th class="text-center">REMARKS</th>
 							<th class="text-center">DEPARTMENT</th>
@@ -168,16 +166,6 @@ $getAllBillDepartment = $this->Model_Selects->GetAllBillDepartment();
 											<?php endif; ?>
 										</td>
 										<td class="text-center">
-											<?php if ($row['Particulars'] != NULL): ?>
-												<?=$row['Particulars']?>
-											<?php else: ?>
-												---
-											<?php endif; ?>
-										</td>
-										<td class="text-center">
-											<?=number_format($row['Amount'], 2)?>
-										</td>
-										<td class="text-center">
 											<?php if ($row['SINORN'] != NULL): ?>
 												<?=$row['SINORN']?>
 											<?php else: ?>
@@ -199,9 +187,9 @@ $getAllBillDepartment = $this->Model_Selects->GetAllBillDepartment();
 											<?php endif; ?>
 										</td>
 										<td>
+											<button type="button" class="btn showbill-btn" data-billno="<?=$row['BillNo']?>"><i class="bi bi-eye text-success"></i></button>
 											<?php if ($this->session->userdata('UserRestrictions')['bills_add']): ?>
 												<button type="button" class="btn updbill-btn"><i class="bi bi-pencil text-warning"></i></button>
-												<!-- <button type="button" class="btn updbillgroup-btn"><i class="bi bi-collection text-success"></i></button> -->
 											<?php endif; ?>
 											<?php if ($this->session->userdata('UserRestrictions')['bills_delete']): ?>
 												<a href="FORM_removeBill?bno=<?=$row['BillNo']?>">
@@ -238,6 +226,7 @@ if ($from == NULL && $to == NULL) {
 <?php $this->load->view('admin/_modals/bills/add_bill'); ?>
 <?php $this->load->view('admin/_modals/bills/update_bill'); ?>
 <?php $this->load->view('admin/_modals/bills/group_bill'); ?>
+<?php $this->load->view('admin/_modals/bills/view_bill'); ?>
 <div class="prompts">
 	<?php print $this->session->flashdata('prompt_status'); ?>
 </div>
@@ -420,8 +409,6 @@ $(document).ready(function() {
 		$('#bill_tinvat').val(tr.attr('data-bill_tinvat'));
 		$('#bill_tinnon').val(tr.attr('data-bill_tinnon'));
 		$('#bill_address').val(tr.attr('data-bill_address'));
-		$('#bill_particulars').val(tr.attr('data-bill_particulars'));
-		$('#bill_amount').val(tr.attr('data-bill_amount'));
 		$('#bill_sinorn').val(tr.attr('data-bill_sinorn'));
 		$('#bill_remarks').val(tr.attr('data-bill_remarks'));
 		$('#bill_department').val(tr.attr('data-bill_department'));
@@ -486,6 +473,128 @@ $(document).ready(function() {
 				}
 			});
 		}
+	});
+
+
+	// BILL GROUP ADD
+	$(document).on('click', '.add-bill-row', function(e) {
+		$(this).before(
+			$('<tr>').attr({ 'class': 'bill-row' })
+				.append($('<td>').attr('class', 'text-center bill-row-num').append($('<i>').html($('.bill-row').length + 1)))
+				.append($('<td>').attr('class', 'text-center').append($('<input>').attr({
+					'type': 		'text',
+					'class': 		'form-control',
+					'name': 		'particulars[]',
+					'placeholder': 	'Particulars',
+					'required': 	''
+				})))
+				.append($('<td>').attr('class', 'text-center').append($('<input>').attr({
+					'type': 		'number',
+					'class': 		'form-control',
+					'name': 		'amount[]',
+					'placeholder': 	'0.00',
+					'step': 		'0.000001',
+					'required':		''
+				})))
+				.append($('<td>').attr('class', 'text-center').append($('<button>').attr('class', 'btn btn-danger remove-bill-row').html('X')))
+
+		);
+	});
+	$(document).on('click', '.remove-bill-row', function(e) {
+		$(this).parents('tr').remove();
+
+		$.each($('.bill-row-num'), function(index, val) {
+			$(this).html('').append($('<i>').html(index + 1))
+		});
+	});
+
+	// BILL SHOW
+	function moneyFormat(value) {
+		return value.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,");
+	}
+	$(document).on('click', '.showbill-btn', function(e) {
+		let billno = $(this).data('billno');
+
+		if (billno.length > 0) {
+			$.ajax({
+				url: 'getBillGroupData',
+				type: 'GET',
+				dataType: 'JSON',
+				data: { bill_no : billno } ,
+				success: function (response) {
+					if (response.bills.length > 0) {
+						$('.viewbill-row').remove();
+
+						let bill = response.bill;
+						let bills = response.bills;
+
+						$('#addGroupBillNo').val(bill.GroupNo);
+
+						$('.view_bill_date').html(bill.Date);
+						$('.view_bill_name').html(bill.Name);
+						$('.view_bill_tinvat').html(bill.TINVAT);
+						$('.view_bill_tinnon').html(bill.TINNON);
+						$('.view_bill_address').html(bill.Address);
+						$('.view_bill_sinorn').html(bill.SINORN);
+						$('.view_bill_remarks').html(bill.Remarks);
+						$('.view_bill_department').html(bill.Department);
+
+						$('#billsViewTable tbody').html('');
+						let total_bill_amount = 0;
+						$.each(bills, function(index, val) {
+							total_bill_amount += parseFloat(val.Amount);
+							$('#billsViewTable tbody').append($('<tr>')
+								.append($('<td>').attr('class', 'text-center').append($('<i>').html(index + 1)))
+								.append($('<td>').attr('class', 'text-center').html(val.Particulars))
+								.append($('<td>').attr('class', 'text-center').html(moneyFormat(parseFloat(val.Amount))))
+								.append($('<td>').attr('class', 'text-center')
+									.append($('<a>').attr('class', 'btn btn-danger removeBill').attr('href', 'FORM_removeBill?bno=' + val.BillNo).html('X')))
+							);
+						});
+						$('#billsViewTable tbody').append($('<tr>')
+							.append($('<td>').attr('colspan', '2').attr('class', 'fw-bold text-end').html('TOTAL:'))
+							.append($('<td>').attr('class', 'text-center').html(moneyFormat(parseFloat(total_bill_amount))))
+							.append($('<td>').html(''))
+						);
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(textStatus, errorThrown);
+				}
+			});
+		}
+
+		$('#grpViewBillModal').modal('toggle');
+	});
+	$(document).on('click', '.add-viewbill-row', function(e) {
+		$(this).before(
+			$('<tr>').attr({ 'class': 'viewbill-row' })
+				.append($('<td>').attr('class', 'text-center viewbill-row-num').append($('<i>').html($('.viewbill-row').length + 1)))
+				.append($('<td>').attr('class', 'text-center').append($('<input>').attr({
+					'type': 		'text',
+					'class': 		'form-control',
+					'name': 		'particulars[]',
+					'placeholder': 	'Particulars',
+					'required': 	''
+				})))
+				.append($('<td>').attr('class', 'text-center').append($('<input>').attr({
+					'type': 		'number',
+					'class': 		'form-control',
+					'name': 		'amount[]',
+					'placeholder': 	'0.00',
+					'step': 		'0.000001',
+					'required':		''
+				})))
+				.append($('<td>').attr('class', 'text-center').append($('<button>').attr('class', 'btn btn-danger remove-viewbill-row').html('X')))
+
+		);
+	});
+	$(document).on('click', '.remove-viewbill-row', function(e) {
+		$(this).parents('tr').remove();
+
+		$.each($('.viewbill-row-num'), function(index, val) {
+			$(this).html('').append($('<i>').html(index + 1))
+		});
 	});
 });
 </script>

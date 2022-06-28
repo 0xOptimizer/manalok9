@@ -555,65 +555,65 @@ class PurchaseOrders extends MY_Controller {
 		}
 	}
 
-	public function FORM_addPOBill()
-	{
-		if ($this->Model_Security->CheckUserRestriction('purchase_orders_bill_creation')) {
-			$purchaseOrderNo = $this->input->post('purchase-order-no');
-			$description = $this->input->post('description');
-			$amount = $this->input->post('amount');
-			$modeOfPayment = $this->input->post('mode-payment');
-			$date = $this->input->post('date');
-			$time = $this->input->post('time');
+	// public function FORM_addPOBill()
+	// {
+	// 	if ($this->Model_Security->CheckUserRestriction('purchase_orders_bill_creation')) {
+	// 		$purchaseOrderNo = $this->input->post('purchase-order-no');
+	// 		$description = $this->input->post('description');
+	// 		$amount = $this->input->post('amount');
+	// 		$modeOfPayment = $this->input->post('mode-payment');
+	// 		$date = $this->input->post('date');
+	// 		$time = $this->input->post('time');
 
-			// Insert
-			$data = array(
-				'BillNo' => 'B' . strtoupper(uniqid()),
-				'OrderNo' => $purchaseOrderNo,
-				'Description' => $description,
-				'Amount' => $amount,
-				'ModeOfPayment' => $modeOfPayment,
-				'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
-			);
-			$insertBill = $this->Model_Inserts->InsertBill($data);
-			if ($insertBill == TRUE) {
-				$billID = $this->db->insert_id();
+	// 		// Insert
+	// 		$data = array(
+	// 			'BillNo' => 'B' . strtoupper(uniqid()),
+	// 			'OrderNo' => $purchaseOrderNo,
+	// 			'Description' => $description,
+	// 			'Amount' => $amount,
+	// 			'ModeOfPayment' => $modeOfPayment,
+	// 			'Date' => date('Y-m-d H:i:s', strtotime($date .' '. $time)),
+	// 		);
+	// 		$insertBill = $this->Model_Inserts->InsertBill($data);
+	// 		if ($insertBill == TRUE) {
+	// 			$billID = $this->db->insert_id();
 
-				$updatePORemainingPayment = $this->totalRemainingPOPayment($purchaseOrderNo);
-				if ($updatePORemainingPayment) {
-					$prompt_txt =
-					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Success!</strong> Added Bill.
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>';
-					$this->session->set_flashdata('prompt_status',$prompt_txt);
-				} else {
-					$prompt_txt =
-					'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Danger!</strong> Purchase Order remaining payment not updated.
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>';
-					$this->session->set_flashdata('prompt_status',$prompt_txt);
-				}
+	// 			$updatePORemainingPayment = $this->totalRemainingPOPayment($purchaseOrderNo);
+	// 			if ($updatePORemainingPayment) {
+	// 				$prompt_txt =
+	// 				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+	// 				<strong>Success!</strong> Added Bill.
+	// 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	// 				</div>';
+	// 				$this->session->set_flashdata('prompt_status',$prompt_txt);
+	// 			} else {
+	// 				$prompt_txt =
+	// 				'<div class="alert alert-danger position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+	// 				<strong>Danger!</strong> Purchase Order remaining payment not updated.
+	// 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	// 				</div>';
+	// 				$this->session->set_flashdata('prompt_status',$prompt_txt);
+	// 			}
 
-				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/bills'));
-				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
-			}
-			else
-			{
-				// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
-				$prompt_txt =
-				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Warning!</strong> Error uploading data. Please try again.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
-				redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
-			}
-		} else {
-			redirect(base_url());
-		}
-	}
+	// 			// LOGBOOK
+	// 			$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '] for purchase order [OrderNo: ' . $purchaseOrderNo . '].', base_url('admin/bills'));
+	// 			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+	// 		}
+	// 		else
+	// 		{
+	// 			// $this->Model_Logbook->SetPrompts('error', 'error', 'Error uploading data. Please try again.');
+	// 			$prompt_txt =
+	// 			'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+	// 			<strong>Warning!</strong> Error uploading data. Please try again.
+	// 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	// 			</div>';
+	// 			$this->session->set_flashdata('prompt_status',$prompt_txt);
+	// 			redirect('admin/view_purchase_order?orderNo=' . $purchaseOrderNo);
+	// 		}
+	// 	} else {
+	// 		redirect(base_url());
+	// 	}
+	// }
 	public function FORM_addBill()
 	{
 		if ($this->Model_Security->CheckUserRestriction('bills_add')) {
@@ -628,51 +628,87 @@ class PurchaseOrders extends MY_Controller {
 			$tinvat = $this->input->post('tinvat');
 			$tinnon = $this->input->post('tinnon');
 			$address = $this->input->post('address');
-			$particulars = $this->input->post('particulars');
-			$amount = $this->input->post('amount');
 			$sinorn = $this->input->post('sinorn');
 			$remarks = $this->input->post('remarks');
 			$department = $this->input->post('department');
 
-			// Insert
-			$data = array(
-				'BillNo' => 'B' . strtoupper(uniqid()),
-				// 'Description' => $description,
-				// 'ModeOfPayment' => $modeOfPayment,
-				// 'Type' => $type,
-				// 'Payee' => $payee,
-				// 'Category' => $category,
-				'Date' => date('Y-m-d', strtotime($date)),
-				'Name' => $name,
-				'TINVAT' => $tinvat,
-				'TINNON' => $tinnon,
-				'Address' => $address,
-				'Particulars' => $particulars,
-				'Amount' => $amount,
-				'SINORN' => $sinorn,
-				'Remarks' => $remarks,
-				'Department' => $department,
-			);
-			$insertBill = $this->Model_Inserts->InsertBill($data);
-			if ($insertBill == TRUE) {
-				$billID = $this->db->insert_id();
 
-				$prompt_txt =
-				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Success!</strong> Added new Bill.
-				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>';
-				$this->session->set_flashdata('prompt_status',$prompt_txt);
 
-				// LOGBOOK
-				$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
-				redirect('admin/bills');
+			$particulars = $this->input->post('particulars[]');
+			$amounts = $this->input->post('amount[]');
+
+			if (!empty($particulars) && !empty($amounts) && count($particulars) > 0 && count($particulars) == count($amounts)) {
+				do {
+					$grpNo = uniqid('B');
+				} while ($this->Model_Selects->GetBillExpensesGroupNo($grpNo)->num_rows() > 0);
+
+
+				// Insert
+				$data = array(
+					'BillNo' => 'B' . strtoupper(uniqid()),
+					// 'Description' => $description,
+					// 'ModeOfPayment' => $modeOfPayment,
+					// 'Type' => $type,
+					// 'Payee' => $payee,
+					// 'Category' => $category,
+					'Date' => date('Y-m-d', strtotime($date)),
+					'Name' => $name,
+					'TINVAT' => $tinvat,
+					'TINNON' => $tinnon,
+					'Address' => $address,
+					'SINORN' => $sinorn,
+					'Remarks' => $remarks,
+					'Department' => $department,
+
+					'GroupNo' => $grpNo,
+					'GroupHead' => 1,
+				);
+				$insertBill = $this->Model_Inserts->InsertBill($data);
+				if ($insertBill == TRUE) {
+					$billID = $this->db->insert_id();
+
+
+					foreach ($particulars as $key => $value) {
+						// Insert
+						$data = array(
+							'BillNo' => 'B' . strtoupper(uniqid()),
+							'Particulars' => $particulars[$key],
+							'Amount' => $amounts[$key],
+
+							'GroupNo' => $grpNo,
+						);
+						$this->Model_Inserts->InsertBill($data);
+					}
+
+
+
+					$prompt_txt =
+					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Success!</strong> Added new Bill.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+					// LOGBOOK
+					$this->Model_Logbook->LogbookEntry('generated a new bill.', 'generated a new bill [ID: ' . $billID . '].', base_url('admin/bills'));
+					redirect('admin/bills');
+				}
+				else
+				{
+					$prompt_txt =
+					'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+					<strong>Warning!</strong> Error uploading data. Please try again.
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>';
+					$this->session->set_flashdata('prompt_status',$prompt_txt);
+					redirect('admin/bills');
+				}
 			}
 			else
 			{
 				$prompt_txt =
 				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-				<strong>Warning!</strong> Error uploading data. Please try again.
+				<strong>Warning!</strong> Bill list is empty.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);
@@ -689,10 +725,20 @@ class PurchaseOrders extends MY_Controller {
 			if ($billNo != NULL) {
 				$bill = $this->Model_Selects->GetBillByBillNo($billNo);
 
-				$removeBill = $this->Model_Updates->remove_bill($billNo);
-				if ($removeBill) {
-					if ($bill->num_rows() > 0) {
-						$billDetails = $bill->row_array();
+				if ($bill->num_rows() > 0) {
+					$billDetails = $bill->row_array();
+
+					if ($billDetails['GroupHead'] == 1) {
+						$group_bills = $this->Model_Selects->GetGroupBills($billDetails['GroupNo']);
+						if ($group_bills->num_rows() > 0) {
+							foreach ($group_bills->result_array() as $row) {
+								$this->Model_Updates->remove_bill($row['BillNo']);
+							}
+						}
+					}
+
+					$removeBill = $this->Model_Updates->remove_bill($billNo);
+					if ($removeBill) {
 
 						$updatePORemainingPayment = $this->totalRemainingPOPayment($billDetails['OrderNo']);
 						if (!$updatePORemainingPayment) {
@@ -703,14 +749,14 @@ class PurchaseOrders extends MY_Controller {
 							</div>';
 							$this->session->set_flashdata('prompt_status',$prompt_txt);
 						}
-					}
 
-					$prompt_txt =
-					'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
-					<strong>Success!</strong> Removed Bill.
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-					</div>';
-					$this->session->set_flashdata('prompt_status',$prompt_txt);
+						$prompt_txt =
+						'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+						<strong>Success!</strong> Removed Bill.
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>';
+						$this->session->set_flashdata('prompt_status',$prompt_txt);
+					}
 				}
 
 				// LOGBOOK
@@ -806,6 +852,55 @@ class PurchaseOrders extends MY_Controller {
 				$prompt_txt =
 				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
 				<strong>Warning!</strong> Error uploading data. Please try again.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+				redirect('admin/bills');
+			}
+		} else {
+			redirect(base_url());
+		}
+	}
+	public function FORM_addGroupBill()
+	{
+		if ($this->Model_Security->CheckUserRestriction('bills_add')) {
+
+			$group_no = $this->input->post('group_no');
+
+			$particulars = $this->input->post('particulars[]');
+			$amounts = $this->input->post('amount[]');
+
+			if (!empty($particulars) && !empty($amounts) && count($particulars) > 0 && count($particulars) == count($amounts)) {
+				foreach ($particulars as $key => $value) {
+					// Insert
+					$data = array(
+						'BillNo' => 'B' . strtoupper(uniqid()),
+						'Particulars' => $particulars[$key],
+						'Amount' => $amounts[$key],
+
+						'GroupNo' => $group_no,
+					);
+					$this->Model_Inserts->InsertBill($data);
+				}
+
+
+
+				$prompt_txt =
+				'<div class="alert alert-success position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Success!</strong> Added new group Bill.
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>';
+				$this->session->set_flashdata('prompt_status',$prompt_txt);
+
+				// LOGBOOK
+				$this->Model_Logbook->LogbookEntry('generated a new group bills.', 'generated a new group bills [ID: ' . $billID . '].', base_url('admin/bills'));
+				redirect('admin/bills');
+			}
+			else
+			{
+				$prompt_txt =
+				'<div class="alert alert-warning text-dark position-fixed bottom-0 end-0 alert-dismissible fade show" role="alert">
+				<strong>Warning!</strong> Bill list is empty.
 				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 				</div>';
 				$this->session->set_flashdata('prompt_status',$prompt_txt);

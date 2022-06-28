@@ -699,4 +699,16 @@ class AJAX extends CI_Controller {
 			echo json_encode($searchResult);
 		}
 	}
+
+	public function Get_BillGroupData()
+	{
+		$bill_no = $this->input->get('bill_no');
+		if (strlen($bill_no) > 0) {
+			$getBill = $this->Model_Selects->GetBillByBillNo($bill_no)->row_array();
+			$getGroupBills = $this->Model_Selects->GetGroupBills($getBill['GroupNo'])->result_array();
+
+			echo json_encode(array('bill'=>$getBill, 'bills'=>$getGroupBills));
+		}
+	}
+	
 }

@@ -160,6 +160,8 @@ $route['admin/FORM_removeBill'] = 'PurchaseOrders/FORM_removeBill';
 $route['FORM_updateBill'] = 'PurchaseOrders/FORM_updateBill';
 
 $route['FORM_groupBill'] = 'PurchaseOrders/FORM_groupBill';
+$route['FORM_addGroupBill'] = 'PurchaseOrders/FORM_addGroupBill';
+
 
 // MANUAL TRANSACTION
 $route['admin/manual_purchases'] = 'PurchaseOrders/manual_purchases';
@@ -344,5 +346,6 @@ $route['removeFCartrelease'] = 'Admin/removeFCartrelease';
 
 
 
+$route['admin/getBillGroupData'] = 'AJAX/Get_BillGroupData';
 
 
